@@ -7,6 +7,8 @@
     "hint": "./node_modules/jshint/bin/jshint lib"
   },
   "dependencies": {
+    "express": "3.4.x",
+    "qejs": "3.0.x",
     "request": "2.27.x",
     "q": "0.9.x"
   },

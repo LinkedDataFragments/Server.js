@@ -1,0 +1,7 @@
+<% inherits('base') %>
+<h1>Linked Data Fragments Server</h1>
+<ul>
+<% datasources.forEach(function (datasource) { %>
+  <li><a href="/<%= datasource %>"><%= datasource %></a></li>
+<% }) %>
+</ul>
