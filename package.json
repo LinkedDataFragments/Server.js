@@ -1,0 +1,16 @@
+{
+  "name": "LinkedDataFragmentsServer",
+  "description": "Linked Fragments Server",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "./test",
+    "hint": "./node_modules/jshint/bin/jshint lib"
+  },
+  "dependencies": {
+    "request": "2.27.x",
+    "q": "0.9.x"
+  },
+  "devDependencies": {
+    "jshint": ">=2.1.10"
+  }
+}

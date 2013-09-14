@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+var SparqlDatasource = require('./lib/SparqlDatasource'),
+    dbpedia = new SparqlDatasource('http://dbpedia.org/sparql');
+
+dbpedia.query(null, null, 'dbpedia:Belgium').then(console.log, console.log);
