@@ -48,7 +48,7 @@ label {
 }
 
 fieldset input {
-  width: 300px;
+  width: 500px;
 }
 
 input.uri {
@@ -59,6 +59,10 @@ legend {
   font-size: 1.2em;
   font-weight: bold;
   padding: 0;
+}
+
+ul {
+  padding: 0 0 0 1.5em;
 }
 
 dt {
@@ -72,4 +76,9 @@ dd {
 
 pre {
   margin: 0;
+}
+
+.triple > * {
+  font-family: monospace;
+  margin-right: 1em;
 }

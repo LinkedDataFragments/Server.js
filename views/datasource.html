@@ -25,6 +25,22 @@
   <dt>Number of triples with this pattern</dt>
   <dd><%= results.count %></dd>
   <dt>Triples</dt>
-  <dd><pre><%= results.triples %></pre></dd>
+  <dd>
+    <ul>
+<% results.triples.forEach(function (triple) { %>
+      <li class="triple">
+  <% ['subject', 'predicate', 'object'].forEach(function (component) {
+    var value = triple[component],
+        queryValue = /^"/.test(value) ? value : '<' + value + '>';
+        short = value.match(/[^\/#]*$/) || value;
+  %>
+        <a href="?<%= component %>=<%= encodeURIComponent(queryValue) %>"><%
+          %><abbr class="<%= component %>" title="<%= value %>"><%= short %></abbr><%
+        %></a>
+  <% }); %>
+      </li>
+<% }); %>
+    </ul>
+  </dd>
 </dl>
 <% <- %>
