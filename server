@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var SparqlDatasource = require('./lib/SparqlDatasource'),
     LinkedDataFragmentsServer = require('./lib/LinkedDataFragmentsServer'),
-    dbpedia = new SparqlDatasource('http://dbpedia.org/sparql'),
+    dbpedia = new SparqlDatasource('http://dbpedia.org/sparql', 'http://dbpedia.org'),
     server = new LinkedDataFragmentsServer({ dbpedia: dbpedia });
 
 var port = 3000;
