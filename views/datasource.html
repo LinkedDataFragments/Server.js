@@ -1,0 +1,30 @@
+<% inherits('base') %>
+<h1>Linked Data Fragments Server</h1>
+<h2>Data source <em><%= datasourceName %></em></h2>
+
+<form action="?" method="GET">
+  <fieldset>
+    <legend>Triple pattern</legend>
+    <ul>
+<% ['subject', 'predicate', 'object'].forEach(function (component) { %>
+      <li>
+        <label for="<%= component %>"><%= component %>:</label>
+        <input id="<%= component %>" name="<%= component %>" value="<%= query[component] || '' %>" />
+      </li>
+<% }); %>
+    </ul>
+  </fieldset>
+  <p>
+    <input type="submit" value="Query" />
+  </p>
+</form>
+
+<% queryResults -> results %>
+<h3>Results for <em><%= results.pattern %></em></h3>
+<dl>
+  <dt>Number of triples with this pattern</dt>
+  <dd><%= results.count %></dd>
+  <dt>Triples</dt>
+  <dd><pre><%= results.triples %></pre></dd>
+</dl>
+<% <- %>
