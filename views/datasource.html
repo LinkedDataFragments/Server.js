@@ -1,5 +1,5 @@
 <% inherits('base') %>
-<h2>Data source <a href="/<%= datasourceName %>"><em><%= datasourceName %></em></a></h2>
+<h2>Data source <a href="/<%= datasourceName %>"><em class="datasource"><%= datasourceName %></em></a></h2>
 
 <form action="?" method="GET">
   <fieldset>
@@ -20,12 +20,12 @@
 </form>
 
 <% queryResults -> results %>
-<h3>Results for <em><%= results.pattern %></em></h3>
+<h3>Results for <em class="pattern"><%= results.pattern %></em></h3>
 <dl>
-  <dt>Number of triples with this pattern</dt>
-  <dd><%= results.count %></dd>
-  <dt>Triples</dt>
-  <dd>
+  <dt class="count">Number of triples with this pattern</dt>
+  <dd class="count"><%= results.count %></dd>
+  <dt class="triples">Triples</dt>
+  <dd class="triples">
     <ul>
 <% results.triples.forEach(function (triple) { %>
       <li class="triple">
