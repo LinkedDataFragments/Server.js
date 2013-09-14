@@ -1,0 +1,75 @@
+html, input, th, td {
+  font-family: Arial, sans-serif;
+  font-size: 11pt;
+}
+
+body {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1, h2, h3, a {
+  color: steelblue;
+}
+
+a {
+  text-decoration: none;
+  border-bottom-width: 2px;
+}
+
+a:hover {
+  border-bottom-style: solid;
+}
+
+form {
+  margin: 0 0 2em 1.5em;
+}
+
+fieldset {
+  border: none;
+  padding: .5em 0 0;
+}
+
+fieldset ul {
+  list-style: none;
+  padding: 0;
+}
+
+fieldset li {
+  line-height: 2em;
+}
+
+label {
+  width: 100px;
+  display: block;
+  float: left;
+  clear: both;
+  font-weight: bold;
+}
+
+fieldset input {
+  width: 300px;
+}
+
+input.uri {
+  font-family: monospace;
+}
+
+legend {
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 0;
+}
+
+dt {
+  font-weight: bold;
+  margin: 1em 0 0;
+}
+
+dd {
+  margin: 0 0 0 1.5em;
+}
+
+pre {
+  margin: 0;
+}

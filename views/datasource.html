@@ -1,6 +1,5 @@
 <% inherits('base') %>
-<h1>Linked Data Fragments Server</h1>
-<h2>Data source <em><%= datasourceName %></em></h2>
+<h2>Data source <a href="/<%= datasourceName %>"><em><%= datasourceName %></em></a></h2>
 
 <form action="?" method="GET">
   <fieldset>
@@ -9,7 +8,8 @@
 <% ['subject', 'predicate', 'object'].forEach(function (component) { %>
       <li>
         <label for="<%= component %>"><%= component %>:</label>
-        <input id="<%= component %>" name="<%= component %>" value="<%= query[component] || '' %>" />
+        <input class="uri" id="<%= component %>" name="<%= component %>"
+               value="<%= query[component] || '' %>" />
       </li>
 <% }); %>
     </ul>
