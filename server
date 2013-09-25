@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 var SparqlDatasource = require('./lib/SparqlDatasource'),
+    N3Datasource = require('./lib/N3Datasource'),
     LinkedDataFragmentsServer = require('./lib/LinkedDataFragmentsServer'),
     dbpedia = new SparqlDatasource('http://dbpedia.org/sparql', 'http://dbpedia.org'),
-    server = new LinkedDataFragmentsServer({ dbpedia: dbpedia });
+    ckan = new SparqlDatasource('http://semantic.ckan.net/sparql','http://datahub.io'),
+    stations = new N3Datasource('http://demo.thedatatank.org/railway/stations.ttl'),
+    server = new LinkedDataFragmentsServer({ dbpedia: dbpedia , ckan : ckan, stations : stations});
 
 var port = 3000;
 console.log('Running on http://localhost:' + port + '/');
