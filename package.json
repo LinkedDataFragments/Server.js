@@ -12,6 +12,7 @@
     "n3": ">=0.1.3",
     "request": "2.27.x",
     "q": "0.9.x",
+    "lodash": "2.2.x",
     "csv" : ">=0.3.6"
   },
   "devDependencies": {
