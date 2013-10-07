@@ -1,6 +1,6 @@
 {
   "name": "LinkedDataFragmentsServer",
-  "description": "Linked Fragments Server",
+  "description": "Linked Data Fragments Server",
   "version": "0.0.1",
   "scripts": {
     "test": "./test",
