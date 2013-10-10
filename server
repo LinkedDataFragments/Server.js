@@ -2,14 +2,16 @@
 var SparqlDatasource = require('./lib/SparqlDatasource'),
     N3Datasource = require('./lib/N3Datasource'),
     CSVDatasource = require('./lib/CSVDatasource'),
+    LevelGraphDatasource = require('./lib/LevelGraphDatasource'),
     LinkedDataFragmentsServer = require('./lib/LinkedDataFragmentsServer'),
     dbpedia = new SparqlDatasource('http://dbpedia.restdesc.org/', 'http://dbpedia.org'),
+    dbpedialevelgraph = new LevelGraphDatasource('data/dbpedia'),
     stations = new N3Datasource('http://demo.thedatatank.org/railway/stations.ttl'),
     ckan = new SparqlDatasource('http://semantic.ckan.net/sparql','http://datahub.io'),
     eventmedia = new SparqlDatasource('http://eventmedia.eurecom.fr/sparql',''),
     stationscsv = new CSVDatasource('http://data.irail.be/NMBS/Stations.csv', { delimiter: ';' }),
     coffee = new CSVDatasource('https://docs.google.com/spreadsheet/pub?key=0Au5ixQ50Pvv_dG5FS294M0RnNDJTOEtDckd4VFB4RVE&single=true&gid=0&output=csv', { delimiter: ',' }),
-    server = new LinkedDataFragmentsServer({ dbpedia: dbpedia , ckan : ckan, stations : stations, coffee : coffee, stationscsv : stationscsv, eventmedia:eventmedia});
+    server = new LinkedDataFragmentsServer({ dbpedia: dbpedia, dbpedialevelgraph: dbpedialevelgraph, ckan: ckan, stations: stations, coffee: coffee, stationscsv: stationscsv, eventmedia:eventmedia });
 
 var port = 3000;
 console.log('Running on http://localhost:' + port + '/');
