@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+/*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */
+
+/** Standalone Linked Data Fragments Server */
+
 var fs = require('fs'),
     LinkedDataFragmentsServer = require('./lib/LinkedDataFragmentsServer');
 

@@ -1,3 +1,5 @@
+/*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */
+
 html, input, th, td {
   font-family: Arial, sans-serif;
   font-size: 11pt;
@@ -76,6 +78,12 @@ dd {
 
 pre {
   margin: 0;
+}
+
+footer {
+  margin-top: 2em;
+  font-size: small;
+  color: gray;
 }
 
 .triple > * {
