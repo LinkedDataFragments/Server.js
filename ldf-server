@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+var fs = require('fs'),
+    LinkedDataFragmentsServer = require('./lib/LinkedDataFragmentsServer');
+
+// Parse arguments
+var args = process.argv.slice(2);
+if (args.length < 1 || args.length > 2) {
+  console.log('usage: server config.json [port]');
+  return process.exit(1);
+}
+var configFile = args[0],
+    config = JSON.parse(fs.readFileSync(configFile)),
+    port = parseInt(args[1], 10) || 3000;
+
+// Create datasources
+var datasources = {};
+for (var datasourceName in config.datasources) {
+  var datasourceConfig = config.datasources[datasourceName];
+  try {
+    var constructor = require('./lib/' + datasourceConfig.type),
+        datasource = createInstance(constructor, datasourceConfig.options || []);
+    datasources[datasourceName] = datasource;
+  }
+  catch (error) {
+    process.stderr.write('Could not load datasource ' + datasourceName + ': ' + error.message + '\n');
+  }
+}
+
+// Create and start server
+var server = new LinkedDataFragmentsServer(datasources);
+server.listen(port);
+console.log('Running on http://localhost:' + port + '/');
+
+// Creates an instance without the `new` keyword
+function createInstance(constructor, constructorArguments) {
+  function Constructor() { return constructor.apply(this, constructorArguments); }
+  Constructor.prototype = constructor.prototype;
+  return new Constructor();
+}
