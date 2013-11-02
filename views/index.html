@@ -2,7 +2,7 @@
 <% inherits('base') %>
 <h2>Available data sources</h2>
 <ul>
-<% datasources.forEach(function (datasource) { %>
+<% datasources.sort().forEach(function (datasource) { %>
   <li><a class="datasource" href="/<%= datasource %>"><%= datasource %></a></li>
 <% }) %>
 </ul>
