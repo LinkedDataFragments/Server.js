@@ -20,7 +20,13 @@
 </form>
 
 <% queryResults -> results %>
-<h3>Results for <em class="pattern"><%= results.pattern %></em></h3>
+<h3>Results for
+  <em class="pattern">{
+    <%= pattern.subject              ? '<' + pattern.subject   + '>' : '?s' %>
+    <%= pattern.predicate            ? '<' + pattern.predicate + '>' : '?p' %>
+    <%= N3Util.isUri(pattern.object) ? '<' + pattern.object    + '>' : (pattern.object || '?o') %>
+  }</em>
+</h3>
 <dl>
   <dt class="count">Number of triples with this pattern</dt>
   <dd class="count"><%= results.count %></dd>
