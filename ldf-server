@@ -31,7 +31,7 @@ for (var datasourceName in config.datasources) {
 }
 
 // Create and start server
-var server = new LinkedDataFragmentsServer(datasources);
+var server = new LinkedDataFragmentsServer(datasources, config.prefixes);
 server.listen(port);
 console.log('Running on http://localhost:' + port + '/');
 

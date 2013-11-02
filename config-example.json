@@ -28,5 +28,21 @@
       "type": "CSVDatasource",
       "options": ["https://docs.google.com/spreadsheet/pub?key=0Au5ixQ50Pvv_dG5FS294M0RnNDJTOEtDckd4VFB4RVE&single=true&gid=0&output=csv", { "delimiter": "," }]
     }
+  },
+
+  "prefixes": {
+    "rdf":         "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs":        "http://www.w3.org/2000/01/rdf-schema#",
+    "owl":         "http://www.w3.org/2002/07/owl#",
+    "skos":        "http://www.w3.org/2004/02/skos/core#",
+    "xsd":         "http://www.w3.org/2001/XMLSchema#",
+    "dc":          "http://purl.org/dc/terms/",
+    "dcterms":     "http://purl.org/dc/terms/",
+    "dc11":        "http://purl.org/dc/elements/1.1/",
+    "foaf":        "http://xmlns.com/foaf/0.1/",
+    "geo":         "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "dbpedia":     "http://dbpedia.org/resource/",
+    "dbpedia-owl": "http://dbpedia.org/ontology/",
+    "dbpprop":     "http://dbpedia.org/property/"
   }
 }
