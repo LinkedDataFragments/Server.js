@@ -19,7 +19,7 @@
   </p>
 </form>
 
-<% queryResults -> results %>
+<% queryResult -> result %>
 <h3>Results for
   <em class="pattern">{
     <%= pattern.subject              ? '<' + pattern.subject   + '>' : '?s' %>
@@ -28,12 +28,12 @@
   }</em>
 </h3>
 <dl>
-  <dt class="count">Number of triples with this pattern</dt>
-  <dd class="count"><%= results.count %></dd>
-  <dt class="triples">Triples</dt>
+  <dt class="total">Triples matching this pattern</dt>
+  <dd class="total"><%= result.total %></dd>
+  <dt class="triples">Triples<%= result.triples.length < result.total ? ' (subset)' : '' %></dt>
   <dd class="triples">
     <ul>
-<% results.triples.forEach(function (triple) { %>
+<% result.triples.forEach(function (triple) { %>
       <li class="triple">
   <% ['subject', 'predicate', 'object'].forEach(function (component) {
     var value = triple[component],
