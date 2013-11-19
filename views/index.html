@@ -1,8 +1,28 @@
 <% /*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */ -%>
 <% inherits('base') %>
-<h2>Available data sources</h2>
-<ul>
-<% datasources.sort().forEach(function (datasource) { %>
-  <li><a class="datasource" href="/<%= datasource %>"><%= datasource %></a></li>
-<% }) %>
-</ul>
+
+<% var hasQuery = Object.keys(query).length === 0; %>
+<% if (hasQuery) { %>
+  <h2>Data sources</h2>
+  <p>This Linked Data Fragments server offers the following datasets:</p>
+  <% queryResult -> result -%>
+  <%
+    var dataSources = [];
+    result.triples.forEach(function (triple) {
+      if(triple.predicate === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+         triple.object === 'http://rdfs.org/ns/void#Dataset') {
+         dataSources.push({ url: triple.subject,
+                            name: triple.subject.match(/\w+$/)[0] });
+      }
+    });
+  %>
+  <ul>
+    <% dataSources.forEach(function (dataSource) { %>
+      <li><a href="<%= dataSource.url %>"><%= dataSource.name %></a></li>
+    <% }) %>
+  </ul>
+  <% <- -%>
+  <hr>
+<% } %>
+
+<%- render('fragment') %>
