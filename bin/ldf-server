@@ -4,7 +4,8 @@
 /** Standalone Linked Data Fragments Server */
 
 var fs = require('fs'),
-    LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer');
+    LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
+    DatasetsSource = require('../lib/DatasetsSource');
 
 // Parse arguments
 var args = process.argv.slice(2);
@@ -29,6 +30,10 @@ for (var datasourceName in config.datasources) {
     process.stderr.write('Could not load datasource ' + datasourceName + ': ' + error.message + '\n');
   }
 }
+
+// Create index datasource
+var indexDatasource = new DatasetsSource(config.baseURL, config.datasources);
+datasources['index'] = indexDatasource;
 
 // Create and start server
 var server = new LinkedDataFragmentsServer(datasources, config.prefixes);

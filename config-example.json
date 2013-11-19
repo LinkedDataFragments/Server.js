@@ -1,4 +1,6 @@
 {
+  "baseURL": "http://localhost:5000/",
+
   "datasources": {
     "dbpedia": {
       "type": "SparqlDatasource",
