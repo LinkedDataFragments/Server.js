@@ -4,7 +4,7 @@
 /** Standalone Linked Data Fragments Server */
 
 var fs = require('fs'),
-    LinkedDataFragmentsServer = require('./lib/LinkedDataFragmentsServer');
+    LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer');
 
 // Parse arguments
 var args = process.argv.slice(2);
@@ -21,7 +21,7 @@ var datasources = {};
 for (var datasourceName in config.datasources) {
   var datasourceConfig = config.datasources[datasourceName];
   try {
-    var constructor = require('./lib/' + datasourceConfig.type),
+    var constructor = require('../lib/' + datasourceConfig.type),
         datasource = createInstance(constructor, datasourceConfig.options || []);
     datasources[datasourceName] = datasource;
   }

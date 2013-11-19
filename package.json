@@ -2,6 +2,9 @@
   "name": "LinkedDataFragmentsServer",
   "description": "Linked Data Fragments Server",
   "version": "0.0.1",
+  "bin": {
+    "ldf-server": "./bin/ldf-server"
+  },
   "scripts": {
     "test": "./test",
     "hint": "./node_modules/jshint/bin/jshint ldf-server lib"
