@@ -36,7 +36,7 @@ var indexDatasource = new DatasetsSource(config.baseURL, config.datasources);
 datasources['index'] = indexDatasource;
 
 // Create and start server
-var server = new LinkedDataFragmentsServer(datasources, config.prefixes);
+var server = new LinkedDataFragmentsServer(config.baseURL, datasources, config.prefixes);
 server.listen(port);
 console.log('Running on http://localhost:' + port + '/');
 
