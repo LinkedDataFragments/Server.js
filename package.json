@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test": "./test",
-    "hint": "./node_modules/jshint/bin/jshint ldf-server lib"
+    "hint": "./node_modules/jshint/bin/jshint bin lib"
   },
   "dependencies": {
     "express": "3.4.x",
@@ -19,7 +19,8 @@
     "lodash": "2.2.x",
     "csv": ">=0.3.6",
     "levelgraph": "~0.6.10",
-    "level": "~0.17.0"
+    "level": "~0.17.0",
+    "uritemplate": "0.3.x"
   },
   "devDependencies": {
     "jshint": ">=2.1.10"
