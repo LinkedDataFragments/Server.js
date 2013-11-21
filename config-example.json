@@ -45,6 +45,8 @@
     "geo":         "http://www.w3.org/2003/01/geo/wgs84_pos#",
     "dbpedia":     "http://dbpedia.org/resource/",
     "dbpedia-owl": "http://dbpedia.org/ontology/",
-    "dbpprop":     "http://dbpedia.org/property/"
+    "dbpprop":     "http://dbpedia.org/property/",
+    "rdfforms":    "http://www.markbaker.ca/2003/rdfforms/",
+    "void":        "http://rdfs.org/ns/void#"
   }
 }
