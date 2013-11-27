@@ -67,6 +67,6 @@
 <% <- -%>
 <%
 function shorten(entity) {
-  return entity.match(/[^\/#]*$/) || entity;
+  return entity.match(/([^\/#]*)[\/#]?$/)[1] || entity;
 }
 -%>
