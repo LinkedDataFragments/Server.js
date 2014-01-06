@@ -12,7 +12,7 @@
       if(triple.predicate === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
          triple.object === 'http://rdfs.org/ns/void#Dataset') {
          dataSources.push({ url: triple.subject,
-                            name: triple.subject.match(/\w+$/)[0] });
+                            name: triple.subject.match(/[\-a-z_]+$/i)[0] });
       }
     });
   %>
