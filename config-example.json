@@ -12,6 +12,7 @@
     },
     "stations": {
       "type": "N3Datasource",
+      "enabled": false,
       "options": ["http://demo.thedatatank.org/railway/stations.ttl"]
     },
     "ckan": {
