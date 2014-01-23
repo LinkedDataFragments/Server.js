@@ -42,6 +42,13 @@ var server = new LinkedDataFragmentsServer(config.baseURL, datasources, config.p
 server.listen(port);
 console.log('Running on http://localhost:' + port + '/');
 
+// Terminate gracefully if possible
+process.once('SIGINT', function () {
+  console.log('\nStopping...');
+  process.on('SIGINT', function () { process.exit(1); });
+  server.stop();
+});
+
 // Creates an instance without the `new` keyword
 function createInstance(constructor, constructorArguments) {
   function Constructor() { return constructor.apply(this, constructorArguments); }
