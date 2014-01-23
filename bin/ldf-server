@@ -4,18 +4,20 @@
 /** Standalone Linked Data Fragments Server */
 
 var fs = require('fs'),
+    cluster = require('cluster'),
     LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
     DatasetsSource = require('../lib/DatasetsSource');
 
 // Parse arguments
 var args = process.argv.slice(2);
-if (args.length < 1 || args.length > 2) {
-  console.log('usage: server config.json [port]');
+if (args.length < 1 || args.length > 3) {
+  console.log('usage: server config.json [port [workers]]');
   return process.exit(1);
 }
 var configFile = args[0],
     config = JSON.parse(fs.readFileSync(configFile)),
-    port = parseInt(args[1], 10) || 3000;
+    port = parseInt(args[1], 10) || 3000
+    workers = parseInt(args[2], 10) || 1;
 
 // Create datasources
 var datasources = {};
@@ -37,17 +39,28 @@ for (var datasourceName in config.datasources) {
 var indexDatasource = new DatasetsSource(config.baseURL, config.datasources);
 datasources['index'] = indexDatasource;
 
-// Create and start server
-var server = new LinkedDataFragmentsServer(config.baseURL, datasources, config.prefixes);
-server.listen(port);
-console.log('Running on http://localhost:' + port + '/');
+if (cluster.isMaster && workers > 1) {
+  // Create workers
+  console.log('Starting cluster');
+  for (var i = 0; i < workers; i++)
+    cluster.fork();
+  cluster.on('exit', function (worker, code, signal) {
+    console.log('worker', worker.process.pid, 'exited');
+  });
+}
+else {
+  // Create and start server
+  var server = new LinkedDataFragmentsServer(config.baseURL, datasources, config.prefixes);
+  server.listen(port);
+  console.log('Worker', process.pid, 'running on http://localhost:' + port + '/');
 
-// Terminate gracefully if possible
-process.once('SIGINT', function () {
-  console.log('\nStopping...');
-  process.on('SIGINT', function () { process.exit(1); });
-  server.stop();
-});
+  // Terminate gracefully if possible
+  process.once('SIGINT', function () {
+    console.log('Stopping worker', process.pid);
+    process.on('SIGINT', function () { process.exit(1); });
+    server.stop();
+  });
+}
 
 // Creates an instance without the `new` keyword
 function createInstance(constructor, constructorArguments) {
