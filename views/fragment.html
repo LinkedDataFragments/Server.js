@@ -43,7 +43,7 @@
         <a href="?predicate=%3C<%= encodeURIComponent(predicate) %>%3E"><%
           %><abbr title="<%= predicate %>"><%= shorten(predicate) %></abbr><%
         %></a>
-        <% if (N3Util.isUri(object)) { -%>
+        <% if (!N3Util.isLiteral(object)) { -%>
         <a href="?object=%3C<%= encodeURIComponent(object) %>%3E" resource="<%= subject %>"><%
           %><abbr title="<%= object %>" property="<%= predicate %>" resource="<%= object %>"><%=
             shorten(object)
