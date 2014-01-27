@@ -10,7 +10,6 @@
     "hint": "./node_modules/jshint/bin/jshint bin lib"
   },
   "dependencies": {
-    "express": "3.4.x",
     "express-negotiate": "0.0.5",
     "qejs": "3.0.x",
     "n3": "0.2.x",
