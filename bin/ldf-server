@@ -42,6 +42,7 @@ else {
         datasources[datasourceName] = datasource;
       }
       catch (error) {
+        datasourceConfig.enabled = false;
         process.stderr.write('Could not load datasource ' + datasourceName + ': ' + error.message + '\n');
       }
     }
