@@ -7,9 +7,10 @@ var rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     voID = 'http://rdfs.org/ns/void#';
 %>
 
-<% var hasQuery = Object.keys(query).length === 0; %>
-<% if (hasQuery) { %>
-  <h2>Data sources</h2>
+<% var hasQuery = Object.keys(query).length > 0; %>
+<% if (!hasQuery) { %>
+<div class="index">
+  <h2>Available datasets</h2>
   <p>This Linked Data Fragments server offers the following datasets:</p>
   <% queryResult -> result -%>
   <%
@@ -22,26 +23,21 @@ var rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     var ids = Object.keys(datasources).filter(
       function (id) { return datasources[id][rdf + 'type'] === voID + 'Dataset'; });
   %>
-  <ul class="datasets">
+  <dl class="datasets">
     <% ids.forEach(function (id) {
         var datasource = datasources[id]; %>
-        <li>
-          <span class="name">
-            <a href="<%= id %>"><%= decode(datasource[rdfs + 'label']) %></a>
-          </span>
-          <% if (datasource[dc + 'description']) { %>
-            <span class="description"><%= decode(datasource[dc + 'description']) %></span>
-          <% } %>
-        </li>
+        <dt><a href="<%= id %>"><%= decode(datasource[rdfs + 'label']) %></a></dt>
+        <dd><%= decode(datasource[dc + 'description']) || ' ' %></dd>
     <% }) %>
-  </ul>
+  </dl>
+  <p>The current dataset <em class="datasource">index</em> contains metadata about these datasets.</p>
+</div>
   <% <- -%>
-  <hr>
 <% } %>
 
 <%
   function decode(literal) {
-    return literal.match(/^"(.+)"/)[1];
+    return literal ? literal.match(/^"(.+)"/)[1] : '';
   }
 %>
 
