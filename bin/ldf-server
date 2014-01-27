@@ -38,7 +38,7 @@ else {
     if (datasourceConfig.enabled !== false) {
       try {
         var constructor = require('../lib/' + datasourceConfig.type),
-            datasource = createInstance(constructor, datasourceConfig.options || []);
+            datasource = createInstance(constructor, datasourceConfig.settings || []);
         datasources[datasourceName] = datasource;
       }
       catch (error) {
