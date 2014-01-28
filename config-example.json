@@ -51,7 +51,7 @@
     "dbpedia":     "http://dbpedia.org/resource/",
     "dbpedia-owl": "http://dbpedia.org/ontology/",
     "dbpprop":     "http://dbpedia.org/property/",
-    "rdfforms":    "http://www.markbaker.ca/2003/rdfforms/",
+    "hydra":       "http://www.w3.org/ns/hydra/core#",
     "void":        "http://rdfs.org/ns/void#"
   }
 }
