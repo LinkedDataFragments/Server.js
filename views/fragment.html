@@ -1,14 +1,17 @@
 <% /*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */ -%>
+<div resource="/<%= datasourceName %>" typeof="void:Dataset hydra:Collection">
 <h2>Data source <a href="/<%= datasourceName %>"><em class="datasource"><%= datasourceName %></em></a></h2>
 
-<form action="?" method="GET">
-  <fieldset>
+<form action="?" method="GET" property="hydra:search" resource="/<%= datasourceName %>#triplePattern">
+  <fieldset resource="/<%= datasourceName %>#triplePattern">
     <legend>Query <em class="datasource"><%= datasourceName %></em> by triple pattern</legend>
     <ul>
 <% ['subject', 'predicate', 'object'].forEach(function (component) { -%>
-      <li>
-        <label for="<%= component %>"><%= component %>:</label>
-        <input class="uri" id="<%= component %>" name="<%= component %>" <%
+      <li property="hydra:mappings" resource="#<%= component %>">
+        <label for="<%= component %>"
+               about="#<%= component %>" property="hydra:variable" lang=""><%= component %></label>
+       <input class="uri" id="<%= component %>" name="<%= component %>"
+              about="#<%= component %>" property="hydra:property" resource="rdf:<%= component %>" <%
             %> value="<%= query[component] || '' %>" />
       </li>
 <% }); -%>
@@ -18,6 +21,7 @@
     <input type="submit" value="Find matching triples" />
   </p>
 </form>
+</div>
 
 <% queryResult -> result -%>
 <h3>Matches in <em class="datasource"><%= datasourceName %></em> for

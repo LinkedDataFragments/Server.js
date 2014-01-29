@@ -80,6 +80,10 @@ label {
   font-weight: bold;
 }
 
+label:after {
+  content: ":";
+}
+
 fieldset input {
   width: 500px;
 }
