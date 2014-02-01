@@ -182,3 +182,12 @@ dd {
   font-style: italic;
   margin: 0;
 }
+
+@media screen and (max-width: 700px) {
+  html, input, th, td {
+    font-size: 10pt;
+  }
+  header figure {
+    display: none;
+  }
+}
