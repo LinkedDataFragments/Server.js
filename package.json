@@ -2,6 +2,7 @@
   "name": "LinkedDataFragmentsServer",
   "description": "Linked Data Fragments Server",
   "version": "0.0.1",
+  "license": "MIT",
   "bin": {
     "ldf-server": "./bin/ldf-server"
   },
