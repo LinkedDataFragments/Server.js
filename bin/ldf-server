@@ -10,7 +10,7 @@ var fs = require('fs'),
 
 // Parse arguments
 var args = process.argv.slice(2);
-if (args.length < 1 || args.length > 3) {
+if (args.length < 1 || args.length > 3 || /^--?h(elp)?$/.test(args[0])) {
   console.log('usage: server config.json [port [workers]]');
   return process.exit(1);
 }
