@@ -1,5 +1,5 @@
 {
-  "name": "LinkedDataFragmentsServer",
+  "name": "ldf-server",
   "description": "Linked Data Fragments Server",
   "version": "0.0.1",
   "license": "MIT",
@@ -7,7 +7,6 @@
     "ldf-server": "./bin/ldf-server"
   },
   "scripts": {
-    "test": "./test",
     "hint": "./node_modules/jshint/bin/jshint bin lib"
   },
   "dependencies": {
