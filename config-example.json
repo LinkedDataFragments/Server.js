@@ -1,14 +1,15 @@
 {
   "datasources": {
     "dbpedia": {
-      "description": "DBpedia 3.9 with a Virtuoso back-end",
+      "description": "DBpedia with a Virtuoso back-end",
       "type": "SparqlDatasource",
-      "settings": ["http://dbpedia.restdesc.org/", "http://dbpedia.org"]
+      "settings": ["http://dbpedia.org/sparql", "http://dbpedia.org"]
     },
-    "dbpedialevelgraph": {
-      "description": "DBpedia 3.9 with a LevelGraph back-end",
-      "type": "LevelGraphDatasource",
-      "settings": ["data/dbpedia"]
+    "dbpedia-remote": {
+      "type": "LdfDatasource",
+      "description": "DBpedia with a LDF server back-end",
+      "settings": ["http://data.linkeddatafragments.org/dbpedia"]
+    },
     },
     "ckan": {
       "description": "CKAN data from a SPARQL endpoint",
