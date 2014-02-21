@@ -12,27 +12,25 @@ var rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
 <div class="index">
   <h2>Available datasets</h2>
   <p>This Linked Data Fragments server offers the following datasets:</p>
-  <% queryResult -> result -%>
   <%
-    var datasources = {};
-    result.triples.forEach(function (triple) {
+    var datasets = {};
+    triples.forEach(function (triple) {
       var id = triple.subject.match(/[\-a-z_]+$/i)[0],
-          datasource = datasources[id] || (datasources[id] = {});
-      datasource[triple.predicate] = triple.object;
+          dataset = datasets[id] || (datasets[id] = {});
+      dataset[triple.predicate] = triple.object;
     });
-    var ids = Object.keys(datasources).filter(
-      function (id) { return datasources[id][rdf + 'type'] === voID + 'Dataset'; });
+    var ids = Object.keys(datasets).filter(
+      function (id) { return datasets[id][rdf + 'type'] === voID + 'Dataset'; });
   %>
   <dl class="datasets">
     <% ids.forEach(function (id) {
-        var datasource = datasources[id]; %>
-        <dt><a href="<%= id %>"><%= decode(datasource[rdfs + 'label']) %></a></dt>
-        <dd><%= decode(datasource[dc + 'description']) || ' ' %></dd>
+        var dataset = datasets[id]; %>
+        <dt><a href="<%= id %>"><%= decode(dataset[rdfs + 'label']) %></a></dt>
+        <dd><%= decode(dataset[dc + 'description']) || ' ' %></dd>
     <% }) %>
   </dl>
-  <p>The current dataset <em class="datasource">index</em> contains metadata about these datasets.</p>
+  <p>The current dataset <em class="dataset">index</em> contains metadata about these datasets.</p>
 </div>
-  <% <- -%>
 <% } %>
 
 <%

@@ -1,10 +1,10 @@
 <% /*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */ -%>
-<div resource="/<%= datasourceName %>" typeof="void:Dataset hydra:Collection">
-<h2>Data source <a href="/<%= datasourceName %>"><em class="datasource"><%= datasourceName %></em></a></h2>
+<div resource="/<%= dataset %>" typeof="void:Dataset hydra:Collection">
+<h2>Data source <a href="/<%= dataset %>"><em class="dataset"><%= dataset %></em></a></h2>
 
-<form action="?" method="GET" property="hydra:search" resource="/<%= datasourceName %>#triplePattern">
-  <fieldset resource="/<%= datasourceName %>#triplePattern">
-    <legend>Query <em class="datasource"><%= datasourceName %></em> by triple pattern</legend>
+<form action="?" method="GET" property="hydra:search" resource="/<%= dataset %>#triplePattern">
+  <fieldset resource="/<%= dataset %>#triplePattern">
+    <legend>Query <em class="dataset"><%= dataset %></em> by triple pattern</legend>
     <ul>
 <% ['subject', 'predicate', 'object'].forEach(function (component) { -%>
       <li property="hydra:mappings" resource="#<%= component %>">
@@ -23,8 +23,7 @@
 </form>
 </div>
 
-<% queryResult -> result -%>
-<h3>Matches in <em class="datasource"><%= datasourceName %></em> for
+<h3>Matches in <em class="dataset"><%= dataset %></em> for
   <em class="pattern">{<% -%>
     <%= pattern.subject              ? '<' + pattern.subject   + '>' : '?s' -%>
     <%= pattern.predicate            ? '<' + pattern.predicate + '>' : '?p' -%>
@@ -33,13 +32,13 @@
 </h3>
 <p class="total">
   Total matches:
-  <%= result.triples.length === result.total ? '' : '±'
-  %><span property="void:triples" datatype="xsd:integer" content="<%= result.total %>"><%=
-    formatNumber(result.total)
+  <%= triples.length === totalCount ? '' : '±'
+  %><span property="void:triples" datatype="xsd:integer" content="<%= totalCount %>"><%=
+    formatNumber(totalCount)
   %></span>
 </p>
 <ul class="triples">
-<% result.triples.forEach(function (triple) {
+<% triples.forEach(function (triple) {
     var subject = triple.subject, predicate = triple.predicate, object = triple.object;
 -%>
     <li class="triple">
@@ -68,7 +67,6 @@
     </li>
 <% }); -%>
 </ul>
-<% <- -%>
 <%
 function shorten(entity) {
   return entity.match(/([^\/#]*)[\/#]?$/)[1] || entity;
