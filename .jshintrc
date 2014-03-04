@@ -1,5 +1,6 @@
 {
   "expr": true,     // Allow expressions where statements are allowed.
+  "boss": true,     // Allow statements where expressions are allowed.
   "undef": true,    // Variables should be defined.
   "trailing": true, // Do not leave trailing whitespace.
   "white": true,    // Enable strict whitespace checking.
