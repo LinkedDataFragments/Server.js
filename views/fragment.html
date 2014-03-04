@@ -7,7 +7,7 @@
     <legend>Query <em class="dataset"><%= dataset %></em> by triple pattern</legend>
     <ul>
 <% ['subject', 'predicate', 'object'].forEach(function (component) { -%>
-      <li property="hydra:mappings" resource="#<%= component %>">
+      <li property="hydra:mapping" resource="#<%= component %>">
         <label for="<%= component %>"
                about="#<%= component %>" property="hydra:variable" lang=""><%= component %></label>
        <input class="uri" id="<%= component %>" name="<%= component %>"
