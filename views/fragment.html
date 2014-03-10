@@ -41,7 +41,7 @@
 <% triples.forEach(function (triple) {
     var subject = triple.subject, predicate = triple.predicate, object = triple.object;
 -%>
-    <li class="triple">
+    <li>
       <a href="?subject=%3C<%= encodeURIComponent(subject) %>%3E"><%
         %><abbr title="<%= subject %>"><%= shorten(subject) %></abbr><%
       %></a>

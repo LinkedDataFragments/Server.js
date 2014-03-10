@@ -1,12 +1,12 @@
 /*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */
 
 html, input, th, td {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", Verdana, Arial, sans-serif;
   font-size: 11pt;
 }
 
 html {
-  background: #316794;
+  background: #f6f6f6;
 }
 
 body {
@@ -20,8 +20,13 @@ body {
 }
 
 h1, h2, h3, legend {
-  color: #316794;
   margin: .4em 0 .2em;
+}
+h1 a {
+  color: black;
+}
+h2 {
+  color: #be1622;
 }
 
 p {
@@ -29,12 +34,12 @@ p {
 }
 
 a {
-  color: #316794;
+  color: #be1622;
   text-decoration: none;
   border-bottom-width: 1px;
 }
-
 a:hover {
+  color: #be1622 !important;
   border-bottom-style: solid;
 }
 
@@ -55,12 +60,10 @@ fieldset {
   border: none;
   padding: .5em 0 0 20px;
 }
-
 fieldset ul {
   list-style: none;
   margin-left: 0;
 }
-
 fieldset li {
   line-height: 2em;
 }
@@ -79,51 +82,40 @@ label {
   clear: both;
   font-weight: bold;
 }
-
 label:after {
   content: ":";
 }
 
 input {
   outline: none;
-  opacity: .85;
 }
-
-input:hover {
-  opacity: 1;
-}
-
 fieldset input {
   width: 500px;
-  color: #316794;
+  color: #be1622;
   background-color: transparent;
   border: none;
-  border-bottom: 1px solid #aed0ec;
+  border-bottom: 1px solid #bbbbbb;
   cursor: pointer;
 }
-
-fieldset input:focus {
-  opacity: 1;
-  background-color: #e9f3fb;
-}
-
-input.uri {
-  font-family: monospace;
-}
-
 input[type=submit] {
-  font-size: .95em;
   font-weight: bold;
-  color: #316794;
-  background-color: #e9f3fb;
+  font-size: .95em;
+  color: #be1622;
+  color: #be1622;
+  background-color: #f6f6f6;
+  border-radius: 3px;
   padding: 5px 8px;
-  border: 1px solid;
-  border-radius: 5px;
+  border: 1px solid #999999;
   cursor: pointer;
 }
-
+input[type=submit]:hover {
+  border-color: #666666;
+}
 input[type=submit]:active {
   padding: 6px 7px 4px 9px;
+}
+.uri {
+  font-family: monospace;
 }
 
 header .logo a {
@@ -131,7 +123,6 @@ header .logo a {
   float: right;
   border-bottom-width: 0px;
 }
-
 header .logo img {
   width: 160px;
 }
@@ -139,6 +130,13 @@ header .logo img {
 footer {
   margin: 1.5em 0 .5em;
   font-size: small;
+}
+footer * {
+  color: gray;
+  margin-right: 5px;
+}
+
+.total {
   color: gray;
 }
 
@@ -147,40 +145,31 @@ ul.triples {
   list-style: none;
   font-size: .95em;
   line-height: 1.5;
-}
-
-.triple {
   font-family: monospace;
 }
-
-.triple a:nth-child(2) {
+ul.triples a {
+  color: inherit;
+}
+ul.triples a:nth-child(2) {
   margin: 0 1em;
 }
 
-p.total {
-  color: gray;
-}
-
-div.index {
+.index {
   margin-bottom: 2em;
 }
-
-dl.datasets {
+.datasets {
   margin: .5em 20px;
 }
-
 dt {
   font-weight: bold;
-  min-width: 150px;
   display: block;
   float: left;
   clear: left;
 }
-
 dd {
   color: gray;
-  font-style: italic;
-  margin: 0;
+  margin: .1em 0 0 12em;
+  font-size: .95em;
 }
 
 @media screen and (max-width: 700px) {
