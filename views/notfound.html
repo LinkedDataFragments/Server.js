@@ -4,3 +4,10 @@
 <p>
   No resource with URL <code><%= url %></code> was found.
 </p>
+
+<h3>Available datasets</h3>
+<ul>
+<% for (var dataset in datasets) { %>
+  <li><a href="<%= datasets[dataset] %>"><%= dataset %></a></li>
+<% } %>
+</ul>
