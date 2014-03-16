@@ -16,10 +16,11 @@
     "jsonld": "0.1.x",
     "request": "2.27.x",
     "lodash": "2.4.x",
-    "csv": ">=0.3.6",
-    "levelgraph": "~0.6.10",
-    "level": "~0.17.0",
     "uritemplate": "0.3.x"
+  },
+  "optionalDependencies": {
+    "csv": ">=0.3.6",
+    "levelgraph": "~0.8.2"
   },
   "devDependencies": {
     "jshint": ">=2.1.10"
