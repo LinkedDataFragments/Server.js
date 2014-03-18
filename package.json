@@ -10,7 +10,6 @@
     "hint": "./node_modules/jshint/bin/jshint bin lib"
   },
   "dependencies": {
-    "connect-conneg": "0.1.1",
     "qejs": "3.0.x",
     "n3": "0.2.x",
     "jsonld": "0.1.x",
