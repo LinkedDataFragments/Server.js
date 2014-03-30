@@ -10,11 +10,10 @@
       "description": "DBpedia with a LDF server back-end",
       "settings": ["http://data.linkeddatafragments.org/dbpedia"]
     },
-    },
     "ckan": {
       "description": "CKAN data from a SPARQL endpoint",
       "type": "SparqlDatasource",
-      "settings": ["http://semantic.ckan.net/sparql","http://datahub.io"]
+      "settings": ["http://semantic.ckan.net/sparql", "http://datahub.io"]
     },
     "eventmedia": {
       "description": "EventMedia from EURECOM",
