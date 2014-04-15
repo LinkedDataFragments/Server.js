@@ -137,8 +137,18 @@ footer * {
   margin-right: 5px;
 }
 
-.total {
+.counts {
   color: gray;
+}
+ul.links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+ul.links li {
+  display: inline;
+  padding-left: 20px;
 }
 
 ul.triples {

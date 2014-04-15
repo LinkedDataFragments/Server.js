@@ -30,26 +30,56 @@
     <%= N3Util.isUri(pattern.object) ? '<' + pattern.object    + '>' : (pattern.object || '?o') -%>
   }</em>
 </h3>
-<p class="total">
-  Total matches:
-  <%= triples.length === totalCount ? '' : '±'
-  %><span property="void:triples" datatype="xsd:integer" content="<%= totalCount %>"><%=
+<%
+  var start = (page - 1) * limit + 1,
+      end = Math.min((page) * limit, totalCount),
+      hasPrev = page > 1,
+      hasNext = totalCount > end,
+      subject = query.subject,
+      predicate = query.predicate, object = query.object,
+      currentUrl = '?subject='   + (subject   ? encodeURIComponent(subject)   : '') +
+                   '&predicate=' + (predicate ? encodeURIComponent(predicate) : '') +
+                   '&object='    + (object    ? encodeURIComponent(object)    : ''),
+      firstUrl = currentUrl + '&page=1',
+      prevUrl  = currentUrl + '&page=' + (page - 1),
+      nextUrl  = currentUrl + '&page=' + (page + 1);
+  if (start <= totalCount) {
+%>
+<div class="counts">
+  Showing triples <%= formatNumber(start) %> to <%= formatNumber(end) %> of
+  <%= totalCount === end ? '' : '±'
+  %><span property="void:triples hydra:totalItems" datatype="xsd:integer" content="<%= totalCount %>"><%=
     formatNumber(totalCount)
   %></span>
-</p>
+  with <span property="hydra:itemsPerPage" datatype="xsd:integer" content="<%= limit %>"><%=
+    formatNumber(limit)
+  %></span> triples per page.
+  <% if (hasPrev || hasNext) { %>
+  <ul class="links">
+    <% if (hasPrev) { %>
+    <li><a href="<%= firstUrl %>" rel="first" property="hydra:firstPage">first</a></li>
+    <li><a href="<%= prevUrl %>" rel="prev" property="hydra:previousPage">previous</a></li>
+    <% } %>
+    <% if (hasNext) { %>
+    <li><a href="<%= nextUrl %>" rel="next" property="hydra:nextPage">next</a></li>
+    <% } %>
+  </ul>
+  <% } %>
+</div>
+<% } %>
 <ul class="triples">
 <% triples.forEach(function (triple) {
     var subject = triple.subject, predicate = triple.predicate, object = triple.object;
 -%>
     <li>
-      <a href="?subject=%3C<%= encodeURIComponent(subject) %>%3E"><%
+      <a href="?subject=<%= encodeURIComponent(subject) %>"><%
         %><abbr title="<%= subject %>"><%= shorten(subject) %></abbr><%
       %></a>
-      <a href="?predicate=%3C<%= encodeURIComponent(predicate) %>%3E"><%
+      <a href="?predicate=<%= encodeURIComponent(predicate) %>"><%
         %><abbr title="<%= predicate %>"><%= shorten(predicate) %></abbr><%
       %></a>
       <% if (!N3Util.isLiteral(object)) { -%>
-      <a href="?object=%3C<%= encodeURIComponent(object) %>%3E" resource="<%= subject %>"><%
+      <a href="?object=<%= encodeURIComponent(object) %>" resource="<%= subject %>"><%
         %><abbr title="<%= object %>" property="<%= predicate %>" resource="<%= object %>"><%=
           shorten(object)
         %></abbr></a>.
@@ -66,6 +96,16 @@
       <% } %>
     </li>
 <% }); -%>
+</ul>
+
+<ul class="links">
+  <% if (hasPrev) { %>
+  <li><a href="<%= firstUrl %>" rel="first" property="hydra:firstPage">first</a></li>
+  <li><a href="<%= prevUrl %>" rel="prev" property="hydra:previousPage">previous</a></li>
+  <% } %>
+  <% if (hasNext) { %>
+  <li><a href="<%= nextUrl %>" rel="next" property="hydra:nextPage">next</a></li>
+  <% } %>
 </ul>
 <%
 function shorten(entity) {
