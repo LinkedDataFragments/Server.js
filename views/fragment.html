@@ -43,9 +43,9 @@
       firstUrl = currentUrl + '&page=1',
       prevUrl  = currentUrl + '&page=' + (page - 1),
       nextUrl  = currentUrl + '&page=' + (page + 1);
-  if (start <= totalCount) {
 %>
 <div class="counts">
+<% if (start <= totalCount) { %>
   Showing triples <%= formatNumber(start) %> to <%= formatNumber(end) %> of
   <%= totalCount === end ? '' : '±'
   %><span property="void:triples hydra:totalItems" datatype="xsd:integer" content="<%= totalCount %>"><%=
@@ -65,8 +65,12 @@
     <% } %>
   </ul>
   <% } %>
-</div>
+<% } else if (totalCount === 0) { %>
+  The dataset <em class="dataset"><%= dataset %></em> contains
+  <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="0">no</span>
+  matches for this pattern.
 <% } %>
+</div>
 <ul class="triples">
 <% triples.forEach(function (triple) {
     var subject = triple.subject, predicate = triple.predicate, object = triple.object;
