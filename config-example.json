@@ -7,8 +7,8 @@
     },
     "dbpedia-remote": {
       "type": "LdfDatasource",
-      "description": "DBpedia with a LDF server back-end",
-      "settings": ["http://data.linkeddatafragments.org/dbpedia"]
+      "description": "DBpedia with an LDF server back-end",
+      "settings": ["http://data.linkeddatafragments.org/dbpedia{?subject,predicate,object,page}"]
     },
     "ckan": {
       "description": "CKAN data from a SPARQL endpoint",
