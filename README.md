@@ -20,7 +20,7 @@ Each basic Linked Data Fragment offers:
 - **controls** that lead to all other fragments of the same dataset
   _([example](http://data.linkeddatafragments.org/dbpedia?subject=&predicate=&object=%22John%22%40en))_.
 
-An example server is available at [data.linkedddatafragments.org](http://data.linkedddatafragments.org/).
+An example server is available at [data.linkeddatafragments.org](http://data.linkeddatafragments.org/).
 
 
 ## Installation
