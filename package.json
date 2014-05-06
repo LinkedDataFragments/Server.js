@@ -1,10 +1,17 @@
 {
   "name": "ldf-server",
   "description": "Linked Data Fragments Server",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "MIT",
   "bin": {
     "ldf-server": "./bin/ldf-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:LinkedDataFragments/Server.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LinkedDataFragments/Server.js/issues"
   },
   "scripts": {
     "hint": "./node_modules/jshint/bin/jshint bin lib"
