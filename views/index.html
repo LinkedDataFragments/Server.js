@@ -15,7 +15,7 @@ var rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
   <%
     var datasets = {};
     triples.forEach(function (triple) {
-      var id = triple.subject.match(/[\-a-z_]+$/i)[0],
+      var id = triple.subject.match(/[\-a-z0-9_]+$/i)[0],
           dataset = datasets[id] || (datasets[id] = {});
       dataset[triple.predicate] = triple.object;
     });
