@@ -19,7 +19,7 @@
   "dependencies": {
     "qejs": "3.0.x",
     "n3": "0.2.x",
-    "jsonld": "0.1.x",
+    "jsonld": "0.2.x",
     "request": "2.27.x",
     "lodash": "2.4.x",
     "uritemplate": "0.3.x"
