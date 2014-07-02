@@ -23,6 +23,9 @@ h1, h2, h3, legend {
   margin: .4em 0 .2em;
   overflow-x: hidden;
 }
+h1 {
+  margin-right: 180px;
+}
 h1 a {
   color: black;
 }
@@ -118,9 +121,13 @@ input[type=submit]:active {
   font-family: monospace;
 }
 
+header .logo {
+  text-align: right;
+}
 header .logo a {
-  margin: -3.5em -3.8em 0 0;
-  float: right;
+  position: absolute;
+  top: 20px;
+  margin-left: -100px;
   border-bottom-width: 0px;
 }
 header .logo img {
@@ -189,5 +196,8 @@ dd {
   }
   header figure {
     display: none;
+  }
+  h1 {
+    margin: 0;
   }
 }
