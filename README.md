@@ -10,10 +10,10 @@ is that they are either so powerful that their servers suffer from low availabil
 ([as is the case with SPARQL](http://sw.deri.org/~aidanh/docs/epmonitorISWC.pdf)),
 or either don't allow efficient querying.
 
-Instead, this server offers **basic Linked Data Fragments**.
-Each basic Linked Data Fragment offers:
+Instead, this server offers **Triple Pattern Fragments**.
+Each Triple Pattern Fragment offers:
 
-- **data** that corresponds to a _basic triple pattern_
+- **data** that corresponds to a _triple pattern_
   _([example](http://data.linkeddatafragments.org/dbpedia?subject=&predicate=rdf%3Atype&object=dbpedia-owl%3ARestaurant))_.
 - **metadata** that consists of the (approximate) total triple count
   _([example](http://data.linkeddatafragments.org/dbpedia?subject=&predicate=rdf%3Atype&object=))_.
@@ -75,7 +75,7 @@ Now visit `http://localhost:5000/` in your browser.
 A Linked Data Fragments server can currently publish triples from the following sources:
 
 - `SparqlDatasource`: triples from a [SPARQL endpoint](http://www.w3.org/TR/rdf-sparql-protocol/)
-- `LdfDatasource`: triples from a [basic Linked Data Fragments](http://linkeddatafragments.org/in-depth/#basic-ldf) source
+- `LdfDatasource`: triples from a [Triple Pattern Fragments](http://linkeddatafragments.org/in-depth/#tpf) source
 - `LevelGraphDatasource`: triples from a [LevelGraph](https://github.com/mcollina/levelgraph) database
 - `JsonLdDatasource`: triples from a [JSON-LD](http://www.w3.org/TR/json-ld/) resource (URL or file)
 - `N3Datasource`: triples from a [Turtle](http://www.w3.org/TR/turtle/) resource (URL or file)
