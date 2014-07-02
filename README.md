@@ -42,6 +42,7 @@ in which you detail your data sources.
 For example, this configuration uses a SPARQL endpoint as data source:
 ```json
 {
+  "title": "My Linked Data Fragments server",
   "datasources": {
     "dbpedia": {
       "description": "DBpedia with a Virtuoso back-end",

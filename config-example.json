@@ -1,4 +1,5 @@
 {
+  "title": "My Linked Data Fragments server",
   "datasources": {
     "dbpedia": {
       "description": "DBpedia with a Virtuoso back-end",

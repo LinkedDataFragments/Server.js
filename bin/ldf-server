@@ -53,7 +53,7 @@ else {
   datasources['index'] = indexDatasource;
 
   // Create and start server
-  var server = new LinkedDataFragmentsServer(config.baseURL, datasources, config.prefixes);
+  var server = new LinkedDataFragmentsServer(config.baseURL, datasources, config.prefixes, config);
   server.listen(port);
   console.log('Worker', process.pid, 'running on http://localhost:' + port + '/');
 
