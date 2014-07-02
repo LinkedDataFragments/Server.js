@@ -29,6 +29,10 @@
     "levelgraph": "~0.8.2"
   },
   "devDependencies": {
-    "jshint": ">=2.1.10"
-  }
+    "jshint": ">=2.1.10",
+    "pre-commit": "~0.0.9"
+  },
+  "pre-commit": [
+    "hint"
+  ]
 }
