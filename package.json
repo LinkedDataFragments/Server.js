@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "qejs": "3.0.x",
-    "n3": "0.2.x",
+    "n3": "0.3.x",
     "jsonld": "0.2.x",
     "request": "2.27.x",
     "lodash": "2.4.x",
