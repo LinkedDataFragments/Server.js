@@ -21,7 +21,7 @@ body {
 
 h1, h2, h3, legend {
   margin: .4em 0 .2em;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 h1 {
   margin-right: 180px;
