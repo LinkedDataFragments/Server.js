@@ -6,5 +6,12 @@
   "trailing": true, // Do not leave trailing whitespace.
   "white": true,    // Enable strict whitespace checking.
   "indent": 2,      // The code uses an indentation width of 2 spaces.
-  "node": true      // Node.js is present.
+  "node": true,     // Node.js is present.
+  "globals": {
+    "it": true,
+    "describe": true,
+    "before": true,
+    "after": true,
+    "test": true
+  }
 }
