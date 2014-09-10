@@ -16,7 +16,7 @@ if (args.length < 1 || args.length > 3 || /^--?h(elp)?$/.test(args[0])) {
 }
 var configFile = args[0],
     config = JSON.parse(fs.readFileSync(configFile)),
-    port = parseInt(args[1], 10) || 3000
+    port = parseInt(args[1], 10) || 3000,
     workers = parseInt(args[2], 10) || 1;
 
 // Start up a cluster master if necessary

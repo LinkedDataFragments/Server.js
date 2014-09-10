@@ -14,7 +14,7 @@
     "url": "https://github.com/LinkedDataFragments/Server.js/issues"
   },
   "scripts": {
-    "hint": "./node_modules/jshint/bin/jshint bin lib"
+    "hint": "./node_modules/jshint/bin/jshint bin/* lib"
   },
   "dependencies": {
     "qejs": "3.0.x",
