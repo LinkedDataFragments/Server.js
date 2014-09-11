@@ -35,6 +35,7 @@ describe('LinkedDataFragmentsServer', function () {
         var asset = fs.readFileSync(__dirname + '/../../assets/logo.svg', 'utf8');
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/svg+xml');
+        response.headers.should.have.property('cache-control', 'public,max-age=1209600');
         response.should.have.property('text', asset);
       }).end(done);
     });
@@ -44,6 +45,7 @@ describe('LinkedDataFragmentsServer', function () {
         var asset = fs.readFileSync(__dirname + '/../../assets/style.css', 'utf8');
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/css');
+        response.headers.should.have.property('cache-control', 'public,max-age=1209600');
         response.should.have.property('text', asset);
       }).end(done);
     });
@@ -53,6 +55,7 @@ describe('LinkedDataFragmentsServer', function () {
         var asset = fs.readFileSync(__dirname + '/../../assets/favicon.ico', 'utf8');
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/x-icon');
+        response.headers.should.have.property('cache-control', 'public,max-age=1209600');
         response.should.have.property('text', asset);
       }).end(done);
     });
