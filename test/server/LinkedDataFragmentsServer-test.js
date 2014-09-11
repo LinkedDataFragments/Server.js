@@ -1,12 +1,13 @@
 var LinkedDataFragmentsServer = require('../../lib/server/LinkedDataFragmentsServer');
 
 var request = require('supertest'),
-    fs = require('fs');
+    fs = require('fs'),
+    url = require('url');
 
 describe('LinkedDataFragmentsServer', function () {
   describe('A LinkedDataFragmentsServer instance', function () {
-    var server = new LinkedDataFragmentsServer(),
-        client = request.agent(server);
+    var server = new LinkedDataFragmentsServer();
+    var client = request.agent(server);
 
     it('should not allow POST requests', function (done) {
       client.post('/').expect(function (response) {
@@ -73,6 +74,39 @@ describe('LinkedDataFragmentsServer', function () {
         response.should.have.property('statusCode', 404);
         response.headers.should.have.property('content-type', 'text/plain');
         response.should.have.property('text', 'The resource with URL "/assets/unknown" was not found.');
+      }).end(done);
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance with 3 routers', function () {
+    var routerA = {}, routerB = {}, routerC = {};
+    var server = new LinkedDataFragmentsServer({
+      fragmentRouters: [ routerA, routerB, routerC ],
+    });
+    var client = request.agent(server);
+
+    it('should call each of the routers in sequence, ignoring errors', function (done) {
+      var finalQuery;
+      routerA.extractQueryParams = function (request, query) {
+        request.url.pathname.should.equal('/dataset');
+        request.url.query.should.deep.equal({ a: 'b', c: 'd' });
+        query.features.push('a');
+      };
+      routerB.extractQueryParams = function (request, query) {
+        request.url.pathname.should.equal('/dataset');
+        request.url.query.should.deep.equal({ a: 'b', c: 'd' });
+        query.features.push('b');
+        throw new Error('extraction error');
+      };
+      routerC.extractQueryParams = function (request, query) {
+        request.url.pathname.should.equal('/dataset');
+        request.url.query.should.deep.equal({ a: 'b', c: 'd' });
+        query.features.push('c');
+        finalQuery = query;
+      };
+
+      client.get('/dataset?a=b&c=d').expect(function (response) {
+        finalQuery.should.deep.equal({ features: [ 'a', 'b', 'c' ] });
       }).end(done);
     });
   });
