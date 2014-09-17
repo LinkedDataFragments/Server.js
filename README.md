@@ -48,13 +48,13 @@ For example, this configuration uses a SPARQL endpoint as data source:
       "description": "DBpedia with a Virtuoso back-end",
       "type": "SparqlDatasource",
       "settings": ["http://dbpedia.org/sparql", "http://dbpedia.org"]
-    },
+    }
   },
 
   "prefixes": {
     "rdf":         "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "dbpedia":     "http://dbpedia.org/resource/",
-    "dbpedia-owl": "http://dbpedia.org/ontology/",
+    "dbpedia-owl": "http://dbpedia.org/ontology/"
   }
 }
 ```
