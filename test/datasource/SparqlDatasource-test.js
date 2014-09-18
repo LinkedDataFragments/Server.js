@@ -36,6 +36,7 @@ describe('SparqlDatasource', function () {
         triplePattern: true,
         limit: true,
         offset: true,
+        totalCount: true,
       });
     });
 
