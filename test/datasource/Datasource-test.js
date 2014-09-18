@@ -32,7 +32,7 @@ describe('Datasource', function () {
 
     it('should throw an error when trying to execute a query', function () {
       (function () { datasource.select({ features: { a: true, b: true } }); })
-      .should.throw('The datasource does not support the given query.');
+      .should.throw('The datasource does not support the given query');
     });
   });
 
@@ -64,9 +64,9 @@ describe('Datasource', function () {
       datasource.supportsQuery({ features: { a: true, b: true, c: true} }).should.be.false;
     });
 
-    it('should not throw an error when trying to execute a query', function () {
+    it('should throw an error when _createTripleStream is not implemented', function () {
       (function () { datasource.select({ features: { a: true, b: true } }); })
-      .should.not.throw();
+      .should.throw('_createTripleStream has not been implemented');
     });
   });
 });

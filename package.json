@@ -24,6 +24,7 @@
     "request": "2.27.x",
     "mime": "1.2.x",
     "lodash": "2.4.x",
+    "lrucache": "2.5.x",
     "uritemplate": "0.3.x"
   },
   "optionalDependencies": {

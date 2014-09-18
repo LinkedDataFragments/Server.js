@@ -1,5 +1,11 @@
 var Datasource = require('../../lib/datasource/Datasource'),
-    SparqlDatasource = require('../../lib/datasource/SparqlDatasource');
+    SparqlDatasource = require('../../lib/datasource/SparqlDatasource'),
+    fs = require('fs'),
+    path = require('path'),
+    URL = require('url');
+
+var turtleResult = fs.readFileSync(path.join(__dirname, '../assets/sparql-triples-response.ttl'));
+var turtleCountResult = fs.readFileSync(path.join(__dirname, '../assets/sparql-count-response.ttl'));
 
 describe('SparqlDatasource', function () {
   describe('The SparqlDatasource module', function () {
@@ -22,7 +28,8 @@ describe('SparqlDatasource', function () {
   });
 
   describe('A SparqlDatasource instance', function () {
-    var datasource = new SparqlDatasource();
+    var request = sinon.stub();
+    var datasource = new SparqlDatasource('http://ex.org/sparql', { request: request });
 
     it('should indicate support for its features', function () {
       datasource.supportedFeatures.should.deep.equal({
@@ -46,7 +53,185 @@ describe('SparqlDatasource', function () {
 
     it('should throw an error when trying to execute an unsupported query', function () {
       (function () { datasource.select({ features: { a: true, b: true } }); })
-      .should.throw('The datasource does not support the given query.');
+      .should.throw('The datasource does not support the given query');
+    });
+
+    itShouldExecute(datasource, request,
+      'the empty query',
+      { features: { triplePattern: true } },
+      'CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}',
+      'SELECT COUNT(*) WHERE {?s ?p ?o}');
+
+    itShouldExecute(datasource, request,
+      'an empty query with a limit',
+      { limit: 100, features: { limit: true } },
+      'CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o} LIMIT 100',
+      null /* count should be cached, since this pattern already occurred above */);
+
+    itShouldExecute(datasource, request,
+      'an empty query with a limit and an offset',
+      { limit: 100, offset: 200, features: { limit: true, offset: true } },
+      'CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o} LIMIT 100 OFFSET 200',
+      null /* count should be cached, since this pattern already occurred above */);
+
+    itShouldExecute(datasource, request,
+      'a query for a subject IRI',
+      { subject: 'http://example.org/bar#foo', features: { triplePattern: true } },
+      'CONSTRUCT {<http://example.org/bar#foo> ?p ?o} WHERE {<http://example.org/bar#foo> ?p ?o}',
+      'SELECT COUNT(*) WHERE {<http://example.org/bar#foo> ?p ?o}');
+
+    itShouldExecute(datasource, request,
+      'a query for a predicate IRI',
+      { predicate: 'http://example.org/bar#foo', features: { triplePattern: true } },
+      'CONSTRUCT {?s <http://example.org/bar#foo> ?o} WHERE {?s <http://example.org/bar#foo> ?o}',
+      'SELECT COUNT(*) WHERE {?s <http://example.org/bar#foo> ?o}');
+
+    itShouldExecute(datasource, request,
+      'a query for an object IRI',
+      { object: 'http://example.org/bar#foo', features: { triplePattern: true } },
+      'CONSTRUCT {?s ?p <http://example.org/bar#foo>} WHERE {?s ?p <http://example.org/bar#foo>}',
+      'SELECT COUNT(*) WHERE {?s ?p <http://example.org/bar#foo>}');
+
+    itShouldExecute(datasource, request,
+      'a query for an object literal',
+      { object: '"a literal"', features: { triplePattern: true } },
+      'CONSTRUCT {?s ?p "a literal"} WHERE {?s ?p "a literal"}',
+      'SELECT COUNT(*) WHERE {?s ?p "a literal"}');
+
+    itShouldExecute(datasource, request,
+      'a query for an object literal with newlines and quotes',
+      { object: '"a\rb\nc"\r\n\\""', features: { triplePattern: true } },
+      'CONSTRUCT {?s ?p """a\rb\nc\\"\r\n\\\\\\""""} WHERE {?s ?p """a\rb\nc\\"\r\n\\\\\\""""}',
+      'SELECT COUNT(*) WHERE {?s ?p """a\rb\nc\\"\r\n\\\\\\""""}');
+
+    itShouldExecute(datasource, request,
+      'a query for an object literal with a language',
+      { object: '"a literal"@nl-be', features: { triplePattern: true } },
+      'CONSTRUCT {?s ?p "a literal"@nl-be} WHERE {?s ?p "a literal"@nl-be}',
+      'SELECT COUNT(*) WHERE {?s ?p "a literal"@nl-be}');
+
+    itShouldExecute(datasource, request,
+      'a query for an object literal with a type',
+      { object: '"a literal"^^http://ex.org/foo#literal', features: { triplePattern: true } },
+      'CONSTRUCT {?s ?p "a literal"^^<http://ex.org/foo#literal>} ' +
+          'WHERE {?s ?p "a literal"^^<http://ex.org/foo#literal>}',
+      'SELECT COUNT(*) WHERE {?s ?p "a literal"^^<http://ex.org/foo#literal>}');
+
+    itShouldExecute(datasource, request,
+      'a query for a predicate and object URI',
+      { predicate: 'http://example.org/bar#foo',
+        object: 'http://example.org/baz#bar',
+        features: { triplePattern: true } },
+      'CONSTRUCT {?s <http://example.org/bar#foo> <http://example.org/baz#bar>} ' +
+          'WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}',
+      'SELECT COUNT(*) WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}');
+
+    itShouldExecute(datasource, request,
+      'a query for a predicate and object URI with offset and limit',
+      { predicate: 'http://example.org/bar#foo',
+        object: 'http://example.org/baz#bar',
+        limit: 50, offset: 150,
+        features: { triplePattern: true, offset: true, limit: true } },
+      'CONSTRUCT {?s <http://example.org/bar#foo> <http://example.org/baz#bar>} ' +
+          'WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>} ' +
+          'LIMIT 50 OFFSET 150',
+      null /* count should be cached, since this pattern already occurred above */);
+
+    describe('when the first Turtle request fails', function () {
+      var result, count, firstArgsCopy;
+      before(function () {
+        request.reset();
+        request.onFirstCall().returns(test.createHttpResponse('invalid Turtle', 'text/turtle'));
+        request.onSecondCall().returns(test.createHttpResponse(turtleCountResult, 'text/turtle'));
+        request.onThirdCall().returns(test.createHttpResponse(turtleResult, 'text/turtle'));
+
+        result = datasource.select({ subject: 'abc', features: { triplePattern: true } });
+        result.on('count', function (c) { count = c; });
+        firstArgsCopy = JSON.parse(JSON.stringify(request.firstCall.args[0]));
+      });
+
+      it('should request a matching CONSTRUCT query the first time', function () {
+        request.should.have.been.called;
+        var url = URL.parse(firstArgsCopy.url, true);
+        (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
+        url.query.query.should.equal('CONSTRUCT {<abc> ?p ?o} WHERE {<abc> ?p ?o}');
+      });
+
+      it('should ask for Turtle the first time', function () {
+        request.should.have.been.called;
+        firstArgsCopy.headers.should.deep.equal(
+          { accept: 'text/turtle;q=1.0,text/ntriples;q=0.5,text/n3;q=0.3' });
+      });
+
+      it('should request a matching COUNT query', function () {
+        request.should.have.been.calledThrice;
+        var url = URL.parse(request.secondCall.args[0].url, true);
+        (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
+        url.query.query.should.equal('SELECT COUNT(*) WHERE {<abc> ?p ?o}');
+      });
+
+      it('should request a matching CONSTRUCT query the second time', function () {
+        request.should.have.been.calledThrice;
+        var url = URL.parse(request.thirdCall.args[0].url, true);
+        (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
+        url.query.query.should.equal('CONSTRUCT {<abc> ?p ?o} WHERE {<abc> ?p ?o}');
+      });
+
+      it('should ask for N-Triples the second time', function () {
+        request.should.have.been.calledThrice;
+        request.thirdCall.args[0].headers.should.deep.equal({ accept: 'text/ntriples' });
+      });
+
+      it('should emit all triples in the SPARQL response', function (done) {
+        result.should.be.a.streamWithLength(50, done);
+      });
+
+      it('should emit the extracted count', function () {
+        expect(count).to.equal(12345678);
+      });
     });
   });
 });
+
+function itShouldExecute(datasource, request, name, query, constructQuery, countQuery) {
+  describe('executing ' + name, function () {
+    var result, count;
+    before(function () {
+      request.reset();
+      request.onFirstCall().returns(test.createHttpResponse(turtleResult, 'text/turtle'));
+      request.onSecondCall().returns(test.createHttpResponse(turtleCountResult, 'text/turtle'));
+
+      result = datasource.select(query);
+      result.on('count', function (c) { count = c; });
+    });
+
+    it('should request a matching CONSTRUCT query', function () {
+      request.should.have.been.called;
+      var url = URL.parse(request.firstCall.args[0].url, true);
+      (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
+      url.query.query.should.equal(constructQuery);
+    });
+
+    if (countQuery) {
+      it('should request a matching COUNT query', function () {
+        request.should.have.been.calledTwice;
+        var url = URL.parse(request.secondCall.args[0].url, true);
+        (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
+        url.query.query.should.equal(countQuery);
+      });
+    }
+    else {
+      it('should use the cached COUNT result', function () {
+        request.should.have.been.calledOnce;
+      });
+    }
+
+    it('should emit all triples in the SPARQL response', function (done) {
+      result.should.be.a.streamWithLength(50, done);
+    });
+
+    it('should emit the extracted count', function () {
+      expect(count).to.equal(12345678);
+    });
+  });
+}

@@ -2,7 +2,6 @@
   "expr": true,     // Allow expressions where statements are allowed.
   "boss": true,     // Allow statements where expressions are allowed.
   "undef": true,    // Variables should be defined.
-  "unused": true,   // Report unused variables.
   "trailing": true, // Do not leave trailing whitespace.
   "white": true,    // Enable strict whitespace checking.
   "indent": 2,      // The code uses an indentation width of 2 spaces.
@@ -12,6 +11,8 @@
     "describe": true,
     "before": true,
     "after": true,
+    "expect": true,
+    "sinon": true,
     "test": true
   }
 }
