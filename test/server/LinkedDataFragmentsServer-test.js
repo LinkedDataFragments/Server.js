@@ -6,8 +6,11 @@ var request = require('supertest'),
 
 describe('LinkedDataFragmentsServer', function () {
   describe('A LinkedDataFragmentsServer instance', function () {
-    var server = new LinkedDataFragmentsServer();
-    var client = request.agent(server);
+    var server, client;
+    before(function () {
+      server = new LinkedDataFragmentsServer();
+      client = request.agent(server);
+    });
 
     it('should not allow POST requests', function (done) {
       client.post('/').expect(function (response) {
@@ -79,35 +82,57 @@ describe('LinkedDataFragmentsServer', function () {
   });
 
   describe('A LinkedDataFragmentsServer instance with 3 routers', function () {
-    var routerA = {}, routerB = {}, routerC = {};
-    var server = new LinkedDataFragmentsServer({
-      fragmentRouters: [ routerA, routerB, routerC ],
+    var server, client, routerA, routerB, routerC;
+    before(function () {
+      routerA = { extractQueryParams: sinon.stub() };
+      routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
+      routerC = { extractQueryParams: sinon.spy(function (request, query) {
+        query.features.dataset = true;
+        query.features.other = true;
+        query.datasource = 'my-datasource';
+        query.other = 'other';
+      })};
+      server = new LinkedDataFragmentsServer({
+        fragmentRouters: [ routerA, routerB, routerC ],
+      });
+      client = request.agent(server);
     });
-    var client = request.agent(server);
 
-    it('should call each of the routers in sequence, ignoring errors', function (done) {
-      var finalQuery;
-      routerA.extractQueryParams = function (request, query) {
-        request.url.pathname.should.equal('/dataset');
-        request.url.query.should.deep.equal({ a: 'b', c: 'd' });
-        query.features.push('a');
-      };
-      routerB.extractQueryParams = function (request, query) {
-        request.url.pathname.should.equal('/dataset');
-        request.url.query.should.deep.equal({ a: 'b', c: 'd' });
-        query.features.push('b');
-        throw new Error('extraction error');
-      };
-      routerC.extractQueryParams = function (request, query) {
-        request.url.pathname.should.equal('/dataset');
-        request.url.query.should.deep.equal({ a: 'b', c: 'd' });
-        query.features.push('c');
-        finalQuery = query;
-      };
+    describe('receiving a request for a fragment', function () {
+      before(function (done) { client.get('/my-datasource?a=b&c=d').end(done); });
 
-      client.get('/dataset?a=b&c=d').expect(function (response) {
-        finalQuery.should.deep.equal({ features: [ 'a', 'b', 'c' ] });
-      }).end(done);
+      it('should call the first router with the request and an empty query', function () {
+        routerA.extractQueryParams.should.have.been.calledOnce;
+
+        var extractQueryParamsArgs = routerA.extractQueryParams.firstCall.args;
+        extractQueryParamsArgs[0].should.have.property('url');
+        extractQueryParamsArgs[0].url.should.have.property('path', '/my-datasource?a=b&c=d');
+        extractQueryParamsArgs[0].url.should.have.property('pathname', '/my-datasource');
+        extractQueryParamsArgs[0].url.should.have.property('query');
+        extractQueryParamsArgs[0].url.query.should.deep.equal({ a: 'b', c: 'd' });
+
+        extractQueryParamsArgs[1].should.be.an('object');
+        extractQueryParamsArgs[1].should.have.property('features');
+        extractQueryParamsArgs[1].features.should.be.an('array');
+      });
+
+      it('should call the second router with the same request and query', function () {
+        routerB.extractQueryParams.should.have.been.calledOnce;
+
+        routerB.extractQueryParams.firstCall.args[0].should.equal(
+          routerA.extractQueryParams.firstCall.args[0]);
+        routerB.extractQueryParams.firstCall.args[1].should.equal(
+          routerA.extractQueryParams.firstCall.args[1]);
+      });
+
+      it('should call the third router with the same request and query', function () {
+        routerC.extractQueryParams.should.have.been.calledOnce;
+
+        routerC.extractQueryParams.firstCall.args[0].should.equal(
+          routerA.extractQueryParams.firstCall.args[0]);
+        routerC.extractQueryParams.firstCall.args[1].should.equal(
+          routerA.extractQueryParams.firstCall.args[1]);
+      });
     });
   });
 });
