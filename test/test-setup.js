@@ -32,6 +32,18 @@ test.createHttpResponse = function (contents, contentType) {
   return response;
 };
 
+// Creates an in-memory stream
+test.createStreamCapture = function () {
+  return {
+    buffer: '',
+    write: function (chunk, encoding, callback) {
+      this.buffer += chunk;
+      callback && callback();
+    },
+    end: sinon.stub(),
+  };
+};
+
 chai.use(function (chai, utils) {
   // Checks whether the stream contains the given number of elements
   chai.Assertion.addMethod('streamWithLength', function (expectedLength, callback) {

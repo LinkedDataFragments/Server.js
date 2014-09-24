@@ -1,0 +1,18 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix hydra: <http://www.w3.org/ns/hydra/core#>.
+@prefix voID: <http://rdfs.org/ns/void#>.
+@prefix dcTerms: <http://purl.org/dc/terms/>.
+
+<http://ex.org/data> a voID:Dataset, hydra:Collection;
+    voID:subset <http://ex.org/data?fragment>;
+    voID:uriLookupEndpoint "http://ex.org/data{?subject,predicate,object}";
+    hydra:search _:triplePattern.
+_:triplePattern hydra:template "http://ex.org/data{?subject,predicate,object}";
+    hydra:mapping _:subject, _:predicate, _:object.
+_:subject hydra:variable "subject";
+    hydra:property rdf:subject.
+_:predicate hydra:variable "predicate";
+    hydra:property rdf:predicate.
+_:object hydra:variable "object";
+    hydra:property rdf:object.
