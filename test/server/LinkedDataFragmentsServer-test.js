@@ -82,7 +82,7 @@ describe('LinkedDataFragmentsServer', function () {
   });
 
   describe('A LinkedDataFragmentsServer instance with 3 routers', function () {
-    var server, client, routerA, routerB, routerC;
+    var server, client, routerA, routerB, routerC, datasource;
     before(function () {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
@@ -92,14 +92,29 @@ describe('LinkedDataFragmentsServer', function () {
         query.datasource = 'my-datasource';
         query.other = 'other';
       })};
+      datasource = {
+        supportsQuery: sinon.stub().returns(true),
+        select: sinon.stub(),
+      };
       server = new LinkedDataFragmentsServer({
         fragmentRouters: [ routerA, routerB, routerC ],
+        datasources: { 'my-datasource': datasource },
       });
       client = request.agent(server);
     });
+    function resetAll() {
+      routerA.extractQueryParams.reset();
+      routerB.extractQueryParams.reset();
+      routerC.extractQueryParams.reset();
+      datasource.supportsQuery.reset();
+      datasource.select.reset();
+    }
 
     describe('receiving a request for a fragment', function () {
-      before(function (done) { client.get('/my-datasource?a=b&c=d').end(done); });
+      before(function (done) {
+        resetAll();
+        client.get('/my-datasource?a=b&c=d').end(done);
+      });
 
       it('should call the first router with the request and an empty query', function () {
         routerA.extractQueryParams.should.have.been.calledOnce;
@@ -132,6 +147,36 @@ describe('LinkedDataFragmentsServer', function () {
           routerA.extractQueryParams.firstCall.args[0]);
         routerC.extractQueryParams.firstCall.args[1].should.equal(
           routerA.extractQueryParams.firstCall.args[1]);
+      });
+
+      it('should verify whether the data source supports the query', function () {
+        var query = routerC.extractQueryParams.firstCall.args[1];
+        datasource.supportsQuery.should.have.been.calledOnce;
+        datasource.supportsQuery.should.have.been.calledWith(query);
+      });
+
+      it('should send the query to the right data source', function () {
+        var query = routerC.extractQueryParams.firstCall.args[1];
+        datasource.select.should.have.been.calledOnce;
+        datasource.select.should.have.been.calledWith(query);
+      });
+    });
+
+    describe('receiving a request for an unsupported fragment', function () {
+      before(function (done) {
+        resetAll();
+        datasource.supportsQuery = sinon.stub().returns(false);
+        client.get('/my-datasource?a=b&c=d').end(done);
+      });
+
+      it('should verify whether the data source supports the query', function () {
+        var query = routerC.extractQueryParams.firstCall.args[1];
+        datasource.supportsQuery.should.have.been.calledOnce;
+        datasource.supportsQuery.should.have.been.calledWith(query);
+      });
+
+      it('should not send the query to the data source', function () {
+        datasource.select.should.not.have.been.called;
       });
     });
   });
