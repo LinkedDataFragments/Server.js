@@ -2,6 +2,7 @@ var LinkedDataFragmentsServer = require('../../lib/server/LinkedDataFragmentsSer
 
 var request = require('supertest'),
     fs = require('fs'),
+    http = require('http'),
     url = require('url');
 
 describe('LinkedDataFragmentsServer', function () {
@@ -82,7 +83,7 @@ describe('LinkedDataFragmentsServer', function () {
   });
 
   describe('A LinkedDataFragmentsServer instance with 3 routers', function () {
-    var server, client, routerA, routerB, routerC, datasource;
+    var server, client, routerA, routerB, routerC, datasource, writer;
     before(function () {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
@@ -94,11 +95,17 @@ describe('LinkedDataFragmentsServer', function () {
       })};
       datasource = {
         supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub(),
+        select: sinon.stub().returns({ queryResult: true }),
+      };
+      writer = {
+        writeFragment: sinon.spy(function (outputStream, tripleStream, options) {
+          outputStream.end();
+        }),
       };
       server = new LinkedDataFragmentsServer({
         fragmentRouters: [ routerA, routerB, routerC ],
         datasources: { 'my-datasource': datasource },
+        writers: { '*/*': writer },
       });
       client = request.agent(server);
     });
@@ -159,6 +166,24 @@ describe('LinkedDataFragmentsServer', function () {
         var query = routerC.extractQueryParams.firstCall.args[1];
         datasource.select.should.have.been.calledOnce;
         datasource.select.should.have.been.calledWith(query);
+      });
+
+      it('should pass the query result to the output writer', function () {
+        writer.writeFragment.should.have.been.calledOnce;
+        var writeFragmentArgs = writer.writeFragment.firstCall.args;
+
+        writeFragmentArgs[0].should.be.an.instanceof(http.ServerResponse); // where to write to
+        writeFragmentArgs[1].should.deep.equal({ queryResult: true }); // what to write
+        writeFragmentArgs[2].should.be.an('object'); // write options
+      });
+
+      it('should pass the correct options to the output writer', function () {
+        writer.writeFragment.should.have.been.calledOnce;
+        var writeFragmentArgs = writer.writeFragment.firstCall.args;
+
+        writeFragmentArgs[2].should.be.an('object'); // write options
+        writeFragmentArgs[2].should.have.property('datasource');
+        writeFragmentArgs[2].datasource.should.have.property('name', 'my-datasource');
       });
     });
 
