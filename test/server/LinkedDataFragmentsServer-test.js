@@ -174,14 +174,13 @@ describe('LinkedDataFragmentsServer', function () {
 
         writeFragmentArgs[0].should.be.an.instanceof(http.ServerResponse); // where to write to
         writeFragmentArgs[1].should.deep.equal({ queryResult: true }); // what to write
-        writeFragmentArgs[2].should.be.an('object'); // write options
+        writeFragmentArgs[2].should.be.an('object'); // writing settings
       });
 
-      it('should pass the correct options to the output writer', function () {
+      it('should pass the correct settings to the output writer', function () {
         writer.writeFragment.should.have.been.calledOnce;
         var writeFragmentArgs = writer.writeFragment.firstCall.args;
 
-        writeFragmentArgs[2].should.be.an('object'); // write options
         writeFragmentArgs[2].should.have.property('datasource');
         writeFragmentArgs[2].datasource.should.have.property('name', 'my-datasource');
       });

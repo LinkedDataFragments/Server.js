@@ -1,5 +1,5 @@
-var Datasource = require('../../lib/datasource/Datasource'),
-    SparqlDatasource = require('../../lib/datasource/SparqlDatasource'),
+var Datasource = require('../../lib/datasources/Datasource'),
+    SparqlDatasource = require('../../lib/datasources/SparqlDatasource'),
     fs = require('fs'),
     path = require('path'),
     URL = require('url');

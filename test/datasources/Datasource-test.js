@@ -1,4 +1,4 @@
-var Datasource = require('../../lib/datasource/Datasource');
+var Datasource = require('../../lib/datasources/Datasource');
 
 describe('Datasource', function () {
   describe('The Datasource module', function () {
