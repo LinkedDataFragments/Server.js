@@ -16,3 +16,10 @@ _:predicate hydra:variable "predicate";
     hydra:property rdf:predicate.
 _:object hydra:variable "object";
     hydra:property rdf:object.
+<http://ex.org/data?fragment> a hydra:Collection, hydra:PagedCollection;
+    dcTerms:title "Linked Data Fragment of My data"@en;
+    dcTerms:description "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."@en;
+    dcTerms:source <http://ex.org/data>;
+    hydra:totalItems "1234"^^xsd:integer;
+    voID:triples "1234"^^xsd:integer;
+    hydra:itemsPerPage "100"^^xsd:integer.

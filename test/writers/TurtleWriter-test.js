@@ -21,6 +21,7 @@ describe('TurtleWriter', function () {
     var writer = new TurtleWriter();
     var writeSettings = {
       datasource: {
+        name: 'My data',
         url: 'http://ex.org/data',
         templateUrl: 'http://ex.org/data{?subject,predicate,object}',
       },
@@ -34,6 +35,10 @@ describe('TurtleWriter', function () {
         voID: 'http://rdfs.org/ns/void#',
         dcTerms: 'http://purl.org/dc/terms/',
       },
+      query: {
+        limit: 100,
+        patternString: '{ a ?b ?c }',
+      },
     };
 
     describe('when writeFragment is called', function () {
@@ -42,6 +47,7 @@ describe('TurtleWriter', function () {
         var result = test.createStreamCapture();
         before(function () {
           writer.writeFragment(result, tripleStream, writeSettings);
+          tripleStream.emit('metadata', { totalCount: 1234 });
         });
 
         it('should only write data source metadata', function () {
@@ -58,6 +64,7 @@ describe('TurtleWriter', function () {
         var result = test.createStreamCapture();
         before(function () {
           writer.writeFragment(result, tripleStream, writeSettings);
+          tripleStream.emit('metadata', { totalCount: 1234 });
         });
 
         it('should only write data source metadata', function () {
