@@ -197,7 +197,7 @@ describe('LinkedDataFragmentsServer', function () {
           },
           fragment: {
             url:             host + '/my-datasource?a=b&c=d',
-            pageUrl:         host + '/my-datasource?a=b&c=d&page=1',
+            pageUrl:         host + '/my-datasource?a=b&c=d',
             firstPageUrl:    host + '/my-datasource?a=b&c=d&page=1',
             nextPageUrl:     host + '/my-datasource?a=b&c=d&page=2',
             previousPageUrl: null
