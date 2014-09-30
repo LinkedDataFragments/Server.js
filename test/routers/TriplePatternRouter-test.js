@@ -1,4 +1,4 @@
-var TriplePatternRouter = require('../../lib/server/TriplePatternRouter');
+var TriplePatternRouter = require('../../lib/routers/TriplePatternRouter');
 
 describe('TriplePatternRouter', function () {
   describe('The TriplePatternRouter module', function () {

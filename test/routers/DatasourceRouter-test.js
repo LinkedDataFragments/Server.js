@@ -1,4 +1,4 @@
-var DatasourceRouter = require('../../lib/server/DatasourceRouter');
+var DatasourceRouter = require('../../lib/routers/DatasourceRouter');
 
 describe('DatasourceRouter', function () {
   describe('The DatasourceRouter module', function () {

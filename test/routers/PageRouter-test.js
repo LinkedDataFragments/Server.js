@@ -1,4 +1,4 @@
-var PageRouter = require('../../lib/server/PageRouter');
+var PageRouter = require('../../lib/routers/PageRouter');
 
 describe('PageRouter', function () {
   describe('The PageRouter module', function () {

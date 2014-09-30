@@ -1,4 +1,4 @@
-var LinkedDataFragmentsServer = require('../../lib/server/LinkedDataFragmentsServer');
+var LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer');
 
 var request = require('supertest'),
     fs = require('fs'),
@@ -45,7 +45,7 @@ describe('LinkedDataFragmentsServer', function () {
 
     it('should correctly serve SVG assets', function (done) {
       client.get('/assets/logo').expect(function (response) {
-        var asset = fs.readFileSync(__dirname + '/../../assets/logo.svg', 'utf8');
+        var asset = fs.readFileSync(__dirname + '/../assets/logo.svg', 'utf8');
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/svg+xml');
         response.headers.should.have.property('cache-control', 'public,max-age=1209600');
@@ -55,7 +55,7 @@ describe('LinkedDataFragmentsServer', function () {
 
     it('should correctly serve CSS assets', function (done) {
       client.get('/assets/style').expect(function (response) {
-        var asset = fs.readFileSync(__dirname + '/../../assets/style.css', 'utf8');
+        var asset = fs.readFileSync(__dirname + '/../assets/style.css', 'utf8');
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/css');
         response.headers.should.have.property('cache-control', 'public,max-age=1209600');
@@ -65,7 +65,7 @@ describe('LinkedDataFragmentsServer', function () {
 
     it('should correctly serve ICO assets', function (done) {
       client.get('/favicon.ico').expect(function (response) {
-        var asset = fs.readFileSync(__dirname + '/../../assets/favicon.ico', 'utf8');
+        var asset = fs.readFileSync(__dirname + '/../assets/favicon.ico', 'utf8');
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/x-icon');
         response.headers.should.have.property('cache-control', 'public,max-age=1209600');
