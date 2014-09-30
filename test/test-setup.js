@@ -44,6 +44,16 @@ test.createStreamCapture = function () {
   };
 };
 
+// Creates a readable stream from an array
+test.streamFromArray = function (items) {
+  var stream = new Readable({ objectMode: true });
+  stream._read = function () {
+    var item = items.shift();
+    this.push(item || null);
+  };
+  return stream;
+};
+
 chai.use(function (chai, utils) {
   // Checks whether the stream contains the given number of elements
   chai.Assertion.addMethod('streamWithLength', function (expectedLength, callback) {

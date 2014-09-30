@@ -38,13 +38,30 @@ describe('TurtleWriter', function () {
 
     describe('when writeFragment is called', function () {
       describe('with an empty triple stream', function () {
+        var tripleStream = test.streamFromArray([]);
         var result = test.createStreamCapture();
         before(function () {
-          writer.writeFragment(result, null, writeSettings);
+          writer.writeFragment(result, tripleStream, writeSettings);
         });
 
         it('should only write data source metadata', function () {
           result.buffer.should.equal(asset('empty-fragment.ttl'));
+        });
+      });
+
+      describe('with a non-empty triple stream', function () {
+        var tripleStream = test.streamFromArray([
+          { subject: 'a', predicate: 'b', object: 'c' },
+          { subject: 'a', predicate: 'd', object: 'e' },
+          { subject: 'f', predicate: 'g', object: 'h' },
+        ]);
+        var result = test.createStreamCapture();
+        before(function () {
+          writer.writeFragment(result, tripleStream, writeSettings);
+        });
+
+        it('should only write data source metadata', function () {
+          result.buffer.should.equal(asset('basic-fragment.ttl'));
         });
       });
     });
