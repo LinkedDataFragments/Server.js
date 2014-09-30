@@ -2,39 +2,10 @@
   "title": "My Linked Data Fragments server",
   "datasources": {
     "dbpedia": {
-      "description": "DBpedia with a Virtuoso back-end",
+      "title": "DBpedia 3.9",
       "type": "SparqlDatasource",
-      "settings": ["http://dbpedia.org/sparql", "http://dbpedia.org"]
-    },
-    "dbpedia-remote": {
-      "type": "LdfDatasource",
-      "description": "DBpedia with an LDF server back-end",
-      "settings": ["http://data.linkeddatafragments.org/dbpedia{?subject,predicate,object,page}"]
-    },
-    "ckan": {
-      "description": "CKAN data from a SPARQL endpoint",
-      "type": "SparqlDatasource",
-      "settings": ["http://semantic.ckan.net/sparql", "http://datahub.io"]
-    },
-    "eventmedia": {
-      "description": "EventMedia from EURECOM",
-      "type": "SparqlDatasource",
-      "settings": ["http://eventmedia.eurecom.fr/sparql", ""]
-    },
-    "stations": {
-      "type": "N3Datasource",
-      "description": "Belgian railway stations from a Turtle document",
-      "settings": ["http://demo.thedatatank.org/railways/stations.ttl"]
-    },
-    "stationscsv": {
-      "description": "Belgian railway stations from a CSV document",
-      "type": "CSVDatasource",
-      "settings": ["http://data.irail.be/NMBS/Stations.csv", { "delimiter": ";" }]
-    },
-    "coffee": {
-      "description": "MMLab Coffee Data from a Google Docs document",
-      "type": "CSVDatasource",
-      "settings": ["https://docs.google.com/spreadsheet/pub?key=0Au5ixQ50Pvv_dG5FS294M0RnNDJTOEtDckd4VFB4RVE&single=true&gid=0&output=csv", { "delimiter": "," }]
+      "description": "DBpedia 3.9 with a Virtuoso back-end",
+      "settings": ["http://dbpedia.restdesc.org/", "http://dbpedia.org"]
     }
   },
 

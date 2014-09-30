@@ -5,8 +5,7 @@
 
 var fs = require('fs'),
     cluster = require('cluster'),
-    LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
-    DatasetsSource = require('../lib/DatasetsSource');
+    LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer');
 
 // Parse arguments
 var args = process.argv.slice(2);
@@ -32,14 +31,14 @@ if (cluster.isMaster && workers > 1) {
 // Start up a worker otherwise
 else {
   // Create datasources
-  var datasources = {};
+  var datasources = config.datasources;
   for (var datasourceName in config.datasources) {
     var datasourceConfig = config.datasources[datasourceName];
     if (datasourceConfig.enabled !== false) {
       try {
-        var constructor = require('../lib/' + datasourceConfig.type),
+        var constructor = require('../lib/datasources/' + datasourceConfig.type),
             datasource = createInstance(constructor, datasourceConfig.settings || []);
-        datasources[datasourceName] = datasource;
+        datasources[datasourceName].datasource = datasource;
       }
       catch (error) {
         datasourceConfig.enabled = false;
@@ -48,14 +47,21 @@ else {
     }
   }
 
-  // Create index datasource if it doesn't exist yet
-  if (!datasources.index) {
-    datasources.index = new DatasetsSource(config.baseURL, config.datasources);
-    datasources.index.type = 'index';
-  }
+  // Set up fragment routing
+  var fragmentRouters = ['Datasource', 'TriplePattern', 'Page'].map(function (routerName) {
+    var Router = require('../lib/routers/' + routerName + 'Router');
+    return new Router({ prefixes: config.prefixes });
+  });
 
   // Create and start server
-  var server = new LinkedDataFragmentsServer(config.baseURL, datasources, config);
+  var server = new LinkedDataFragmentsServer({
+    datasources: datasources,
+    fragmentRouters: fragmentRouters,
+    writers: {
+      '*/*': new require('../lib/writers/TurtleWriter')(),
+    },
+    prefixes: config.prefixes,
+  });
   server.listen(port);
   console.log('Worker', process.pid, 'running on http://localhost:' + port + '/');
 
