@@ -1,0 +1,28 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix hydra: <http://www.w3.org/ns/hydra/core#>.
+@prefix voID: <http://rdfs.org/ns/void#>.
+@prefix dcTerms: <http://purl.org/dc/terms/>.
+
+<http://ex.org/data> a voID:Dataset, hydra:Collection;
+    voID:subset <http://ex.org/data?fragment>;
+    voID:uriLookupEndpoint "http://ex.org/data{?subject,predicate,object}";
+    hydra:search _:triplePattern.
+_:triplePattern hydra:template "http://ex.org/data{?subject,predicate,object}";
+    hydra:mapping _:subject, _:predicate, _:object.
+_:subject hydra:variable "subject";
+    hydra:property rdf:subject.
+_:predicate hydra:variable "predicate";
+    hydra:property rdf:predicate.
+_:object hydra:variable "object";
+    hydra:property rdf:object.
+<a> <b> <c>;
+    <d> <e>.
+<f> <g> <h>.
+<http://ex.org/data?fragment> a hydra:Collection, hydra:PagedCollection;
+    dcTerms:title "Linked Data Fragment of My data"@en;
+    dcTerms:description "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."@en;
+    dcTerms:source <http://ex.org/data>;
+    hydra:totalItems "1234"^^xsd:integer;
+    voID:triples "1234"^^xsd:integer;
+    hydra:itemsPerPage "100"^^xsd:integer.

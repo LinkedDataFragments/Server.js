@@ -71,6 +71,25 @@ describe('TurtleWriter', function () {
           result.buffer.should.equal(asset('basic-fragment.ttl'));
         });
       });
+
+      describe('with a non-empty triple stream that writes metadata afterwards', function () {
+        var tripleStream = test.streamFromArray([
+          { subject: 'a', predicate: 'b', object: 'c' },
+          { subject: 'a', predicate: 'd', object: 'e' },
+          { subject: 'f', predicate: 'g', object: 'h' },
+        ]);
+        var result = test.createStreamCapture();
+        before(function () {
+          writer.writeFragment(result, tripleStream, writeSettings);
+          setImmediate(function () {
+            tripleStream.emit('metadata', { totalCount: 1234 });
+          });
+        });
+
+        it('should only write data source metadata', function () {
+          result.buffer.should.equal(asset('basic-fragment-metadata-last.ttl'));
+        });
+      });
     });
   });
 });
