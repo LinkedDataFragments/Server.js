@@ -139,7 +139,7 @@ describe('SparqlDatasource', function () {
       null /* count should be cached, since this pattern already occurred above */);
 
     describe('when the first Turtle request fails', function () {
-      var result, count, firstArgsCopy;
+      var result, totalCount, firstArgsCopy;
       before(function () {
         request.reset();
         request.onFirstCall().returns(test.createHttpResponse('invalid Turtle', 'text/turtle'));
@@ -147,7 +147,7 @@ describe('SparqlDatasource', function () {
         request.onThirdCall().returns(test.createHttpResponse(turtleResult, 'text/turtle'));
 
         result = datasource.select({ subject: 'abc', features: { triplePattern: true } });
-        result.on('count', function (c) { count = c; });
+        result.on('metadata', function (metadata) { totalCount = metadata.totalCount; });
         firstArgsCopy = JSON.parse(JSON.stringify(request.firstCall.args[0]));
       });
 
@@ -188,7 +188,7 @@ describe('SparqlDatasource', function () {
       });
 
       it('should emit the extracted count', function () {
-        expect(count).to.equal(12345678);
+        expect(totalCount).to.equal(12345678);
       });
     });
   });
@@ -196,14 +196,14 @@ describe('SparqlDatasource', function () {
 
 function itShouldExecute(datasource, request, name, query, constructQuery, countQuery) {
   describe('executing ' + name, function () {
-    var result, count;
+    var result, totalCount;
     before(function () {
       request.reset();
       request.onFirstCall().returns(test.createHttpResponse(turtleResult, 'text/turtle'));
       request.onSecondCall().returns(test.createHttpResponse(turtleCountResult, 'text/turtle'));
 
       result = datasource.select(query);
-      result.on('count', function (c) { count = c; });
+      result.on('metadata', function (metadata) { totalCount = metadata.totalCount; });
     });
 
     it('should request a matching CONSTRUCT query', function () {
@@ -232,7 +232,7 @@ function itShouldExecute(datasource, request, name, query, constructQuery, count
     });
 
     it('should emit the extracted count', function () {
-      expect(count).to.equal(12345678);
+      expect(totalCount).to.equal(12345678);
     });
   });
 }
