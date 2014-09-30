@@ -16,7 +16,7 @@ describe('LinkedDataFragmentsServer', function () {
     it('should not allow POST requests', function (done) {
       client.post('/').expect(function (response) {
         response.should.have.property('statusCode', 405);
-        response.headers.should.have.property('content-type', 'text/plain');
+        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
       }).end(done);
     });
@@ -38,7 +38,7 @@ describe('LinkedDataFragmentsServer', function () {
     it('should send a 404 if a resource is not found', function (done) {
       client.get('/notfound').expect(function (response) {
         response.should.have.property('statusCode', 404);
-        response.headers.should.have.property('content-type', 'text/plain');
+        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'The resource with URL "/notfound" was not found.');
       }).end(done);
     });
@@ -57,7 +57,7 @@ describe('LinkedDataFragmentsServer', function () {
       client.get('/assets/style').expect(function (response) {
         var asset = fs.readFileSync(__dirname + '/../assets/style.css', 'utf8');
         response.should.have.property('statusCode', 200);
-        response.headers.should.have.property('content-type', 'text/css');
+        response.headers.should.have.property('content-type', 'text/css;charset=utf-8');
         response.headers.should.have.property('cache-control', 'public,max-age=1209600');
         response.should.have.property('text', asset);
       }).end(done);
@@ -76,7 +76,7 @@ describe('LinkedDataFragmentsServer', function () {
     it('should send a 404 if an asset is not found', function (done) {
       client.get('/assets/unknown').expect(function (response) {
         response.should.have.property('statusCode', 404);
-        response.headers.should.have.property('content-type', 'text/plain');
+        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'The resource with URL "/assets/unknown" was not found.');
       }).end(done);
     });
