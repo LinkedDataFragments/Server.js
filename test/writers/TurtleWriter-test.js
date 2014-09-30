@@ -21,7 +21,7 @@ describe('TurtleWriter', function () {
     var writer = new TurtleWriter();
     var writeSettings = {
       datasource: {
-        name: 'My data',
+        title: 'My data',
         url: 'http://ex.org/data',
         templateUrl: 'http://ex.org/data{?subject,predicate,object}',
       },

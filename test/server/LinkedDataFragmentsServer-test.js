@@ -83,7 +83,7 @@ describe('LinkedDataFragmentsServer', function () {
   });
 
   describe('A LinkedDataFragmentsServer instance with 3 routers', function () {
-    var server, client, routerA, routerB, routerC, datasource, writer;
+    var server, client, routerA, routerB, routerC, datasource, writer, prefixes;
     before(function () {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
@@ -102,10 +102,12 @@ describe('LinkedDataFragmentsServer', function () {
           outputStream.end();
         }),
       };
+      prefixes = { a: 'a' };
       server = new LinkedDataFragmentsServer({
         fragmentRouters: [ routerA, routerB, routerC ],
-        datasources: { 'my-datasource': datasource },
+        datasources: { 'my-datasource': { title: 'My data', datasource: datasource } },
         writers: { '*/*': writer },
+        prefixes: prefixes,
       });
       client = request.agent(server);
     });
@@ -179,10 +181,30 @@ describe('LinkedDataFragmentsServer', function () {
 
       it('should pass the correct settings to the output writer', function () {
         writer.writeFragment.should.have.been.calledOnce;
-        var writeFragmentArgs = writer.writeFragment.firstCall.args;
+        var query = routerC.extractQueryParams.firstCall.args[1];
+        var settings = writer.writeFragment.firstCall.args[2];
 
-        writeFragmentArgs[2].should.have.property('datasource');
-        writeFragmentArgs[2].datasource.should.have.property('name', 'my-datasource');
+        // find the hostname of the request
+        settings.should.have.property('fragment');
+        settings.fragment.should.have.property('url');
+        var host = settings.fragment.url.match(/^http:\/\/[^\/]+/)[0];
+
+        settings.should.deep.equal({
+          datasource: {
+            title: 'My data',
+            url: host + '/my-datasource',
+            templateUrl: host + '/my-datasource{?subject,predicate,object}',
+          },
+          fragment: {
+            url:             host + '/my-datasource?a=b&c=d',
+            pageUrl:         host + '/my-datasource?a=b&c=d&page=1',
+            firstPageUrl:    host + '/my-datasource?a=b&c=d&page=1',
+            nextPageUrl:     host + '/my-datasource?a=b&c=d&page=2',
+            previousPageUrl: null
+          },
+          prefixes: prefixes,
+          query: query,
+        });
       });
     });
 
