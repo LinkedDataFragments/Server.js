@@ -84,7 +84,7 @@ describe('PageRouter', function () {
   });
 
   describe('A PageRouter instance with a given page size', function () {
-    var router = new PageRouter(250);
+    var router = new PageRouter({ pageSize: 250 });
 
     describe('extractUrlParams', function () {
       describe('with an existing query', function () {
@@ -152,7 +152,7 @@ describe('PageRouter', function () {
   });
 
   describe('A PageRouter instance with an invalid page size', function () {
-    var router = new PageRouter(1);
+    var router = new PageRouter({ pageSize: -1 });
 
     describe('extractUrlParams', function () {
       describe('with an existing query', function () {

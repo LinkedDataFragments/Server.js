@@ -183,8 +183,10 @@ describe('TriplePatternRouter', function () {
 
   describe('A TriplePatternRouter instance with prefixes', function () {
     var router = new TriplePatternRouter({
-      'foo': 'http://example.org/foo#',
-      'http': 'http://www.w3.org/2011/http#',
+      prefixes: {
+        'foo': 'http://example.org/foo#',
+        'http': 'http://www.w3.org/2011/http#',
+      },
     });
 
     describe('extractUrlParams', function () {
