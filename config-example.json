@@ -2,6 +2,12 @@
   "title": "My Linked Data Fragments server",
   "datasources": {
     "dbpedia": {
+      "title": "DBpedia 2014",
+      "type": "HdtDatasource",
+      "description": "DBpedia 2014 with an HDT back-end",
+      "settings": ["data/dbpedia2014.hdt"]
+    },
+    "dbpedia-sparql": {
       "title": "DBpedia 3.9",
       "type": "SparqlDatasource",
       "description": "DBpedia 3.9 with a Virtuoso back-end",

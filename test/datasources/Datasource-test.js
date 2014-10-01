@@ -34,6 +34,18 @@ describe('Datasource', function () {
       (function () { datasource.select({ features: { a: true, b: true } }); })
       .should.throw('The datasource does not support the given query');
     });
+
+    describe('when closed without a callback', function () {
+      it('should do nothing', function () {
+        datasource.close();
+      });
+    });
+
+    describe('when closed with a callback', function () {
+      it('should invoke the callback', function (done) {
+        datasource.close(done);
+      });
+    });
   });
 
   describe('A derived Datasource instance', function () {
@@ -64,9 +76,9 @@ describe('Datasource', function () {
       datasource.supportsQuery({ features: { a: true, b: true, c: true} }).should.be.false;
     });
 
-    it('should throw an error when _createTripleStream is not implemented', function () {
+    it('should throw an error when _executeQuery is not implemented', function () {
       (function () { datasource.select({ features: { a: true, b: true } }); })
-      .should.throw('_createTripleStream has not been implemented');
+      .should.throw('_executeQuery has not been implemented');
     });
   });
 });
