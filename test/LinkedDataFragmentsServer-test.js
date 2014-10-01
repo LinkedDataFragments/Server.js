@@ -9,7 +9,7 @@ describe('LinkedDataFragmentsServer', function () {
   describe('A LinkedDataFragmentsServer instance', function () {
     var server, client;
     before(function () {
-      server = new LinkedDataFragmentsServer();
+      server = new LinkedDataFragmentsServer({ log: function () {} });
       client = request.agent(server);
     });
 
@@ -79,6 +79,25 @@ describe('LinkedDataFragmentsServer', function () {
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'The resource with URL "/assets/unknown" was not found.');
       }).end(done);
+    });
+
+    describe('when an internal error occurs', function (done) {
+      before(function () {
+        server._oldSendAsset = server._sendAsset;
+        delete server._sendAsset;
+      });
+      after(function () {
+        server._sendAsset = server._oldSendAsset;
+        delete server._oldSendAsset;
+      });
+
+      it('should send a 500 error message', function (done) {
+        client.get('/assets/logo', function (response) {
+          response.should.have.property('statusCode', 500);
+          response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
+          response.should.have.property('text', 'A server error occurred.');
+        }).end(done);
+      });
     });
   });
 
