@@ -1,5 +1,6 @@
 var URL = require('url'),
-    Readable = require('stream').Readable;
+    Readable = require('stream').Readable,
+    Writable = require('stream').Writable;
 
 // Set up the sinon stubbing library
 var sinon = global.sinon = require('sinon');
@@ -34,14 +35,13 @@ test.createHttpResponse = function (contents, contentType) {
 
 // Creates an in-memory stream
 test.createStreamCapture = function () {
-  return {
-    buffer: '',
-    write: function (chunk, encoding, callback) {
-      this.buffer += chunk;
-      callback && callback();
-    },
-    end: sinon.stub(),
+  var stream = new Writable({ objectMode: true });
+  stream.buffer = '';
+  stream._write = function (chunk, encoding, callback) {
+    this.buffer += chunk;
+    callback && callback();
   };
+  return stream;
 };
 
 // Creates a readable stream from an array

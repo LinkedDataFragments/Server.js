@@ -26,11 +26,11 @@ describe('TurtleWriter', function () {
         templateUrl: 'http://ex.org/data{?subject,predicate,object}',
       },
       fragment: {
-        url:            'http://ex.org/data?fragment',
-        pageUrl:        'http://ex.org/data?fragment&page=3',
-        firstPageUrl:   'http://ex.org/data?fragment&page=1',
-        nextPageUrl:    'http://ex.org/data?fragment&page=4',
-        prevousPageUrl: 'http://ex.org/data?fragment&page=2',
+        url:             'http://ex.org/data?fragment',
+        pageUrl:         'http://ex.org/data?fragment&page=3',
+        firstPageUrl:    'http://ex.org/data?fragment&page=1',
+        nextPageUrl:     'http://ex.org/data?fragment&page=4',
+        previousPageUrl: 'http://ex.org/data?fragment&page=2',
       },
       prefixes: {
         rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -50,9 +50,10 @@ describe('TurtleWriter', function () {
       describe('with an empty triple stream', function () {
         var tripleStream = test.streamFromArray([]);
         var result = test.createStreamCapture();
-        before(function () {
+        before(function (done) {
           writer.writeFragment(result, tripleStream, writeSettings);
           tripleStream.emit('metadata', { totalCount: 1234 });
+          result.on('finish', done);
         });
 
         it('should only write data source metadata', function () {
@@ -67,9 +68,10 @@ describe('TurtleWriter', function () {
           { subject: 'f', predicate: 'g', object: 'h' },
         ]);
         var result = test.createStreamCapture();
-        before(function () {
+        before(function (done) {
           writer.writeFragment(result, tripleStream, writeSettings);
           tripleStream.emit('metadata', { totalCount: 1234 });
+          result.on('finish', done);
         });
 
         it('should only write data source metadata', function () {
@@ -93,6 +95,102 @@ describe('TurtleWriter', function () {
 
         it('should only write data source metadata', function () {
           result.buffer.should.equal(asset('basic-fragment-metadata-last.ttl'));
+        });
+      });
+
+      describe('with a query with a limit but no offset', function () {
+        var tripleStream = test.streamFromArray([]);
+        var settings = {
+          datasource: { },
+          fragment: {
+            pageUrl:         'mypage',
+            firstPageUrl:    'myfirst',
+            nextPageUrl:     'mynext',
+            previousPageUrl: 'myprevious',
+          },
+          query: { limit: 100 },
+        };
+        var result = test.createStreamCapture();
+        before(function (done) {
+          writer.writeFragment(result, tripleStream, settings);
+          tripleStream.emit('metadata', { totalCount: 1234 });
+          result.on('finish', done);
+        });
+
+        it('should write a first page link', function () {
+          result.buffer.should.contain('myfirst');
+        });
+
+        it('should write a next page link', function () {
+          result.buffer.should.contain('mynext');
+        });
+
+        it('should not write a previous page link', function () {
+          result.buffer.should.not.contain('myprevious');
+        });
+      });
+
+      describe('with a query with a limit and offset before the end', function () {
+        var tripleStream = test.streamFromArray([]);
+        var settings = {
+          datasource: { },
+          fragment: {
+            pageUrl:         'mypage',
+            firstPageUrl:    'myfirst',
+            nextPageUrl:     'mynext',
+            previousPageUrl: 'myprevious',
+          },
+          query: { limit: 100, offset: 1133 },
+        };
+        var result = test.createStreamCapture();
+        before(function (done) {
+          writer.writeFragment(result, tripleStream, settings);
+          tripleStream.emit('metadata', { totalCount: 1234 });
+          result.on('finish', done);
+        });
+
+        it('should write a first page link', function () {
+          result.buffer.should.contain('myfirst');
+        });
+
+        it('should write a next page link', function () {
+          result.buffer.should.contain('mynext');
+        });
+
+        it('should write a previous page link', function () {
+          result.buffer.should.contain('myprevious');
+        });
+      });
+
+      describe('with a query with a limit and offset past the end', function () {
+        var tripleStream = test.streamFromArray([]);
+        var settings = {
+          datasource: { },
+          fragment: {
+            pageUrl:         'mypage',
+            firstPageUrl:    'myfirst',
+            nextPageUrl:     'mynext',
+            previousPageUrl: 'myprevious',
+          },
+          query: { limit: 100, offset: 1135 },
+        };
+        var result = test.createStreamCapture();
+        before(function (done) {
+          writer.writeFragment(result, tripleStream, settings);
+          tripleStream.emit('metadata', { totalCount: 1234 });
+          result.on('finish', done);
+        });
+
+        it('should write a first page link', function () {
+          result.buffer.should.contain('myfirst');
+        });
+
+        it('should not write a next page link', function () {
+          result.buffer.should.not.contain('mynext');
+        });
+
+        it('should write a previous page link', function () {
+          result.buffer.should.contain('myprevious');
         });
       });
     });
