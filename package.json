@@ -23,6 +23,7 @@
     "jsonld": "0.2.x",
     "request": "2.27.x",
     "mime": "1.2.x",
+    "negotiate": "^1.0.1",
     "lodash": "2.4.x",
     "lrucache": "2.5.x",
     "uritemplate": "0.3.x"

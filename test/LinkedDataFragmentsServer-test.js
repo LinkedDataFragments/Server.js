@@ -9,7 +9,10 @@ describe('LinkedDataFragmentsServer', function () {
   describe('A LinkedDataFragmentsServer instance', function () {
     var server, client;
     before(function () {
-      server = new LinkedDataFragmentsServer({ log: function () {} });
+      server = new LinkedDataFragmentsServer({
+        log: function () {},
+        writers: { '*/*': {} },
+      });
       client = request.agent(server);
     });
 
@@ -242,6 +245,192 @@ describe('LinkedDataFragmentsServer', function () {
 
       it('should not send the query to the data source', function () {
         datasource.select.should.not.have.been.called;
+      });
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance with 3 writers', function () {
+    var server, client, writerHtml, writerJson, writerTurtle;
+    before(function () {
+      var datasource = {
+        supportsQuery: sinon.stub().returns(true),
+        select: sinon.stub(),
+      };
+      var router = { extractQueryParams: function (request, query) {
+        query.features.dataset = true;
+        query.datasource = 'my-datasource';
+      }};
+      writerHtml   = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
+      writerJson   = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
+      writerTurtle = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
+      server = new LinkedDataFragmentsServer({
+        fragmentRouters: [ router ],
+        datasources: { 'my-datasource': { datasource: datasource } },
+        writers: {
+          'application/json': writerJson,
+          'text/turtle,text/n3': writerTurtle,
+          'text/html,*/*': writerHtml,
+        },
+      });
+      client = request.agent(server);
+    });
+    function resetAll() {
+      writerHtml.writeFragment.reset();
+      writerJson.writeFragment.reset();
+      writerTurtle.writeFragment.reset();
+    }
+
+    describe('receiving a request without Accept header', function () {
+      var response;
+      before(function (done) {
+        resetAll();
+        client.get('/my-datasource')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should call the default writer', function () {
+        writerHtml.writeFragment.should.have.been.calledOnce;
+      });
+
+      it('should set the text/html content type', function () {
+        response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
+      });
+    });
+
+    describe('receiving a request with an Accept header of */*', function () {
+      var response;
+      before(function (done) {
+        resetAll();
+        client.get('/my-datasource').set('Accept', '*/*')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should call the */* writer', function () {
+        writerHtml.writeFragment.should.have.been.calledOnce;
+      });
+
+      it('should set the text/html content type', function () {
+        response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
+      });
+    });
+
+    describe('receiving a request with an Accept header of text/html', function () {
+      var response;
+      before(function (done) {
+        resetAll();
+        client.get('/my-datasource').set('Accept', 'text/html')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should call the HTML writer', function () {
+        writerHtml.writeFragment.should.have.been.calledOnce;
+      });
+
+      it('should set the text/html content type', function () {
+        response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
+      });
+    });
+
+    describe('receiving a request with an Accept header of application/json', function () {
+      var response;
+      before(function (done) {
+        resetAll();
+        client.get('/my-datasource').set('Accept', 'application/json')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should call the JSON writer', function () {
+        writerJson.writeFragment.should.have.been.calledOnce;
+      });
+
+      it('should set the application/json content type', function () {
+        response.headers.should.have.property('content-type', 'application/json;charset=utf-8');
+      });
+    });
+
+    describe('receiving a request with an Accept header of text/turtle', function () {
+      var response;
+      before(function (done) {
+        resetAll();
+        client.get('/my-datasource').set('Accept', 'text/turtle')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should call the Turtle writer', function () {
+        writerTurtle.writeFragment.should.have.been.calledOnce;
+      });
+
+      it('should set the text/turtle content type', function () {
+        response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
+      });
+    });
+
+    describe('receiving a request with an Accept header of text/n3', function () {
+      var response;
+      before(function (done) {
+        resetAll();
+        client.get('/my-datasource').set('Accept', 'text/n3')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should call the Turtle writer', function () {
+        writerTurtle.writeFragment.should.have.been.calledOnce;
+      });
+
+      it('should set the text/n3 content type', function () {
+        response.headers.should.have.property('content-type', 'text/n3;charset=utf-8');
+      });
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance without matching writer', function () {
+    var server, client, writerHtml, writerJson, writerTurtle;
+    before(function () {
+      var datasource = {
+        supportsQuery: sinon.stub().returns(true),
+        select: sinon.stub(),
+      };
+      var router = { extractQueryParams: function (request, query) {
+        query.features.dataset = true;
+        query.datasource = 'my-datasource';
+      }};
+      server = new LinkedDataFragmentsServer({
+        log: function () {},
+        fragmentRouters: [ router ],
+        datasources: { 'my-datasource': { datasource: datasource } },
+      });
+      client = request.agent(server);
+    });
+
+    describe('receiving a request without Accept header', function () {
+      var response;
+      before(function (done) {
+        client.get('/my-datasource')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should return status code 406', function () {
+        response.should.have.property('statusCode', 406);
+      });
+
+      it('should set the text/plain content type', function () {
+        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
+      });
+    });
+
+    describe('receiving a request with an Accept header of text/html', function () {
+      var response;
+      before(function (done) {
+        client.get('/my-datasource').set('Accept', 'text/html')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should return status code 406', function () {
+        response.should.have.property('statusCode', 406);
+      });
+
+      it('should set the text/plain content type', function () {
+        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
       });
     });
   });
