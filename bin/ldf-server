@@ -58,7 +58,8 @@ else {
     datasources: datasources,
     fragmentRouters: fragmentRouters,
     writers: {
-      'text/turtle,text/n3': new require('../lib/writers/TurtleWriter')(),
+      'text/html,*/*': new require('../lib/writers/HtmlWriter')(config),
+      'text/turtle,text/n3': new require('../lib/writers/TurtleWriter')(config),
     },
     prefixes: config.prefixes,
   });

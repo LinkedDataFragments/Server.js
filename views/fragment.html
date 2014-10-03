@@ -1,10 +1,10 @@
 <% /*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */ -%>
-<div resource="/<%= dataset %>" typeof="void:Dataset hydra:Collection">
-<h2>Dataset <a href="/<%= dataset %>"><em class="dataset"><%= dataset %></em></a></h2>
+<div resource="<%= datasource.url %>" typeof="void:datasource hydra:Collection">
+<h2><a href="<%= datasource.url %>"><%= datasource.title %></a></h2>
 
-<form action="?" method="GET" property="hydra:search" resource="/<%= dataset %>#triplePattern">
-  <fieldset resource="/<%= dataset %>#triplePattern">
-    <legend>Query <em class="dataset"><%= dataset %></em> by triple pattern</legend>
+<form action="?" method="GET" property="hydra:search" resource="<%= datasource.url %>#triplePattern">
+  <fieldset resource="<%= datasource.url %>#triplePattern">
+    <legend>Query <%= datasource.title %> by triple pattern</legend>
     <ul>
 <% ['subject', 'predicate', 'object'].forEach(function (component) { -%>
       <li property="hydra:mapping" resource="#<%= component %>">
@@ -23,26 +23,20 @@
 </form>
 </div>
 
-<h3>Matches in <em class="dataset"><%= dataset %></em> for
+<h3>Matches in <%= datasource.title %> for
   <em class="pattern">{<% -%>
-    <%= pattern.subject              ? '<' + pattern.subject   + '>' : '?s' -%>
-    <%= pattern.predicate            ? '<' + pattern.predicate + '>' : '?p' -%>
-    <%= N3Util.isUri(pattern.object) ? '<' + pattern.object    + '>' : (pattern.object || '?o') -%>
+    <%= query.subject              ? '<' + query.subject   + '>' : '?s' -%>
+    <%= query.predicate            ? '<' + query.predicate + '>' : '?p' -%>
+    <%= N3Util.isUri(query.object) ? '<' + query.object    + '>' : (query.object || '?o') -%>
   }</em>
 </h3>
 <%
-  var start = (page - 1) * limit + 1,
-      end = Math.min((page) * limit, totalCount),
-      hasPrev = page > 1,
-      hasNext = totalCount > end,
-      subject = query.subject,
-      predicate = query.predicate, object = query.object,
-      currentUrl = '?subject='   + (subject   ? encodeURIComponent(subject)   : '') +
-                   '&predicate=' + (predicate ? encodeURIComponent(predicate) : '') +
-                   '&object='    + (object    ? encodeURIComponent(object)    : ''),
-      firstUrl = currentUrl + '&page=1',
-      prevUrl  = currentUrl + '&page=' + (page - 1),
-      nextUrl  = currentUrl + '&page=' + (page + 1);
+  var totalCount = metadata.totalCount,
+      offset = query.offset || 0, limit = query.limit || Infinity,
+      start = offset + 1, end = Math.min(start + limit, totalCount),
+      page = offset / limit + 1,
+      hasPrev = page > 1, hasNext = totalCount > end,
+      subject = query.subject, predicate = query.predicate, object = query.object;
 %>
 <div class="counts">
 <% if (start <= totalCount) { %>
@@ -54,21 +48,13 @@
   with <span property="hydra:itemsPerPage" datatype="xsd:integer" content="<%= limit %>"><%=
     formatNumber(limit)
   %></span> triples per page.
-  <% if (hasPrev || hasNext) { %>
-  <ul class="links">
-    <% if (hasPrev) { %>
-    <li><a href="<%= firstUrl %>" rel="first" property="hydra:firstPage">first</a></li>
-    <li><a href="<%= prevUrl %>" rel="prev" property="hydra:previousPage">previous</a></li>
-    <% } %>
-    <% if (hasNext) { %>
-    <li><a href="<%= nextUrl %>" rel="next" property="hydra:nextPage">next</a></li>
-    <% } %>
-  </ul>
-  <% } %>
+  <% pageLinks(fragment); -%>
 <% } else if (totalCount === 0) { %>
-  The dataset <em class="dataset"><%= dataset %></em> contains
-  <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="0">no</span>
-  matches for this pattern.
+  <p>
+    <%= datasource.title %> contains
+    <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="0">no</span>
+    triples that match this pattern.
+  </p>
 <% } %>
 </div>
 <ul class="triples">
@@ -97,20 +83,13 @@
                 else { %>lang="<%= language %>" xml:lang="<%= language %>"<% } %>><%=
           N3Util.getLiteralValue(object)
         %></span>"</a>.
-      <% } %>
+      <% } -%>
     </li>
 <% }); -%>
 </ul>
 
-<ul class="links">
-  <% if (hasPrev) { %>
-  <li><a href="<%= firstUrl %>" rel="first" property="hydra:firstPage">first</a></li>
-  <li><a href="<%= prevUrl %>" rel="prev" property="hydra:previousPage">previous</a></li>
-  <% } %>
-  <% if (hasNext) { %>
-  <li><a href="<%= nextUrl %>" rel="next" property="hydra:nextPage">next</a></li>
-  <% } %>
-</ul>
+<% pageLinks(fragment); -%>
+
 <%
 function shorten(entity) {
   return entity.match(/([^\/#]*)[\/#]?$/)[1] || entity;
@@ -118,5 +97,20 @@ function shorten(entity) {
 
 function formatNumber(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function pageLinks(fragment) {
+  if (!hasPrev && !hasNext) return;
+-%>
+  <ul class="links">
+    <% if (hasPrev) { -%>
+    <li><a href="<%= fragment.firstPageUrl %>" rel="first" property="hydra:firstPage">first</a></li>
+    <li><a href="<%= fragment.previousPageUrl %>" rel="prev" property="hydra:previousPage">previous</a></li>
+    <% } -%>
+    <% if (hasNext) { -%>
+    <li><a href="<%= fragment.nextPageUrl %>" rel="next" property="hydra:nextPage">next</a></li>
+    <% } -%>
+  </ul>
+<%
 }
 -%>
