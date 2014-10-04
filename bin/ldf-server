@@ -50,6 +50,8 @@ else {
   }
   // Create index data source
   datasources[''] = {
+    url: '/',
+    role: 'index',
     title: 'dataset index',
     datasource: new IndexDatasource(datasources),
   };

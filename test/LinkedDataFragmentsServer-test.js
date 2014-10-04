@@ -105,7 +105,7 @@ describe('LinkedDataFragmentsServer', function () {
   });
 
   describe('A LinkedDataFragmentsServer instance with 3 routers', function () {
-    var server, client, routerA, routerB, routerC, datasource, writer, prefixes;
+    var server, client, routerA, routerB, routerC, datasource, datasources, writer, prefixes;
     before(function () {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
@@ -119,6 +119,7 @@ describe('LinkedDataFragmentsServer', function () {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().returns({ queryResult: true }),
       };
+      datasources = { 'my-datasource': { title: 'My data', datasource: datasource } };
       writer = {
         writeFragment: sinon.spy(function (outputStream, tripleStream, options) {
           outputStream.end();
@@ -127,7 +128,7 @@ describe('LinkedDataFragmentsServer', function () {
       prefixes = { a: 'a' };
       server = new LinkedDataFragmentsServer({
         fragmentRouters: [ routerA, routerB, routerC ],
-        datasources: { 'my-datasource': { title: 'My data', datasource: datasource } },
+        datasources: datasources,
         writers: { '*/*': writer },
         prefixes: prefixes,
       });
@@ -226,6 +227,7 @@ describe('LinkedDataFragmentsServer', function () {
           },
           prefixes: prefixes,
           query: query,
+          datasources: datasources,
         });
       });
     });

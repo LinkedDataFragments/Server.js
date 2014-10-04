@@ -7,36 +7,20 @@ var rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     voID = 'http://rdfs.org/ns/void#';
 %>
 
-<% var hasQuery = Object.keys(query).length > 0; %>
-<% if (!hasQuery) { %>
+<% if (!query.features.triplePattern) { %>
 <div class="index">
   <h2>Available datasets</h2>
   <p>Browse the following datasets as <a href="http://linkeddatafragments.org/in-depth/#tpf">Triple Pattern Fragments</a>:</p>
-  <%
-    var datasets = {};
-    triples.forEach(function (triple) {
-      var id = triple.subject.match(/([\-a-z0-9_]+)#dataset$/i)[1],
-          dataset = datasets[id] || (datasets[id] = {});
-      dataset[triple.predicate] = triple.object;
-    });
-    var ids = Object.keys(datasets).filter(
-      function (id) { return datasets[id][rdf + 'type'] === voID + 'Dataset'; });
-  %>
   <dl class="datasets">
-    <% ids.forEach(function (id) {
-        var dataset = datasets[id]; %>
-        <dt><a href="<%= id %>"><%= decode(dataset[rdfs + 'label']) %></a></dt>
-        <dd><%= decode(dataset[dc + 'description']) || ' ' %></dd>
-    <% }) %>
+    <% for (var datasourceName in datasources) {
+         var datasource = datasources[datasourceName];
+         if (datasource.role === 'index') continue; %>
+        <dt><a href="<%= datasource.url %>"><%= datasource.title %></a></dt>
+        <dd><%= datasource.description || ' ' %></dd>
+    <% } %>
   </dl>
   <p>The current dataset <em class="dataset">index</em> contains metadata about these datasets.</p>
 </div>
 <% } %>
-
-<%
-  function decode(literal) {
-    return literal ? literal.match(/^"(.+)"/)[1] : '';
-  }
-%>
 
 <%- render('fragment') %>

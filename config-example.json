@@ -8,7 +8,7 @@
       "settings": ["data/dbpedia2014.hdt"]
     },
     "dbpedia-sparql": {
-      "title": "DBpedia 3.9",
+      "title": "DBpedia 3.9 (Virtuoso)",
       "type": "SparqlDatasource",
       "description": "DBpedia 3.9 with a Virtuoso back-end",
       "settings": ["http://dbpedia.restdesc.org/", "http://dbpedia.org"]
