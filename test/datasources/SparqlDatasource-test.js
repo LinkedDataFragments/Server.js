@@ -52,9 +52,12 @@ describe('SparqlDatasource', function () {
       datasource.supportsQuery({ features: { limit: true, b: true } }).should.be.false;
     });
 
-    it('should throw an error when trying to execute an unsupported query', function () {
-      (function () { datasource.select({ features: { a: true, b: true } }); })
-      .should.throw('The datasource does not support the given query');
+    it('should throw an error when trying to execute an unsupported query', function (done) {
+      datasource.select({ features: { a: true, b: true } }, function (error) {
+        error.should.be.an.instanceOf(Error);
+        error.should.have.property('message', 'The datasource does not support the given query');
+        done();
+      });
     });
 
     itShouldExecute(datasource, request,

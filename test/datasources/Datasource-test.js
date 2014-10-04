@@ -30,9 +30,17 @@ describe('Datasource', function () {
       datasource.supportsQuery({ features: { a: true, b: true } }).should.be.false;
     });
 
-    it('should throw an error when trying to execute a query', function () {
-      (function () { datasource.select({ features: { a: true, b: true } }); })
-      .should.throw('The datasource does not support the given query');
+    it('should throw an error when trying to execute an unsupported query', function (done) {
+      datasource.select({ features: { a: true, b: true } }, function (error) {
+        error.should.be.an.instanceOf(Error);
+        error.should.have.property('message', 'The datasource does not support the given query');
+        done();
+      });
+    });
+
+    it('should throw an error when trying to execute a supported query', function () {
+      (function () { datasource.select({ features: {} }); })
+      .should.throw('_executeQuery has not been implemented');
     });
 
     describe('when closed without a callback', function () {
@@ -54,6 +62,7 @@ describe('Datasource', function () {
       enumerable: true,
       value: { a: true, b: true, c: false },
     });
+    datasource._executeQuery = sinon.stub();
 
     it('should support the empty query', function () {
       datasource.supportsQuery({}).should.be.true;
@@ -76,9 +85,17 @@ describe('Datasource', function () {
       datasource.supportsQuery({ features: { a: true, b: true, c: true} }).should.be.false;
     });
 
-    it('should throw an error when _executeQuery is not implemented', function () {
-      (function () { datasource.select({ features: { a: true, b: true } }); })
-      .should.throw('_executeQuery has not been implemented');
+    it('should not attach an error listener on select if none was passed', function () {
+      var result = datasource.select({ features: {} });
+      (function () { result.emit('error', new Error()); }).should.throw();
+    });
+
+    it('should attach an error listener on select if one was passed', function () {
+      var onError = sinon.stub(), error = new Error();
+      var result = datasource.select({ features: {} }, onError);
+      result.emit('error', error);
+      onError.should.have.been.calledOnce;
+      onError.should.have.been.calledWith(error);
     });
   });
 });
