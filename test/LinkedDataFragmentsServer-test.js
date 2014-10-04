@@ -11,7 +11,11 @@ describe('LinkedDataFragmentsServer', function () {
     before(function () {
       server = new LinkedDataFragmentsServer({
         log: function () {},
-        writers: { '*/*': {} },
+        writers: { '*/*': {
+          writeNotFound: function (destination, settings) {
+            destination.end(settings.url + ' not found');
+          },
+        }},
       });
       client = request.agent(server);
     });
@@ -42,7 +46,7 @@ describe('LinkedDataFragmentsServer', function () {
       client.get('/notfound').expect(function (response) {
         response.should.have.property('statusCode', 404);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'The resource with URL "/notfound" was not found.');
+        response.should.have.property('text', '/notfound not found');
       }).end(done);
     });
 
@@ -80,7 +84,7 @@ describe('LinkedDataFragmentsServer', function () {
       client.get('/assets/unknown').expect(function (response) {
         response.should.have.property('statusCode', 404);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'The resource with URL "/assets/unknown" was not found.');
+        response.should.have.property('text', '/assets/unknown not found');
       }).end(done);
     });
 
@@ -121,9 +125,8 @@ describe('LinkedDataFragmentsServer', function () {
       };
       datasources = { 'my-datasource': { title: 'My data', datasource: datasource } };
       writer = {
-        writeFragment: sinon.spy(function (outputStream, tripleStream, options) {
-          outputStream.end();
-        }),
+        writeFragment: sinon.spy(function (outputStream) { outputStream.end(); }),
+        writeNotFound: sinon.spy(function (outputStream) { outputStream.end(); }),
       };
       prefixes = { a: 'a' };
       server = new LinkedDataFragmentsServer({
