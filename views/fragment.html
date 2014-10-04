@@ -23,13 +23,7 @@
 </form>
 </div>
 
-<h3>Matches in <%= datasource.title %> for
-  <em class="pattern">{<% -%>
-    <%= query.subject              ? '<' + query.subject   + '>' : '?s' -%>
-    <%= query.predicate            ? '<' + query.predicate + '>' : '?p' -%>
-    <%= N3Util.isUri(query.object) ? '<' + query.object    + '>' : (query.object || '?o') -%>
-  }</em>
-</h3>
+<h3>Matches in <%= datasource.title %> for <em class="pattern"><%= query.patternString %></em></h3>
 <%
   var totalCount = metadata.totalCount,
       offset = query.offset || 0, limit = query.limit || Infinity,

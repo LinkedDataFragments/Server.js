@@ -40,7 +40,7 @@ else {
         var constructor = require('../lib/datasources/' + datasourceConfig.type),
             datasource = createInstance(constructor, datasourceConfig.settings || []);
         datasources[datasourceName].datasource = datasource;
-        datasources[datasourceName].url = '/' + datasourceName;
+        datasources[datasourceName].url = '/' + datasourceName + '#dataset';
       }
       catch (error) {
         datasourceConfig.enabled = false;
@@ -50,7 +50,7 @@ else {
   }
   // Create index data source
   datasources[''] = {
-    url: '/',
+    url: '/#dataset',
     role: 'index',
     title: 'dataset index',
     datasource: new IndexDatasource(datasources),
@@ -69,6 +69,7 @@ else {
     writers: {
       'text/html,*/*': new require('../lib/writers/HtmlWriter')(config),
       'text/turtle,text/n3': new require('../lib/writers/TurtleWriter')(config),
+      'application/ld+json,application/json': new require('../lib/writers/JsonLdWriter')(config),
     },
     prefixes: config.prefixes,
   });

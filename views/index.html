@@ -15,7 +15,7 @@ var rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     <% for (var datasourceName in datasources) {
          var datasource = datasources[datasourceName];
          if (datasource.role === 'index') continue; %>
-        <dt><a href="<%= datasource.url %>"><%= datasource.title %></a></dt>
+        <dt><a href="<%= datasource.url.replace(/#.*/, '') %>"><%= datasource.title %></a></dt>
         <dd><%= datasource.description || ' ' %></dd>
     <% } %>
   </dl>

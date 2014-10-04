@@ -20,7 +20,7 @@
   "dependencies": {
     "qejs": "3.0.x",
     "n3": "0.3.x",
-    "jsonld": "0.2.x",
+    "jsonld": "0.3.x",
     "request": "2.27.x",
     "mime": "1.2.x",
     "negotiate": "^1.0.1",

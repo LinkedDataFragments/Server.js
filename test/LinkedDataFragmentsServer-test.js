@@ -215,7 +215,7 @@ describe('LinkedDataFragmentsServer', function () {
         settings.should.deep.equal({
           datasource: {
             title: 'My data',
-            url: host + '/my-datasource',
+            url: host + '/my-datasource#dataset',
             templateUrl: host + '/my-datasource{?subject,predicate,object}',
           },
           fragment: {
@@ -229,6 +229,7 @@ describe('LinkedDataFragmentsServer', function () {
           query: query,
           datasources: datasources,
         });
+        query.should.have.property('patternString', '{ ?s ?p ?o }');
       });
     });
 
