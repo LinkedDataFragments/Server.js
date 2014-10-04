@@ -1,6 +1,6 @@
 <% /*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */ -%>
 <div resource="<%= datasource.url %>" typeof="void:datasource hydra:Collection">
-<h2><a href="<%= datasource.url %>"><%= datasource.title %></a></h2>
+<h2><a href="<%= datasource.url %>"><%= capitalizeFirst(datasource.title) %></a></h2>
 
 <form action="?" method="GET" property="hydra:search" resource="<%= datasource.url %>#triplePattern">
   <fieldset resource="<%= datasource.url %>#triplePattern">
@@ -51,7 +51,7 @@
   <% pageLinks(fragment); -%>
 <% } else if (totalCount === 0) { %>
   <p>
-    <%= datasource.title %> contains
+    <%= capitalizeFirst(datasource.title) %> contains
     <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="0">no</span>
     triples that match this pattern.
   </p>
@@ -91,6 +91,10 @@
 <% pageLinks(fragment); -%>
 
 <%
+function capitalizeFirst(string) {
+  return string && !/[A-Z]/.test(string) ? string[0].toUpperCase() + string.slice(1) : string;
+}
+
 function shorten(entity) {
   return entity.match(/([^\/#]*)[\/#]?$/)[1] || entity;
 }

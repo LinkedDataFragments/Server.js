@@ -26,14 +26,14 @@ describe('LinkedDataFragmentsServer', function () {
 
     it('should not send a body with HEAD requests', function (done) {
       client.head('/').expect(function (response) {
-        response.should.have.property('statusCode', 200);
+        response.should.have.property('statusCode', 404);
         response.should.have.property('text', '');
       }).end(done);
     });
 
     it('should not send a body with OPTIONS requests', function (done) {
       client.options('/').expect(function (response) {
-        response.should.have.property('statusCode', 200);
+        response.should.have.property('statusCode', 404);
         response.should.have.property('text', '');
       }).end(done);
     });
@@ -110,7 +110,7 @@ describe('LinkedDataFragmentsServer', function () {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
       routerC = { extractQueryParams: sinon.spy(function (request, query) {
-        query.features.dataset = true;
+        query.features.datasource = true;
         query.features.other = true;
         query.datasource = 'my-datasource';
         query.other = 'other';
@@ -257,7 +257,7 @@ describe('LinkedDataFragmentsServer', function () {
         select: sinon.stub(),
       };
       var router = { extractQueryParams: function (request, query) {
-        query.features.dataset = true;
+        query.features.datasource = true;
         query.datasource = 'my-datasource';
       }};
       writerHtml   = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
