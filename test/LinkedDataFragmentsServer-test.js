@@ -146,9 +146,10 @@ describe('LinkedDataFragmentsServer', function () {
     }
 
     describe('receiving a request for a fragment', function () {
+      var response;
       before(function (done) {
         resetAll();
-        client.get('/my-datasource?a=b&c=d').end(done);
+        response = client.get('/my-datasource?a=b&c=d').end(done);
       });
 
       it('should call the first router with the request and an empty query', function () {
@@ -210,22 +211,18 @@ describe('LinkedDataFragmentsServer', function () {
         var query = routerC.extractQueryParams.firstCall.args[1];
         var settings = writer.writeFragment.firstCall.args[2];
 
-        // find the hostname of the request
-        settings.should.have.property('fragment');
-        settings.fragment.should.have.property('url');
-        var host = settings.fragment.url.match(/^http:\/\/[^\/]+/)[0];
-
+        var root = 'http://' + response.req.getHeader('Host');
         settings.should.deep.equal({
           datasource: {
             title: 'My data',
-            url: host + '/my-datasource#dataset',
-            templateUrl: host + '/my-datasource{?subject,predicate,object}',
+            url: root + '/my-datasource#dataset',
+            templateUrl: root + '/my-datasource{?subject,predicate,object}',
           },
           fragment: {
-            url:             host + '/my-datasource?a=b&c=d',
-            pageUrl:         host + '/my-datasource?a=b&c=d',
-            firstPageUrl:    host + '/my-datasource?a=b&c=d&page=1',
-            nextPageUrl:     host + '/my-datasource?a=b&c=d&page=2',
+            url:             root + '/my-datasource?a=b&c=d',
+            pageUrl:         root + '/my-datasource?a=b&c=d',
+            firstPageUrl:    root + '/my-datasource?a=b&c=d&page=1',
+            nextPageUrl:     root + '/my-datasource?a=b&c=d&page=2',
             previousPageUrl: null
           },
           prefixes: prefixes,
@@ -437,6 +434,52 @@ describe('LinkedDataFragmentsServer', function () {
 
       it('should set the text/plain content type', function () {
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
+      });
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance with dereferencing', function () {
+    var server, client, writerHtml, writerJson, writerTurtle;
+    before(function () {
+      var datasource = {
+        supportsQuery: sinon.stub().returns(true),
+        select: sinon.stub(),
+      };
+      server = new LinkedDataFragmentsServer({
+        dereference: { '/resource/': 'dbpedia' },
+      });
+      client = request.agent(server);
+    });
+
+    describe('receiving a request for a dereferenced URL', function () {
+      var response;
+      before(function (done) {
+        client.get('/resource/Mickey_Mouse')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should return status code 303', function () {
+        response.should.have.property('statusCode', 303);
+      });
+
+      it('should set the text/plain content type', function () {
+        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
+      });
+
+      it('should set the Location header correctly', function () {
+        var hostname = response.req.getHeader('Host'),
+            entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
+            expectedLocation = 'http://' + hostname + '/dbpedia?subject=' + entityUrl;
+
+        response.headers.should.have.property('location', expectedLocation);
+      });
+
+      it('should mention the desired location in the body', function () {
+        var hostname = response.req.getHeader('Host'),
+            entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
+            expectedLocation = 'http://' + hostname + '/dbpedia?subject=' + entityUrl;
+
+        response.text.should.contain(expectedLocation);
       });
     });
   });
