@@ -3,7 +3,9 @@
 
 /** Standalone Linked Data Fragments Server */
 
-var fs = require('fs'),
+var _ = require('lodash'),
+    fs = require('fs'),
+    path = require('path'),
     cluster = require('cluster'),
     LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
     IndexDatasource = require('../lib/datasources/IndexDatasource');
@@ -57,30 +59,34 @@ else {
   };
 
   // Set up fragment routing
-  var fragmentRouters = ['Datasource', 'TriplePattern', 'Page'].map(function (routerName) {
-    var Router = require('../lib/routers/' + routerName + 'Router');
-    return new Router({ prefixes: config.prefixes });
+  var routersSettings = config.routers || ['DatasourceRouter', 'TriplePatternRouter', 'PageRouter']
+                                          .map(function (type) { return { type: type }; });
+  config.routers = routersSettings.map(function (router) {
+    var Router = require(path.join('../lib/routers/', router.type));
+    return new Router(_.defaults(router.settings || {}, config));
+  });
+
+  // Set up writers
+  var writersSettings = config.writers || {
+    'text/html,*/*': { type: 'HtmlWriter' },
+    'text/turtle,text/n3': { type: 'TurtleWriter' },
+    'application/ld+json,application/json': { type: 'JsonLdWriter' },
+  };
+  config.writers = _.mapValues(writersSettings, function (writer) {
+    var Writer = require(path.join('../lib/writers/', writer.type));
+    return new Writer(_.defaults(writer.settings || {}, config));
   });
 
   // Create and start server
-  var server = new LinkedDataFragmentsServer({
-    datasources: datasources,
-    fragmentRouters: fragmentRouters,
-    writers: {
-      'text/html,*/*': new require('../lib/writers/HtmlWriter')(config),
-      'text/turtle,text/n3': new require('../lib/writers/TurtleWriter')(config),
-      'application/ld+json,application/json': new require('../lib/writers/JsonLdWriter')(config),
-    },
-    prefixes: config.prefixes,
-  });
+  var server = new LinkedDataFragmentsServer(config);
   server.listen(port);
   console.log('Worker', process.pid, 'running on http://localhost:' + port + '/');
 
   // Terminate gracefully if possible
   process.once('SIGINT', function () {
     console.log('Stopping worker', process.pid);
-    process.on('SIGINT', function () { process.exit(1); });
     server.stop();
+    process.on('SIGINT', function () { process.exit(1); });
   });
 }
 

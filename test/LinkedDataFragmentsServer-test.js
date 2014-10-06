@@ -130,7 +130,7 @@ describe('LinkedDataFragmentsServer', function () {
       };
       prefixes = { a: 'a' };
       server = new LinkedDataFragmentsServer({
-        fragmentRouters: [ routerA, routerB, routerC ],
+        routers: [ routerA, routerB, routerC ],
         datasources: datasources,
         writers: { '*/*': writer },
         prefixes: prefixes,
@@ -270,7 +270,7 @@ describe('LinkedDataFragmentsServer', function () {
       writerJson   = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
       writerTurtle = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
       server = new LinkedDataFragmentsServer({
-        fragmentRouters: [ router ],
+        routers: [ router ],
         datasources: { 'my-datasource': { datasource: datasource } },
         writers: {
           'application/json': writerJson,
@@ -402,7 +402,7 @@ describe('LinkedDataFragmentsServer', function () {
       }};
       server = new LinkedDataFragmentsServer({
         log: function () {},
-        fragmentRouters: [ router ],
+        routers: [ router ],
         datasources: { 'my-datasource': { datasource: datasource } },
       });
       client = request.agent(server);
