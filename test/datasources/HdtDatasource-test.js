@@ -11,26 +11,26 @@ describe('HdtDatasource', function () {
     });
 
     it('should be a HdtDatasource constructor', function (done) {
-      var instance = new HdtDatasource(exampleHdtFile);
+      var instance = new HdtDatasource({ file: exampleHdtFile });
       instance.should.be.an.instanceof(HdtDatasource);
       instance.close(done);
     });
 
     it('should create HdtDatasource objects', function (done) {
-      var instance = HdtDatasource(exampleHdtFile);
+      var instance = HdtDatasource({ file: exampleHdtFile });
       instance.should.be.an.instanceof(HdtDatasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', function (done) {
-      var instance = new HdtDatasource(exampleHdtFile);
+      var instance = new HdtDatasource({ file: exampleHdtFile });
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
   });
 
   describe('A HdtDatasource instance for an example HDT file', function () {
-    var datasource = new HdtDatasource(exampleHdtFile);
+    var datasource = new HdtDatasource({ file: exampleHdtFile });
     after(function (done) { datasource.close(done); });
 
     itShouldExecute(datasource,

@@ -5,13 +5,13 @@
       "title": "DBpedia 2014",
       "type": "HdtDatasource",
       "description": "DBpedia 2014 with an HDT back-end",
-      "settings": ["data/dbpedia2014.hdt"]
+      "settings": { "file": "data/dbpedia2014.hdt" }
     },
     "dbpedia-sparql": {
       "title": "DBpedia 3.9 (Virtuoso)",
       "type": "SparqlDatasource",
       "description": "DBpedia 3.9 with a Virtuoso back-end",
-      "settings": ["http://dbpedia.restdesc.org/", "http://dbpedia.org"]
+      "settings": { "endpoint": "http://dbpedia.restdesc.org/", "defaultGraph": "http://dbpedia.org" }
     }
   },
 

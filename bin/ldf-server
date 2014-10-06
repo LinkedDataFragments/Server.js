@@ -34,18 +34,18 @@ if (cluster.isMaster && workers > 1) {
 // Start up a worker otherwise
 else {
   // Create data sources
-  var datasources = config.datasources;
-  for (var datasourceName in config.datasources) {
-    var datasourceConfig = config.datasources[datasourceName];
-    if (datasourceConfig.enabled !== false) {
+  var datasources = config.datasources || {};
+  for (var datasourceName in datasources) {
+    var datasource = config.datasources[datasourceName];
+    if (datasource.enabled !== false) {
       try {
-        var constructor = require('../lib/datasources/' + datasourceConfig.type),
-            datasource = createInstance(constructor, datasourceConfig.settings || []);
+        var Datasource = require(path.join('../lib/datasources/', datasource.type));
+        datasource = new Datasource(_.defaults(datasource.settings || {}, config));
         datasources[datasourceName].datasource = datasource;
         datasources[datasourceName].url = '/' + datasourceName + '#dataset';
       }
       catch (error) {
-        datasourceConfig.enabled = false;
+        datasource.enabled = false;
         process.stderr.write('Could not load datasource ' + datasourceName + ': ' + error.message + '\n');
       }
     }
@@ -88,11 +88,4 @@ else {
     server.stop();
     process.on('SIGINT', function () { process.exit(1); });
   });
-}
-
-// Creates an instance without the `new` keyword
-function createInstance(constructor, constructorArguments) {
-  function Constructor() { return constructor.apply(this, constructorArguments); }
-  Constructor.prototype = constructor.prototype;
-  return new Constructor();
 }
