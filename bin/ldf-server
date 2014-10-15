@@ -37,7 +37,9 @@ else {
   var datasources = config.datasources || {};
   for (var datasourceName in datasources) {
     var datasource = config.datasources[datasourceName];
-    if (datasource.enabled !== false) {
+    if (datasource.enabled === false)
+      delete datasources[datasourceName];
+    else {
       try {
         var Datasource = require(path.join('../lib/datasources/', datasource.type));
         datasource = new Datasource(_.defaults(datasource.settings || {}, config));
@@ -45,7 +47,7 @@ else {
         datasources[datasourceName].url = '/' + datasourceName + '#dataset';
       }
       catch (error) {
-        datasource.enabled = false;
+        delete datasources[datasourceName];
         process.stderr.write('Could not load datasource ' + datasourceName + ': ' + error.message + '\n');
       }
     }
