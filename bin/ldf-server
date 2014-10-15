@@ -36,15 +36,16 @@ else {
   // Create data sources
   var datasources = config.datasources || {};
   for (var datasourceName in datasources) {
-    var datasource = config.datasources[datasourceName];
-    if (datasource.enabled === false)
+    var datasourceConfig = config.datasources[datasourceName];
+    if (datasourceConfig.enabled === false)
       delete datasources[datasourceName];
     else {
       try {
-        var Datasource = require(path.join('../lib/datasources/', datasource.type));
-        datasource = new Datasource(_.defaults(datasource.settings || {}, config));
-        datasources[datasourceName].datasource = datasource;
-        datasources[datasourceName].url = '/' + datasourceName + '#dataset';
+        var Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
+            datasource = new Datasource(_.defaults(datasourceConfig.settings || {}, config));
+        datasourceConfig.datasource = datasource;
+        datasourceConfig.url = '/' + datasourceName + '#dataset';
+        datasourceConfig.title = datasourceConfig.title || datasourceName;
       }
       catch (error) {
         delete datasources[datasourceName];
