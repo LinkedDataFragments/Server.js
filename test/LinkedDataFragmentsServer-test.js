@@ -20,6 +20,12 @@ describe('LinkedDataFragmentsServer', function () {
       client = request.agent(server);
     });
 
+    it('should send CORS headers', function (done) {
+      client.head('/').expect(function (response) {
+        response.headers.should.have.property('access-control-allow-origin', '*');
+      }).end(done);
+    });
+
     it('should not allow POST requests', function (done) {
       client.post('/').expect(function (response) {
         response.should.have.property('statusCode', 405);
