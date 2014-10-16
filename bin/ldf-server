@@ -80,6 +80,21 @@ else {
     return new Writer(_.defaults(writer.settings || {}, config));
   });
 
+  // Set up access logging
+  var loggingSettings = _.defaults(config.logging || {}, { enabled: false, file: 'access.log' });
+  if (loggingSettings.enabled) {
+    var accesslog;
+    try { accesslog = require('access-log'); }
+    catch (e) { console.error('Cannot write access log: "access-log" dependency missing'); }
+    config.accesslogger = function (request, response) {
+      accesslog(request, response, null, function (logEntry) {
+        fs.appendFile(loggingSettings.file, logEntry + '\n', function (error) {
+          error && process.stderr.write('Error when writing to access log file: ' + error);
+        });
+      });
+    };
+  }
+
   // Create and start server
   var server = new LinkedDataFragmentsServer(config);
   server.listen(port);

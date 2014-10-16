@@ -48,5 +48,10 @@
     "dbpprop":     "http://dbpedia.org/property/",
     "hydra":       "http://www.w3.org/ns/hydra/core#",
     "void":        "http://rdfs.org/ns/void#"
+  },
+
+  "logging": {
+    "enabled": true,
+    "file": "access.log"
   }
 }
