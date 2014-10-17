@@ -1,5 +1,6 @@
 {
-  "title": "My Linked Data Fragments server",
+  "title": "DBpedia – Linked Data Fragments",
+  "baseURL": "http://fragments.dbpedia.org/",
 
   "datasources": {
     "dbpedia": {

@@ -13,7 +13,7 @@ body {
   max-width: 800px;
   margin: 0 auto;
   line-height: 1.3;
-  color: #333333;
+  color: #404040;
   background-color: white;
   padding: 10px 40px;
   box-shadow: 2px 2px 15px 0px rgba(50, 50, 50, 0.75);
@@ -27,10 +27,10 @@ h1 {
   margin-right: 180px;
 }
 h1 a {
-  color: black;
+  color: inherit;
 }
 h2 {
-  color: #be1622;
+  color: #1a5f76;
 }
 h3 {
   white-space: nowrap;
@@ -43,12 +43,12 @@ p {
 }
 
 a {
-  color: #be1622;
+  color: #1a5f76;
   text-decoration: none;
   border-bottom: none 1px;
 }
 a:hover {
-  color: #be1622 !important;
+  color: #e77a0a !important;
   border-bottom-style: solid;
 }
 
@@ -101,7 +101,7 @@ input {
 }
 fieldset input {
   width: 500px;
-  color: #be1622;
+  color: #1a5f76;
   background-color: transparent;
   border: none;
   border-bottom: 1px solid #bbbbbb;
@@ -109,7 +109,7 @@ fieldset input {
 }
 input[type=submit] {
   font-weight: bold;
-  color: #be1622;
+  color: #1a5f76;
   background-color: #f6f6f6;
   border-radius: 3px;
   padding: 5px 8px;
@@ -117,7 +117,8 @@ input[type=submit] {
   cursor: pointer;
 }
 input[type=submit]:hover {
-  border-color: #666666;
+  color: #e77a0a;
+  border-color: #e77a0a;
 }
 input[type=submit]:active {
   padding: 6px 7px 4px 9px;
