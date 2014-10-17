@@ -1,7 +1,41 @@
 <% /* @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */ -%>
 <% inherits('base') %>
 
-<h2>Query DBpedia</h2>
+<section id="welcome">
+<h2><a href="/2014/en">Welcome to DBpedia!</a></h2>
+<p>
+  DBpedia is a crowd-sourced community effort to extract
+  <strong>structured information from Wikipedia</strong>
+  and make this information available on the Web.
+  DBpedia allows you to ask sophisticated queries against Wikipedia.
+</p>
+<p>
+  Data from DBpedia can be accessed as <strong>four complementary kinds of Linked Data Fragments:</strong>
+</p>
+<ul>
+  <li><strong><a href="http://wiki.dbpedia.org/Downloads2014">Data dumps</a></strong>, which you can download and query locally</a></li>
+  <li><strong><a href="http://dbpedia.org/sparql">SPARQL endpoint queries</a></strong>, which are executed by the DBpedia server</a></li>
+  <li><strong><a href="http://dbpedia.org/resource/DBpedia">Linked Data documents</a></strong>, which you can browse by topic</a></li>
+  <li><strong><a href="/2014/en">Triple Pattern Fragments</a></strong>, which allow <em>clients</em> to execute queries</a></li>
+</ul>
+<p>
+  This page is the entry point of the <strong>Triple Pattern Fragments</strong> interface.
+</p>
+</section>
+
+<h2><a href="/2014/en">Browse DBpedia by triple pattern</a></h2>
+<p>
+  Use the <a href="/2014/en">DBpedia triple pattern fragments interface</a>
+  to query by triple pattern.
+  Examples:
+</p>
+<ul>
+  <li><a href="/2014/en?subject=&predicate=http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type&object=http%3A%2F%2Fdbpedia.org%2Fontology%2FArtist">Show all artists</a></a></li>
+  <li><a href="/2014/en?subject=&predicate=&object=http%3A%2F%2Fdbpedia.org%2Fresource%2FBelgium">Show all things that link to Belgium</a></a></li>
+  <li><a href="/2014/en?subject=&predicate=http%3A%2F%2Fdbpedia.org%2Fontology%2FbirthPlace&object=">List all people's birth places</a></a></li>
+</ul>
+
+<h2>Query DBpedia from your browser</h2>
 <p>
   Your browser executes these queries locally
   using <a href="http://linkeddatafragments.org/in-depth/#tpf" target="_blank">triple pattern fragments</a>.

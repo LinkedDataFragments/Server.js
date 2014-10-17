@@ -7,6 +7,18 @@ html, input, textarea, button {
   outline: none !important;
 }
 
+h1 {
+  margin-bottom: 1em;
+}
+
+h2 {
+  margin-top: 1em;
+}
+
+p {
+  margin: .5em 0;
+}
+
 a, button, label {
   font-weight: bold;
 }
@@ -34,12 +46,12 @@ fieldset {
 .ldf-client, .ldf-client * {
   max-width: 100%;
 }
-ul {
+fieldset ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-li {
+fieldset li {
   margin: .5em 0;
   line-height: 1.4em !important;
 }
@@ -131,7 +143,7 @@ footer {
 }
 
 @media (max-width: 500px) {
-  .logo {
+  .logo, #welcome {
     display: none;
   }
 }

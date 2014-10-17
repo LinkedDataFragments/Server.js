@@ -49,7 +49,7 @@ a {
 }
 a:hover {
   color: #e77a0a !important;
-  border-bottom-style: solid;
+  text-decoration: underline;
 }
 
 ul {
