@@ -1,6 +1,6 @@
 /* @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
-html, input, th, td {
+html, input, textarea, button, th, td {
   font-family: "Open Sans", Verdana, Arial, sans-serif;
   font-size: 11pt;
 }
@@ -107,7 +107,7 @@ fieldset input {
   border-bottom: 1px solid #bbbbbb;
   cursor: pointer;
 }
-input[type=submit] {
+input[type=submit], button {
   font-weight: bold;
   color: #1a5f76;
   background-color: #f6f6f6;
@@ -116,11 +116,11 @@ input[type=submit] {
   border: 1px solid #999999;
   cursor: pointer;
 }
-input[type=submit]:hover {
+input[type=submit]:hover, button:hover {
   color: #e77a0a;
   border-color: #e77a0a;
 }
-input[type=submit]:active {
+input[type=submit]:active, button:active {
   padding: 6px 7px 4px 9px;
 }
 .uri {

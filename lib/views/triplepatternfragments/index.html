@@ -1,26 +1,41 @@
 <% /* @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */ -%>
 <% inherits('base') %>
-<%
-var rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-    rdfs = 'http://www.w3.org/2000/01/rdf-schema#',
-    dc   = 'http://purl.org/dc/terms/',
-    voID = 'http://rdfs.org/ns/void#';
-%>
 
-<% if (!query.features.triplePattern) { %>
-<div class="index">
-  <h2>Available datasets</h2>
-  <p>Browse the following datasets as <a href="http://linkeddatafragments.org/in-depth/#tpf">Triple Pattern Fragments</a>:</p>
-  <dl class="datasets">
-    <% for (var datasourceName in datasources) {
-         var datasource = datasources[datasourceName];
-         if (datasource.role === 'index' || datasource.hide) continue; %>
-        <dt><a href="<%= datasource.url.replace(/#.*/, '') %>"><%= datasource.title %></a></dt>
-        <dd><%= datasource.description || ' ' %></dd>
-    <% } %>
-  </dl>
-  <p>The current dataset <em class="dataset">index</em> contains metadata about these datasets.</p>
-</div>
-<% } %>
+<h2>Query DBpedia</h2>
+<p>
+  Your browser executes these queries locally
+  using <a href="http://linkeddatafragments.org/in-depth/#tpf" target="_blank">triple pattern fragments</a>.
+</p>
 
-<%- render('fragment') %>
+<fieldset class="ldf-client">
+  <ul>
+    <li>
+      <label>Query</label>
+      <textarea class="queryText"></textarea>
+    </li>
+
+    <li>
+      <label>Example queries</label>
+      <select class="query"></select>
+    </li>
+
+    <li>
+      <button class="start">Execute query</button>
+      <button class="stop" style="display:none">Stop execution</button>
+    </li>
+
+    <li>
+      <label>Query results</label>
+      <pre class="results"></pre>
+    </li>
+
+    <li>
+      <label>Execution log</label>
+      <pre class="log"></pre>
+    </li>
+  </ul>
+</fieldset>
+
+<link rel="stylesheet" href="/assets/styles/ldf-query-ui" />
+<script src="/assets/scripts/ldf-query-ui"></script>
+<script>jQuery(function($){$(".ldf-client").queryui({settings:"/assets/queries"})})</script>
