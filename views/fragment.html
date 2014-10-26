@@ -27,13 +27,13 @@
 <%
   var totalCount = metadata.totalCount,
       offset = query.offset || 0, limit = query.limit || Infinity,
-      start = offset + 1, end = Math.min(start + limit, totalCount),
+      start = offset + 1, end = Math.min(offset + limit, totalCount),
       page = offset / limit + 1,
       hasPrev = page > 1, hasNext = totalCount > end,
       subject = query.subject, predicate = query.predicate, object = query.object;
 %>
 <div class="counts">
-<% if (start <= totalCount) { %>
+<% if (offset < totalCount) { %>
   Showing triples <%= formatNumber(start) %> to <%= formatNumber(end) %> of
   <%= totalCount === end ? '' : '±'
   %><span property="void:triples hydra:totalItems" datatype="xsd:integer" content="<%= totalCount %>"><%=
