@@ -61,20 +61,22 @@ describe('TurtleWriter', function () {
         });
       });
 
-      describe('with a non-empty triple stream', function () {
+      describe('with a non-empty triple stream that writes metadata first', function () {
         var tripleStream = test.streamFromArray([
           { subject: 'a', predicate: 'b', object: 'c' },
           { subject: 'a', predicate: 'd', object: 'e' },
           { subject: 'f', predicate: 'g', object: 'h' },
         ]);
+        tripleStream.pause();
         var result = test.createStreamCapture();
         before(function (done) {
           writer.writeFragment(result, tripleStream, writeSettings);
           tripleStream.emit('metadata', { totalCount: 1234 });
+          tripleStream.resume();
           result.on('finish', done);
         });
 
-        it('should only write data source metadata', function () {
+        it('should write data and metadata', function () {
           result.buffer.should.equal(asset('basic-fragment.ttl'));
         });
       });
@@ -93,7 +95,7 @@ describe('TurtleWriter', function () {
           });
         });
 
-        it('should only write data source metadata', function () {
+        it('should write data and metadata', function () {
           result.buffer.should.equal(asset('basic-fragment-metadata-last.ttl'));
         });
       });
