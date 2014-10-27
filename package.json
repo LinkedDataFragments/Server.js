@@ -37,7 +37,7 @@
     "jshint": "^2.1.10",
     "mocha": "^1.17.1",
     "pre-commit": "^0.0.9",
-    "sinon": "^1.10.3",
+    "sinon": "1.10.3",
     "sinon-chai": "^2.6.0",
     "supertest": "^0.13.0"
   },
