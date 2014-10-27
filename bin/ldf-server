@@ -58,7 +58,7 @@ else {
     url: '/#dataset',
     role: 'index',
     title: 'dataset index',
-    datasource: new IndexDatasource(datasources),
+    datasource: new IndexDatasource({ datasources: datasources }),
   };
 
   // Set up fragment routing
