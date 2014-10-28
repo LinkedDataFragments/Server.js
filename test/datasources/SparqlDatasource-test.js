@@ -194,6 +194,39 @@ describe('SparqlDatasource', function () {
         expect(totalCount).to.equal(12345678);
       });
     });
+
+    describe('when invalid Turtle is returned in response to the data query', function () {
+      var result, error;
+      before(function (done) {
+        request.reset();
+        request.onFirstCall().returns(test.createHttpResponse('invalid', 'text/turtle'));
+        request.onSecondCall().returns(test.createHttpResponse(turtleCountResult, 'text/turtle'));
+        request.onThirdCall().returns(test.createHttpResponse('invalid', 'text/turtle'));
+
+        result = datasource.select({ subject: 'abcd', features: { triplePattern: true } });
+        result.on('error', function (e) { error = e; done(); });
+      });
+
+      it('should emit an error', function () {
+        error.should.have.property('message', 'The SPARQL endpoint returned an invalid Turtle response.');
+      });
+    });
+
+    describe('when invalid Turtle is returned in response to the count query', function () {
+      var result, error;
+      before(function (done) {
+        request.reset();
+        request.onFirstCall().returns(test.createHttpResponse(turtleResult, 'text/turtle'));
+        request.onSecondCall().returns(test.createHttpResponse('invalid', 'text/turtle'));
+
+        result = datasource.select({ subject: 'abcde', features: { triplePattern: true } });
+        result.on('error', function (e) { error = e; done(); });
+      });
+
+      it('should emit an error', function () {
+        error.should.have.property('message', 'The SPARQL endpoint returned an invalid Turtle response.');
+      });
+    });
   });
 });
 
