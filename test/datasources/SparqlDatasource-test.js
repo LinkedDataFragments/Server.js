@@ -208,7 +208,7 @@ describe('SparqlDatasource', function () {
       });
 
       it('should emit an error', function () {
-        error.should.have.property('message', 'The SPARQL endpoint returned an invalid Turtle response.');
+        error.should.have.property('message', 'Error accessing SPARQL endpoint http://ex.org/sparql: The endpoint returned an invalid Turtle response.');
       });
     });
 
@@ -224,7 +224,37 @@ describe('SparqlDatasource', function () {
       });
 
       it('should emit an error', function () {
-        error.should.have.property('message', 'The SPARQL endpoint returned an invalid Turtle response.');
+        error.should.have.property('message', 'Error accessing SPARQL endpoint http://ex.org/sparql: The endpoint returned an invalid Turtle response.');
+      });
+    });
+
+    describe('when the data query request errors', function () {
+      var result, error;
+      before(function (done) {
+        request.reset();
+
+        result = datasource.select({ subject: 'abcde', features: { triplePattern: true } });
+        result.on('error', function (e) { error = e; done(); });
+        request.getCall(0).callArgWith(1, Error('query response error'));
+      });
+
+      it('should emit an error', function () {
+        error.should.have.property('message', 'Error accessing SPARQL endpoint http://ex.org/sparql: query response error');
+      });
+    });
+
+    describe('when the count query request errors', function () {
+      var result, error;
+      before(function (done) {
+        request.reset();
+
+        result = datasource.select({ subject: 'abcdef', features: { triplePattern: true } });
+        result.on('error', function (e) { error = e; done(); });
+        request.getCall(1).callArgWith(1, Error('query response error'));
+      });
+
+      it('should emit an error', function () {
+        error.should.have.property('message', 'Error accessing SPARQL endpoint http://ex.org/sparql: query response error');
       });
     });
   });
