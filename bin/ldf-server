@@ -21,8 +21,8 @@ var configFile = args[0],
     port = parseInt(args[1], 10) || 3000,
     workers = parseInt(args[2], 10) || 1;
 
-// Start up a cluster master if necessary
-if (cluster.isMaster && workers > 1) {
+// Start up a cluster master
+if (cluster.isMaster) {
   // Create workers
   console.log('Master %d running.', process.pid);
   for (var i = 0; i < workers; i++)
@@ -32,7 +32,7 @@ if (cluster.isMaster && workers > 1) {
     cluster.fork();
   });
 }
-// Start up a worker otherwise
+// Start up a worker
 else {
   // Create data sources
   var datasources = config.datasources || {};
