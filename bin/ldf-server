@@ -24,11 +24,12 @@ var configFile = args[0],
 // Start up a cluster master if necessary
 if (cluster.isMaster && workers > 1) {
   // Create workers
-  console.log('Starting cluster');
+  console.log('Master %d running.', process.pid);
   for (var i = 0; i < workers; i++)
     cluster.fork();
-  cluster.on('exit', function (worker) {
-    console.log('worker', worker.process.pid, 'exited');
+  cluster.on('exit', function (worker, code, signal) {
+    console.log('Worker %d died with code %s. Starting a new worker.', worker.process.pid, code || signal);
+    cluster.fork();
   });
 }
 // Start up a worker otherwise
@@ -98,7 +99,7 @@ else {
   // Create and start server
   var server = new LinkedDataFragmentsServer(config);
   server.listen(port);
-  console.log('Worker', process.pid, 'running on http://localhost:' + port + '/');
+  console.log('Worker %d running on http://localhost:%d/.', process.pid, port);
 
   // Terminate gracefully if possible
   process.once('SIGINT', function () {
