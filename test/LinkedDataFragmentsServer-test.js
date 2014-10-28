@@ -305,8 +305,8 @@ describe('LinkedDataFragmentsServer', function () {
         response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
       });
 
-      it('should indicate Content-Type in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Content-Type');
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
       });
     });
 
@@ -326,8 +326,8 @@ describe('LinkedDataFragmentsServer', function () {
         response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
       });
 
-      it('should indicate Content-Type in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Content-Type');
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
       });
     });
 
@@ -347,8 +347,8 @@ describe('LinkedDataFragmentsServer', function () {
         response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
       });
 
-      it('should indicate Content-Type in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Content-Type');
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
       });
     });
 
@@ -368,8 +368,8 @@ describe('LinkedDataFragmentsServer', function () {
         response.headers.should.have.property('content-type', 'application/json;charset=utf-8');
       });
 
-      it('should indicate Content-Type in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Content-Type');
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
       });
     });
 
@@ -389,8 +389,8 @@ describe('LinkedDataFragmentsServer', function () {
         response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
       });
 
-      it('should indicate Content-Type in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Content-Type');
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
       });
     });
 
@@ -410,8 +410,8 @@ describe('LinkedDataFragmentsServer', function () {
         response.headers.should.have.property('content-type', 'text/n3;charset=utf-8');
       });
 
-      it('should indicate Content-Type in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Content-Type');
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
       });
     });
   });
@@ -450,8 +450,8 @@ describe('LinkedDataFragmentsServer', function () {
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
       });
 
-      it('should indicate Content-Type in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Content-Type');
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
       });
     });
 
@@ -470,8 +470,8 @@ describe('LinkedDataFragmentsServer', function () {
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
       });
 
-      it('should indicate Content-Type in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Content-Type');
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
       });
     });
   });
