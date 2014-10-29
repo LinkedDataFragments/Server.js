@@ -96,6 +96,29 @@ describe('HdtDatasource', function () {
         { subject: 'a',       predicate: 'b', object: 'genid:c2' },
         { subject: 'a',       predicate: 'b', object: 'genid:c3' },
       ]);
+
+    itShouldExecute(datasource,
+      'a query for a blank subject',
+      { suject: '_:a', features: { triplePattern: true } },
+      6, 6);
+
+    itShouldExecute(datasource,
+      'a query for a IRI that corresponds to a blank node as subject',
+      { subject: 'genid:a', features: { triplePattern: true } },
+      3, 3,
+      [
+        { subject: 'genid:a', predicate: 'b', object: 'c1' },
+        { subject: 'genid:a', predicate: 'b', object: 'c2' },
+        { subject: 'genid:a', predicate: 'b', object: 'c3' },
+      ]);
+
+    itShouldExecute(datasource,
+      'a query for a IRI that corresponds to a blank node as object',
+      { object: 'genid:c1', features: { triplePattern: true } },
+      1, 1,
+      [
+        { subject: 'a', predicate: 'b', object: 'genid:c1' },
+      ]);
   });
 
   describe('A HdtDatasource instance with blank nodes and a blank node prefix', function () {
@@ -114,6 +137,29 @@ describe('HdtDatasource', function () {
         { subject: 'a', predicate: 'b', object: 'http://example.org/.well-known/genid/c1' },
         { subject: 'a', predicate: 'b', object: 'http://example.org/.well-known/genid/c2' },
         { subject: 'a', predicate: 'b', object: 'http://example.org/.well-known/genid/c3' },
+      ]);
+
+    itShouldExecute(datasource,
+      'a query for a blank subject',
+      { suject: '_:a', features: { triplePattern: true } },
+      6, 6);
+
+    itShouldExecute(datasource,
+      'a query for a IRI that corresponds to a blank node as subject',
+      { subject: 'http://example.org/.well-known/genid/a', features: { triplePattern: true } },
+      3, 3,
+      [
+        { subject: 'http://example.org/.well-known/genid/a', predicate: 'b', object: 'c1' },
+        { subject: 'http://example.org/.well-known/genid/a', predicate: 'b', object: 'c2' },
+        { subject: 'http://example.org/.well-known/genid/a', predicate: 'b', object: 'c3' },
+      ]);
+
+    itShouldExecute(datasource,
+      'a query for a IRI that corresponds to a blank node as object',
+      { object: 'http://example.org/.well-known/genid/c1', features: { triplePattern: true } },
+      1, 1,
+      [
+        { subject: 'a', predicate: 'b', object: 'http://example.org/.well-known/genid/c1' },
       ]);
   });
 });
