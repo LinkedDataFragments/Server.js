@@ -43,7 +43,9 @@ else {
     else {
       try {
         var Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
-            datasource = new Datasource(_.defaults(datasourceConfig.settings || {}, config));
+            settings = _.defaults(datasourceConfig.settings || {}, config), datasource;
+        settings.blankNodePrefix = settings.blankNodePrefix || 'genid:' + encodeURIComponent(datasourceName) + '#';
+        datasource = new Datasource(settings);
         datasourceConfig.datasource = datasource;
         datasourceConfig.url = '/' + datasourceName + '#dataset';
         datasourceConfig.title = datasourceConfig.title || datasourceName;
