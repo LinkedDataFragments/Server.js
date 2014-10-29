@@ -221,6 +221,7 @@ describe('LinkedDataFragmentsServer', function () {
         settings.should.deep.equal({
           datasource: {
             title: 'My data',
+            index: root + '/#dataset',
             url: root + '/my-datasource#dataset',
             templateUrl: root + '/my-datasource{?subject,predicate,object}',
           },

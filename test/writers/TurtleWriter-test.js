@@ -22,7 +22,8 @@ describe('TurtleWriter', function () {
     var writeSettings = {
       datasource: {
         title: 'My data',
-        url: 'http://ex.org/data',
+        index: 'http://ex.org/#dataset',
+        url: 'http://ex.org/data#dataset',
         templateUrl: 'http://ex.org/data{?subject,predicate,object}',
       },
       fragment: {
