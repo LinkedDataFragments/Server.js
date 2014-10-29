@@ -34,17 +34,31 @@ if (cluster.isMaster) {
 }
 // Start up a worker
 else {
-  // Create data sources
-  var datasources = config.datasources || {};
+  // Configure preset URLs
+  var baseURL = config.baseURL ? config.baseURL.replace(/\/?$/, '') : '',
+      blankNodePath = baseURL ? '/.well-known/genid/' : '',
+      blankNodePrefix = blankNodePath ? baseURL + blankNodePath : 'genid:';
+
+  // Create all data sources
+  var datasources = config.datasources || {},
+      dereference = config.dereference || (config.dereference = {});
   for (var datasourceName in datasources) {
     var datasourceConfig = config.datasources[datasourceName];
     if (datasourceConfig.enabled === false)
       delete datasources[datasourceName];
     else {
       try {
+        // Retrieve the data source class and settings
         var Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
             settings = _.defaults(datasourceConfig.settings || {}, config), datasource;
-        settings.blankNodePrefix = settings.blankNodePrefix || 'genid:' + encodeURIComponent(datasourceName) + '#';
+        // Set up blank-node-to-IRI translation, with dereferenceable URLs when possible
+        if (!settings.blankNodePrefix) {
+          var datasetPath = encodeURIComponent(datasourceName) + '/';
+          settings.blankNodePrefix = blankNodePrefix + datasetPath;
+          if (blankNodePath)
+            dereference[blankNodePath + datasetPath] = datasourceName;
+        }
+        // Create the data source
         datasource = new Datasource(settings);
         datasourceConfig.datasource = datasource;
         datasourceConfig.url = '/' + datasourceName + '#dataset';
@@ -56,6 +70,7 @@ else {
       }
     }
   }
+
   // Create index data source
   datasources[''] = {
     url: '/#dataset',

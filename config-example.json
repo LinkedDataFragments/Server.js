@@ -1,5 +1,7 @@
 {
   "title": "My Linked Data Fragments server",
+  "baseURL": "http://example.org/",
+
   "datasources": {
     "dbpedia": {
       "title": "DBpedia 2014",
