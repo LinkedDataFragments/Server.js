@@ -44,28 +44,29 @@ else {
       dereference = config.dereference || (config.dereference = {});
   for (var datasourceName in datasources) {
     var datasourceConfig = config.datasources[datasourceName];
-    if (datasourceConfig.enabled === false)
-      delete datasources[datasourceName];
-    else {
+    delete datasources[datasourceName];
+    if (datasourceConfig.enabled !== false) {
       try {
+        // Avoid illegal URI characters in data source path
+        var datasourcePath = encodeURI(datasourceName);
+        datasources[datasourcePath] = datasourceConfig;
         // Retrieve the data source class and settings
         var Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
             settings = _.defaults(datasourceConfig.settings || {}, config), datasource;
         // Set up blank-node-to-IRI translation, with dereferenceable URLs when possible
         if (!settings.blankNodePrefix) {
-          var datasetPath = encodeURIComponent(datasourceName) + '/';
-          settings.blankNodePrefix = blankNodePrefix + datasetPath;
+          settings.blankNodePrefix = blankNodePrefix + datasourcePath + '/';
           if (blankNodePath)
-            dereference[blankNodePath + datasetPath] = datasourceName;
+            dereference[blankNodePath + datasourcePath + '/'] = datasourceName;
         }
         // Create the data source
         datasource = new Datasource(settings);
         datasourceConfig.datasource = datasource;
-        datasourceConfig.url = '/' + datasourceName + '#dataset';
+        datasourceConfig.url = '/' + datasourcePath + '#dataset';
         datasourceConfig.title = datasourceConfig.title || datasourceName;
       }
       catch (error) {
-        delete datasources[datasourceName];
+        delete datasources[datasourcePath];
         process.stderr.write('Could not load datasource ' + datasourceName + ': ' + error.message + '\n');
       }
     }
