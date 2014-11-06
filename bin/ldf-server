@@ -62,7 +62,7 @@ else {
         // Create the data source
         datasource = new Datasource(settings);
         datasourceConfig.datasource = datasource;
-        datasourceConfig.url = '/' + datasourcePath + '#dataset';
+        datasourceConfig.url = baseURL + '/' + datasourcePath + '#dataset';
         datasourceConfig.title = datasourceConfig.title || datasourceName;
       }
       catch (error) {
