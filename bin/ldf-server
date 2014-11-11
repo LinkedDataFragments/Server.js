@@ -83,6 +83,9 @@ else {
     datasource: new IndexDatasource({ datasources: datasources }),
   };
 
+  // Set up assets
+  config.assetsPath = baseURLPath + 'assets/';
+
   // Set up fragment routing
   var routersSettings = config.routers || ['DatasourceRouter', 'TriplePatternRouter', 'PageRouter']
                                           .map(function (type) { return { type: type }; });
