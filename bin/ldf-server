@@ -35,12 +35,14 @@ if (cluster.isMaster) {
 // Start up a worker
 else {
   // Configure preset URLs
-  var baseURL = config.baseURL ? config.baseURL.replace(/\/?$/, '') : '',
-      blankNodePath = baseURL ? '/.well-known/genid/' : '',
-      blankNodePrefix = blankNodePath ? baseURL + blankNodePath : 'genid:';
+  var baseURL = config.baseURL ? config.baseURL.replace(/\/?$/, '/') : '/',
+      baseURLRoot = baseURL.match(/^(?:https?:\/\/[^\/]+)?/)[0],
+      baseURLPath = baseURL.substr(baseURLRoot.length),
+      blankNodePath = baseURLRoot ? '/.well-known/genid/' : '',
+      blankNodePrefix = blankNodePath ? baseURLRoot + blankNodePath : 'genid:';
 
   // Create all data sources
-  var datasources = config.datasources || {},
+  var datasources = config.datasources || {}, datasourceBase = baseURLPath.substr(1),
       dereference = config.dereference || (config.dereference = {});
   for (var datasourceName in datasources) {
     var datasourceConfig = config.datasources[datasourceName];
@@ -48,7 +50,7 @@ else {
     if (datasourceConfig.enabled !== false) {
       try {
         // Avoid illegal URI characters in data source path
-        var datasourcePath = encodeURI(datasourceName);
+        var datasourcePath = datasourceBase + encodeURI(datasourceName);
         datasources[datasourcePath] = datasourceConfig;
         // Retrieve the data source class and settings
         var Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
@@ -57,12 +59,12 @@ else {
         if (!settings.blankNodePrefix) {
           settings.blankNodePrefix = blankNodePrefix + datasourcePath + '/';
           if (blankNodePath)
-            dereference[blankNodePath + datasourcePath + '/'] = datasourceName;
+            dereference[blankNodePath + datasourcePath + '/'] = datasourcePath;
         }
         // Create the data source
         datasource = new Datasource(settings);
         datasourceConfig.datasource = datasource;
-        datasourceConfig.url = baseURL + '/' + datasourcePath + '#dataset';
+        datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
         datasourceConfig.title = datasourceConfig.title || datasourceName;
       }
       catch (error) {
@@ -73,8 +75,9 @@ else {
   }
 
   // Create index data source
-  datasources[''] = {
-    url: '/#dataset',
+  var indexPath = datasourceBase.replace(/\/$/, '');
+  datasources[indexPath] = {
+    url: baseURLRoot + '/' + indexPath + '#dataset',
     role: 'index',
     title: 'dataset index',
     datasource: new IndexDatasource({ datasources: datasources }),
