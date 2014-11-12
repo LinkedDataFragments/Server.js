@@ -1,5 +1,6 @@
 {
   "title": "My Linked Data Fragments server",
+  "baseURL": "http://example.org/",
 
   "datasources": {
     "dbpedia": {
@@ -16,16 +17,42 @@
     }
   },
 
+  "dereference": {
+    "/resource/": "dbpedia"
+  },
+
+  "routers": [
+    { "type": "DatasourceRouter" },
+    { "type": "TriplePatternRouter" },
+    { "type": "PageRouter", "settings": { "pageSize": 100 } }
+  ],
+
+  "writers": {
+    "text/html,*/*": { "type": "HtmlWriter" },
+    "text/turtle,text/n3": { "type": "TurtleWriter" },
+    "application/ld+json,application/json": { "type": "JsonLdWriter" }
+  },
+
   "prefixes": {
     "rdf":         "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs":        "http://www.w3.org/2000/01/rdf-schema#",
+    "owl":         "http://www.w3.org/2002/07/owl#",
+    "skos":        "http://www.w3.org/2004/02/skos/core#",
     "xsd":         "http://www.w3.org/2001/XMLSchema#",
     "dc":          "http://purl.org/dc/terms/",
+    "dcterms":     "http://purl.org/dc/terms/",
+    "dc11":        "http://purl.org/dc/elements/1.1/",
     "foaf":        "http://xmlns.com/foaf/0.1/",
+    "geo":         "http://www.w3.org/2003/01/geo/wgs84_pos#",
     "dbpedia":     "http://dbpedia.org/resource/",
     "dbpedia-owl": "http://dbpedia.org/ontology/",
     "dbpprop":     "http://dbpedia.org/property/",
     "hydra":       "http://www.w3.org/ns/hydra/core#",
     "void":        "http://rdfs.org/ns/void#"
+  },
+
+  "logging": {
+    "enabled": true,
+    "file": "access.log"
   }
 }
