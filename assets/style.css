@@ -50,6 +50,7 @@ a:hover {
 ul {
   padding: 0;
   margin: 0 0 .5em 1.5em;
+  list-style: none;
 }
 
 pre {
@@ -65,7 +66,6 @@ fieldset {
   padding: .5em 0 0 20px;
 }
 fieldset ul {
-  list-style: none;
   margin-left: 0;
 }
 fieldset li {
@@ -135,6 +135,7 @@ header .logo img {
 }
 
 footer {
+  clear: both;
   margin: 1.5em 0 .5em;
   font-size: small;
 }
@@ -147,7 +148,6 @@ footer * {
   color: gray;
 }
 ul.links {
-  list-style: none;
   margin: 0;
   padding: 0;
   display: inline;
@@ -155,11 +155,11 @@ ul.links {
 ul.links li {
   display: inline;
   padding-left: 20px;
+  font-weight: bold;
 }
 
 ul.triples {
   margin: .3em 0 1em 20px;
-  list-style: none;
   font-size: .95em;
   line-height: 1.5;
   font-family: monospace;
@@ -188,6 +188,11 @@ dd {
   color: gray;
   margin: .1em 0 0 12em;
   font-size: .95em;
+}
+
+#about {
+  margin-top: 1.5em;
+  font-size: .9em;
 }
 
 @media screen and (max-width: 700px) {

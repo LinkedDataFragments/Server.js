@@ -112,3 +112,15 @@ function pageLinks(fragment) {
 <%
 }
 -%>
+<aside id="about">
+  <h3>About <%= datasource.title %></h3>
+  <ul>
+    <li><a href="<%= datasource.homepage || datasource.url %>" target="_blank"><%= datasource.title %></a><%
+        if (datasource.description) { %> – <%= datasource.description %><% } %></li>
+    <% if (datasource.copyright) { %><li><%= datasource.copyright %></li><% } %>
+    <% if (datasource.license || datasource.licenseUrl)
+    { %><li><a href="<%= datasource.licenseUrl || '#' %>" target="_blank"><%=
+              datasource.license || datasource.licenseUrl
+          %></a></li><% } %>
+  </ul>
+</aside>

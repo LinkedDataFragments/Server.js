@@ -4,10 +4,14 @@
 
   "datasources": {
     "dbpedia": {
-      "title": "DBpedia 2014",
-      "type": "HdtDatasource",
+      "title":       "DBpedia 2014",
       "description": "DBpedia 2014 with an HDT back-end",
-      "settings": { "file": "data/dbpedia2014.hdt" }
+      "license":     "Creative Commons Attribution-ShareAlike 3.0",
+      "licenseUrl":  "https://creativecommons.org/licenses/by-sa/3.0/",
+      "copyright":   "The DBpedia dataset is Open Knowledge.",
+      "homepage":    "http://dbpedia.org/",
+      "type":        "HdtDatasource",
+      "settings":    { "file": "data/dbpedia2014.hdt" }
     },
     "dbpedia-sparql": {
       "title": "DBpedia 3.9 (Virtuoso)",
