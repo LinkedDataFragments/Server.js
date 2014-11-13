@@ -23,7 +23,7 @@ Each Triple Pattern Fragment offers:
 An example server is available at [data.linkeddatafragments.org](http://data.linkeddatafragments.org/).
 
 
-## Installation
+## Install the server
 
 This server requires [Node.js](http://nodejs.org/) 0.10 or higher
 and is tested on OSX and Linux.
@@ -33,9 +33,9 @@ $ [sudo] npm install -g ldf-server
 ```
 
 
-## Usage
+## Use the server
 
-### Configuration
+### Confure the data sources
 
 First, create a configuration file `config.json` similar to `config-example.json`,
 in which you detail your data sources.
@@ -61,7 +61,7 @@ and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
 }
 ```
 
-### Running the server
+### Start the server
 
 After creating a configuration file, execute
 ```bash
@@ -72,8 +72,39 @@ and `4` the number of worker processes.
 
 Now visit `http://localhost:5000/` in your browser.
 
+### _(Optional)_ Set up a reverse proxy
+
+A Linked Data Fragments server would typically run behind an HTTP reverse proxy server.
+<br>
+To set this up, configure the server's public URL in your server's `config.json`:
+```json
+{
+  "title": "My Linked Data Fragments server",
+  "baseURL": "http://data.example.org/",
+  "datasources": { … }
+}
+```
+Then configure your reverse proxy to pass requests to your server.
+Here's an example for [nginx](http://nginx.org/):
+```nginx
+server {
+  server_name data.example.org;
+
+  location / {
+    proxy_pass http://127.0.0.1:3000$request_uri;
+    proxy_set_header Host $http_host;
+    proxy_pass_header Server;
+  }
+}
+```
+Change the value `3000` into the port on which your Linked Data Fragments server runs.
+
+If you would like to proxy the data in a subfolder such as `http://example.org/my/data`,
+modify the `baseURL` in your `config.json` to `"http://example.org/my/data"`
+and change `location` from `/` to `/my/data` (excluding a trailing slash).
+
 ## License
 The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/).
 
-This code is copyrighted by [Multimedia Lab – iMinds – Ghent University](http://mmlab.be/)
+This code is copyrighted by [iMinds – Ghent University](http://mmlab.be/)
 and released under the [MIT license](http://opensource.org/licenses/MIT).
