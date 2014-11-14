@@ -28,8 +28,26 @@ if (cluster.isMaster) {
   for (var i = 0; i < workers; i++)
     cluster.fork();
   cluster.on('exit', function (worker, code, signal) {
-    console.log('Worker %d died with code %s. Starting a new worker.', worker.process.pid, code || signal);
-    cluster.fork();
+    if (!worker.suicide) {
+      console.log('Worker %d died with %s. Starting new worker.', worker.process.pid, code || signal);
+      cluster.fork();
+    }
+  });
+
+  // Respawn workers when receiving a SIGHUP signal
+  process.on('SIGHUP', function () {
+    console.log('Respawning workers of master %d.', process.pid);
+    var workers = Object.keys(cluster.workers).map(function (id) { return cluster.workers[id]; });
+    (function respawnNext() {
+      var worker = workers.pop(), newWorker = worker && cluster.fork();
+      newWorker && newWorker.once('listening', function () {
+          worker.once('exit', function () {
+            console.log('Worker %d replaces killed worker %d.', newWorker.process.pid, worker.process.pid);
+            respawnNext();
+          });
+          worker.kill();
+        });
+    })();
   });
 }
 // Start up a worker
