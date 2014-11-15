@@ -4,9 +4,9 @@
 
 <form action="?" method="GET" property="hydra:search" resource="<%= datasource.url %>#triplePattern">
   <fieldset resource="<%= datasource.url %>#triplePattern">
-    <legend>Query <%= datasource.title %> by triple pattern</legend>
+    <legend>Query <%= datasource.title %> by <%= (datasource.isQuadsEnabled ? 'quad' : 'triple') %> pattern</legend>
     <ul>
-<% ['subject', 'predicate', 'object'].forEach(function (component) { -%>
+<% ['subject', 'predicate', 'object'].concat(datasource.isQuadsEnabled ? ['graph'] : []).forEach(function (component) { -%>
       <li property="hydra:mapping" resource="#<%= component %>">
         <label for="<%= component %>"
                about="#<%= component %>" property="hydra:variable" lang=""><%= component %></label>
@@ -18,7 +18,7 @@
     </ul>
   </fieldset>
   <p>
-    <input type="submit" value="Find matching triples" />
+    <input type="submit" value="Find matching <%= (datasource.isQuadsEnabled ? 'quads' : 'triples') %>" />
   </p>
 </form>
 </div>
@@ -53,7 +53,7 @@
 </div>
 <ul class="triples">
 <% triples.forEach(function (triple) {
-    var subject = triple.subject, predicate = triple.predicate, object = triple.object;
+    var subject = triple.subject, predicate = triple.predicate, object = triple.object, graph = triple.graph;
 -%>
     <li>
       <a href="?subject=<%= encodeURIComponent(subject) %>"><%
@@ -66,7 +66,7 @@
       <a href="?object=<%= encodeURIComponent(object) %>" resource="<%= subject %>"><%
         %><abbr title="<%= object %>" property="<%= predicate %>" resource="<%= object %>"><%=
           shorten(object)
-        %></abbr></a>.
+        %></abbr></a>
       <% } else {
         var type = N3Util.getLiteralType(object),
             language = N3Util.getLiteralLanguage(object);
@@ -76,8 +76,13 @@
                 if (!language) { %>datatype="<%= type %>"<% }
                 else { %>lang="<%= language %>" xml:lang="<%= language %>"<% } %>><%=
           N3Util.getLiteralValue(object)
-        %></span>"</a>.
+        %></span>"</a>
       <% } -%>
+      <% if (datasource.isQuadsEnabled && graph) { -%>
+        <a href="?graph=<%= encodeURIComponent(graph) %>"><%
+          %><abbr title="<%= graph %>"><%= shorten(graph) %></abbr><%
+        %></a>
+      <% } -%>.
     </li>
 <% }); -%>
 </ul>

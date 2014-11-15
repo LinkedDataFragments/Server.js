@@ -87,7 +87,7 @@ else {
   config.assetsPath = baseURLPath + 'assets/';
 
   // Set up fragment routing
-  var routersSettings = config.routers || ['DatasourceRouter', 'TriplePatternRouter', 'PageRouter']
+  var routersSettings = config.routers || ['DatasourceRouter', 'TriplePatternRouter', 'QuadPatternRouter', 'PageRouter']
                                           .map(function (type) { return { type: type }; });
   config.routers = routersSettings.map(function (router) {
     var Router = require(path.join('../lib/routers/', router.type));
@@ -98,6 +98,7 @@ else {
   var writersSettings = config.writers || {
     'text/html,*/*': { type: 'HtmlWriter' },
     'text/turtle,text/n3': { type: 'TurtleWriter' },
+    'application/n-quads': { type: 'NQuadsWriter' },
     'application/ld+json,application/json': { type: 'JsonLdWriter' },
   };
   config.writers = _.mapValues(writersSettings, function (writer) {
