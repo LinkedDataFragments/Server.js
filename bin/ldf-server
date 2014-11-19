@@ -39,22 +39,33 @@ if (cluster.isMaster) {
   });
 
   // Respawn workers one by one when receiving a SIGHUP signal
-  process.on('SIGHUP', function () {
+  process.on('SIGHUP', function respawn() {
     console.log('Respawning workers of master %d.', process.pid);
+    process.addListener('SIGHUP', respawnPending);
+    process.removeListener('SIGHUP', respawn);
+
     var workers = Object.keys(cluster.workers).map(function (id) { return cluster.workers[id]; });
     (function respawnNext() {
-      var worker = workers.pop();
-      if (!worker)
-        return console.log('Respawned all workers of master %d.', process.pid);
-      var newWorker = worker && cluster.fork();
-      newWorker.once('listening', function () {
+      // If there are still old workers, respawn a new one
+      if (workers.length) {
+        var newWorker = cluster.fork();
+        newWorker.once('listening', function () {
+          var worker = workers.pop();
+          if (!worker) return newWorker.kill(), respawnNext(); // Dead worker are replaced automatically
           worker.once('exit', function () {
             console.log('Worker %d replaces killed worker %d.', newWorker.process.pid, worker.process.pid);
             respawnNext();
           });
           worker.kill();
         });
+      }
+      else {
+        process.addListener('SIGHUP', respawn);
+        process.removeListener('SIGHUP', respawnPending);
+        console.log('Respawned all workers of master %d.', process.pid);
+      }
     })();
+    function respawnPending() { console.log('Respawning already in progress'); }
   });
 }
 // Start up a worker
