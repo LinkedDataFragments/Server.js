@@ -43,8 +43,11 @@ if (cluster.isMaster) {
     console.log('Respawning workers of master %d.', process.pid);
     var workers = Object.keys(cluster.workers).map(function (id) { return cluster.workers[id]; });
     (function respawnNext() {
-      var worker = workers.pop(), newWorker = worker && cluster.fork();
-      newWorker && newWorker.once('listening', function () {
+      var worker = workers.pop();
+      if (!worker)
+        return console.log('Respawned all workers of master %d.', process.pid);
+      var newWorker = worker && cluster.fork();
+      newWorker.once('listening', function () {
           worker.once('exit', function () {
             console.log('Worker %d replaces killed worker %d.', newWorker.process.pid, worker.process.pid);
             respawnNext();
