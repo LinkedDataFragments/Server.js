@@ -132,4 +132,13 @@ else {
     server.stop();
     process.on('SIGINT', function () { process.exit(1); });
   });
+
+  // Open worker message handler
+  process.on('message', function(data) {
+    data.forEach(function(action) {
+      if(action.action == 'datasourcePush') {
+        config.datasources[action.datasource].datasource.push(action.data);
+      }
+  });
+});
 }
