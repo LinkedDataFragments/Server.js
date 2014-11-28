@@ -32,7 +32,8 @@ if (cluster.isMaster) {
   cluster.on('listening', function (worker) {
     worker.once('exit', function (code, signal) {
       if (!worker.suicide) {
-        console.log('Worker %d died with %s. Starting new worker.', worker.process.pid, code || signal);
+        console.log('Worker %d died with %s. Starting new worker.',
+                    worker.process.pid, code || signal);
         cluster.fork();
       }
     });
@@ -44,21 +45,37 @@ if (cluster.isMaster) {
     process.addListener('SIGHUP', respawnPending);
     process.removeListener('SIGHUP', respawn);
 
+    // Retrieve a list of old workers that will be replaced by new ones
     var workers = Object.keys(cluster.workers).map(function (id) { return cluster.workers[id]; });
     (function respawnNext() {
       // If there are still old workers, respawn a new one
       if (workers.length) {
+        // Wait until the new worker starts listening to kill the old one
         var newWorker = cluster.fork();
         newWorker.once('listening', function () {
           var worker = workers.pop();
-          if (!worker) return newWorker.kill(), respawnNext(); // Dead worker are replaced automatically
+          if (!worker)
+            return newWorker.kill(), respawnNext(); // Dead workers are replaced automatically
           worker.once('exit', function () {
-            console.log('Worker %d replaces killed worker %d.', newWorker.process.pid, worker.process.pid);
+            console.log('Worker %d replaces killed worker %d.',
+                        newWorker.process.pid, worker.process.pid);
             respawnNext();
           });
           worker.kill();
+          newWorker.removeListener('exit', abort);
         });
+        // Abort the respawning process if creating a new worker fails
+        newWorker.on('exit', abort);
+        function abort(code, signal) {
+          if (!newWorker.suicide) {
+            console.log('Respawning aborted because worker %d died with %s.',
+                        newWorker.process.pid, code || signal);
+            process.addListener('SIGHUP', respawn);
+            process.removeListener('SIGHUP', respawnPending);
+          }
+        }
       }
+      // No old workers left, so respawning has finished
       else {
         process.addListener('SIGHUP', respawn);
         process.removeListener('SIGHUP', respawnPending);

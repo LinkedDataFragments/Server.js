@@ -7,6 +7,7 @@
   "white": true,    // Enable strict whitespace checking.
   "indent": 2,      // The code uses an indentation width of 2 spaces.
   "node": true,     // Node.js is present.
+  "-W082": true,    // Allow function creation in blocks.
   "globals": {
     "it": true,
     "describe": true,
