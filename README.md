@@ -35,7 +35,7 @@ $ [sudo] npm install -g ldf-server
 
 ## Use the server
 
-### Confure the data sources
+### Configure the data sources
 
 First, create a configuration file `config.json` similar to `config-example.json`,
 in which you detail your data sources.
