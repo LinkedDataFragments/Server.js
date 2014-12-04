@@ -62,7 +62,7 @@ describe('HdtDatasource', function () {
     itShouldExecute(datasource,
       'a query for an existing predicate',
       { predicate: 'http://example.org/p1', limit: 10, features: { triplePattern: true, limit: true } },
-      10, 100);
+      10, 20);
 
     itShouldExecute(datasource,
       'a query for a non-existing predicate',
@@ -72,7 +72,7 @@ describe('HdtDatasource', function () {
     itShouldExecute(datasource,
       'a query for an existing object',
       { object: 'http://example.org/o001',  limit: 10, features: { triplePattern: true, limit: true } },
-      3, 100);
+      3, 3);
 
     itShouldExecute(datasource,
       'a query for a non-existing object',
@@ -164,7 +164,8 @@ describe('HdtDatasource', function () {
   });
 });
 
-function itShouldExecute(datasource, name, query, expectedResultsCount, totalCount, expectedTriples) {
+function itShouldExecute(datasource, name, query,
+                         expectedResultsCount, expectedTotalCount, expectedTriples) {
   describe('executing ' + name, function () {
     var resultsCount = 0, totalCount, triples = [];
     before(function (done) {
@@ -179,7 +180,7 @@ function itShouldExecute(datasource, name, query, expectedResultsCount, totalCou
     });
 
     it('should emit the expected total number of triples', function () {
-      expect(totalCount).to.equal(totalCount);
+      expect(totalCount).to.equal(expectedTotalCount);
     });
 
     if (expectedTriples) {
