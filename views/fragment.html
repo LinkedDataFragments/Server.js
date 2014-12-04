@@ -25,28 +25,29 @@
 
 <h3>Matches in <%= datasource.title %> for <em class="pattern"><%= query.patternString %></em></h3>
 <%
-  var totalCount = metadata.totalCount,
-      offset = query.offset || 0, limit = query.limit || Infinity,
-      start = offset + 1, end = Math.min(offset + limit, totalCount),
-      page = offset / limit + 1,
-      hasPrev = page > 1, hasNext = totalCount > end,
+  var totalEstimate = metadata.totalCount,
+      offset = query.offset || 0, limit = query.limit || triples.length,
+      start = offset + 1, end = offset + triples.length,
+      hasPrev = offset > 0, hasNext = totalEstimate > end,
       subject = query.subject, predicate = query.predicate, object = query.object;
 %>
 <div class="counts">
-<% if (offset < totalCount) { %>
+<% if (triples.length) { %>
   Showing triples <%= formatNumber(start) %> to <%= formatNumber(end) %> of
-  <%= totalCount === end ? '' : '±'
-  %><span property="void:triples hydra:totalItems" datatype="xsd:integer" content="<%= totalCount %>"><%=
-    formatNumber(totalCount)
+  <%= totalEstimate === end ? '' : '±'
+  %><span property="void:triples hydra:totalItems" datatype="xsd:integer" content="<%= totalEstimate %>"><%=
+    formatNumber(totalEstimate)
   %></span>
   with <span property="hydra:itemsPerPage" datatype="xsd:integer" content="<%= limit %>"><%=
     formatNumber(limit)
   %></span> triples per page.
   <% pageLinks(fragment); -%>
-<% } else if (totalCount === 0) { %>
+<% } else { %>
   <p>
     <%= capitalizeFirst(datasource.title) %> contains
-    <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="0">no</span>
+    <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="0">
+      no <% if (totalEstimate > 0) { %>more<% } %>
+    </span>
     triples that match this pattern.
   </p>
 <% } %>
