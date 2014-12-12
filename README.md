@@ -81,9 +81,33 @@ and `4` the number of worker processes.
 
 Now visit `http://localhost:5000/` in your browser.
 
+### Reload running server
+
+You can reload the server without any downtime
+in order to load a new configuration or version.
+<br>
+In order to do this, you need the process ID of the server master process.
+<br>
+One possibility to obtain this are the server logs:
+```bash
+$ bin/ldf-server config.json
+Master 28106 running.
+Worker 28107 running on http://localhost:3000/.
+```
+
+If you send the server a `SIGHUP` signal:
+```bash
+$ kill -s SIGHUP 28106
+```
+it will reload by replacing its workers.
+
+Note that crashed or killed workers are always replaced automatically.
+
 ### _(Optional)_ Set up a reverse proxy
 
-A Linked Data Fragments server would typically run behind an HTTP reverse proxy server.
+A typical Linked Data Fragments server will be exposed
+on a public domain or subdomain along with other applications.
+Therefore, you need to configure the server to run behind an HTTP reverse proxy.
 <br>
 To set this up, configure the server's public URL in your server's `config.json`:
 ```json
