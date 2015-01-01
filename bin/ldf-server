@@ -149,8 +149,11 @@ else {
 
   // Set up writers
   var writersSettings = config.writers || {
-    'text/html,*/*': { type: 'HtmlWriter' },
-    'text/turtle,text/n3': { type: 'TurtleWriter' },
+    'text/html,*/*':         { type: 'HtmlWriter' },
+    'text/turtle,text/n3':   { type: 'TurtleWriter' },
+    'application/trig':      { type: 'TrigWriter' },
+    'application/n-triples': { type: 'NTriplesWriter' },
+    'application/n-quads':   { type: 'NQuadsWriter' },
     'application/ld+json,application/json': { type: 'JsonLdWriter' },
   };
   config.writers = _.mapValues(writersSettings, function (writer) {
