@@ -138,6 +138,8 @@ else {
     data.forEach(function(action) {
       if(action.action == 'datasourcePush') {
         config.datasources[action.datasource].datasource.push(action.data);
+      } else if(action.action == 'datasourceRemove') {
+        config.datasources[action.datasource].datasource.remove(action.data);
       }
   });
 });
