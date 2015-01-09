@@ -40,7 +40,7 @@ p {
 a {
   color: #be1622;
   text-decoration: none;
-  border-bottom-width: 1px;
+  border-bottom: none 1px;
 }
 a:hover {
   color: #be1622 !important;
@@ -165,11 +165,29 @@ ul.triples {
   font-family: monospace;
   overflow-x: hidden;
 }
-ul.triples a {
+ul.triples li {
+  text-indent: -20px;
+  padding-left: 20px;
+  max-width: 100%;
+  max-height: 1.5em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+ul.triples li:hover {
+  max-height: 100em;
+  white-space: normal;
+  transition: max-height .5s ease-in;
+  transition-delay: .5s;
+}
+ul.triples li:not(:hover) a {
   color: inherit;
 }
 ul.triples a:nth-child(2) {
   margin: 0 1em;
+}
+abbr {
+  border: none;
 }
 
 .index {
