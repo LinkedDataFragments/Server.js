@@ -92,6 +92,7 @@ label:after {
 
 input {
   outline: none;
+  font-size: .95em;
 }
 fieldset input {
   width: 500px;
@@ -103,7 +104,6 @@ fieldset input {
 }
 input[type=submit] {
   font-weight: bold;
-  font-size: .95em;
   color: #be1622;
   background-color: #f6f6f6;
   border-radius: 3px;
@@ -118,7 +118,7 @@ input[type=submit]:active {
   padding: 6px 7px 4px 9px;
 }
 .uri {
-  font-family: monospace;
+  font-family: "Droid Sans Mono", monospace;
 }
 
 header .logo {
@@ -162,7 +162,7 @@ ul.triples {
   margin: .3em 0 1em 20px;
   font-size: .95em;
   line-height: 1.5;
-  font-family: monospace;
+  font-family: "Droid Sans Mono", monospace;
   overflow-x: hidden;
 }
 ul.triples li {
