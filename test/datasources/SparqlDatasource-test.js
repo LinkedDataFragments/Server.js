@@ -164,7 +164,7 @@ describe('SparqlDatasource', function () {
       it('should ask for Turtle the first time', function () {
         request.should.have.been.called;
         firstArgsCopy.headers.should.deep.equal(
-          { accept: 'text/turtle;q=1.0,text/ntriples;q=0.5,text/n3;q=0.3' });
+          { accept: 'text/turtle;q=1.0,application/n-triples;q=0.5,text/n3;q=0.3' });
       });
 
       it('should request a matching COUNT query', function () {
@@ -183,7 +183,7 @@ describe('SparqlDatasource', function () {
 
       it('should ask for N-Triples the second time', function () {
         request.should.have.been.calledThrice;
-        request.thirdCall.args[0].headers.should.deep.equal({ accept: 'text/ntriples' });
+        request.thirdCall.args[0].headers.should.deep.equal({ accept: 'application/n-triples' });
       });
 
       it('should emit all triples in the SPARQL response', function (done) {
