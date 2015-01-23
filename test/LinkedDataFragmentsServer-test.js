@@ -478,14 +478,22 @@ describe('LinkedDataFragmentsServer', function () {
   });
 
   describe('A LinkedDataFragmentsServer instance with dereferencing', function () {
-    var server, client, writerHtml, writerJson, writerTurtle;
+    var server, client, writerTurtle;
     before(function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub(),
       };
+      var router = { extractQueryParams: function (request, query) {
+        query.features.datasource = true;
+        query.datasource = request.url.pathname.substr(1);
+      }};
+      writerTurtle = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
       server = new LinkedDataFragmentsServer({
+        datasources: { 'resource/datasource': { datasource: datasource } },
         dereference: { '/resource/': 'dbpedia' },
+        writers: { 'text/turtle': writerTurtle },
+        routers: [ router ],
       });
       client = request.agent(server);
     });
@@ -519,6 +527,26 @@ describe('LinkedDataFragmentsServer', function () {
             expectedLocation = 'http://' + hostname + '/dbpedia?subject=' + entityUrl;
 
         response.text.should.contain(expectedLocation);
+      });
+    });
+
+    describe('receiving a request for a data source URL', function () {
+      var response;
+      before(function (done) {
+        client.get('/resource/datasource')
+              .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should not dereference', function () {
+        response.should.have.property('statusCode', 200);
+      });
+
+      it('should call the Turtle writer', function () {
+        writerTurtle.writeFragment.should.have.been.calledOnce;
+      });
+
+      it('should set the text/turtle content type', function () {
+        response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
       });
     });
   });
