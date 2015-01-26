@@ -95,7 +95,8 @@ else {
       blankNodePrefix = blankNodePath ? baseURLRoot + blankNodePath : 'genid:';
 
   // Create all data sources
-  var datasources = config.datasources || {}, datasourceBase = baseURLPath.substr(1),
+  var datasourceConstructors = {},
+      datasources = config.datasources || {}, datasourceBase = baseURLPath.substr(1),
       dereference = config.dereference || (config.dereference = {});
   for (var datasourceName in datasources) {
     var datasourceConfig = config.datasources[datasourceName];
@@ -106,7 +107,8 @@ else {
         var datasourcePath = datasourceBase + encodeURI(datasourceName);
         datasources[datasourcePath] = datasourceConfig;
         // Retrieve the data source class and settings
-        var Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
+        var type = datasourceConfig.type, Datasource = datasourceConstructors[type] ||
+              (datasourceConstructors[type] = require(path.join('../lib/datasources/', type))),
             settings = _.defaults(datasourceConfig.settings || {}, config), datasource;
         // Set up blank-node-to-IRI translation, with dereferenceable URLs when possible
         if (!settings.blankNodePrefix) {
