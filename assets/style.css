@@ -222,10 +222,20 @@ dd {
   html, input, th, td {
     font-size: 10pt;
   }
+  body {
+    padding: 15px;
+  }
   header figure {
     display: none;
   }
-  h1 {
+  h1, legend {
     margin: 0;
+  }
+  fieldset, ul.triples {
+    padding: .5em 0;
+    margin: 0;
+  }
+  fieldset input {
+    width: 90%;
   }
 }
