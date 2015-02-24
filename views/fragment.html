@@ -2,8 +2,8 @@
 <div resource="<%= datasource.url %>" typeof="void:datasource hydra:Collection">
 <h2><a href="<%= datasource.url %>"><%= capitalizeFirst(datasource.title) %></a></h2>
 
-<form action="?" method="GET" property="hydra:search" resource="<%= datasource.url %>#triplePattern">
-  <fieldset resource="<%= datasource.url %>#triplePattern">
+<form action="?" method="GET" property="hydra:search" resource="#triplePattern">
+  <fieldset resource="#triplePattern">
     <legend>Query <%= datasource.title %> by triple pattern</legend>
     <ul>
 <% ['subject', 'predicate', 'object'].forEach(function (component) { -%>
