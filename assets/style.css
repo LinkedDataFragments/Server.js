@@ -236,6 +236,12 @@ dd {
     margin: 0;
   }
   fieldset input {
-    width: 90%;
+    width: 70%;
+  }
+  label {
+    width: 80px;
+  }
+  ul.triples li {
+    margin: 1em 0;
   }
 }
