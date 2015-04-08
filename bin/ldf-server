@@ -142,8 +142,9 @@ else {
   config.assetsPath = baseURLPath + 'assets/';
 
   // Set up fragment routing
-  var routersSettings = config.routers || ['DatasourceRouter', 'TriplePatternRouter', 'PageRouter']
-                                          .map(function (type) { return { type: type }; });
+  var routersSettings = config.routers ||
+      ['DatasourceRouter', 'TriplePatternRouter', 'SubstringRouter', 'PageRouter']
+      .map(function (type) { return { type: type }; });
   config.routers = routersSettings.map(function (router) {
     var Router = require(path.join('../lib/routers/', router.type));
     return new Router(_.defaults(router.settings || {}, config));
