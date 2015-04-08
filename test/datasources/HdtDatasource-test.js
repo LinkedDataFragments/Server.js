@@ -4,6 +4,7 @@ var Datasource = require('../../lib/datasources/Datasource'),
 
 var exampleHdtFile = path.join(__dirname, '../assets/test.hdt');
 var exampleHdtFileWithBlanks = path.join(__dirname, '../assets/test-blank.hdt');
+var exampleHdtFileWithFmIndex = path.join(__dirname, '../assets/test-fm.hdt');
 
 describe('HdtDatasource', function () {
   describe('The HdtDatasource module', function () {
@@ -11,7 +12,7 @@ describe('HdtDatasource', function () {
       HdtDatasource.should.be.a('function');
     });
 
-    it('should be a HdtDatasource constructor', function (done) {
+    it('should be an HdtDatasource constructor', function (done) {
       var instance = new HdtDatasource({ file: exampleHdtFile });
       instance.should.be.an.instanceof(HdtDatasource);
       instance.close(done);
@@ -30,7 +31,7 @@ describe('HdtDatasource', function () {
     });
   });
 
-  describe('A HdtDatasource instance for an example HDT file', function () {
+  describe('An HdtDatasource instance for an example HDT file', function () {
     var datasource = new HdtDatasource({ file: exampleHdtFile });
     after(function (done) { datasource.close(done); });
 
@@ -80,7 +81,7 @@ describe('HdtDatasource', function () {
       0, 0);
   });
 
-  describe('A HdtDatasource instance with blank nodes', function () {
+  describe('An HdtDatasource instance with blank nodes', function () {
     var datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks });
     after(function (done) { datasource.close(done); });
 
@@ -121,7 +122,7 @@ describe('HdtDatasource', function () {
       ]);
   });
 
-  describe('A HdtDatasource instance with blank nodes and a blank node prefix', function () {
+  describe('An HdtDatasource instance with blank nodes and a blank node prefix', function () {
     var datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks,
                                          blankNodePrefix: 'http://example.org/.well-known/genid/' });
     after(function (done) { datasource.close(done); });
@@ -162,6 +163,32 @@ describe('HdtDatasource', function () {
         { subject: 'a', predicate: 'b', object: 'http://example.org/.well-known/genid/c1' },
       ]);
   });
+
+  describe('An HdtDatasource instance for an HDT file without FM index', function () {
+    var datasource = new HdtDatasource({ file: exampleHdtFile });
+    after(function (done) { datasource.close(done); });
+
+    itShouldNotExecute(datasource,
+      'a query for a substring',
+      { features: { substring: true }, substring: 'abc' },
+      'The HDT document does not support literal search');
+  });
+
+  describe('An HdtDatasource instance for an HDT file with FM index', function () {
+    var datasource = new HdtDatasource({ file: exampleHdtFileWithFmIndex,
+                                         blankNodePrefix: '_:' });
+    after(function (done) { datasource.close(done); });
+
+    itShouldExecute(datasource,
+      'a query for a substring',
+      { features: { substring: true }, substring: 'abc' },
+      3, 3,
+      [
+        { subject: '_:l0', predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', object: '\"abc\"' },
+        { subject: '_:l1', predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', object: '\"abc\"@en' },
+        { subject: '_:l2', predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', object: '\"abc\"^^bcd' },
+      ]);
+  });
 });
 
 function itShouldExecute(datasource, name, query,
@@ -190,5 +217,20 @@ function itShouldExecute(datasource, name, query,
           triples[i].should.deep.equal(expectedTriples[i]);
       });
     }
+  });
+}
+
+function itShouldNotExecute(datasource, name, query, expectedError) {
+  describe('executing ' + name, function () {
+    var error;
+    before(function (done) {
+      var result = datasource.select(query);
+      result.once('error', function (e) { error = e; done(); });
+    });
+
+    it('should return the expected error', function () {
+      expect(error).to.be.an.instanceof(Error);
+      expect(error).to.have.property('message', expectedError);
+    });
   });
 }

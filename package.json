@@ -29,7 +29,7 @@
     "uritemplate": "^0.3.0"
   },
   "optionalDependencies": {
-    "hdt": "^1.1.0",
+    "hdt": "^1.2.1",
     "access-log": "^0.3.9"
   },
   "devDependencies": {
