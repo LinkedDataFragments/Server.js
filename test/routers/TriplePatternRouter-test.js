@@ -175,6 +175,13 @@ describe('TriplePatternRouter', function () {
             { a: 1 },
             { a: 1, features: { triplePattern: true }, object: '"foo"^^http://example.org/foo#bar' },
           ],
+          [
+            'a URL with a substring search',
+            'http://example.org/?object=*abc*',
+            'should not add the object to the query',
+            { a: 1 },
+            { a: 1 },
+          ],
         ]
         .forEach(function (args) { test.extractQueryParams.apply(router, args); });
       });
