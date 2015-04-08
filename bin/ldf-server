@@ -166,9 +166,7 @@ else {
   // Set up access logging
   var loggingSettings = _.defaults(config.logging || {}, { enabled: false, file: 'access.log' });
   if (loggingSettings.enabled) {
-    var accesslog;
-    try { accesslog = require('access-log'); }
-    catch (e) { console.error('Cannot write access log: "access-log" dependency missing'); }
+    var accesslog = require('access-log');
     config.accesslogger = function (request, response) {
       accesslog(request, response, null, function (logEntry) {
         fs.appendFile(loggingSettings.file, logEntry + '\n', function (error) {
