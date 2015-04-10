@@ -176,7 +176,7 @@ describe('HdtDatasource', function () {
 
   describe('An HdtDatasource instance for an HDT file with FM index', function () {
     var datasource = new HdtDatasource({ file: exampleHdtFileWithFmIndex,
-                                         blankNodePrefix: '_:' });
+                                         blankNodePrefix: 'shouldnotbeused' });
     after(function (done) { datasource.close(done); });
 
     itShouldExecute(datasource,
@@ -184,9 +184,9 @@ describe('HdtDatasource', function () {
       { features: { substring: true }, substring: 'abc' },
       3, 3,
       [
-        { subject: '_:l0', predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', object: '\"abc\"' },
-        { subject: '_:l1', predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', object: '\"abc\"@en' },
-        { subject: '_:l2', predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', object: '\"abc\"^^bcd' },
+        { subject: '_:l1', predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', object: '\"abc\"' },
+        { subject: '_:l2', predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', object: '\"abc\"@en' },
+        { subject: '_:l3', predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', object: '\"abc\"^^bcd' },
       ]);
   });
 });
