@@ -33,6 +33,7 @@ describe('SparqlDatasource', function () {
 
     it('should indicate support for its features', function () {
       datasource.supportedFeatures.should.deep.equal({
+        all: true,
         triplePattern: true,
         limit: true,
         offset: true,
@@ -40,7 +41,7 @@ describe('SparqlDatasource', function () {
       });
     });
 
-    it('should support the empty query', function () {
+    it('should support the all query', function () {
       datasource.supportsQuery({}).should.be.true;
     });
 
@@ -61,19 +62,19 @@ describe('SparqlDatasource', function () {
     });
 
     itShouldExecute(datasource, request,
-      'the empty query',
-      { features: { triplePattern: true } },
+      'the all query',
+      { features: { } },
       'CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}',
       'SELECT COUNT(*) WHERE {?s ?p ?o}');
 
     itShouldExecute(datasource, request,
-      'an empty query with a limit',
+      'the all query with a limit',
       { limit: 100, features: { limit: true } },
       'CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o} LIMIT 100',
       null /* count should be cached, since this pattern already occurred above */);
 
     itShouldExecute(datasource, request,
-      'an empty query with a limit and an offset',
+      'the all query with a limit and an offset',
       { limit: 100, offset: 200, features: { limit: true, offset: true } },
       'CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o} LIMIT 100 OFFSET 200',
       null /* count should be cached, since this pattern already occurred above */);

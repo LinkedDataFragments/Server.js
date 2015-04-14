@@ -34,18 +34,18 @@ describe('JsonLdDatasource', function () {
     after(function (done) { datasource.close(done); });
 
     itShouldExecute(datasource,
-      'the empty query',
-      { features: { triplePattern: true } },
+      'the all query',
+      { features: { } },
       129, 129);
 
     itShouldExecute(datasource,
-      'the empty query with a limit',
-      { limit: 10, features: { triplePattern: true, limit: true } },
+      'the all query with a limit',
+      { limit: 10, features: { limit: true } },
       10, 129);
 
     itShouldExecute(datasource,
-      'the empty query with an offset',
-      { offset: 10, features: { triplePattern: true, offset: true } },
+      'the all query with an offset',
+      { offset: 10, features: { offset: true } },
       119, 129);
 
     itShouldExecute(datasource,

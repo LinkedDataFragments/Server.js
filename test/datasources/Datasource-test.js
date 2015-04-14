@@ -22,7 +22,7 @@ describe('Datasource', function () {
       datasource.supportedFeatures.should.deep.equal({});
     });
 
-    it('should not support the empty query', function () {
+    it('should not support the all query', function () {
       datasource.supportsQuery({}).should.be.false;
     });
 
@@ -38,11 +38,6 @@ describe('Datasource', function () {
       });
     });
 
-    it('should throw an error when trying to execute a supported query', function () {
-      (function () { datasource.select({ features: {} }); })
-      .should.throw('_executeQuery has not been implemented');
-    });
-
     describe('when closed without a callback', function () {
       it('should do nothing', function () {
         datasource.close();
@@ -56,7 +51,7 @@ describe('Datasource', function () {
     });
   });
 
-  describe('A derived Datasource instance', function () {
+  describe('A Datasource instance with various features', function () {
     var datasource = new Datasource();
     Object.defineProperty(datasource, 'supportedFeatures', {
       enumerable: true,
@@ -64,12 +59,11 @@ describe('Datasource', function () {
     });
     datasource._executeQuery = sinon.stub();
 
-    it('should support the empty query', function () {
-      datasource.supportsQuery({}).should.be.true;
+    it('should not support the all query', function () {
+      datasource.supportsQuery({}).should.be.false;
     });
 
     it('should support queries with supported features', function () {
-      datasource.supportsQuery({ features: {} }).should.be.true;
       datasource.supportsQuery({ features: { a: true } }).should.be.true;
       datasource.supportsQuery({ features: { a: true, b: true } }).should.be.true;
       datasource.supportsQuery({ features: { b: true } }).should.be.true;
@@ -79,6 +73,7 @@ describe('Datasource', function () {
     });
 
     it('should not support queries with unsupported features', function () {
+      datasource.supportsQuery({ features: {} }).should.be.false;
       datasource.supportsQuery({ features: { c: true} }).should.be.false;
       datasource.supportsQuery({ features: { a: true, c: true} }).should.be.false;
       datasource.supportsQuery({ features: { b: true, c: true} }).should.be.false;
@@ -86,16 +81,33 @@ describe('Datasource', function () {
     });
 
     it('should not attach an error listener on select if none was passed', function () {
-      var result = datasource.select({ features: {} });
+      var result = datasource.select({ features: { a: true } });
       (function () { result.emit('error', new Error()); }).should.throw();
     });
 
     it('should attach an error listener on select if one was passed', function () {
       var onError = sinon.stub(), error = new Error();
-      var result = datasource.select({ features: {} }, onError);
+      var result = datasource.select({ features: { a: true } }, onError);
       result.emit('error', error);
       onError.should.have.been.calledOnce;
       onError.should.have.been.calledWith(error);
+    });
+  });
+
+  describe('A Datasource instance with support for the all query', function () {
+    var datasource = new Datasource();
+    Object.defineProperty(datasource, 'supportedFeatures', {
+      enumerable: true,
+      value: { all: true },
+    });
+
+    it('should support the all query', function () {
+      datasource.supportsQuery({}).should.be.true;
+    });
+
+    it('should throw an error when _executeQuery is not implemented', function () {
+      (function () { datasource.select({ features: {} }); })
+      .should.throw('_executeQuery has not been implemented');
     });
   });
 });

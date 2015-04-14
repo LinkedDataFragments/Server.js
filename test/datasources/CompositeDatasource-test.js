@@ -34,7 +34,7 @@ describe('CompositeDatasource', function () {
   describe('A CompositeDatasource instance without datasources', function () {
     var datasource = new CompositeDatasource();
 
-    it('should not support the empty query', function () {
+    it('should not support the all query', function () {
       datasource.supportsQuery({}).should.be.false;
     });
 

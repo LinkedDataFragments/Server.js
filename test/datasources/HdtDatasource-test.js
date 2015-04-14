@@ -36,18 +36,18 @@ describe('HdtDatasource', function () {
     after(function (done) { datasource.close(done); });
 
     itShouldExecute(datasource,
-      'the empty query',
-      { features: { triplePattern: true } },
+      'the all query',
+      { features: { } },
       132, 132);
 
     itShouldExecute(datasource,
-      'the empty query with a limit',
-      { limit: 10, features: { triplePattern: true, limit: true } },
+      'the all query with a limit',
+      { limit: 10, features: { limit: true } },
       10, 132);
 
     itShouldExecute(datasource,
-      'the empty query with an offset',
-      { offset: 10, features: { triplePattern: true, offset: true } },
+      'the all query with an offset',
+      { offset: 10, features: { offset: true } },
       122, 132);
 
     itShouldExecute(datasource,
@@ -86,8 +86,8 @@ describe('HdtDatasource', function () {
     after(function (done) { datasource.close(done); });
 
     itShouldExecute(datasource,
-      'the empty query',
-      { features: { triplePattern: true } },
+      'the all query',
+      { features: { } },
       6, 6,
       [
         { subject: 'genid:a', predicate: 'b', object: 'c1' },
@@ -128,8 +128,8 @@ describe('HdtDatasource', function () {
     after(function (done) { datasource.close(done); });
 
     itShouldExecute(datasource,
-      'the empty query',
-      { features: { triplePattern: true } },
+      'the all query',
+      { features: { } },
       6, 6,
       [
         { subject: 'http://example.org/.well-known/genid/a', predicate: 'b', object: 'c1' },
