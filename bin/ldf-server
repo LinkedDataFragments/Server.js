@@ -8,7 +8,8 @@ var _ = require('lodash'),
     path = require('path'),
     cluster = require('cluster'),
     LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
-    IndexDatasource = require('../lib/datasources/IndexDatasource');
+    IndexDatasource = require('../lib/datasources/IndexDatasource'),
+    CompositeDatasource = require('../lib/datasources/CompositeDatasource');
 
 // Parse arguments
 var args = process.argv.slice(2);
@@ -20,6 +21,7 @@ var configFile = args[0],
     config = JSON.parse(fs.readFileSync(configFile)),
     port = parseInt(args[1], 10) || 3000,
     workers = parseInt(args[2], 10) || 1;
+var Datasources = {};
 
 // Start up a cluster master
 if (cluster.isMaster) {
@@ -95,8 +97,7 @@ else {
       blankNodePrefix = blankNodePath ? baseURLRoot + blankNodePath : 'genid:';
 
   // Create all data sources
-  var datasourceConstructors = {},
-      datasources = config.datasources || {}, datasourceBase = baseURLPath.substr(1),
+  var datasources = config.datasources || {}, datasourceBase = baseURLPath.substr(1),
       dereference = config.dereference || (config.dereference = {});
   for (var datasourceName in datasources) {
     var datasourceConfig = config.datasources[datasourceName];
@@ -106,21 +107,30 @@ else {
         // Avoid illegal URI characters in data source path
         var datasourcePath = datasourceBase + encodeURI(datasourceName);
         datasources[datasourcePath] = datasourceConfig;
-        // Retrieve the data source class and settings
-        var type = datasourceConfig.type, Datasource = datasourceConstructors[type] ||
-              (datasourceConstructors[type] = require(path.join('../lib/datasources/', type))),
-            settings = _.defaults(datasourceConfig.settings || {}, config), datasource;
+
+        // Fetch the datasource settings
+        var settings = _.defaults(datasourceConfig.settings || {}, config);
+        datasourceConfig.title = datasourceConfig.title || datasourceName;
+        datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
+
         // Set up blank-node-to-IRI translation, with dereferenceable URLs when possible
         if (!settings.blankNodePrefix) {
           settings.blankNodePrefix = blankNodePrefix + datasourcePath + '/';
           if (blankNodePath)
             dereference[blankNodePath + datasourcePath + '/'] = datasourcePath;
         }
-        // Create the data source
-        datasource = new Datasource(settings);
-        datasourceConfig.datasource = datasource;
-        datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
-        datasourceConfig.title = datasourceConfig.title || datasourceName;
+
+        // Create a single data source
+        var type = datasourceConfig.type || datasourceConfig.types;
+        if (typeof type === 'string')
+          datasourceConfig.datasource = createDatasource(type, settings);
+        // Create a composite of multiple data sources
+        else if (_.isArray(type))
+          datasourceConfig.datasource = new CompositeDatasource({
+            datasources: type.map(function (type) { return createDatasource(type, settings); }),
+          });
+        else
+          throw new Error('Invalid datasource type: ' + type);
       }
       catch (error) {
         delete datasources[datasourcePath];
@@ -188,4 +198,11 @@ else {
     server.stop();
     process.on('SIGINT', function () { process.exit(1); });
   });
+}
+
+// Creates a datasource with the given type
+function createDatasource(type, settings) {
+  var Datasource = Datasources[type] ||
+                   (Datasources[type] = require(path.join('../lib/datasources/', type)));
+  return new Datasource(settings);
 }
