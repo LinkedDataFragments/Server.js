@@ -140,6 +140,7 @@ describe('LinkedDataFragmentsServer', function () {
         datasources: datasources,
         writers: { '*/*': writer },
         prefixes: prefixes,
+        baseURL: 'https://example.org/base/?bar=foo',
       });
       client = request.agent(server);
     });
@@ -217,19 +218,18 @@ describe('LinkedDataFragmentsServer', function () {
         var query = routerC.extractQueryParams.firstCall.args[1];
         var settings = writer.writeFragment.firstCall.args[2];
 
-        var root = 'http://' + response.req.getHeader('Host');
         settings.should.deep.equal({
           datasource: {
             title: 'My data',
-            index: root + '/#dataset',
-            url: root + '/my-datasource#dataset',
-            templateUrl: root + '/my-datasource{?subject,predicate,object}',
+            index: 'https://example.org/#dataset',
+            url: 'https://example.org/my-datasource#dataset',
+            templateUrl: 'https://example.org/my-datasource{?subject,predicate,object}',
           },
           fragment: {
-            url:             root + '/my-datasource?a=b&c=d',
-            pageUrl:         root + '/my-datasource?a=b&c=d',
-            firstPageUrl:    root + '/my-datasource?a=b&c=d&page=1',
-            nextPageUrl:     root + '/my-datasource?a=b&c=d&page=2',
+            url:             'https://example.org/my-datasource?a=b&c=d',
+            pageUrl:         'https://example.org/my-datasource?a=b&c=d',
+            firstPageUrl:    'https://example.org/my-datasource?a=b&c=d&page=1',
+            nextPageUrl:     'https://example.org/my-datasource?a=b&c=d&page=2',
             previousPageUrl: null
           },
           prefixes: prefixes,

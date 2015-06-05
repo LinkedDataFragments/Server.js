@@ -88,7 +88,7 @@ if (cluster.isMaster) {
 // Start up a worker
 else {
   // Configure preset URLs
-  var baseURL = config.baseURL ? config.baseURL.replace(/\/?$/, '/') : '/',
+  var baseURL = config.baseURL = (config.baseURL || '').replace(/\/?$/, '/'),
       baseURLRoot = baseURL.match(/^(?:https?:\/\/[^\/]+)?/)[0],
       baseURLPath = baseURL.substr(baseURLRoot.length),
       blankNodePath = baseURLRoot ? '/.well-known/genid/' : '',
