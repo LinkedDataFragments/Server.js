@@ -346,6 +346,27 @@ describe('TriplePatternRouter', function () {
             { a: 1 },
             { a: 1, features: { triplePattern: true }, object: 'foo:bar' },
           ],
+          [
+            'a URL with a typed literal object parameter',
+            'http://example.org/?object=%22foo%22%5E%5Ehttp%3A%2F%2Fexample.org%2Ffoo%23bar',
+            'should add the object to the query',
+            { a: 1 },
+            { a: 1, features: { triplePattern: true }, object: '"foo"^^http://example.org/foo#bar' },
+          ],
+          [
+            'a URL with a typed literal object parameter in angular brackets',
+            'http://example.org/?object=%22foo%22%5E%5E%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
+            'should add the object to the query',
+            { a: 1 },
+            { a: 1, features: { triplePattern: true }, object: '"foo"^^http://example.org/foo#bar' },
+          ],
+          [
+            'a URL with a prefixed literal object parameter',
+            'http://example.org/?object=%22foo%22%5E%5Efoo%3Abar',
+            'should add the object to the query',
+            { a: 1 },
+            { a: 1, features: { triplePattern: true }, object: '"foo"^^http://example.org/foo#bar' },
+          ],
         ]
         .forEach(function (args) { test.extractQueryParams.apply(router, args); });
       });
