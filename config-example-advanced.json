@@ -32,11 +32,11 @@
   ],
 
   "writers": {
-    "text/html,*/*":         { type: "HtmlWriter" },
-    "text/turtle,text/n3":   { type: "TurtleWriter" },
-    "application/trig":      { type: "TrigWriter" },
-    "application/n-triples": { type: "NTriplesWriter" },
-    "application/n-quads":   { type: "NQuadsWriter" },
+    "text/html,*/*":         { "type": "HtmlWriter" },
+    "text/turtle,text/n3":   { "type": "TurtleWriter" },
+    "application/trig":      { "type": "TrigWriter" },
+    "application/n-triples": { "type": "NTriplesWriter" },
+    "application/n-quads":   { "type": "NQuadsWriter" },
     "application/ld+json,application/json": { "type": "JsonLdWriter" }
   },
 
