@@ -368,4 +368,95 @@ describe('FragmentsHandler', function () {
       });
     });
   });
+
+  describe('A FragmentsHandler instance with a datasource that synchronously errors', function () {
+    var handler, client, router, datasource, error, writer;
+    before(function () {
+      router = { extractQueryParams: sinon.spy(function (request, query) {
+        query.features.datasource = true;
+        query.datasource = 'my-datasource';
+      })};
+      error = new Error('datasource error'),
+      datasource = {
+        supportsQuery: sinon.stub().returns(true),
+        select: sinon.stub().throws(error),
+      };
+      writer = {
+        writeError: sinon.spy(function (outputStream) { outputStream.end(); }),
+      };
+      handler = new FragmentsHandler({
+        routers: [ router ],
+        datasources: { 'my-datasource': { datasource: datasource } },
+        writers: { '*/*': writer },
+      });
+      client = request.agent(new DummyServer(handler));
+    });
+    function resetAll() {
+      router.extractQueryParams.reset();
+    }
+
+    describe('receiving a request for a fragment', function () {
+      var response;
+      before(function (done) {
+        resetAll();
+        response = client.get('/my-datasource?a=b&c=d').end(done);
+      });
+
+      it('should pass the query error to the output writer', function () {
+        writer.writeError.should.have.been.calledOnce;
+        var writeErrorArgs = writer.writeError.firstCall.args;
+
+        writeErrorArgs.should.have.length(3);
+        writeErrorArgs[0].should.be.an.instanceof(http.ServerResponse);
+        writeErrorArgs[1].should.equal(error);
+        writeErrorArgs[2].should.be.an('object');
+      });
+    });
+  });
+
+  describe('A FragmentsHandler instance with a datasource that asynchronously errors', function () {
+    var handler, client, router, datasource, error, writer;
+    before(function () {
+      router = { extractQueryParams: sinon.spy(function (request, query) {
+        query.features.datasource = true;
+        query.datasource = 'my-datasource';
+      })};
+      error = new Error('datasource error'),
+      datasource = {
+        supportsQuery: sinon.stub().returns(true),
+        select: function (query, callback) { setImmediate(callback.bind(null, error)); },
+      };
+      writer = {
+        writeError: sinon.spy(function (outputStream) { outputStream.end(); }),
+        writeFragment: sinon.stub(),
+      };
+      handler = new FragmentsHandler({
+        routers: [ router ],
+        datasources: { 'my-datasource': { datasource: datasource } },
+        writers: { '*/*': writer },
+      });
+      client = request.agent(new DummyServer(handler));
+    });
+    function resetAll() {
+      router.extractQueryParams.reset();
+    }
+
+    describe('receiving a request for a fragment', function () {
+      var response;
+      before(function (done) {
+        resetAll();
+        response = client.get('/my-datasource?a=b&c=d').end(done);
+      });
+
+      it('should pass the query error to the output writer', function () {
+        writer.writeError.should.have.been.calledOnce;
+        var writeErrorArgs = writer.writeError.firstCall.args;
+
+        writeErrorArgs.should.have.length(3);
+        writeErrorArgs[0].should.be.an.instanceof(http.ServerResponse);
+        writeErrorArgs[1].should.equal(error);
+        writeErrorArgs[2].should.be.an('object');
+      });
+    });
+  });
 });

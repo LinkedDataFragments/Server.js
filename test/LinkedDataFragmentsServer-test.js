@@ -425,7 +425,7 @@ describe('LinkedDataFragmentsServer', function () {
         select: sinon.stub(),
       };
       var router = { extractQueryParams: function (request, query) {
-        query.features.dataset = true;
+        query.features.datasource = true;
         query.datasource = 'my-datasource';
       }};
       server = new LinkedDataFragmentsServer({
