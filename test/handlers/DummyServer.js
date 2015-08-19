@@ -5,7 +5,9 @@ var http = require('http'),
 /* Dummy server that emulates LinkedDataFragmentsServer */
 function DummyServer(handler, options) {
   var server = http.createServer(),
-      baseUrl = options && options.baseUrl ? url.parse(options.baseUrl) : null;
+      baseUrl = _.mapValues(url.parse(options && options.baseURL || '/'), function (value, key) {
+                  return value && !/^(?:href|path|search)$/.test(key) ? value : undefined;
+                });
   server.on('request', function (request, response) {
     // pre-set parsed request URL
     request.parsedUrl = _.defaults(
