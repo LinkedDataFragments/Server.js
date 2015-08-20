@@ -141,14 +141,6 @@ else {
   // Set up assets
   config.assetsPath = baseURLPath + 'assets/';
 
-  // Set up fragment routing
-  var routersSettings = config.routers || ['DatasourceRouter', 'TriplePatternRouter', 'PageRouter']
-                                          .map(function (type) { return { type: type }; });
-  config.routers = routersSettings.map(function (router) {
-    var Router = require(path.join('../lib/routers/', router.type));
-    return new Router(_.defaults(router.settings || {}, config));
-  });
-
   // Set up writers
   var writersSettings = config.writers || {
     'text/html,*/*':         { type: 'HtmlWriter' },
@@ -161,6 +153,22 @@ else {
   config.writers = _.mapValues(writersSettings, function (writer) {
     var Writer = require(path.join('../lib/writers/', writer.type));
     return new Writer(_.defaults(writer.settings || {}, config));
+  });
+
+  // Set up fragment routing
+  var routersSettings = config.routers || ['DatasourceRouter', 'TriplePatternRouter', 'PageRouter']
+                                          .map(function (type) { return { type: type }; });
+  config.routers = routersSettings.map(function (router) {
+    var Router = require(path.join('../lib/routers/', router.type));
+    return new Router(_.defaults(router.settings || {}, config));
+  });
+
+  // Set up request handlers
+  var handlersSettings = config.handlers || ['FragmentsHandler', 'AssetsHandler', 'DereferenceHandler', 'NotFoundHandler']
+                                           .map(function (type) { return { type: type }; });
+  config.handlers = handlersSettings.map(function (handler) {
+    var Handler = require(path.join('../lib/handlers/', handler.type));
+    return new Handler(_.defaults(handler.settings || {}, config));
   });
 
   // Set up access logging
