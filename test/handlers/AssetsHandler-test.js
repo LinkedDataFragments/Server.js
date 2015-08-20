@@ -5,6 +5,20 @@ var request = require('supertest'),
     fs = require('fs');
 
 describe('AssetsHandler', function () {
+  describe('The AssetsHandler module', function () {
+    it('should be a function', function () {
+      AssetsHandler.should.be.a('function');
+    });
+
+    it('should be an AssetsHandler constructor', function () {
+      new AssetsHandler().should.be.an.instanceof(AssetsHandler);
+    });
+
+    it('should create new AssetsHandler objects', function () {
+      AssetsHandler().should.be.an.instanceof(AssetsHandler);
+    });
+  });
+
   describe('An AssetsHandler instance', function () {
     var handler, client;
     before(function () {

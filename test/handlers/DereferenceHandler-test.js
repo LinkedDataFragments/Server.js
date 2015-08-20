@@ -4,6 +4,20 @@ var request = require('supertest'),
     DummyServer = require('./DummyServer');
 
 describe('DereferenceHandler', function () {
+  describe('The DereferenceHandler module', function () {
+    it('should be a function', function () {
+      DereferenceHandler.should.be.a('function');
+    });
+
+    it('should be a DereferenceHandler constructor', function () {
+      new DereferenceHandler().should.be.an.instanceof(DereferenceHandler);
+    });
+
+    it('should create new DereferenceHandler objects', function () {
+      DereferenceHandler().should.be.an.instanceof(DereferenceHandler);
+    });
+  });
+
   describe('A DereferenceHandler instance', function () {
     var handler, client;
     before(function () {

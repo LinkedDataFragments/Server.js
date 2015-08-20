@@ -7,6 +7,20 @@ var request = require('supertest'),
     url = require('url');
 
 describe('FragmentsHandler', function () {
+  describe('The FragmentsHandler module', function () {
+    it('should be a function', function () {
+      FragmentsHandler.should.be.a('function');
+    });
+
+    it('should be a FragmentsHandler constructor', function () {
+      new FragmentsHandler().should.be.an.instanceof(FragmentsHandler);
+    });
+
+    it('should create new FragmentsHandler objects', function () {
+      FragmentsHandler().should.be.an.instanceof(FragmentsHandler);
+    });
+  });
+
   describe('A FragmentsHandler instance with 3 routers', function () {
     var handler, client, routerA, routerB, routerC, datasource, datasources, writer, prefixes;
     before(function () {
@@ -29,13 +43,13 @@ describe('FragmentsHandler', function () {
       };
       prefixes = { a: 'a' };
       handler = new FragmentsHandler({
+        baseURL: 'https://example.org/base/?bar=foo',
         routers: [ routerA, routerB, routerC ],
         datasources: datasources,
         writers: { '*/*': writer },
         prefixes: prefixes,
       });
-      client = request.agent(new DummyServer(handler,
-                             { baseURL: 'https://example.org/base/?bar=foo' }));
+      client = request.agent(new DummyServer(handler));
     });
     function resetAll() {
       routerA.extractQueryParams.reset();

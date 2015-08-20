@@ -5,6 +5,20 @@ var request = require('supertest'),
     fs = require('fs');
 
 describe('NotFoundHandler', function () {
+  describe('The NotFoundHandler module', function () {
+    it('should be a function', function () {
+      NotFoundHandler.should.be.a('function');
+    });
+
+    it('should be a NotFoundHandler constructor', function () {
+      new NotFoundHandler().should.be.an.instanceof(NotFoundHandler);
+    });
+
+    it('should create new NotFoundHandler objects', function () {
+      NotFoundHandler().should.be.an.instanceof(NotFoundHandler);
+    });
+  });
+
   describe('A NotFoundHandler instance without writers', function () {
     var handler, client;
     before(function () {
