@@ -19,7 +19,8 @@ if (args.length < 1 || args.length > 3 || /^--?h(elp)?$/.test(args[0])) {
 var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config-defaults.json'))),
     config = _.defaults(JSON.parse(fs.readFileSync(args[0])), configDefaults),
     port = parseInt(args[1], 10) || config.port,
-    workers = parseInt(args[2], 10) || config.workers;
+    workers = parseInt(args[2], 10) || config.workers,
+    constructors = {};
 
 // Start up a cluster master
 if (cluster.isMaster) {
@@ -95,8 +96,7 @@ else {
       blankNodePrefix = blankNodePath ? baseURLRoot + blankNodePath : 'genid:';
 
   // Create all data sources
-  var datasourceConstructors = {}, datasources = config.datasources, datasourceBase = baseURLPath.substr(1),
-      dereference = config.dereference;
+  var datasources = config.datasources, datasourceBase = baseURLPath.substr(1), dereference = config.dereference;
   for (var datasourceName in datasources) {
     var datasourceConfig = config.datasources[datasourceName];
     delete datasources[datasourceName];
@@ -105,18 +105,15 @@ else {
         // Avoid illegal URI characters in data source path
         var datasourcePath = datasourceBase + encodeURI(datasourceName);
         datasources[datasourcePath] = datasourceConfig;
-        // Retrieve the data source class and settings
-        var type = datasourceConfig.type, Datasource = datasourceConstructors[type] ||
-              (datasourceConstructors[type] = require(path.join('../lib/datasources/', type))),
-            settings = _.defaults(datasourceConfig.settings || {}, config), datasource;
         // Set up blank-node-to-IRI translation, with dereferenceable URLs when possible
-        if (!settings.blankNodePrefix) {
-          settings.blankNodePrefix = blankNodePrefix + datasourcePath + '/';
+        datasourceConfig.settings = _.defaults(datasourceConfig.settings || {}, config);
+        if (!datasourceConfig.settings.blankNodePrefix) {
+          datasourceConfig.settings.blankNodePrefix = blankNodePrefix + datasourcePath + '/';
           if (blankNodePath)
             dereference[blankNodePath + datasourcePath + '/'] = datasourcePath;
         }
         // Create the data source
-        datasource = new Datasource(settings);
+        var datasource = instantiate(datasourceConfig, '../lib/datasources/');
         datasourceConfig.datasource = datasource;
         datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
         datasourceConfig.title = datasourceConfig.title || datasourceName;
@@ -140,23 +137,10 @@ else {
   // Set up assets
   config.assetsPath = baseURLPath + 'assets/';
 
-  // Set up writers
-  config.writers = _.mapValues(config.writers, function (writer) {
-    var Writer = require(path.join('../lib/writers/', writer.type || writer));
-    return new Writer(_.defaults(writer.settings || {}, config));
-  });
-
-  // Set up fragment routing
-  config.routers = config.routers.map(function (router) {
-    var Router = require(path.join('../lib/routers/', router.type || router));
-    return new Router(_.defaults(router.settings || {}, config));
-  });
-
-  // Set up request handlers
-  config.handlers = config.handlers.map(function (handler) {
-    var Handler = require(path.join('../lib/handlers/', handler.type || handler));
-    return new Handler(_.defaults(handler.settings || {}, config));
-  });
+  // Set up writers, routers, and handlers
+  config.writers  = instantiateAll(config.writers,  '../lib/writers/');
+  config.routers  = instantiateAll(config.routers,  '../lib/routers/');
+  config.handlers = instantiateAll(config.handlers, '../lib/handlers/');
 
   // Set up access logging
   var loggingSettings = _.defaults(config.logging, configDefaults.logging);
@@ -182,4 +166,19 @@ else {
     server.stop();
     process.on('SIGINT', function () { process.exit(1); });
   });
+}
+
+
+// Instantiates an object from the given description
+function instantiate(description, includePath) {
+  var type = description.type || description, Constructor = constructors[type], instance;
+  if (!Constructor)
+    Constructor = constructors[type] = require(path.join(includePath, type));
+  return new Constructor(_.defaults(description.settings || {}, config));
+}
+
+// Instantiates all objects from the given descriptions
+function instantiateAll(descriptions, includePath) {
+  return (_.isArray(descriptions) ? _.map : _.mapValues)
+         (descriptions, function (description) { return instantiate(description, includePath); });
 }
