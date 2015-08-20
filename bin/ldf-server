@@ -16,15 +16,15 @@ if (args.length < 1 || args.length > 3 || /^--?h(elp)?$/.test(args[0])) {
   console.log('usage: server config.json [port [workers]]');
   return process.exit(1);
 }
-var configFile = args[0],
-    config = JSON.parse(fs.readFileSync(configFile)),
-    port = parseInt(args[1], 10) || 3000,
-    workers = parseInt(args[2], 10) || 1;
+var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config-defaults.json'))),
+    config = _.defaults(JSON.parse(fs.readFileSync(args[0])), configDefaults),
+    port = parseInt(args[1], 10) || config.port,
+    workers = parseInt(args[2], 10) || config.workers;
 
 // Start up a cluster master
 if (cluster.isMaster) {
   // Create workers
-  console.log('Master %d running.', process.pid);
+  console.log('Master %d running on http://localhost:%d/.', process.pid, port);
   for (var i = 0; i < workers; i++)
     cluster.fork();
 
@@ -88,16 +88,15 @@ if (cluster.isMaster) {
 // Start up a worker
 else {
   // Configure preset URLs
-  var baseURL = config.baseURL = (config.baseURL || '').replace(/\/?$/, '/'),
+  var baseURL = config.baseURL = config.baseURL.replace(/\/?$/, '/'),
       baseURLRoot = baseURL.match(/^(?:https?:\/\/[^\/]+)?/)[0],
       baseURLPath = baseURL.substr(baseURLRoot.length),
       blankNodePath = baseURLRoot ? '/.well-known/genid/' : '',
       blankNodePrefix = blankNodePath ? baseURLRoot + blankNodePath : 'genid:';
 
   // Create all data sources
-  var datasourceConstructors = {},
-      datasources = config.datasources || {}, datasourceBase = baseURLPath.substr(1),
-      dereference = config.dereference || (config.dereference = {});
+  var datasourceConstructors = {}, datasources = config.datasources, datasourceBase = baseURLPath.substr(1),
+      dereference = config.dereference;
   for (var datasourceName in datasources) {
     var datasourceConfig = config.datasources[datasourceName];
     delete datasources[datasourceName];
@@ -142,37 +141,25 @@ else {
   config.assetsPath = baseURLPath + 'assets/';
 
   // Set up writers
-  var writersSettings = config.writers || {
-    'text/html,*/*':         { type: 'HtmlWriter' },
-    'text/turtle,text/n3':   { type: 'TurtleWriter' },
-    'application/trig':      { type: 'TrigWriter' },
-    'application/n-triples': { type: 'NTriplesWriter' },
-    'application/n-quads':   { type: 'NQuadsWriter' },
-    'application/ld+json,application/json': { type: 'JsonLdWriter' },
-  };
-  config.writers = _.mapValues(writersSettings, function (writer) {
-    var Writer = require(path.join('../lib/writers/', writer.type));
+  config.writers = _.mapValues(config.writers, function (writer) {
+    var Writer = require(path.join('../lib/writers/', writer.type || writer));
     return new Writer(_.defaults(writer.settings || {}, config));
   });
 
   // Set up fragment routing
-  var routersSettings = config.routers || ['DatasourceRouter', 'TriplePatternRouter', 'PageRouter']
-                                          .map(function (type) { return { type: type }; });
-  config.routers = routersSettings.map(function (router) {
-    var Router = require(path.join('../lib/routers/', router.type));
+  config.routers = config.routers.map(function (router) {
+    var Router = require(path.join('../lib/routers/', router.type || router));
     return new Router(_.defaults(router.settings || {}, config));
   });
 
   // Set up request handlers
-  var handlersSettings = config.handlers || ['FragmentsHandler', 'AssetsHandler', 'DereferenceHandler', 'NotFoundHandler']
-                                           .map(function (type) { return { type: type }; });
-  config.handlers = handlersSettings.map(function (handler) {
-    var Handler = require(path.join('../lib/handlers/', handler.type));
+  config.handlers = config.handlers.map(function (handler) {
+    var Handler = require(path.join('../lib/handlers/', handler.type || handler));
     return new Handler(_.defaults(handler.settings || {}, config));
   });
 
   // Set up access logging
-  var loggingSettings = _.defaults(config.logging || {}, { enabled: false, file: 'access.log' });
+  var loggingSettings = _.defaults(config.logging, configDefaults.logging);
   if (loggingSettings.enabled) {
     var accesslog = require('access-log');
     config.accesslogger = function (request, response) {
