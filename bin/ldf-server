@@ -179,7 +179,7 @@ else {
   // Create and start server
   var server = new LinkedDataFragmentsServer(config);
   server.listen(port);
-  console.log('Worker %d running on http://localhost:%d/.', process.pid, port);
+  console.log('Worker %d running on %s://localhost:%d/.', process.pid, config.protocol || 'http', port);
 
   // Terminate gracefully if possible
   process.once('SIGINT', function () {
