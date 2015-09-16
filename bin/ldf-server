@@ -137,10 +137,10 @@ else {
   // Set up assets
   config.assetsPath = baseURLPath + 'assets/';
 
-  // Set up writers, routers, and handlers
-  config.writers  = instantiateAll(config.writers,  '../lib/writers/');
-  config.routers  = instantiateAll(config.routers,  '../lib/routers/');
-  config.handlers = instantiateAll(config.handlers, '../lib/handlers/');
+  // Set up writers, routers, and controllers
+  config.writers = instantiateAll(config.writers,  '../lib/writers/');
+  config.routers = instantiateAll(config.routers,  '../lib/routers/');
+  config.controllers = instantiateAll(config.controllers, '../lib/controllers/');
 
   // Set up access logging
   var loggingSettings = _.defaults(config.logging, configDefaults.logging);

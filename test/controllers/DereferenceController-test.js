@@ -1,25 +1,25 @@
-var DereferenceHandler = require('../../lib/handlers/DereferenceHandler');
+var DereferenceController = require('../../lib/controllers/DereferenceController');
 
 var request = require('supertest'),
     DummyServer = require('./DummyServer');
 
-describe('DereferenceHandler', function () {
-  describe('The DereferenceHandler module', function () {
+describe('DereferenceController', function () {
+  describe('The DereferenceController module', function () {
     it('should be a function', function () {
-      DereferenceHandler.should.be.a('function');
+      DereferenceController.should.be.a('function');
     });
 
-    it('should be a DereferenceHandler constructor', function () {
-      new DereferenceHandler().should.be.an.instanceof(DereferenceHandler);
+    it('should be a DereferenceController constructor', function () {
+      new DereferenceController().should.be.an.instanceof(DereferenceController);
     });
 
-    it('should create new DereferenceHandler objects', function () {
-      DereferenceHandler().should.be.an.instanceof(DereferenceHandler);
+    it('should create new DereferenceController objects', function () {
+      DereferenceController().should.be.an.instanceof(DereferenceController);
     });
   });
 
-  describe('A DereferenceHandler instance', function () {
-    var handler, client;
+  describe('A DereferenceController instance', function () {
+    var controller, client;
     before(function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
@@ -29,8 +29,8 @@ describe('DereferenceHandler', function () {
         query.features.datasource = true;
         query.datasource = request.url.pathname.substr(1);
       }};
-      handler = new DereferenceHandler({ dereference: { '/resource/': 'dbpedia/2014' } });
-      client = request.agent(new DummyServer(handler));
+      controller = new DereferenceController({ dereference: { '/resource/': 'dbpedia/2014' } });
+      client = request.agent(new DummyServer(controller));
     });
 
     describe('receiving a request for a dereferenced URL', function () {
@@ -41,7 +41,7 @@ describe('DereferenceHandler', function () {
       });
 
       it('should return true', function () {
-        handler.result.should.be.true;
+        controller.result.should.be.true;
       });
 
       it('should set the status code to 303', function () {
@@ -77,7 +77,7 @@ describe('DereferenceHandler', function () {
       });
 
       it('should return false', function () {
-        handler.result.should.be.false;
+        controller.result.should.be.false;
       });
     });
   });

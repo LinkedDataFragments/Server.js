@@ -1,4 +1,4 @@
-var FragmentsHandler = require('../../lib/handlers/FragmentsHandler');
+var TriplePatternFragmentsController = require('../../lib/controllers/TriplePatternFragmentsController');
 
 var request = require('supertest'),
     DummyServer = require('./DummyServer'),
@@ -6,23 +6,23 @@ var request = require('supertest'),
     http = require('http'),
     url = require('url');
 
-describe('FragmentsHandler', function () {
-  describe('The FragmentsHandler module', function () {
+describe('TriplePatternFragmentsController', function () {
+  describe('The TriplePatternFragmentsController module', function () {
     it('should be a function', function () {
-      FragmentsHandler.should.be.a('function');
+      TriplePatternFragmentsController.should.be.a('function');
     });
 
-    it('should be a FragmentsHandler constructor', function () {
-      new FragmentsHandler().should.be.an.instanceof(FragmentsHandler);
+    it('should be a TriplePatternFragmentsController constructor', function () {
+      new TriplePatternFragmentsController().should.be.an.instanceof(TriplePatternFragmentsController);
     });
 
-    it('should create new FragmentsHandler objects', function () {
-      FragmentsHandler().should.be.an.instanceof(FragmentsHandler);
+    it('should create new TriplePatternFragmentsController objects', function () {
+      TriplePatternFragmentsController().should.be.an.instanceof(TriplePatternFragmentsController);
     });
   });
 
-  describe('A FragmentsHandler instance with 3 routers', function () {
-    var handler, client, routerA, routerB, routerC, datasource, datasources, writer, prefixes;
+  describe('A TriplePatternFragmentsController instance with 3 routers', function () {
+    var controller, client, routerA, routerB, routerC, datasource, datasources, writer, prefixes;
     before(function () {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
@@ -42,14 +42,14 @@ describe('FragmentsHandler', function () {
         writeNotFound: sinon.spy(function (outputStream) { outputStream.end(); }),
       };
       prefixes = { a: 'a' };
-      handler = new FragmentsHandler({
+      controller = new TriplePatternFragmentsController({
         baseURL: 'https://example.org/base/?bar=foo',
         routers: [ routerA, routerB, routerC ],
         datasources: datasources,
         writers: { '*/*': writer },
         prefixes: prefixes,
       });
-      client = request.agent(new DummyServer(handler));
+      client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
       routerA.extractQueryParams.reset();
@@ -166,8 +166,8 @@ describe('FragmentsHandler', function () {
     });
   });
 
-  describe('A FragmentsHandler instance with 3 writers', function () {
-    var handler, client, writerHtml, writerJson, writerTurtle;
+  describe('A TriplePatternFragmentsController instance with 3 writers', function () {
+    var controller, client, writerHtml, writerJson, writerTurtle;
     before(function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
@@ -180,7 +180,7 @@ describe('FragmentsHandler', function () {
       writerHtml   = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
       writerJson   = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
       writerTurtle = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
-      handler = new FragmentsHandler({
+      controller = new TriplePatternFragmentsController({
         routers: [ router ],
         datasources: { 'my-datasource': { datasource: datasource } },
         writers: {
@@ -189,7 +189,7 @@ describe('FragmentsHandler', function () {
           'text/html,*/*': writerHtml,
         },
       });
-      client = request.agent(new DummyServer(handler));
+      client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
       writerHtml.writeFragment.reset();
@@ -324,8 +324,8 @@ describe('FragmentsHandler', function () {
     });
   });
 
-  describe('A FragmentsHandler instance without matching writer', function () {
-    var handler, client;
+  describe('A TriplePatternFragmentsController instance without matching writer', function () {
+    var controller, client;
     before(function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
@@ -335,11 +335,11 @@ describe('FragmentsHandler', function () {
         query.features.datasource = true;
         query.datasource = 'my-datasource';
       }};
-      handler = new FragmentsHandler({
+      controller = new TriplePatternFragmentsController({
         routers: [ router ],
         datasources: { 'my-datasource': { datasource: datasource } },
       });
-      client = request.agent(new DummyServer(handler));
+      client = request.agent(new DummyServer(controller));
     });
 
     describe('receiving a request without Accept header', function () {
@@ -383,8 +383,8 @@ describe('FragmentsHandler', function () {
     });
   });
 
-  describe('A FragmentsHandler instance with a datasource that synchronously errors', function () {
-    var handler, client, router, datasource, error, writer;
+  describe('A TriplePatternFragmentsController instance with a datasource that synchronously errors', function () {
+    var controller, client, router, datasource, error, writer;
     before(function () {
       router = { extractQueryParams: sinon.spy(function (request, query) {
         query.features.datasource = true;
@@ -398,12 +398,12 @@ describe('FragmentsHandler', function () {
       writer = {
         writeError: sinon.spy(function (outputStream) { outputStream.end(); }),
       };
-      handler = new FragmentsHandler({
+      controller = new TriplePatternFragmentsController({
         routers: [ router ],
         datasources: { 'my-datasource': { datasource: datasource } },
         writers: { '*/*': writer },
       });
-      client = request.agent(new DummyServer(handler));
+      client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
       router.extractQueryParams.reset();
@@ -428,8 +428,8 @@ describe('FragmentsHandler', function () {
     });
   });
 
-  describe('A FragmentsHandler instance with a datasource that asynchronously errors', function () {
-    var handler, client, router, datasource, error, writer;
+  describe('A TriplePatternFragmentsController instance with a datasource that asynchronously errors', function () {
+    var controller, client, router, datasource, error, writer;
     before(function () {
       router = { extractQueryParams: sinon.spy(function (request, query) {
         query.features.datasource = true;
@@ -444,12 +444,12 @@ describe('FragmentsHandler', function () {
         writeError: sinon.spy(function (outputStream) { outputStream.end(); }),
         writeFragment: sinon.stub(),
       };
-      handler = new FragmentsHandler({
+      controller = new TriplePatternFragmentsController({
         routers: [ router ],
         datasources: { 'my-datasource': { datasource: datasource } },
         writers: { '*/*': writer },
       });
-      client = request.agent(new DummyServer(handler));
+      client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
       router.extractQueryParams.reset();

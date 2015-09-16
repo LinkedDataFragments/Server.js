@@ -27,9 +27,18 @@
     "application/ld+json,application/json": "JsonLdWriter"
   },
 
-  "routers": ["DatasourceRouter", "TriplePatternRouter", "PageRouter"],
+  "routers": [
+    "DatasourceRouter",
+    "TriplePatternRouter",
+    "PageRouter"
+  ],
 
-  "handlers": ["FragmentsHandler", "AssetsHandler", "DereferenceHandler", "NotFoundHandler"],
+  "controllers": [
+    "TriplePatternFragmentsController",
+    "AssetsController",
+    "DereferenceController",
+    "NotFoundController"
+  ],
 
   "logging": { "enabled": false, "file": "access.log" }
 }

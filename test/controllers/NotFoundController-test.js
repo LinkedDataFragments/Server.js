@@ -1,34 +1,34 @@
-var NotFoundHandler = require('../../lib/handlers/NotFoundHandler');
+var NotFoundController = require('../../lib/controllers/NotFoundController');
 
 var request = require('supertest'),
     DummyServer = require('./DummyServer'),
     fs = require('fs');
 
-describe('NotFoundHandler', function () {
-  describe('The NotFoundHandler module', function () {
+describe('NotFoundController', function () {
+  describe('The NotFoundController module', function () {
     it('should be a function', function () {
-      NotFoundHandler.should.be.a('function');
+      NotFoundController.should.be.a('function');
     });
 
-    it('should be a NotFoundHandler constructor', function () {
-      new NotFoundHandler().should.be.an.instanceof(NotFoundHandler);
+    it('should be a NotFoundController constructor', function () {
+      new NotFoundController().should.be.an.instanceof(NotFoundController);
     });
 
-    it('should create new NotFoundHandler objects', function () {
-      NotFoundHandler().should.be.an.instanceof(NotFoundHandler);
+    it('should create new NotFoundController objects', function () {
+      NotFoundController().should.be.an.instanceof(NotFoundController);
     });
   });
 
-  describe('A NotFoundHandler instance without writers', function () {
-    var handler, client;
+  describe('A NotFoundController instance without writers', function () {
+    var controller, client;
     before(function () {
-      handler = new NotFoundHandler();
-      client = request.agent(new DummyServer(handler));
+      controller = new NotFoundController();
+      client = request.agent(new DummyServer(controller));
     });
 
     it('should send a 404 in plaintext', function (done) {
       client.get('/notfound').expect(function (response) {
-        handler.result.should.be.true;
+        controller.result.should.be.true;
         response.should.have.property('statusCode', 404);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', '/notfound not found');
@@ -36,20 +36,20 @@ describe('NotFoundHandler', function () {
     });
   });
 
-  describe('A NotFoundHandler instance with 3 writers', function () {
-    var handler, client, writerHtml, writerJson, writerTurtle;
+  describe('A NotFoundController instance with 3 writers', function () {
+    var controller, client, writerHtml, writerJson, writerTurtle;
     before(function () {
       writerHtml   = { writeNotFound: sinon.spy(function (stream) { stream.end(); }) };
       writerJson   = { writeNotFound: sinon.spy(function (stream) { stream.end(); }) };
       writerTurtle = { writeNotFound: sinon.spy(function (stream) { stream.end(); }) };
-      handler = new NotFoundHandler({
+      controller = new NotFoundController({
        writers: {
           'application/json': writerJson,
           'text/turtle,text/n3': writerTurtle,
           'text/html,*/*': writerHtml,
         }
       });
-      client = request.agent(new DummyServer(handler));
+      client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
       writerHtml.writeNotFound.reset();

@@ -1,30 +1,30 @@
-var RequestHandler = require('../../lib/handlers/RequestHandler');
+var Controller = require('../../lib/controllers/Controller');
 
 var http = require('http'),
     request = require('supertest'),
     DummyServer = require('./DummyServer');
 
-describe('RequestHandler', function () {
-  describe('The RequestHandler module', function () {
+describe('Controller', function () {
+  describe('The Controller module', function () {
     it('should be a function', function () {
-      RequestHandler.should.be.a('function');
+      Controller.should.be.a('function');
     });
 
-    it('should be a RequestHandler constructor', function () {
-      new RequestHandler().should.be.an.instanceof(RequestHandler);
+    it('should be a Controller constructor', function () {
+      new Controller().should.be.an.instanceof(Controller);
     });
 
-    it('should create new RequestHandler objects', function () {
-      RequestHandler().should.be.an.instanceof(RequestHandler);
+    it('should create new Controller objects', function () {
+      Controller().should.be.an.instanceof(Controller);
     });
   });
 
-  describe('A RequestHandler instance without baseURL', function () {
-    var handler, client;
+  describe('A Controller instance without baseURL', function () {
+    var controller, client;
     before(function () {
-      handler = new RequestHandler();
-      sinon.spy(handler, '_handleRequest');
-      client = request.agent(new DummyServer(handler));
+      controller = new Controller();
+      sinon.spy(controller, '_handleRequest');
+      client = request.agent(new DummyServer(controller));
     });
 
     describe('receiving a request', function () {
@@ -35,16 +35,16 @@ describe('RequestHandler', function () {
       });
 
       it('should call _handleRequest with request and response', function () {
-        handler._handleRequest.should.have.been.calledOnce;
-        var args = handler._handleRequest.getCall(0).args;
+        controller._handleRequest.should.have.been.calledOnce;
+        var args = controller._handleRequest.getCall(0).args;
         args.should.have.length(2);
         args[0].should.have.property('url');
         args[1].should.be.an.instanceof(http.ServerResponse);
       });
 
       it('should extend _handleRequest with the original URL as parsedUrl property', function () {
-        handler._handleRequest.should.have.been.calledOnce;
-        var request = handler._handleRequest.getCall(0).args[0];
+        controller._handleRequest.should.have.been.calledOnce;
+        var request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
         request.parsedUrl.should.deep.equal({
           protocol: 'http:', host: request.headers.host, hostname: undefined, port: undefined,
@@ -54,17 +54,17 @@ describe('RequestHandler', function () {
       });
 
       it('should return false', function () {
-        handler.result.should.be.false;
+        controller.result.should.be.false;
       });
     });
   });
 
-  describe('A RequestHandler instance with baseURL', function () {
-    var handler, client;
+  describe('A Controller instance with baseURL', function () {
+    var controller, client;
     before(function () {
-      handler = new RequestHandler({ baseURL: 'http://example.org:1234/base?c=d#f' });
-      sinon.spy(handler, '_handleRequest');
-      client = request.agent(new DummyServer(handler));
+      controller = new Controller({ baseURL: 'http://example.org:1234/base?c=d#f' });
+      sinon.spy(controller, '_handleRequest');
+      client = request.agent(new DummyServer(controller));
     });
 
     describe('receiving a request', function () {
@@ -75,16 +75,16 @@ describe('RequestHandler', function () {
       });
 
       it('should call _handleRequest with request and response', function () {
-        handler._handleRequest.should.have.been.calledOnce;
-        var args = handler._handleRequest.getCall(0).args;
+        controller._handleRequest.should.have.been.calledOnce;
+        var args = controller._handleRequest.getCall(0).args;
         args.should.have.length(2);
         args[0].should.have.property('url');
         args[1].should.be.an.instanceof(http.ServerResponse);
       });
 
       it('should extend _handleRequest with the rebased URL as parsedUrl property', function () {
-        handler._handleRequest.should.have.been.calledOnce;
-        var request = handler._handleRequest.getCall(0).args[0];
+        controller._handleRequest.should.have.been.calledOnce;
+        var request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
         request.parsedUrl.should.deep.equal({
           protocol: 'http:', host: 'example.org:1234', hostname: 'example.org', port: "1234",
@@ -94,7 +94,7 @@ describe('RequestHandler', function () {
       });
 
       it('should return false', function () {
-        handler.result.should.be.false;
+        controller.result.should.be.false;
       });
     });
   });

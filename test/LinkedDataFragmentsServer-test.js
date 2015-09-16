@@ -6,10 +6,10 @@ var request = require('supertest'),
     url = require('url');
 
 describe('LinkedDataFragmentsServer', function () {
-  describe('A LinkedDataFragmentsServer instance with one handler', function () {
-    var server, handler, client;
+  describe('A LinkedDataFragmentsServer instance with one controller', function () {
+    var server, controller, client;
     before(function () {
-      handler = {
+      controller = {
         handleRequest: sinon.spy(function (request, response) {
           switch (request.url) {
             case '/handle':
@@ -22,13 +22,13 @@ describe('LinkedDataFragmentsServer', function () {
         }),
       };
       server = new LinkedDataFragmentsServer({
-        handlers: [ handler ],
+        controllers: [ controller ],
         log: sinon.stub(),
       });
       client = request.agent(server);
     });
     beforeEach(function () {
-      handler.handleRequest.reset();
+      controller.handleRequest.reset();
     });
 
     it('should send CORS headers', function (done) {
@@ -39,7 +39,7 @@ describe('LinkedDataFragmentsServer', function () {
 
     it('should not allow POST requests', function (done) {
       client.post('/').expect(function (response) {
-        handler.handleRequest.should.not.have.been.called;
+        controller.handleRequest.should.not.have.been.called;
         response.should.have.property('statusCode', 405);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
@@ -48,7 +48,7 @@ describe('LinkedDataFragmentsServer', function () {
 
     it('should send a body with GET requests', function (done) {
       client.get('/handle').expect(function (response) {
-        handler.handleRequest.should.have.been.calledOnce;
+        controller.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 200);
         response.should.have.property('text', 'body contents');
       }).end(done);
@@ -56,7 +56,7 @@ describe('LinkedDataFragmentsServer', function () {
 
     it('should not send a body with HEAD requests', function (done) {
       client.head('/handle').expect(function (response) {
-        handler.handleRequest.should.have.been.calledOnce;
+        controller.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 200);
         response.should.have.property('text', '');
       }).end(done);
@@ -64,24 +64,24 @@ describe('LinkedDataFragmentsServer', function () {
 
     it('should not send a body with OPTIONS requests', function (done) {
       client.options('/handle').expect(function (response) {
-        handler.handleRequest.should.have.been.calledOnce;
+        controller.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 200);
         response.should.have.property('text', '');
       }).end(done);
     });
 
-    it('should error when the handler cannot handle the request', function (done) {
+    it('should error when the controller cannot handle the request', function (done) {
       client.get('/unsupported').expect(function (response) {
-        handler.handleRequest.should.have.been.calledOnce;
+        controller.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'Application error: No handler for /unsupported');
+        response.should.have.property('text', 'Application error: No controller for /unsupported');
       }).end(done);
     });
 
-    it('should error when the handler errors', function (done) {
+    it('should error when the controller errors', function (done) {
       client.get('/error').expect(function (response) {
-        handler.handleRequest.should.have.been.calledOnce;
+        controller.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'Application error: error message');
@@ -89,10 +89,10 @@ describe('LinkedDataFragmentsServer', function () {
     });
   });
 
-  describe('A LinkedDataFragmentsServer instance with two handlers', function () {
-    var server, handlerA, handlerB, client;
+  describe('A LinkedDataFragmentsServer instance with two controllers', function () {
+    var server, controllerA, controllerB, client;
     before(function () {
-      handlerA = {
+      controllerA = {
         handleRequest: sinon.spy(function (request, response) {
           switch (request.url) {
             case '/handleA':
@@ -104,7 +104,7 @@ describe('LinkedDataFragmentsServer', function () {
           }
         }),
       };
-      handlerB = {
+      controllerB = {
         handleRequest: sinon.spy(function (request, response) {
           switch (request.url) {
             case '/handleB':
@@ -117,68 +117,68 @@ describe('LinkedDataFragmentsServer', function () {
         }),
       };
       server = new LinkedDataFragmentsServer({
-        handlers: [ handlerA, handlerB ],
+        controllers: [ controllerA, controllerB ],
         log: sinon.stub(),
       });
       client = request.agent(server);
     });
     beforeEach(function () {
-      handlerA.handleRequest.reset();
-      handlerB.handleRequest.reset();
+      controllerA.handleRequest.reset();
+      controllerB.handleRequest.reset();
     });
 
     it('should not allow POST requests', function (done) {
       client.post('/').expect(function (response) {
-        handlerA.handleRequest.should.not.have.been.called;
-        handlerB.handleRequest.should.not.have.been.called;
+        controllerA.handleRequest.should.not.have.been.called;
+        controllerB.handleRequest.should.not.have.been.called;
         response.should.have.property('statusCode', 405);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
       }).end(done);
     });
 
-    it('should use the first handler when it can handle the request', function (done) {
+    it('should use the first controller when it can handle the request', function (done) {
       client.get('/handleA').expect(function (response) {
-        handlerA.handleRequest.should.have.been.calledOnce;
-        handlerB.handleRequest.should.not.have.been.called;
+        controllerA.handleRequest.should.have.been.calledOnce;
+        controllerB.handleRequest.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.should.have.property('text', 'body contents A');
       }).end(done);
     });
 
-    it('should use the second handler when the first cannot handle the request', function (done) {
+    it('should use the second controller when the first cannot handle the request', function (done) {
       client.get('/handleB').expect(function (response) {
-        handlerA.handleRequest.should.have.been.calledOnce;
-        handlerB.handleRequest.should.have.been.calledOnce;
+        controllerA.handleRequest.should.have.been.calledOnce;
+        controllerB.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 200);
         response.should.have.property('text', 'body contents B');
       }).end(done);
     });
 
-    it('should error when neither handler can handle the request', function (done) {
+    it('should error when neither controller can handle the request', function (done) {
       client.get('/unsupported').expect(function (response) {
-        handlerA.handleRequest.should.have.been.calledOnce;
-        handlerB.handleRequest.should.have.been.calledOnce;
+        controllerA.handleRequest.should.have.been.calledOnce;
+        controllerB.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'Application error: No handler for /unsupported');
+        response.should.have.property('text', 'Application error: No controller for /unsupported');
       }).end(done);
     });
 
-    it('should error when the first handler errors', function (done) {
+    it('should error when the first controller errors', function (done) {
       client.get('/errorA').expect(function (response) {
-        handlerA.handleRequest.should.have.been.calledOnce;
-        handlerB.handleRequest.should.not.have.been.called;
+        controllerA.handleRequest.should.have.been.calledOnce;
+        controllerB.handleRequest.should.not.have.been.called;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'Application error: error message A');
       }).end(done);
     });
 
-    it('should error when the second handler errors', function (done) {
+    it('should error when the second controller errors', function (done) {
       client.get('/errorB').expect(function (response) {
-        handlerA.handleRequest.should.have.been.calledOnce;
-        handlerB.handleRequest.should.have.been.calledOnce;
+        controllerA.handleRequest.should.have.been.calledOnce;
+        controllerB.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'Application error: error message B');
