@@ -8,7 +8,8 @@ var _ = require('lodash'),
     path = require('path'),
     cluster = require('cluster'),
     LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
-    IndexDatasource = require('../lib/datasources/IndexDatasource');
+    IndexDatasource = require('../lib/datasources/IndexDatasource'),
+    ViewCollection = require('../lib/views/ViewCollection.js');
 
 // Parse arguments
 var args = process.argv.slice(2);
@@ -137,9 +138,21 @@ else {
   // Set up assets
   config.assetsPath = baseURLPath + 'assets/';
 
-  // Set up writers, routers, and controllers
+  // Set up routers, views, and controllers
   config.writers = instantiateAll(config.writers,  '../lib/writers/');
   config.routers = instantiateAll(config.routers,  '../lib/routers/');
+  config.views = new ViewCollection(_.flatten(
+    config.controllers.map(function (controller) {
+      // Find and instantiate the views for each controller
+      var viewFiles, viewPath = path.join(__dirname, '../lib/views',
+                                          controller.replace(/Controller$/i, '').toLowerCase());
+      try { viewFiles = fs.readdirSync(viewPath); }
+      catch (error) { viewFiles = []; }
+      return _.compact(viewFiles.map(function (viewFile) {
+        if (/\.js$/.test(viewFile))
+          return instantiate(viewFile, viewPath);
+      }));
+    })));
   config.controllers = instantiateAll(config.controllers, '../lib/controllers/');
 
   // Set up access logging
@@ -171,9 +184,11 @@ else {
 
 // Instantiates an object from the given description
 function instantiate(description, includePath) {
-  var type = description.type || description, Constructor = constructors[type], instance;
+  var absolutePath = path.resolve(__dirname, includePath),
+      type = path.join(absolutePath, description.type || description),
+      Constructor = constructors[type];
   if (!Constructor)
-    Constructor = constructors[type] = require(path.join(includePath, type));
+    Constructor = constructors[type] = require(type);
   return new Constructor(_.defaults(description.settings || {}, config));
 }
 
