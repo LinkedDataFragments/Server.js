@@ -54,6 +54,7 @@ describe('TriplePatternFragmentsRdfView', function () {
       'application/trig': 'trig',
       'application/n-triples': 'nt',
       'application/n-quads': 'nq',
+      'application/ld+json': 'jsonld',
     },
     function (extension, format) {
       describe('when render is called for ' + format, function () {
