@@ -138,14 +138,14 @@ else {
   // Set up assets
   config.assetsPath = baseURLPath + 'assets/';
 
-  // Set up routers, views, and controllers
-  config.writers = instantiateAll(config.writers,  '../lib/writers/');
+  // Set up routers, views for each controller, and the controllers themselves
   config.routers = instantiateAll(config.routers,  '../lib/routers/');
+  var viewPaths = config.controllers.concat('Error').map(function (controller) {
+    return path.join(__dirname, '../lib/views', controller.replace(/Controller$/i, '').toLowerCase());
+  });
   config.views = new ViewCollection(_.flatten(
-    config.controllers.map(function (controller) {
-      // Find and instantiate the views for each controller
-      var viewFiles, viewPath = path.join(__dirname, '../lib/views',
-                                          controller.replace(/Controller$/i, '').toLowerCase());
+    viewPaths.map(function (viewPath) {
+      var viewFiles;
       try { viewFiles = fs.readdirSync(viewPath); }
       catch (error) { viewFiles = []; }
       return _.compact(viewFiles.map(function (viewFile) {

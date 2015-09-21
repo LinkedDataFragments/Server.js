@@ -18,15 +18,6 @@
     "void":  "http://rdfs.org/ns/void#"
   },
 
-  "writers": {
-    "text/html,*/*":         "HtmlWriter",
-    "text/turtle,text/n3":   "TurtleWriter",
-    "application/trig":      "TrigWriter",
-    "application/n-triples": "NTriplesWriter",
-    "application/n-quads":   "NQuadsWriter",
-    "application/ld+json,application/json": "JsonLdWriter"
-  },
-
   "routers": [
     "DatasourceRouter",
     "TriplePatternRouter",
