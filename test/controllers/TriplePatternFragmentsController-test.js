@@ -6,6 +6,9 @@ var request = require('supertest'),
     http = require('http'),
     url = require('url');
 
+var TriplePatternFragmentsHtmlView = require('../../lib/views/triplepatternfragments/TriplePatternFragmentsHtmlView.js'),
+    TriplePatternFragmentsRdfView  = require('../../lib/views/triplepatternfragments/TriplePatternFragmentsRdfView.js');
+
 describe('TriplePatternFragmentsController', function () {
   describe('The TriplePatternFragmentsController module', function () {
     it('should be a function', function () {
@@ -22,7 +25,7 @@ describe('TriplePatternFragmentsController', function () {
   });
 
   describe('A TriplePatternFragmentsController instance with 3 routers', function () {
-    var controller, client, routerA, routerB, routerC, datasource, datasources, writer, prefixes;
+    var controller, client, routerA, routerB, routerC, datasource, datasources, view, prefixes;
     before(function () {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
@@ -34,19 +37,17 @@ describe('TriplePatternFragmentsController', function () {
       })};
       datasource = {
         supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub().returns({ queryResult: true }),
+        select: sinon.stub().returns({ stream: 'items' }),
       };
       datasources = { 'my-datasource': { title: 'My data', datasource: datasource } };
-      writer = {
-        writeFragment: sinon.spy(function (outputStream) { outputStream.end(); }),
-        writeNotFound: sinon.spy(function (outputStream) { outputStream.end(); }),
-      };
+      view = new TriplePatternFragmentsRdfView(),
+      sinon.spy(view, 'render');
       prefixes = { a: 'a' };
       controller = new TriplePatternFragmentsController({
         baseURL: 'https://example.org/base/?bar=foo',
-        routers: [ routerA, routerB, routerC ],
+        routers: [routerA, routerB, routerC],
         datasources: datasources,
-        writers: { '*/*': writer },
+        views: [view],
         prefixes: prefixes,
       });
       client = request.agent(new DummyServer(controller));
@@ -111,19 +112,19 @@ describe('TriplePatternFragmentsController', function () {
         datasource.select.should.have.been.calledWith(query);
       });
 
-      it('should pass the query result to the output writer', function () {
-        writer.writeFragment.should.have.been.calledOnce;
-        var writeFragmentArgs = writer.writeFragment.firstCall.args;
+      it('should pass the query result to the output view', function () {
+        view.render.should.have.been.calledOnce;
+        var args = view.render.firstCall.args;
 
-        writeFragmentArgs[0].should.be.an.instanceof(http.ServerResponse); // where to write to
-        writeFragmentArgs[1].should.deep.equal({ queryResult: true }); // what to write
-        writeFragmentArgs[2].should.be.an('object'); // writing settings
+        args[0].should.be.an('object'); // settings
+        args[1].should.be.an.instanceof(http.IncomingMessage);
+        args[2].should.be.an.instanceof(http.ServerResponse);
       });
 
-      it('should pass the correct settings to the output writer', function () {
-        writer.writeFragment.should.have.been.calledOnce;
+      it('should pass the correct settings to the view', function () {
+        view.render.should.have.been.calledOnce;
         var query = routerC.extractQueryParams.firstCall.args[1];
-        var settings = writer.writeFragment.firstCall.args[2];
+        var settings = view.render.firstCall.args[0];
 
         settings.should.deep.equal({
           datasource: {
@@ -138,6 +139,9 @@ describe('TriplePatternFragmentsController', function () {
             firstPageUrl:    'https://example.org/my-datasource?a=b&c=d&page=1',
             nextPageUrl:     'https://example.org/my-datasource?a=b&c=d&page=2',
             previousPageUrl: null
+          },
+          resultStream: {
+            stream: 'items',
           },
           prefixes: prefixes,
           query: query,
@@ -166,35 +170,34 @@ describe('TriplePatternFragmentsController', function () {
     });
   });
 
-  describe('A TriplePatternFragmentsController instance with 3 writers', function () {
-    var controller, client, writerHtml, writerJson, writerTurtle;
+  describe('A TriplePatternFragmentsController instance with 2 views', function () {
+    var controller, client, htmlView, rdfView;
     before(function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub(),
+        select: sinon.stub().returns({ on: function (event, callback) {
+          if (event === 'end' || event === 'metadata')
+            setImmediate(callback, {});
+        }}),
       };
       var router = { extractQueryParams: function (request, query) {
         query.features.datasource = true;
         query.datasource = 'my-datasource';
       }};
-      writerHtml   = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
-      writerJson   = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
-      writerTurtle = { writeFragment: sinon.spy(function (stream) { stream.end(); }) };
+      htmlView = new TriplePatternFragmentsHtmlView();
+      rdfView = new TriplePatternFragmentsRdfView();
+      sinon.spy(htmlView, 'render');
+      sinon.spy(rdfView, 'render');
       controller = new TriplePatternFragmentsController({
-        routers: [ router ],
+        routers: [router],
         datasources: { 'my-datasource': { datasource: datasource } },
-        writers: {
-          'application/json': writerJson,
-          'text/turtle,text/n3': writerTurtle,
-          'text/html,*/*': writerHtml,
-        },
+        views: [htmlView, rdfView],
       });
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      writerHtml.writeFragment.reset();
-      writerJson.writeFragment.reset();
-      writerTurtle.writeFragment.reset();
+      htmlView.render.reset();
+      rdfView.render.reset();
     }
 
     describe('receiving a request without Accept header', function () {
@@ -205,8 +208,8 @@ describe('TriplePatternFragmentsController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should call the default writer', function () {
-        writerHtml.writeFragment.should.have.been.calledOnce;
+      it('should call the default view', function () {
+        htmlView.render.should.have.been.calledOnce;
       });
 
       it('should set the text/html content type', function () {
@@ -226,8 +229,8 @@ describe('TriplePatternFragmentsController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should call the */* writer', function () {
-        writerHtml.writeFragment.should.have.been.calledOnce;
+      it('should call the HTML view', function () {
+        htmlView.render.should.have.been.calledOnce;
       });
 
       it('should set the text/html content type', function () {
@@ -247,33 +250,12 @@ describe('TriplePatternFragmentsController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should call the HTML writer', function () {
-        writerHtml.writeFragment.should.have.been.calledOnce;
+      it('should call the HTML view', function () {
+        htmlView.render.should.have.been.calledOnce;
       });
 
       it('should set the text/html content type', function () {
         response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
-      });
-
-      it('should indicate Accept in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Accept');
-      });
-    });
-
-    describe('receiving a request with an Accept header of application/json', function () {
-      var response;
-      before(function (done) {
-        resetAll();
-        client.get('/my-datasource').set('Accept', 'application/json')
-              .end(function (error, res) { response = res; done(error); });
-      });
-
-      it('should call the JSON writer', function () {
-        writerJson.writeFragment.should.have.been.calledOnce;
-      });
-
-      it('should set the application/json content type', function () {
-        response.headers.should.have.property('content-type', 'application/json;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', function () {
@@ -289,8 +271,8 @@ describe('TriplePatternFragmentsController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should call the Turtle writer', function () {
-        writerTurtle.writeFragment.should.have.been.calledOnce;
+      it('should call the Turtle view', function () {
+        rdfView.render.should.have.been.calledOnce;
       });
 
       it('should set the text/turtle content type', function () {
@@ -310,8 +292,8 @@ describe('TriplePatternFragmentsController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should call the Turtle writer', function () {
-        writerTurtle.writeFragment.should.have.been.calledOnce;
+      it('should call the Turtle view', function () {
+        rdfView.render.should.have.been.calledOnce;
       });
 
       it('should set the text/n3 content type', function () {
@@ -324,7 +306,7 @@ describe('TriplePatternFragmentsController', function () {
     });
   });
 
-  describe('A TriplePatternFragmentsController instance without matching writer', function () {
+  describe('A TriplePatternFragmentsController instance without matching view', function () {
     var controller, client;
     before(function () {
       var datasource = {
@@ -336,7 +318,7 @@ describe('TriplePatternFragmentsController', function () {
         query.datasource = 'my-datasource';
       }};
       controller = new TriplePatternFragmentsController({
-        routers: [ router ],
+        routers: [router],
         datasources: { 'my-datasource': { datasource: datasource } },
       });
       client = request.agent(new DummyServer(controller));
@@ -384,7 +366,7 @@ describe('TriplePatternFragmentsController', function () {
   });
 
   describe('A TriplePatternFragmentsController instance with a datasource that synchronously errors', function () {
-    var controller, client, router, datasource, error, writer;
+    var controller, client, router, datasource, error, view;
     before(function () {
       router = { extractQueryParams: sinon.spy(function (request, query) {
         query.features.datasource = true;
@@ -395,13 +377,11 @@ describe('TriplePatternFragmentsController', function () {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().throws(error),
       };
-      writer = {
-        writeError: sinon.spy(function (outputStream) { outputStream.end(); }),
-      };
+      view = new TriplePatternFragmentsRdfView(),
       controller = new TriplePatternFragmentsController({
-        routers: [ router ],
+        routers: [router],
+        views: [view],
         datasources: { 'my-datasource': { datasource: datasource } },
-        writers: { '*/*': writer },
       });
       client = request.agent(new DummyServer(controller));
     });
@@ -413,23 +393,30 @@ describe('TriplePatternFragmentsController', function () {
       var response;
       before(function (done) {
         resetAll();
-        response = client.get('/my-datasource?a=b&c=d').end(done);
+        client.get('/my-datasource?a=b&c=d')
+              .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should pass the query error to the output writer', function () {
-        writer.writeError.should.have.been.calledOnce;
-        var writeErrorArgs = writer.writeError.firstCall.args;
+      it('should return status code 500', function () {
+        response.should.have.property('statusCode', 500);
+      });
 
-        writeErrorArgs.should.have.length(3);
-        writeErrorArgs[0].should.be.an.instanceof(http.ServerResponse);
-        writeErrorArgs[1].should.equal(error);
-        writeErrorArgs[2].should.be.an('object');
+      it('should set the text/plain content type', function () {
+        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
+      });
+
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
+      });
+
+      it('should have the error message in the body', function () {
+        response.should.have.property('text', 'Application error: datasource error\n');
       });
     });
   });
 
   describe('A TriplePatternFragmentsController instance with a datasource that asynchronously errors', function () {
-    var controller, client, router, datasource, error, writer;
+    var controller, client, router, datasource, error, view;
     before(function () {
       router = { extractQueryParams: sinon.spy(function (request, query) {
         query.features.datasource = true;
@@ -440,14 +427,12 @@ describe('TriplePatternFragmentsController', function () {
         supportsQuery: sinon.stub().returns(true),
         select: function (query, callback) { setImmediate(callback.bind(null, error)); },
       };
-      writer = {
-        writeError: sinon.spy(function (outputStream) { outputStream.end(); }),
-        writeFragment: sinon.stub(),
-      };
+      view = new TriplePatternFragmentsRdfView(),
+      view.render = sinon.stub(); // avoid writing a partial body
       controller = new TriplePatternFragmentsController({
-        routers: [ router ],
+        routers: [router],
+        views: [view],
         datasources: { 'my-datasource': { datasource: datasource } },
-        writers: { '*/*': writer },
       });
       client = request.agent(new DummyServer(controller));
     });
@@ -459,17 +444,24 @@ describe('TriplePatternFragmentsController', function () {
       var response;
       before(function (done) {
         resetAll();
-        response = client.get('/my-datasource?a=b&c=d').end(done);
+        client.get('/my-datasource?a=b&c=d')
+              .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should pass the query error to the output writer', function () {
-        writer.writeError.should.have.been.calledOnce;
-        var writeErrorArgs = writer.writeError.firstCall.args;
+      it('should return status code 500', function () {
+        response.should.have.property('statusCode', 500);
+      });
 
-        writeErrorArgs.should.have.length(3);
-        writeErrorArgs[0].should.be.an.instanceof(http.ServerResponse);
-        writeErrorArgs[1].should.equal(error);
-        writeErrorArgs[2].should.be.an('object');
+      it('should set the text/plain content type', function () {
+        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
+      });
+
+      it('should indicate Accept in the Vary header', function () {
+        response.headers.should.have.property('vary', 'Accept');
+      });
+
+      it('should have the error message in the body', function () {
+        response.should.have.property('text', 'Application error: datasource error\n');
       });
     });
   });
