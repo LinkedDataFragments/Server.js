@@ -20,6 +20,7 @@
 
   "routers": [
     "DatasourceRouter",
+    "TimeRangeGateRouter",
     "TriplePatternRouter",
     "PageRouter"
   ],

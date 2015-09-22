@@ -7,6 +7,7 @@ var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
     cluster = require('cluster'),
+    util = require('../lib/Util'),
     LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
     IndexDatasource = require('../lib/datasources/IndexDatasource'),
     ViewCollection = require('../lib/views/ViewCollection.js');
@@ -20,8 +21,7 @@ if (args.length < 1 || args.length > 3 || /^--?h(elp)?$/.test(args[0])) {
 var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config-defaults.json'))),
     config = _.defaults(JSON.parse(fs.readFileSync(args[0])), configDefaults),
     port = parseInt(args[1], 10) || config.port,
-    workers = parseInt(args[2], 10) || config.workers,
-    constructors = {};
+    workers = parseInt(args[2], 10) || config.workers;
 
 // Start up a cluster master
 if (cluster.isMaster) {
@@ -114,7 +114,7 @@ else {
             dereference[blankNodePath + datasourcePath + '/'] = datasourcePath;
         }
         // Create the data source
-        var datasource = instantiate(datasourceConfig, '../lib/datasources/');
+        var datasource = util.instantiate(datasourceConfig, '../lib/datasources/', config);
         datasourceConfig.datasource = datasource;
         datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
         datasourceConfig.title = datasourceConfig.title || datasourceName;
@@ -139,7 +139,7 @@ else {
   config.assetsPath = baseURLPath + 'assets/';
 
   // Set up routers, views for each controller, and the controllers themselves
-  config.routers = instantiateAll(config.routers,  '../lib/routers/');
+  config.routers = util.instantiateAll(config.routers,  '../lib/routers/', config);
   var viewPaths = config.controllers.concat('Error').map(function (controller) {
     return path.join(__dirname, '../lib/views', controller.replace(/Controller$/i, '').toLowerCase());
   });
@@ -150,10 +150,10 @@ else {
       catch (error) { viewFiles = []; }
       return _.compact(viewFiles.map(function (viewFile) {
         if (/\.js$/.test(viewFile))
-          return instantiate(viewFile, viewPath);
+          return util.instantiate(viewFile, viewPath, config);
       }));
     })));
-  config.controllers = instantiateAll(config.controllers, '../lib/controllers/');
+  config.controllers = util.instantiateAll(config.controllers, '../lib/controllers/', config);
 
   // Set up access logging
   var loggingSettings = _.defaults(config.logging, configDefaults.logging);
@@ -179,21 +179,4 @@ else {
     server.stop();
     process.on('SIGINT', function () { process.exit(1); });
   });
-}
-
-
-// Instantiates an object from the given description
-function instantiate(description, includePath) {
-  var absolutePath = path.resolve(__dirname, includePath),
-      type = path.join(absolutePath, description.type || description),
-      Constructor = constructors[type];
-  if (!Constructor)
-    Constructor = constructors[type] = require(type);
-  return new Constructor(_.defaults(description.settings || {}, config));
-}
-
-// Instantiates all objects from the given descriptions
-function instantiateAll(descriptions, includePath) {
-  return (_.isArray(descriptions) ? _.map : _.mapValues)
-         (descriptions, function (description) { return instantiate(description, includePath); });
 }
