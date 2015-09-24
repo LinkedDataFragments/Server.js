@@ -31,15 +31,6 @@
     { "type": "PageRouter", "settings": { "pageSize": 100 } }
   ],
 
-  "writers": {
-    "text/html,*/*":         { "type": "HtmlWriter" },
-    "text/turtle,text/n3":   { "type": "TurtleWriter" },
-    "application/trig":      { "type": "TrigWriter" },
-    "application/n-triples": { "type": "NTriplesWriter" },
-    "application/n-quads":   { "type": "NQuadsWriter" },
-    "application/ld+json,application/json": { "type": "JsonLdWriter" }
-  },
-
   "prefixes": {
     "rdf":         "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs":        "http://www.w3.org/2000/01/rdf-schema#",
