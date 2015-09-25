@@ -25,6 +25,7 @@
   ],
 
   "controllers": [
+    "SummaryController",
     "TriplePatternFragmentsController",
     "AssetsController",
     "DereferenceController",
