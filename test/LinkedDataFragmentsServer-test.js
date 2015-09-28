@@ -10,14 +10,15 @@ describe('LinkedDataFragmentsServer', function () {
     var server, controller, client;
     before(function () {
       controller = {
-        handleRequest: sinon.spy(function (request, response) {
+        handleRequest: sinon.spy(function (request, response, next) {
           switch (request.url) {
             case '/handle':
-              return response.end('body contents'), true;
+              response.end('body contents');
+              break;
             case '/error':
               throw new Error('error message');
             default:
-              return false;
+              next();
           }
         }),
       };
@@ -93,26 +94,29 @@ describe('LinkedDataFragmentsServer', function () {
     var server, controllerA, controllerB, client;
     before(function () {
       controllerA = {
-        handleRequest: sinon.spy(function (request, response) {
+        handleRequest: sinon.spy(function (request, response, next) {
           switch (request.url) {
             case '/handleA':
-              return response.end('body contents A'), true;
+              response.end('body contents A');
+              break;
             case '/errorA':
               throw new Error('error message A');
             default:
-              return false;
+              next();
           }
         }),
       };
       controllerB = {
-        handleRequest: sinon.spy(function (request, response) {
+        handleRequest: sinon.spy(function (request, response, next) {
           switch (request.url) {
             case '/handleB':
-              return response.end('body contents B'), true;
+              response.end('body contents B');
+              break;
             case '/errorB':
-              throw new Error('error message B');
+              next(new Error('error message B'));
+              break;
             default:
-              return false;
+              next();
           }
         }),
       };

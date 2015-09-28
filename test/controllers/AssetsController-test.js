@@ -37,7 +37,7 @@ describe('AssetsController', function () {
     it('should correctly serve SVG assets', function (done) {
       client.get('/assets/logo').expect(function (response) {
         var asset = fs.readFileSync(__dirname + '/../../assets/logo.svg', 'utf8');
-        controller.result.should.be.true;
+        controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/svg+xml');
         response.headers.should.have.property('cache-control', 'public,max-age=1209600');
@@ -48,7 +48,7 @@ describe('AssetsController', function () {
     it('should correctly serve CSS assets', function (done) {
       client.get('/assets/style').expect(function (response) {
         var asset = fs.readFileSync(__dirname + '/../../assets/style.css', 'utf8');
-        controller.result.should.be.true;
+        controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/css;charset=utf-8');
         response.headers.should.have.property('cache-control', 'public,max-age=1209600');
@@ -59,7 +59,7 @@ describe('AssetsController', function () {
     it('should correctly serve ICO assets', function (done) {
       client.get('/favicon.ico').expect(function (response) {
         var asset = fs.readFileSync(__dirname + '/../../assets/favicon.ico', 'utf8');
-        controller.result.should.be.true;
+        controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/x-icon');
         response.headers.should.have.property('cache-control', 'public,max-age=1209600');
@@ -67,15 +67,15 @@ describe('AssetsController', function () {
       }).end(done);
     });
 
-    it('should return false if no asset with that name is found', function (done) {
+    it('should hand over to the next controller if no asset with that name is found', function (done) {
       client.get('/assets/unknown').expect(function (response) {
-        controller.result.should.be.false;
+        controller.next.should.have.been.calledOnce;
       }).end(done);
     });
 
-    it('should return false for non-asset paths', function (done) {
+    it('should hand over to the next controller for non-asset paths', function (done) {
       client.get('/other').expect(function (response) {
-        controller.result.should.be.false;
+        controller.next.should.have.been.calledOnce;
       }).end(done);
     });
   });
