@@ -1,5 +1,6 @@
 node_modules
+config
 data
-config.json
+summaries
 *.log
 *.hdt.index

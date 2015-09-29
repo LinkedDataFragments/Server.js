@@ -17,7 +17,7 @@ if (args.length < 1 || args.length > 3 || /^--?h(elp)?$/.test(args[0])) {
   console.log('usage: server config.json [port [workers]]');
   return process.exit(1);
 }
-var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config-defaults.json'))),
+var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/config-defaults.json'))),
     config = _.defaults(JSON.parse(fs.readFileSync(args[0])), configDefaults),
     port = parseInt(args[1], 10) || config.port,
     workers = parseInt(args[2], 10) || config.workers,
