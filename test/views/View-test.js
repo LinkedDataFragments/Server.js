@@ -76,26 +76,30 @@ describe('View', function () {
     describe('created without defaults', function () {
       it('should call _render with the given options', function () {
         var view = new View(),
-            options = { a: 'b' }, request = {}, response = {};
+            options = { a: 'b' }, request = {}, response = {}, done = function () {};
         view._render = sinon.spy();
-        view.render(options, request, response);
+        view.render(options, request, response, done);
         view._render.should.have.been.calledOnce;
+        view._render.getCall(0).args.should.have.length(4);
         view._render.getCall(0).args[0].should.deep.equal(options);
         view._render.getCall(0).args[1].should.equal(request);
         view._render.getCall(0).args[2].should.equal(response);
+        view._render.getCall(0).args[3].should.be.an.instanceof(Function);
       });
     });
 
     describe('created with defaults', function () {
       it('should call _render with the combined defaults and options', function () {
         var view = new View(null, null, { c: 'd' }),
-            options = { a: 'b' }, request = {}, response = {};
+            options = { a: 'b' }, request = {}, response = {}, done = function () {};
         view._render = sinon.spy();
-        view.render(options, request, response);
+        view.render(options, request, response, done);
         view._render.should.have.been.calledOnce;
+        view._render.getCall(0).args.should.have.length(4);
         view._render.getCall(0).args[0].should.deep.equal({ a: 'b', c: 'd' });
         view._render.getCall(0).args[1].should.equal(request);
         view._render.getCall(0).args[2].should.equal(response);
+        view._render.getCall(0).args[3].should.be.an.instanceof(Function);
       });
     });
   });
