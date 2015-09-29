@@ -140,7 +140,8 @@ else {
 
   // Set up routers, views, and controllers
   config.routers = instantiateAll(config.routers,  '../lib/routers/');
-  config.views = new ViewCollection(instantiateAll(findFiles('../lib/views', /\.js$/)));
+  config.views = new ViewCollection();
+  config.views.addViews(instantiateAll(findFiles('../lib/views', /\.js$/)));
   config.controllers = instantiateAll(config.controllers, '../lib/controllers/');
 
   // Set up access logging
