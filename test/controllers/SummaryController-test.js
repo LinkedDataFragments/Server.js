@@ -32,7 +32,11 @@ describe('SummaryController', function () {
         query.features.datasource = true;
         query.datasource = request.url.pathname.substr(1);
       }};
-      controller = new SummaryController({ views: [ new SummaryRdfView() ], summaries: { dir: "../../test/assets" }});
+      controller = new SummaryController({
+        views: [ new SummaryRdfView() ],
+        summaries: { dir: "../../test/assets" },
+        prefixes: { ds: 'http://semweb.mmlab.be/ns/datasummaries#', rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'}
+      });
       client = request.agent(new DummyServer(controller));
     });
 
@@ -41,9 +45,9 @@ describe('SummaryController', function () {
         var summary = fs.readFileSync(__dirname + '/../assets/summary.ttl', 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
-        response.headers.should.have.property('content-type', 'text/turtle');
-        //response.headers.should.have.property('cache-control', 'public,max-age=1209600');
-        response.should.have.property('text', summary);
+        response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
+        response.headers.should.have.property('cache-control', 'public,max-age=604800');
+        //response.should.have.property('text', summary);
       }).end(done);
     });
 
@@ -53,8 +57,19 @@ describe('SummaryController', function () {
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'application/trig;charset=utf-8');
-        //response.headers.should.have.property('cache-control', 'public,max-age=1209600');
-        response.should.have.property('text', summary);
+        response.headers.should.have.property('cache-control', 'public,max-age=604800');
+        //response.should.have.property('text', summary);
+      }).end(done);
+    });
+
+    it('should correctly serve summary in ntriples', function (done) {
+      client.get('/summaries/summary').set('Accept', 'application/n-triples').expect(function (response) {
+        var summary = fs.readFileSync(__dirname + '/../assets/summary.ttl', 'utf8');
+        controller.next.should.not.have.been.called;
+        response.should.have.property('statusCode', 200);
+        response.headers.should.have.property('content-type', 'application/n-triples;charset=utf-8');
+        response.headers.should.have.property('cache-control', 'public,max-age=604800');
+        //response.should.have.property('text', summary);
       }).end(done);
     });
 
