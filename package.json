@@ -26,7 +26,11 @@
     "negotiate": "^1.0.1",
     "lodash": "^2.4.0",
     "lru-cache": "^2.5.0",
-    "uritemplate": "^0.3.0"
+    "uritemplate": "^0.3.0",
+    "bloem": "0.2.4",
+    "golombcodedsets": "0.0.1",
+    "base64-arraybuffer": "0.1.2",
+    "murmurhash": "0.0.2"
   },
   "optionalDependencies": {
     "hdt": "^1.1.0",
