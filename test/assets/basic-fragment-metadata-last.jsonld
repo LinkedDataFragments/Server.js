@@ -1,0 +1,109 @@
+{
+  "@context": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "hydra": "http://www.w3.org/ns/hydra/core#",
+    "void": "http://rdfs.org/ns/void#",
+    "dcterms": "http://purl.org/dc/terms/"
+  },
+  "@graph": [
+    {
+      "@id": "_:object",
+      "hydra:property": {
+        "@id": "rdf:object"
+      },
+      "hydra:variable": "object"
+    },
+    {
+      "@id": "_:predicate",
+      "hydra:property": {
+        "@id": "rdf:predicate"
+      },
+      "hydra:variable": "predicate"
+    },
+    {
+      "@id": "_:subject",
+      "hydra:property": {
+        "@id": "rdf:subject"
+      },
+      "hydra:variable": "subject"
+    },
+    {
+      "@id": "_:triplePattern",
+      "hydra:mapping": [
+        {
+          "@id": "_:subject"
+        },
+        {
+          "@id": "_:predicate"
+        },
+        {
+          "@id": "_:object"
+        }
+      ],
+      "hydra:template": "http://ex.org/data{?subject,predicate,object}"
+    },
+    {
+      "@id": "http://ex.org/#dataset",
+      "hydra:member": {
+        "@id": "http://ex.org/data#dataset"
+      }
+    },
+    {
+      "@id": "http://ex.org/data#dataset",
+      "@type": [
+        "void:Dataset",
+        "hydra:Collection"
+      ],
+      "void:subset": [
+        {
+          "@id": "http://ex.org/data?fragment&page=3"
+        },
+        {
+          "@id": "http://ex.org/data?fragment"
+        }
+      ],
+      "void:uriLookupEndpoint": "http://ex.org/data{?subject,predicate,object}",
+      "hydra:search": {
+        "@id": "_:triplePattern"
+      }
+    },
+    {
+      "@id": "http://ex.org/data?fragment",
+      "void:subset": {
+        "@id": "http://ex.org/data?fragment&page=3"
+      }
+    },
+    {
+      "@id": "http://ex.org/data?fragment&page=3",
+      "@type": [
+        "hydra:Collection",
+        "hydra:PagedCollection"
+      ],
+      "dcterms:description": {
+        "@language": "en",
+        "@value": "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."
+      },
+      "dcterms:source": {
+        "@id": "http://ex.org/data#dataset"
+      },
+      "dcterms:title": {
+        "@language": "en",
+        "@value": "Linked Data Fragment of My data"
+      },
+      "void:triples": 1234,
+      "hydra:firstPage": {
+        "@id": "http://ex.org/data?fragment&page=1"
+      },
+      "hydra:itemsPerPage": 100,
+      "hydra:nextPage": {
+        "@id": "http://ex.org/data?fragment&page=4"
+      },
+      "hydra:previousPage": {
+        "@id": "http://ex.org/data?fragment&page=2"
+      },
+      "hydra:totalItems": 1234
+    }
+  ],
+  "@id": "http://ex.org/data?fragment#metadata"
+}

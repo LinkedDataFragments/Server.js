@@ -1,0 +1,36 @@
+{
+  "title": "Linked Data Fragments server",
+  "baseURL": "/",
+
+  "port": 3000,
+  "workers": 1,
+
+  "datasources": {},
+
+  "dereference": {},
+
+  "prefixes": {
+    "rdf":   "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs":  "http://www.w3.org/2000/01/rdf-schema#",
+    "owl":   "http://www.w3.org/2002/07/owl#",
+    "xsd":   "http://www.w3.org/2001/XMLSchema#",
+    "hydra": "http://www.w3.org/ns/hydra/core#",
+    "void":  "http://rdfs.org/ns/void#"
+  },
+
+  "routers": [
+    "DatasourceRouter",
+    "TriplePatternRouter",
+    "PageRouter"
+  ],
+
+  "controllers": [
+    "SummaryController",
+    "TriplePatternFragmentsController",
+    "AssetsController",
+    "DereferenceController",
+    "NotFoundController"
+  ],
+
+  "logging": { "enabled": false, "file": "access.log" }
+}
