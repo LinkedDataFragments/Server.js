@@ -33,7 +33,11 @@
     "q": "^1.4.1",
     "qejs": "^3.0.5",
     "request": "^2.88.0",
-    "uritemplate": "^0.3.4"
+    "uritemplate": "^0.3.4",
+    "bloem": "0.2.4",
+    "golombcodedsets": "0.0.1",
+    "base64-arraybuffer": "0.1.2",
+    "murmurhash": "0.0.2"
   },
   "optionalDependencies": {
     "access-log": "^0.3.9",

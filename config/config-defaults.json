@@ -27,6 +27,7 @@
   "controllers": [
     "SummaryController",
     "TimegateController",
+    "AmfController",
     "TriplePatternFragmentsController",
     "AssetsController",
     "DereferenceController",
