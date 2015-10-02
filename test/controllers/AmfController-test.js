@@ -36,9 +36,6 @@ describe('AmfController', function () {
       };
       controller = new AmfController({
         views: [new AmfRdfView()],
-        amf: {
-          dir: "../../test/assets"
-        },
         prefixes: {
           amf: 'http://semweb.mmlab.be/ns/membership#',
           rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
