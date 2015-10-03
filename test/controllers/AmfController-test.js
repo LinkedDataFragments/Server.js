@@ -52,32 +52,11 @@ describe('AmfController', function () {
 
     it('should correctly serve Amf in TURTLE', function (done) {
       client.get('/amf/amf').set('Accept', 'text/turtle').expect(function (response) {
+        console.log(response.text);
         //var amf = fs.readFileSync(__dirname + '/../assets/amf.ttl', 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
-        response.headers.should.have.property('cache-control', 'public,max-age=604800');
-        //response.should.have.property('text', Amf);
-      }).end(done);
-    });
-
-    it('should correctly serve Amf in Trig', function (done) {
-      client.get('/amf/amf').expect(function (response) {
-        //var amf = fs.readFileSync(__dirname + '/../assets/amf.ttl', 'utf8');
-        controller.next.should.not.have.been.called;
-        response.should.have.property('statusCode', 200);
-        response.headers.should.have.property('content-type', 'application/trig;charset=utf-8');
-        response.headers.should.have.property('cache-control', 'public,max-age=604800');
-        //response.should.have.property('text', Amf);
-      }).end(done);
-    });
-
-    it('should correctly serve Amf in ntriples', function (done) {
-      client.get('/amf/amf').set('Accept', 'application/n-triples').expect(function (response) {
-        //var amf = fs.readFileSync(__dirname + '/../assets/amf.ttl', 'utf8');
-        controller.next.should.not.have.been.called;
-        response.should.have.property('statusCode', 200);
-        response.headers.should.have.property('content-type', 'application/n-triples;charset=utf-8');
         response.headers.should.have.property('cache-control', 'public,max-age=604800');
         //response.should.have.property('text', Amf);
       }).end(done);
