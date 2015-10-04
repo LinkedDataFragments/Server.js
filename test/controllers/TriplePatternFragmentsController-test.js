@@ -311,7 +311,7 @@ describe('TriplePatternFragmentsController', function () {
     before(function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub(),
+        select: sinon.stub().returns({ stream: 'items' }),
       };
       var router = { extractQueryParams: function (request, query) {
         query.features.datasource = true;

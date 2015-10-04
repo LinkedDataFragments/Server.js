@@ -24,10 +24,6 @@ describe('SummaryController', function () {
   describe('An SummaryController instance', function () {
     var controller, client;
     before(function () {
-      var datasource = {
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub(),
-      };
       var router = { extractQueryParams: function (request, query) {
         query.features.datasource = true;
         query.datasource = request.url.pathname.substr(1);

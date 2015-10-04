@@ -40,6 +40,7 @@ describe('AmfController', function () {
           amf: 'http://semweb.mmlab.be/ns/membership#',
           rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
         },
+        datasources: { 'amf': { title: 'My data', datasource: datasource } },
         cache: {
           get: function () {
             return null;
