@@ -26,7 +26,10 @@ describe('AmfController', function () {
     before(function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub(),
+        select: sinon.stub().returns({ on: function (event, callback) {
+          if (event === 'end' || event === 'metadata')
+            setImmediate(callback, {});
+        }})
       };
       var router = {
         extractQueryParams: function (request, query) {
