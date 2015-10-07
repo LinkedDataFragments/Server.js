@@ -68,7 +68,8 @@ describe('View', function () {
 
     describe('without _render method', function () {
       it('should throw an error on calling render', function () {
-        (function () { new View().render(); })
+        var response = { getHeader: sinon.stub() };
+        (function () { new View().render(null, null, response); })
         .should.throw('The _render method is not yet implemented.');
       });
     });
@@ -76,12 +77,15 @@ describe('View', function () {
     describe('created without defaults', function () {
       it('should call _render with the given options', function () {
         var view = new View(),
-            options = { a: 'b' }, request = {}, response = {}, done = function () {};
+            request = {}, response = { getHeader: sinon.stub().returns('text/html') },
+            options = { a: 'b' }, done = function () {};
         view._render = sinon.spy();
         view.render(options, request, response, done);
-        view._render.should.have.been.calledOnce;
+        response.getHeader.should.have.been.calledOnce;
+        response.getHeader.should.have.been.calledWith('Content-Type');
         view._render.getCall(0).args.should.have.length(4);
-        view._render.getCall(0).args[0].should.deep.equal(options);
+        view._render.should.have.been.calledOnce;
+        view._render.getCall(0).args[0].should.deep.equal({ a: 'b', contentType: 'text/html' });
         view._render.getCall(0).args[1].should.equal(request);
         view._render.getCall(0).args[2].should.equal(response);
         view._render.getCall(0).args[3].should.be.an.instanceof(Function);
@@ -91,12 +95,15 @@ describe('View', function () {
     describe('created with defaults', function () {
       it('should call _render with the combined defaults and options', function () {
         var view = new View(null, null, { c: 'd' }),
-            options = { a: 'b' }, request = {}, response = {}, done = function () {};
+            request = {}, response = { getHeader: sinon.stub().returns('text/html') },
+            options = { a: 'b' }, done = function () {};
         view._render = sinon.spy();
         view.render(options, request, response, done);
+        response.getHeader.should.have.been.calledOnce;
+        response.getHeader.should.have.been.calledWith('Content-Type');
         view._render.should.have.been.calledOnce;
         view._render.getCall(0).args.should.have.length(4);
-        view._render.getCall(0).args[0].should.deep.equal({ a: 'b', c: 'd' });
+        view._render.getCall(0).args[0].should.deep.equal({ a: 'b', c: 'd', contentType: 'text/html' });
         view._render.getCall(0).args[1].should.equal(request);
         view._render.getCall(0).args[2].should.equal(response);
         view._render.getCall(0).args[3].should.be.an.instanceof(Function);
