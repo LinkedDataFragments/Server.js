@@ -397,20 +397,8 @@ describe('TriplePatternFragmentsController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should return status code 500', function () {
-        response.should.have.property('statusCode', 500);
-      });
-
-      it('should set the text/plain content type', function () {
-        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-      });
-
-      it('should indicate Accept in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Accept');
-      });
-
-      it('should have the error message in the body', function () {
-        response.should.have.property('text', 'Application error: datasource error\n');
+      it('should emit the error', function () {
+        expect(controller.error).to.equal(error);
       });
     });
   });
@@ -448,20 +436,8 @@ describe('TriplePatternFragmentsController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should return status code 500', function () {
-        response.should.have.property('statusCode', 500);
-      });
-
-      it('should set the text/plain content type', function () {
-        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-      });
-
-      it('should indicate Accept in the Vary header', function () {
-        response.headers.should.have.property('vary', 'Accept');
-      });
-
-      it('should have the error message in the body', function () {
-        response.should.have.property('text', 'Application error: datasource error\n');
+      it('should emit the error', function () {
+        expect(controller.error).to.equal(error);
       });
     });
   });
