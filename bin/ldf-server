@@ -108,13 +108,14 @@ else {
         datasources[datasourcePath] = datasourceConfig;
         // Set up blank-node-to-IRI translation, with dereferenceable URLs when possible
         datasourceConfig.settings = _.defaults(datasourceConfig.settings || {}, config);
+        datasourceConfig.settings.datasourceName = datasourceName;
         if (!datasourceConfig.settings.blankNodePrefix) {
           datasourceConfig.settings.blankNodePrefix = blankNodePrefix + datasourcePath + '/';
           if (blankNodePath)
             dereference[blankNodePath + datasourcePath + '/'] = datasourcePath;
         }
         // Create the data source
-        var datasource = util.instantiate(datasourceConfig, '../lib/datasources/', config);
+        var datasource = util.instantiate(config, datasourceConfig, '../lib/datasources/');
         datasourceConfig.datasource = datasource;
         datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
         datasourceConfig.title = datasourceConfig.title || datasourceName;
@@ -139,10 +140,10 @@ else {
   config.assetsPath = baseURLPath + 'assets/';
 
   // Set up routers, views, and controllers
-  config.routers = util.instantiateAll(config.routers,  '../lib/routers/', config);
+  config.routers = util.instantiateAll(config, config.routers,  '../lib/routers/');
   config.views = new ViewCollection();
-  config.views.addViews(util.instantiateAll(findFiles('../lib/views', /\.js$/), config));
-  config.controllers = util.instantiateAll(config.controllers, '../lib/controllers/', config);
+  config.views.addViews(util.instantiateAll(config, findFiles('../lib/views', /\.js$/)));
+  config.controllers = util.instantiateAll(config, config.controllers, '../lib/controllers/');
 
   // Set up access logging
   var loggingSettings = _.defaults(config.logging, configDefaults.logging);
