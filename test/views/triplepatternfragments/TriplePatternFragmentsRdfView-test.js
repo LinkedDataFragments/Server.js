@@ -69,9 +69,8 @@ describe('TriplePatternFragmentsRdfView', function () {
           before(function (done) {
             settings.resultStream = resultStream;
             response.getHeader = sinon.stub().returns(format);
-            view.render(settings, {}, response);
+            view.render(settings, {}, response, done);
             resultStream.emit('metadata', { totalCount: 1234 });
-            response.on('finish', done);
           });
 
           it('should only write data source metadata', function () {
@@ -90,10 +89,9 @@ describe('TriplePatternFragmentsRdfView', function () {
           before(function (done) {
             settings.resultStream = resultStream;
             response.getHeader = sinon.stub().returns(format);
-            view.render(settings, {}, response);
+            view.render(settings, {}, response, done);
             resultStream.emit('metadata', { totalCount: 1234 });
             resultStream.resume();
-            response.on('finish', done);
           });
 
           it('should write data and metadata', function () {
@@ -108,10 +106,10 @@ describe('TriplePatternFragmentsRdfView', function () {
             { subject: 'f', predicate: 'g', object: 'h' },
           ]);
           var response = test.createStreamCapture();
-          before(function () {
+          before(function (done) {
             settings.resultStream = resultStream;
             response.getHeader = sinon.stub().returns(format);
-            view.render(settings, {}, response);
+            view.render(settings, {}, response, done);
             setImmediate(function () {
               resultStream.emit('metadata', { totalCount: 1234 });
             });
@@ -138,9 +136,8 @@ describe('TriplePatternFragmentsRdfView', function () {
           before(function (done) {
             settings.resultStream = resultStream;
             response.getHeader = sinon.stub().returns(format);
-            view.render(settings, {}, response);
+            view.render(settings, {}, response, done);
             resultStream.emit('metadata', { totalCount: 1234 });
-            response.on('finish', done);
           });
 
           it('should write a first page link', function () {
@@ -172,9 +169,8 @@ describe('TriplePatternFragmentsRdfView', function () {
           before(function (done) {
             settings.resultStream = resultStream;
             response.getHeader = sinon.stub().returns(format);
-            view.render(settings, {}, response);
+            view.render(settings, {}, response, done);
             resultStream.emit('metadata', { totalCount: 1234 });
-            response.on('finish', done);
           });
 
           it('should write a first page link', function () {
@@ -206,9 +202,8 @@ describe('TriplePatternFragmentsRdfView', function () {
           before(function (done) {
             settings.resultStream = resultStream;
             response.getHeader = sinon.stub().returns(format);
-            view.render(settings, {}, response);
+            view.render(settings, {}, response, done);
             resultStream.emit('metadata', { totalCount: 1234 });
-            response.on('finish', done);
           });
 
           it('should write a first page link', function () {

@@ -4,10 +4,9 @@ var http = require('http');
 function DummyServer(controller) {
   var server = http.createServer();
   server.on('request', function (request, response) {
-    // Execute the controller and store its result
-    controller.result = controller.handleRequest(request, response);
     // End the request if the controller did not handle the request
-    if (!controller.result) response.end();
+    controller.next = sinon.spy(function () { response.end(); });
+    controller.result = controller.handleRequest(request, response, controller.next);
   });
   return server;
 }

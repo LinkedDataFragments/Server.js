@@ -37,7 +37,7 @@ $ [sudo] npm install -g ldf-server
 
 ### Configure the data sources
 
-First, create a configuration file `config.json` similar to `config-example.json`,
+First, create a configuration file `config.json` similar to `config/config-example.json`,
 in which you detail your data sources.
 For example, this configuration uses an [HDT file](http://www.rdfhdt.org/)
 and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:

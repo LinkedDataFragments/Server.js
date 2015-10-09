@@ -23,8 +23,8 @@ describe('ViewCollection', function () {
       viewCollection = new ViewCollection();
     });
 
-    it('should throw an error when getting a view', function () {
-      (function () { viewCollection.getView('Foo'); })
+    it('should throw an error when matching a view', function () {
+      (function () { viewCollection.matchView('Foo'); })
       .should.throw('No view named Foo found.');
     });
   });
@@ -36,8 +36,8 @@ describe('ViewCollection', function () {
       viewCollection = new ViewCollection([viewA]);
     });
 
-    it('should throw an error when getting a view with a non-existing type', function () {
-      (function () { viewCollection.getView('Bar'); })
+    it('should throw an error when matching a view with a non-existing type', function () {
+      (function () { viewCollection.matchView('Bar'); })
       .should.throw('No view named Bar found.');
     });
 
@@ -46,10 +46,10 @@ describe('ViewCollection', function () {
       before(function () {
         request = { headers: { accept: 'text/html' } };
         response = {};
-        viewDetails = viewCollection.getView('MyView1', request, response);
+        viewDetails = viewCollection.matchView('MyView1', request, response);
       });
 
-      it('should return a description of the view', function () {
+      it('should return a match for the view', function () {
         viewDetails.should.have.property('view', viewA);
         viewDetails.should.have.property('type', 'text/html');
         viewDetails.should.have.property('responseType', 'text/html;charset=utf-8');
@@ -61,10 +61,10 @@ describe('ViewCollection', function () {
       before(function () {
         request = { headers: { accept: 'application/trig' } };
         response = {};
-        viewDetails = viewCollection.getView('MyView1', request, response);
+        viewDetails = viewCollection.matchView('MyView1', request, response);
       });
 
-      it('should return a description of the view', function () {
+      it('should return a match for the view', function () {
         viewDetails.should.have.property('view', viewA);
         viewDetails.should.have.property('type', 'application/trig');
         viewDetails.should.have.property('responseType', 'application/trig;charset=utf-8');
@@ -81,17 +81,17 @@ describe('ViewCollection', function () {
       viewCollection = new ViewCollection([viewA, viewB, viewC]);
     });
 
-    it('should throw an error when getting a view with a non-existing type', function () {
-      (function () { viewCollection.getView('Bar'); })
+    it('should throw an error when matching a view with a non-existing type', function () {
+      (function () { viewCollection.matchView('Bar'); })
       .should.throw('No view named Bar found.');
     });
 
-    describe('when a client requests one view type as HTML', function () {
+    describe('when matching a request of one view type as HTML', function () {
       var viewDetails, request, response;
       before(function () {
         request = { headers: { accept: 'text/html' } };
         response = {};
-        viewDetails = viewCollection.getView('MyView1', request, response);
+        viewDetails = viewCollection.matchView('MyView1', request, response);
       });
 
       it('should return a description of the best fitting view', function () {
@@ -101,12 +101,12 @@ describe('ViewCollection', function () {
       });
     });
 
-    describe('when a client requests one view type as TriG', function () {
+    describe('when matching a request of one view type as TriG', function () {
       var viewDetails, request, response;
       before(function () {
         request = { headers: { accept: 'application/trig' } };
         response = {};
-        viewDetails = viewCollection.getView('MyView1', request, response);
+        viewDetails = viewCollection.matchView('MyView1', request, response);
       });
 
       it('should return a description of the best fitting view', function () {
@@ -116,12 +116,12 @@ describe('ViewCollection', function () {
       });
     });
 
-    describe('when a client requests another view type as HTML', function () {
+    describe('when matching a request of another view type as HTML', function () {
       var viewDetails, request, response;
       before(function () {
         request = { headers: { accept: 'text/html' } };
         response = {};
-        viewDetails = viewCollection.getView('MyView2', request, response);
+        viewDetails = viewCollection.matchView('MyView2', request, response);
       });
 
       it('should return a description of the other view', function () {

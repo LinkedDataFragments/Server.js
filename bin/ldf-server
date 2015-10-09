@@ -18,7 +18,7 @@ if (args.length < 1 || args.length > 3 || /^--?h(elp)?$/.test(args[0])) {
   console.log('usage: server config.json [port [workers]]');
   return process.exit(1);
 }
-var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config-defaults.json'))),
+var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/config-defaults.json'))),
     config = _.defaults(JSON.parse(fs.readFileSync(args[0])), configDefaults),
     port = parseInt(args[1], 10) || config.port,
     workers = parseInt(args[2], 10) || config.workers;
@@ -138,21 +138,10 @@ else {
   // Set up assets
   config.assetsPath = baseURLPath + 'assets/';
 
-  // Set up routers, views for each controller, and the controllers themselves
+  // Set up routers, views, and controllers
   config.routers = util.instantiateAll(config.routers,  '../lib/routers/', config);
-  var viewPaths = config.controllers.concat('Error').map(function (controller) {
-    return path.join(__dirname, '../lib/views', controller.replace(/Controller$/i, '').toLowerCase());
-  });
-  config.views = new ViewCollection(_.flatten(
-    viewPaths.map(function (viewPath) {
-      var viewFiles;
-      try { viewFiles = fs.readdirSync(viewPath); }
-      catch (error) { viewFiles = []; }
-      return _.compact(viewFiles.map(function (viewFile) {
-        if (/\.js$/.test(viewFile))
-          return util.instantiate(viewFile, viewPath, config);
-      }));
-    })));
+  config.views = new ViewCollection();
+  config.views.addViews(util.instantiateAll(findFiles('../lib/views', /\.js$/), config));
   config.controllers = util.instantiateAll(config.controllers, '../lib/controllers/', config);
 
   // Set up access logging
@@ -179,4 +168,16 @@ else {
     server.stop();
     process.on('SIGINT', function () { process.exit(1); });
   });
+}
+
+// Recursively finds files in a folder whose name matches the pattern
+function findFiles(folder, pattern, includeCurrentFolder) {
+  folder = path.resolve(__dirname, folder);
+  return _.flatten(_.compact(fs.readdirSync(folder).map(function (name) {
+    name = path.join(folder, name);
+    if (fs.statSync(name).isDirectory())
+      return findFiles(name, pattern, true);
+    else if (includeCurrentFolder && pattern.test(name))
+      return name;
+  })));
 }

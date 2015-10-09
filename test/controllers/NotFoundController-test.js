@@ -36,8 +36,8 @@ describe('NotFoundController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should return true', function () {
-        controller.result.should.be.true;
+      it('should not hand over to the next controller', function () {
+        controller.next.should.not.have.been.called;
       });
 
       it('should have a 404 status', function () {
@@ -82,6 +82,10 @@ describe('NotFoundController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
+      it('should not hand over to the next controller', function () {
+        controller.next.should.not.have.been.called;
+      });
+
       it('should call the HTML view', function () {
         htmlView.render.should.have.been.calledOnce;
       });
@@ -113,6 +117,10 @@ describe('NotFoundController', function () {
         resetAll();
         client.get('/notfound').set('Accept', '*/*')
               .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should not hand over to the next controller', function () {
+        controller.next.should.not.have.been.called;
       });
 
       it('should call the HTML view', function () {
@@ -148,6 +156,10 @@ describe('NotFoundController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
+      it('should not hand over to the next controller', function () {
+        controller.next.should.not.have.been.called;
+      });
+
       it('should call the HTML view', function () {
         htmlView.render.should.have.been.calledOnce;
       });
@@ -179,6 +191,10 @@ describe('NotFoundController', function () {
         resetAll();
         client.get('/notfound').set('Accept', 'text/turtle')
               .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should not hand over to the next controller', function () {
+        controller.next.should.not.have.been.called;
       });
 
       it('should call the RDF view', function () {
@@ -213,6 +229,10 @@ describe('NotFoundController', function () {
         resetAll();
         client.get('/notfound').set('Accept', 'application/trig')
               .end(function (error, res) { response = res; done(error); });
+      });
+
+      it('should not hand over to the next controller', function () {
+        controller.next.should.not.have.been.called;
       });
 
       it('should call the RDF view', function () {

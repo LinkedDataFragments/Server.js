@@ -40,8 +40,8 @@ describe('DereferenceController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should return true', function () {
-        controller.result.should.be.true;
+      it('should not hand over to the next controller', function () {
+        controller.next.should.not.have.been.called;
       });
 
       it('should set the status code to 303', function () {
@@ -76,8 +76,8 @@ describe('DereferenceController', function () {
               .end(function (error, res) { response = res; done(error); });
       });
 
-      it('should return false', function () {
-        controller.result.should.be.false;
+      it('should hand over to the next controller', function () {
+        controller.next.should.have.been.calledOnce;
       });
     });
   });
