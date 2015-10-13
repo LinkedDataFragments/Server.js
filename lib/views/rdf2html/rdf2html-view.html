@@ -1,0 +1,56 @@
+<script type="text/javascript" src="/assets/rdf2html"></script>
+
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseTriples">
+            <span class="glyphicon glyphicon-chevron-up"></span> Data
+        </h4>
+    </div>
+    <div id="collapseTriples" class="panel-collapse collapse in">
+        <div class="panel-body" data-rdftohtml-plugin='triples'></div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseMap">
+            <span class="glyphicon glyphicon-chevron-up"></span> Map
+        </h4>
+    </div>
+    <div id="collapseMap" class="panel-collapse collapse in">
+        <div class="panel-body" data-rdftohtml-plugin='map' style="min-height:100px;"></div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapsePaging">
+            <span class="glyphicon glyphicon-chevron-up"></span> Paging
+        </h4>
+    </div>
+    <div id="collapsePaging" class="panel-collapse collapse in">
+        <div class="panel-body" data-rdftohtml-plugin='paging'></div>
+    </div>
+</div>
+
+<!-- The actual triples in Turtle -->
+<script id="turtle" type="text/turtle">
+<%- serializedtriples %>
+</script>
+
+<!-- Run RDF2HTML -->
+<script type="text/javascript">
+    var triples = document.getElementById("turtle").innerHTML;
+    var config = {
+        // Plugins to be called, add your own plugin to the plugin definition in rdf2hml.js and compile
+        plugins: ['triples', 'paging', 'map'],
+        // Output information to the console, errors are always logged to the console
+        verbose: true,
+        assetsBase: '/assets'
+    };
+    rdf2html(triples, config);
+</script>
