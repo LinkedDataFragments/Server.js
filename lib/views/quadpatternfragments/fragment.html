@@ -1,0 +1,132 @@
+<% /*! @license ©2013 Ruben Taelman - Multimedia Lab / iMinds / Ghent University */ -%>
+<div resource="<%= datasource.url %>" typeof="void:datasource hydra:Collection">
+<h2><a href="<%= datasource.url %>"><%= capitalizeFirst(datasource.title) %></a></h2>
+
+<form action="?" method="GET" property="hydra:search" resource="#quadPattern">
+  <fieldset resource="#quadPattern">
+    <legend>Query <%= datasource.title %> by quad pattern</legend>
+    <ul>
+<% ['subject', 'predicate', 'object', 'graph'].forEach(function (component) { -%>
+      <li property="hydra:mapping" resource="#<%= component %>">
+        <label for="<%= component %>"
+               about="#<%= component %>" property="hydra:variable" lang=""><%= component %></label>
+       <input class="uri" id="<%= component %>" name="<%= component %>"
+              about="#<%= component %>" property="hydra:property" resource="<%= component == 'graph' ? 'sd' : 'rdf' %>:<%= component %>" <%
+            %> value="<%= query[component] || '' %>" />
+      </li>
+<% }); -%>
+    </ul>
+  </fieldset>
+  <p>
+    <input type="submit" value="Find matching quads" />
+  </p>
+</form>
+</div>
+
+<%- extensions.Info %>
+
+<h3>Matches in <%= datasource.title %> for <em class="pattern"><%= query.patternString %></em></h3>
+<%
+  var totalEstimate = metadata.totalCount,
+      offset = query.offset || 0, limit = query.limit || triples.length,
+      start = offset + 1, end = offset + triples.length,
+      hasPrev = offset > 0, hasNext = totalEstimate > end,
+      subject = query.subject, predicate = query.predicate, object = query.object, graph = query.graph;
+%>
+<div class="counts">
+<% if (triples.length) { %>
+  Showing triples <%= formatNumber(start) %> to <%= formatNumber(end) %> of
+  <%= totalEstimate === end ? '' : '±'
+  %><span property="void:triples hydra:totalItems" datatype="xsd:integer" content="<%= totalEstimate %>"><%=
+    formatNumber(totalEstimate)
+  %></span>
+  with <span property="hydra:itemsPerPage" datatype="xsd:integer" content="<%= limit %>"><%=
+    formatNumber(limit)
+  %></span> quads per page.
+  <% pageLinks(fragment); -%>
+<% } else { %>
+  <p>
+    <%= capitalizeFirst(datasource.title) %> contains
+    <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="0">
+      no <% if (totalEstimate > 0) { %>more<% } %>
+    </span>
+    quads that match this pattern.
+  </p>
+<% } %>
+</div>
+<ul class="triples">
+<% triples.forEach(function (quad) {
+    var subject = quad.subject, predicate = quad.predicate, object = quad.object, graph = quad.graph;
+-%>
+  <li>
+    <a href="?subject=<%= encodeURIComponent(subject) %>"><%
+      %><abbr title="<%= subject %>"><%= shorten(subject) %></abbr><%
+      %></a>
+    <a href="?predicate=<%= encodeURIComponent(predicate) %>"><%
+      %><abbr title="<%= predicate %>"><%= shorten(predicate) %></abbr><%
+      %></a>
+    <% if (!N3Util.isLiteral(object)) { -%>
+    <a href="?object=<%= encodeURIComponent(object) %>" resource="<%= subject %>"><%
+      %><abbr title="<%= object %>" property="<%= predicate %>" resource="<%= object %>"><%=
+        shorten(object)
+        %></abbr></a>
+    <% } else {
+    var type = N3Util.getLiteralType(object),
+    language = N3Util.getLiteralLanguage(object);
+    -%>
+    <a href="?object=<%= encodeURIComponent(object) %>" resource="<%= subject %>"><%
+      %>"<span property="<%= predicate %>" <%
+      if (!language) { %>datatype="<%= type %>"<% }
+      else { %>lang="<%= language %>" xml:lang="<%= language %>"<% } %>><%=
+      N3Util.getLiteralValue(object)
+      %></span>"</a>
+    <% } -%>
+    <a href="?graph=<%= encodeURIComponent(graph) %>"><%
+      %><abbr title="<%= graph %>"><%= shorten(graph) %></abbr><%
+      %></a>.
+  </li>
+<% }); -%>
+</ul>
+
+<% pageLinks(fragment); -%>
+
+<%
+function capitalizeFirst(string) {
+  return string && !/[A-Z]/.test(string) ? string[0].toUpperCase() + string.slice(1) : string;
+}
+
+function shorten(entity) {
+  return entity.match(/([^\/#]*)[\/#]?$/)[1] || entity;
+}
+
+function formatNumber(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function pageLinks(fragment) {
+  if (!hasPrev && !hasNext) return;
+-%>
+  <ul class="links">
+    <% if (hasPrev) { -%>
+    <li><a href="<%= fragment.firstPageUrl %>" rel="first" property="hydra:firstPage">first</a></li>
+    <li><a href="<%= fragment.previousPageUrl %>" rel="prev" property="hydra:previousPage">previous</a></li>
+    <% } -%>
+    <% if (hasNext) { -%>
+    <li><a href="<%= fragment.nextPageUrl %>" rel="next" property="hydra:nextPage">next</a></li>
+    <% } -%>
+  </ul>
+<%
+}
+-%>
+<aside id="about">
+  <h3>About <%= datasource.title %></h3>
+  <ul>
+    <li><a href="<%= datasource.homepage || datasource.url %>" target="_blank"><%= datasource.title %></a><%
+        if (datasource.description) { %> – <%= datasource.description %><% } %></li>
+    <% if (datasource.copyright) { %><li><%= datasource.copyright %></li><% } %>
+    <% if (datasource.license || datasource.licenseUrl)
+    { %><li><a href="<%= datasource.licenseUrl || '#' %>" target="_blank"><%=
+              datasource.license || datasource.licenseUrl
+          %></a></li><% } %>
+  </ul>
+</aside>
