@@ -19,6 +19,7 @@ ul.pagination li{
   padding: 2px;
 }
 
-#collapseMap {
+.map {
+  margin-top:5px;
   height:300px;
 }

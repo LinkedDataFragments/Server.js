@@ -7,9 +7,10 @@
 <h3>Data</h3>
 <div class="panel-body" data-rdftohtml-plugin='triples'></div>
 
-<div data-rdftohtml-plugin='map'></div>
+<div class='map' data-rdftohtml-plugin='map'></div>
 
 <div data-rdftohtml-plugin='paging'></div>
+<div data-rdftohtml-plugin='tpfcollector'></div>
 
 <!-- The actual triples in Turtle -->
 <script id="turtle" type="text/turtle">
@@ -22,12 +23,18 @@
     var config = {
         // Plugins to be called
         plugins: {
+            paging: true,
+            tpfcollector: {
+                callback: function(db, container, prefixes, config) {
+                    db.removeTriples(db.find(document.location.href.match(/(^[^#]*)/)[0], null, null));
+                    db.removeTriples(db.find(document.location.href.match(/(^[^#?]*)/)[0], null, null));
+                }
+            },
             triples: true,
             map: {
                 // Base path on which the assets are provided
                 assetsBase: '/assets'
-            },
-            paging: true
+            }
         },
         // Output information to the console, errors are always logged to the console
         verbose: true
