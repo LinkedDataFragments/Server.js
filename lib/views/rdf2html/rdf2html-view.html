@@ -1,40 +1,15 @@
 <!-- Requirements, this _should_ be in the header -->
-<script type="text/javascript" src="/assets/rdf2html"></script>
+<script type="text/javascript" src="/assets/rdf2html.js"></script>
+<link rel="stylesheet" href="/assets/rdf2html.css" />
 <link rel="stylesheet" href="/assets/leaflet.css" />
 
 <!-- Panels with human-readable content -->
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseTriples">
-            <span class="glyphicon glyphicon-chevron-up"></span> Data
-        </h4>
-    </div>
-    <div id="collapseTriples" class="panel-collapse collapse in">
-        <div class="panel-body" data-rdftohtml-plugin='triples'></div>
-    </div>
-</div>
+<h3>Data</h3>
+<div class="panel-body" data-rdftohtml-plugin='triples'></div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseMap">
-            <span class="glyphicon glyphicon-chevron-up"></span> Map
-        </h4>
-    </div>
-    <div id="collapseMap" class="panel-collapse collapse in">
-        <div class="panel-body" data-rdftohtml-plugin='map' style="height:300px"></div>
-    </div>
-</div>
+<div data-rdftohtml-plugin='map'></div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapsePaging">
-            <span class="glyphicon glyphicon-chevron-up"></span> Paging
-        </h4>
-    </div>
-    <div id="collapsePaging" class="panel-collapse collapse in">
-        <div class="panel-body" data-rdftohtml-plugin='paging'></div>
-    </div>
-</div>
+<div data-rdftohtml-plugin='paging'></div>
 
 <!-- The actual triples in Turtle -->
 <script id="turtle" type="text/turtle">

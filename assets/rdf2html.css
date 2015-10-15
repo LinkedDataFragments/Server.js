@@ -1,0 +1,24 @@
+/*! @license ©2013 Ruben Taelman - Multimedia Lab / iMinds / Ghent University */
+
+.rdf2html-triple table.triples {
+  border-collapse: collapse;
+  border: 1px solid lightgray;
+  width: 100%;
+}
+
+.rdf2html-triple table.triples, .rdf2html-triple table.triples td {
+  border: 1px solid lightgray;
+}
+
+ul.pagination {
+  text-align: center;
+}
+
+ul.pagination li{
+  display: inline;
+  padding: 2px;
+}
+
+#collapseMap {
+  height:300px;
+}
