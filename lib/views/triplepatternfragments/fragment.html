@@ -54,6 +54,9 @@
   </p>
 <% } %>
 </div>
+<% if (extensions.Data) { %>
+<%- extensions.Data %>
+<% } else { %>
 <ul class="triples">
 <% triples.forEach(function (triple) {
     var subject = triple.subject, predicate = triple.predicate, object = triple.object;
@@ -84,6 +87,7 @@
     </li>
 <% }); -%>
 </ul>
+<% } %>
 
 <% pageLinks(fragment); -%>
 
