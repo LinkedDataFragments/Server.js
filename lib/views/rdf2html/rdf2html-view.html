@@ -25,8 +25,12 @@
             paging: true,
             tpfcollector: {
                 callback: function(db, container, prefixes, config) {
-                    db.removeTriples(db.find(document.location.href.match(/(^[^#]*)/)[0], null, null));
-                    db.removeTriples(db.find(document.location.href.match(/(^[^#?]*)/)[0], null, null));
+                    var uri = document.location.href.match(/(^[^#]*)/)[0];
+                    var baseUri = document.location.href.match(/(^[^#?]*)/)[0];
+                    db.removeTriples(db.find(uri, null, null));
+                    db.removeTriples(db.find(baseUri, null, null));
+                    db.removeTriples(db.find(null, null, uri));
+                    db.removeTriples(db.find(null, null, baseUri));
                 }
             },
             triples: true,
