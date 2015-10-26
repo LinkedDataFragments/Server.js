@@ -113,11 +113,15 @@ else {
           if (blankNodePath)
             dereference[blankNodePath + datasourcePath + '/'] = datasourcePath;
         }
+         // Add memento
+        //  datasourceConfig.settings.memento = datasourceConfig.memento || false;
         // Create the data source
         var datasource = instantiate(datasourceConfig, '../lib/datasources/');
         datasourceConfig.datasource = datasource;
         datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
+        datasourceConfig.baseurl = baseURLRoot;
         datasourceConfig.title = datasourceConfig.title || datasourceName;
+       
       }
       catch (error) {
         delete datasources[datasourcePath];

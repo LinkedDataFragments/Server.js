@@ -1,0 +1,17 @@
+/*! @license ©2014 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */
+
+/** A DatasourceRouter routes URLs to data sources. */
+
+// Creates a new DatasourceRouter
+function MementoRouter() {
+  if (!(this instanceof MementoRouter))
+    return new MementoRouter();
+}
+
+// Extracts the mementodatetime parameter from the request and adds it to the query
+MementoRouter.prototype.extractQueryParams = function (request, query) {
+  (query.features || (query.features = {})).mementodatetime = true;
+  query.mementodatetime = /^\/?(.*)$/.exec(request.url && request.url.pathname || '')[1];
+};
+
+module.exports = MementoRouter;
