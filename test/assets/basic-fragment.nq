@@ -17,8 +17,7 @@ _:predicate <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/0
 _:object <http://www.w3.org/ns/hydra/core#variable> "object" <http://ex.org/data?fragment#metadata>.
 _:object <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <http://ex.org/data?fragment#metadata>.
 <http://ex.org/data?fragment> <http://rdfs.org/ns/void#subset> <http://ex.org/data?fragment&page=3> <http://ex.org/data?fragment#metadata>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#Collection> <http://ex.org/data?fragment#metadata>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#PagedCollection> <http://ex.org/data?fragment#metadata>.
+<http://ex.org/data?fragment&page=3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#PartialCollectionView> <http://ex.org/data?fragment#metadata>.
 <http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/title> "Linked Data Fragment of My data"@en <http://ex.org/data?fragment#metadata>.
 <http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/description> "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."@en <http://ex.org/data?fragment#metadata>.
 <http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/source> <http://ex.org/data#dataset> <http://ex.org/data?fragment#metadata>.

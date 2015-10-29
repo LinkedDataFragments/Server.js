@@ -76,10 +76,7 @@
     },
     {
       "@id": "http://ex.org/data?fragment&page=3",
-      "@type": [
-        "hydra:Collection",
-        "hydra:PagedCollection"
-      ],
+      "@type": "hydra:PartialCollectionView",
       "dcterms:description": {
         "@language": "en",
         "@value": "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."
