@@ -24,6 +24,6 @@ _:object <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/02/2
 <http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#totalItems> "1234"^^<http://www.w3.org/2001/XMLSchema#integer>.
 <http://ex.org/data?fragment&page=3> <http://rdfs.org/ns/void#triples> "1234"^^<http://www.w3.org/2001/XMLSchema#integer>.
 <http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#itemsPerPage> "100"^^<http://www.w3.org/2001/XMLSchema#integer>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#firstPage> <http://ex.org/data?fragment&page=1>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#previousPage> <http://ex.org/data?fragment&page=2>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#nextPage> <http://ex.org/data?fragment&page=4>.
+<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#first> <http://ex.org/data?fragment&page=1>.
+<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#previous> <http://ex.org/data?fragment&page=2>.
+<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#next> <http://ex.org/data?fragment&page=4>.

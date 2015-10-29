@@ -27,9 +27,9 @@ _:object hydra:variable "object";
     hydra:totalItems "1234"^^xsd:integer;
     void:triples "1234"^^xsd:integer;
     hydra:itemsPerPage "100"^^xsd:integer;
-    hydra:firstPage <http://ex.org/data?fragment&page=1>;
-    hydra:previousPage <http://ex.org/data?fragment&page=2>;
-    hydra:nextPage <http://ex.org/data?fragment&page=4>
+    hydra:first <http://ex.org/data?fragment&page=1>;
+    hydra:previous <http://ex.org/data?fragment&page=2>;
+    hydra:next <http://ex.org/data?fragment&page=4>
 }
 <a> <b> <c>;
     <d> <e>.

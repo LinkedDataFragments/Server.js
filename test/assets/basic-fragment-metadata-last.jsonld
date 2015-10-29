@@ -92,14 +92,14 @@
         "@value": "Linked Data Fragment of My data"
       },
       "void:triples": 1234,
-      "hydra:firstPage": {
+      "hydra:first": {
         "@id": "http://ex.org/data?fragment&page=1"
       },
       "hydra:itemsPerPage": 100,
-      "hydra:nextPage": {
+      "hydra:next": {
         "@id": "http://ex.org/data?fragment&page=4"
       },
-      "hydra:previousPage": {
+      "hydra:previous": {
         "@id": "http://ex.org/data?fragment&page=2"
       },
       "hydra:totalItems": 1234
