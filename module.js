@@ -16,8 +16,10 @@ function readModules(folder) {
     // Add script files by including them
     if (item.isFile()) {
       var scriptMatch = name.match(/(\w+)\.js$/);
-      if (scriptMatch)
-        modules[scriptMatch[1]] = require(location);
+      if (scriptMatch) {
+        try { modules[scriptMatch[1]] = require(location); }
+        catch (error) { /* ignore modules that cannot be instantiated */ }
+      }
     }
     // Add folders by recursing over them
     else if (item.isDirectory()) {
