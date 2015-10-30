@@ -6,6 +6,7 @@
   "bin": {
     "ldf-server": "./bin/ldf-server"
   },
+  "main": "module.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:LinkedDataFragments/Server.js.git"
