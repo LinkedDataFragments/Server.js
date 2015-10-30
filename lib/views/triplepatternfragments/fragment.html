@@ -5,7 +5,9 @@
 <form action="?" method="GET" property="hydra:search" resource="#triplePattern">
   <fieldset resource="#triplePattern">
     <legend>Query <%= datasource.title %> by triple pattern</legend>
-    <ul property="hydra:variableRepresentation" resource="hydra:ExplicitRepresentation">
+    <span property="hydra:template" content="<%= datasource.templateUrl %>" lang=""></span>
+    <span property="hydra:variableRepresentation" resource="hydra:ExplicitRepresentation"></span>
+    <ul>
 <% ['subject', 'predicate', 'object'].forEach(function (component) { -%>
       <li property="hydra:mapping" resource="#<%= component %>">
         <label for="<%= component %>"
