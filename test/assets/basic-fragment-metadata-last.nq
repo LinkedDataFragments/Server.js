@@ -7,6 +7,7 @@
 <http://ex.org/data#dataset> <http://rdfs.org/ns/void#uriLookupEndpoint> "http://ex.org/data{?subject,predicate,object}" <http://ex.org/data?fragment#metadata>.
 <http://ex.org/data#dataset> <http://www.w3.org/ns/hydra/core#search> _:triplePattern <http://ex.org/data?fragment#metadata>.
 _:triplePattern <http://www.w3.org/ns/hydra/core#template> "http://ex.org/data{?subject,predicate,object}" <http://ex.org/data?fragment#metadata>.
+_:triplePattern <http://www.w3.org/ns/hydra/core#variableRepresentation> <http://www.w3.org/ns/hydra/core#ExplicitRepresentation> <http://ex.org/data?fragment#metadata>.
 _:triplePattern <http://www.w3.org/ns/hydra/core#mapping> _:subject <http://ex.org/data?fragment#metadata>.
 _:triplePattern <http://www.w3.org/ns/hydra/core#mapping> _:predicate <http://ex.org/data?fragment#metadata>.
 _:triplePattern <http://www.w3.org/ns/hydra/core#mapping> _:object <http://ex.org/data?fragment#metadata>.

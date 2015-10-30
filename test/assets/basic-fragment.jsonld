@@ -41,7 +41,10 @@
           "@id": "_:object"
         }
       ],
-      "hydra:template": "http://ex.org/data{?subject,predicate,object}"
+      "hydra:template": "http://ex.org/data{?subject,predicate,object}",
+      "hydra:variableRepresentation": {
+        "@id": "hydra:ExplicitRepresentation"
+      }
     },
     {
       "@id": "http://ex.org/#dataset",

@@ -12,6 +12,7 @@
     void:uriLookupEndpoint "http://ex.org/data{?subject,predicate,object}";
     hydra:search _:triplePattern.
 _:triplePattern hydra:template "http://ex.org/data{?subject,predicate,object}";
+    hydra:variableRepresentation hydra:ExplicitRepresentation;
     hydra:mapping _:subject, _:predicate, _:object.
 _:subject hydra:variable "subject";
     hydra:property rdf:subject.
