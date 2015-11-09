@@ -1,7 +1,9 @@
 <% /*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */ -%>
 <div resource="<%= datasource.url %>" typeof="void:datasource hydra:Collection">
 <h2><a href="<%= datasource.url %>"><%= capitalizeFirst(datasource.title) %></a></h2>
-
+<% if (datasource.memento) { %>
+    <div>This is a memento valid from <%= datasource.memento.interval[0] %> to <%= datasource.memento.interval[1] || "now" %></div>
+<% } %>
 <form action="?" method="GET" property="hydra:search" resource="#triplePattern">
   <fieldset resource="#triplePattern">
     <legend>Query <%= datasource.title %> by triple pattern</legend>
