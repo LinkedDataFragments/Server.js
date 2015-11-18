@@ -138,7 +138,7 @@ and change `location` from `/` to `/my/data` (excluding a trailing slash).
 
 ### _(Optional)_ Running in a Docker container
 
-To launch a [Docker](https://www.docker.com/) container for the LDF server, you must first build the container:
+If you want to rapidly deploy the server as a microservice, you can build a [Docker](https://www.docker.com/) container as follows:
 
 ```
 docker build -t ldf-server .
