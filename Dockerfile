@@ -4,7 +4,7 @@ FROM node:4.2.2
 ADD . /var/www/ldf-server
 
 # Install the node module
-RUN cd /var/www/ldf-server && npm install --ignore-scripts
+RUN cd /var/www/ldf-server && npm install
 
 # Expose the default port
 EXPOSE 3000
