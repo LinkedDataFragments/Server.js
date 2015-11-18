@@ -136,6 +136,18 @@ If you would like to proxy the data in a subfolder such as `http://example.org/m
 modify the `baseURL` in your `config.json` to `"http://example.org/my/data"`
 and change `location` from `/` to `/my/data` (excluding a trailing slash).
 
+### _(Optional)_ Running in a Docker container
+
+To launch a [Docker](https://www.docker.com/) container for the LDF server, you must first build the container:
+
+```
+docker build -t ldf-server .
+```
+After that, you can run your newly created container:
+```
+docker run -p 3000:3000 -t -i --rm -v $(pwd)/config.json:/tmp/config.json ldf-server /tmp/config.json
+```
+
 ## License
 The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/).
 
