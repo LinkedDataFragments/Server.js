@@ -119,9 +119,8 @@ else {
         var datasource = instantiate(datasourceConfig, '../lib/datasources/');
         datasourceConfig.datasource = datasource;
         datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
-        datasourceConfig.baseurl = baseURLRoot;
         datasourceConfig.title = datasourceConfig.title || datasourceName;
-       
+
       }
       catch (error) {
         delete datasources[datasourcePath];
