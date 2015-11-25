@@ -123,7 +123,7 @@ else {
       catch (error) { datasourceError(error); }
       function datasourceError(error) {
         delete datasources[datasourcePath];
-        process.stderr.write('Could not load datasource ' + datasourceName + ': ' + error.message + '\n');
+        process.stderr.write('WARNING: skipped datasource ' + datasourceName + '. ' + error.message + '\n');
       }
     }
   });
