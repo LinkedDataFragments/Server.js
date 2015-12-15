@@ -64,7 +64,7 @@ describe('SparqlDatasource', function () {
       'the empty query',
       { features: { triplePattern: true } },
       'CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}',
-      'SELECT COUNT(*) WHERE {?s ?p ?o}');
+      'SELECT (COUNT(*) as ?count) WHERE {?s ?p ?o}');
 
     itShouldExecute(datasource, request,
       'an empty query with a limit',
@@ -82,44 +82,44 @@ describe('SparqlDatasource', function () {
       'a query for a subject IRI',
       { subject: 'http://example.org/bar#foo', features: { triplePattern: true } },
       'CONSTRUCT {<http://example.org/bar#foo> ?p ?o} WHERE {<http://example.org/bar#foo> ?p ?o}',
-      'SELECT COUNT(*) WHERE {<http://example.org/bar#foo> ?p ?o}');
+      'SELECT (COUNT(*) as ?count) WHERE {<http://example.org/bar#foo> ?p ?o}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate IRI',
       { predicate: 'http://example.org/bar#foo', features: { triplePattern: true } },
       'CONSTRUCT {?s <http://example.org/bar#foo> ?o} WHERE {?s <http://example.org/bar#foo> ?o}',
-      'SELECT COUNT(*) WHERE {?s <http://example.org/bar#foo> ?o}');
+      'SELECT (COUNT(*) as ?count) WHERE {?s <http://example.org/bar#foo> ?o}');
 
     itShouldExecute(datasource, request,
       'a query for an object IRI',
       { object: 'http://example.org/bar#foo', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p <http://example.org/bar#foo>} WHERE {?s ?p <http://example.org/bar#foo>}',
-      'SELECT COUNT(*) WHERE {?s ?p <http://example.org/bar#foo>}');
+      'SELECT (COUNT(*) as ?count) WHERE {?s ?p <http://example.org/bar#foo>}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal',
       { object: '"a literal"', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p "a literal"} WHERE {?s ?p "a literal"}',
-      'SELECT COUNT(*) WHERE {?s ?p "a literal"}');
+      'SELECT (COUNT(*) as ?count) WHERE {?s ?p "a literal"}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with newlines and quotes',
       { object: '"a\rb\nc"\r\n\\""', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p """a\rb\nc\\"\r\n\\\\\\""""} WHERE {?s ?p """a\rb\nc\\"\r\n\\\\\\""""}',
-      'SELECT COUNT(*) WHERE {?s ?p """a\rb\nc\\"\r\n\\\\\\""""}');
+      'SELECT (COUNT(*) as ?count) WHERE {?s ?p """a\rb\nc\\"\r\n\\\\\\""""}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a language',
       { object: '"a literal"@nl-be', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p "a literal"@nl-be} WHERE {?s ?p "a literal"@nl-be}',
-      'SELECT COUNT(*) WHERE {?s ?p "a literal"@nl-be}');
+      'SELECT (COUNT(*) as ?count)  WHERE {?s ?p "a literal"@nl-be}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a type',
       { object: '"a literal"^^http://ex.org/foo#literal', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p "a literal"^^<http://ex.org/foo#literal>} ' +
           'WHERE {?s ?p "a literal"^^<http://ex.org/foo#literal>}',
-      'SELECT COUNT(*) WHERE {?s ?p "a literal"^^<http://ex.org/foo#literal>}');
+      'SELECT (COUNT(*) as ?count) WHERE {?s ?p "a literal"^^<http://ex.org/foo#literal>}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate and object URI',
@@ -128,7 +128,7 @@ describe('SparqlDatasource', function () {
         features: { triplePattern: true } },
       'CONSTRUCT {?s <http://example.org/bar#foo> <http://example.org/baz#bar>} ' +
           'WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}',
-      'SELECT COUNT(*) WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}');
+      'SELECT (COUNT(*) as ?count) WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate and object URI with offset and limit',
@@ -171,7 +171,7 @@ describe('SparqlDatasource', function () {
         request.should.have.been.calledThrice;
         var url = URL.parse(request.secondCall.args[0].url, true);
         (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
-        url.query.query.should.equal('SELECT COUNT(*) WHERE {<abc> ?p ?o}');
+        url.query.query.should.equal('SELECT (COUNT(*) as ?count) WHERE {<abc> ?p ?o}');
       });
 
       it('should request a matching CONSTRUCT query the second time', function () {
