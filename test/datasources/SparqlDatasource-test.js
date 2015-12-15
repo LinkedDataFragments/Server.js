@@ -5,7 +5,7 @@ var Datasource = require('../../lib/datasources/Datasource'),
     URL = require('url');
 
 var turtleResult = fs.readFileSync(path.join(__dirname, '../assets/sparql-triples-response.ttl'));
-var turtleCountResult = fs.readFileSync(path.join(__dirname, '../assets/sparql-count-response.ttl'));
+var countResult = '"c"\n12345678\n';
 
 describe('SparqlDatasource', function () {
   describe('The SparqlDatasource module', function () {
@@ -64,7 +64,7 @@ describe('SparqlDatasource', function () {
       'the empty query',
       { features: { triplePattern: true } },
       'CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}',
-      'SELECT COUNT(*) WHERE {?s ?p ?o}');
+      'SELECT (COUNT(*) AS ?c) WHERE {?s ?p ?o}');
 
     itShouldExecute(datasource, request,
       'an empty query with a limit',
@@ -82,44 +82,44 @@ describe('SparqlDatasource', function () {
       'a query for a subject IRI',
       { subject: 'http://example.org/bar#foo', features: { triplePattern: true } },
       'CONSTRUCT {<http://example.org/bar#foo> ?p ?o} WHERE {<http://example.org/bar#foo> ?p ?o}',
-      'SELECT COUNT(*) WHERE {<http://example.org/bar#foo> ?p ?o}');
+      'SELECT (COUNT(*) AS ?c) WHERE {<http://example.org/bar#foo> ?p ?o}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate IRI',
       { predicate: 'http://example.org/bar#foo', features: { triplePattern: true } },
       'CONSTRUCT {?s <http://example.org/bar#foo> ?o} WHERE {?s <http://example.org/bar#foo> ?o}',
-      'SELECT COUNT(*) WHERE {?s <http://example.org/bar#foo> ?o}');
+      'SELECT (COUNT(*) AS ?c) WHERE {?s <http://example.org/bar#foo> ?o}');
 
     itShouldExecute(datasource, request,
       'a query for an object IRI',
       { object: 'http://example.org/bar#foo', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p <http://example.org/bar#foo>} WHERE {?s ?p <http://example.org/bar#foo>}',
-      'SELECT COUNT(*) WHERE {?s ?p <http://example.org/bar#foo>}');
+      'SELECT (COUNT(*) AS ?c) WHERE {?s ?p <http://example.org/bar#foo>}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal',
       { object: '"a literal"', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p "a literal"} WHERE {?s ?p "a literal"}',
-      'SELECT COUNT(*) WHERE {?s ?p "a literal"}');
+      'SELECT (COUNT(*) AS ?c) WHERE {?s ?p "a literal"}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with newlines and quotes',
       { object: '"a\rb\nc"\r\n\\""', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p """a\rb\nc\\"\r\n\\\\\\""""} WHERE {?s ?p """a\rb\nc\\"\r\n\\\\\\""""}',
-      'SELECT COUNT(*) WHERE {?s ?p """a\rb\nc\\"\r\n\\\\\\""""}');
+      'SELECT (COUNT(*) AS ?c) WHERE {?s ?p """a\rb\nc\\"\r\n\\\\\\""""}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a language',
       { object: '"a literal"@nl-be', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p "a literal"@nl-be} WHERE {?s ?p "a literal"@nl-be}',
-      'SELECT COUNT(*) WHERE {?s ?p "a literal"@nl-be}');
+      'SELECT (COUNT(*) AS ?c) WHERE {?s ?p "a literal"@nl-be}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a type',
       { object: '"a literal"^^http://ex.org/foo#literal', features: { triplePattern: true } },
       'CONSTRUCT {?s ?p "a literal"^^<http://ex.org/foo#literal>} ' +
           'WHERE {?s ?p "a literal"^^<http://ex.org/foo#literal>}',
-      'SELECT COUNT(*) WHERE {?s ?p "a literal"^^<http://ex.org/foo#literal>}');
+      'SELECT (COUNT(*) AS ?c) WHERE {?s ?p "a literal"^^<http://ex.org/foo#literal>}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate and object URI',
@@ -128,7 +128,7 @@ describe('SparqlDatasource', function () {
         features: { triplePattern: true } },
       'CONSTRUCT {?s <http://example.org/bar#foo> <http://example.org/baz#bar>} ' +
           'WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}',
-      'SELECT COUNT(*) WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}');
+      'SELECT (COUNT(*) AS ?c) WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate and object URI with offset and limit',
@@ -146,7 +146,7 @@ describe('SparqlDatasource', function () {
       before(function () {
         request.reset();
         request.onFirstCall().returns(test.createHttpResponse('invalid Turtle', 'text/turtle'));
-        request.onSecondCall().returns(test.createHttpResponse(turtleCountResult, 'text/turtle'));
+        request.onSecondCall().returns(test.createHttpResponse(countResult, 'text/csv'));
         request.onThirdCall().returns(test.createHttpResponse(turtleResult, 'text/turtle'));
 
         result = datasource.select({ subject: 'abc', features: { triplePattern: true } });
@@ -171,7 +171,7 @@ describe('SparqlDatasource', function () {
         request.should.have.been.calledThrice;
         var url = URL.parse(request.secondCall.args[0].url, true);
         (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
-        url.query.query.should.equal('SELECT COUNT(*) WHERE {<abc> ?p ?o}');
+        url.query.query.should.equal('SELECT (COUNT(*) AS ?c) WHERE {<abc> ?p ?o}');
       });
 
       it('should request a matching CONSTRUCT query the second time', function () {
@@ -200,7 +200,7 @@ describe('SparqlDatasource', function () {
       before(function (done) {
         request.reset();
         request.onFirstCall().returns(test.createHttpResponse('invalid', 'text/turtle'));
-        request.onSecondCall().returns(test.createHttpResponse(turtleCountResult, 'text/turtle'));
+        request.onSecondCall().returns(test.createHttpResponse(countResult, 'text/csv'));
         request.onThirdCall().returns(test.createHttpResponse('invalid', 'text/turtle'));
 
         result = datasource.select({ subject: 'abcd', features: { triplePattern: true } });
@@ -224,7 +224,7 @@ describe('SparqlDatasource', function () {
       });
 
       it('should emit an error', function () {
-        error.should.have.property('message', 'Error accessing SPARQL endpoint http://ex.org/sparql: The endpoint returned an invalid Turtle response.');
+        error.should.have.property('message', 'Error accessing SPARQL endpoint http://ex.org/sparql: COUNT query failed.');
       });
     });
 
@@ -266,7 +266,7 @@ function itShouldExecute(datasource, request, name, query, constructQuery, count
     before(function () {
       request.reset();
       request.onFirstCall().returns(test.createHttpResponse(turtleResult, 'text/turtle'));
-      request.onSecondCall().returns(test.createHttpResponse(turtleCountResult, 'text/turtle'));
+      request.onSecondCall().returns(test.createHttpResponse(countResult, 'text/csv'));
 
       result = datasource.select(query);
       result.on('metadata', function (metadata) { totalCount = metadata.totalCount; });
