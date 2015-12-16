@@ -29,6 +29,7 @@
 
   "controllers": [
     "SummaryController",
+    "TimeRangeGateController",
     "QuadPatternFragmentsController",
     "TriplePatternFragmentsController",
     "AssetsController",
