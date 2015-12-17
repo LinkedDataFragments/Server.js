@@ -38,12 +38,10 @@ describe('LinkedDataFragmentsServer', function () {
       }).end(done);
     });
 
-    it('should not allow POST requests', function (done) {
+    it('should allow POST requests', function (done) {
       client.post('/').expect(function (response) {
-        controller.handleRequest.should.not.have.been.called;
-        response.should.have.property('statusCode', 405);
-        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
+        controller.handleRequest.should.have.been.calledOnce;
+        response.should.have.property('statusCode', 500);
       }).end(done);
     });
 
@@ -131,13 +129,12 @@ describe('LinkedDataFragmentsServer', function () {
       controllerB.handleRequest.reset();
     });
 
-    it('should not allow POST requests', function (done) {
+    it('should allow POST requests', function (done) {
       client.post('/').expect(function (response) {
-        controllerA.handleRequest.should.not.have.been.called;
-        controllerB.handleRequest.should.not.have.been.called;
-        response.should.have.property('statusCode', 405);
+        controllerA.handleRequest.should.have.been.calledOnce;
+        controllerA.handleRequest.should.have.been.calledOnce;
+        response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
       }).end(done);
     });
 
