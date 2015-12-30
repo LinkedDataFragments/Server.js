@@ -41,7 +41,10 @@
           "@id": "_:object"
         }
       ],
-      "hydra:template": "http://ex.org/data{?subject,predicate,object}"
+      "hydra:template": "http://ex.org/data{?subject,predicate,object}",
+      "hydra:variableRepresentation": {
+        "@id": "hydra:ExplicitRepresentation"
+      }
     },
     {
       "@id": "http://ex.org/#dataset",
@@ -76,10 +79,7 @@
     },
     {
       "@id": "http://ex.org/data?fragment&page=3",
-      "@type": [
-        "hydra:Collection",
-        "hydra:PagedCollection"
-      ],
+      "@type": "hydra:PartialCollectionView",
       "dcterms:description": {
         "@language": "en",
         "@value": "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."
@@ -92,14 +92,14 @@
         "@value": "Linked Data Fragment of My data"
       },
       "void:triples": 1234,
-      "hydra:firstPage": {
+      "hydra:first": {
         "@id": "http://ex.org/data?fragment&page=1"
       },
       "hydra:itemsPerPage": 100,
-      "hydra:nextPage": {
+      "hydra:next": {
         "@id": "http://ex.org/data?fragment&page=4"
       },
-      "hydra:previousPage": {
+      "hydra:previous": {
         "@id": "http://ex.org/data?fragment&page=2"
       },
       "hydra:totalItems": 1234

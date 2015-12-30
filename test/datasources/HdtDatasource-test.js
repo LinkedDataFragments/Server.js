@@ -11,7 +11,7 @@ describe('HdtDatasource', function () {
       HdtDatasource.should.be.a('function');
     });
 
-    it('should be a HdtDatasource constructor', function (done) {
+    it('should be an HdtDatasource constructor', function (done) {
       var instance = new HdtDatasource({ file: exampleHdtFile });
       instance.should.be.an.instanceof(HdtDatasource);
       instance.close(done);
@@ -31,60 +31,72 @@ describe('HdtDatasource', function () {
   });
 
   describe('A HdtDatasource instance for an example HDT file', function () {
-    var datasource = new HdtDatasource({ file: exampleHdtFile });
-    after(function (done) { datasource.close(done); });
+    var datasource, getDatasource = function () { return datasource; };
+    before(function (done) {
+      datasource = new HdtDatasource({ file: exampleHdtFile });
+      datasource.on('initialized', done);
+    });
+    after(function (done) {
+      datasource.close(done);
+    });
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'the empty query',
       { features: { triplePattern: true } },
       132, 132);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'the empty query with a limit',
       { limit: 10, features: { triplePattern: true, limit: true } },
       10, 132);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'the empty query with an offset',
       { offset: 10, features: { triplePattern: true, offset: true } },
       122, 132);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for an existing subject',
       { subject: 'http://example.org/s1',   limit: 10, features: { triplePattern: true, limit: true } },
       10, 100);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for a non-existing subject',
       { subject: 'http://example.org/p1',   limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for an existing predicate',
       { predicate: 'http://example.org/p1', limit: 10, features: { triplePattern: true, limit: true } },
       10, 20);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for a non-existing predicate',
       { predicate: 'http://example.org/s1', limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for an existing object',
       { object: 'http://example.org/o001',  limit: 10, features: { triplePattern: true, limit: true } },
       3, 3);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for a non-existing object',
       { object: 'http://example.org/s1',    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
   });
 
   describe('A HdtDatasource instance with blank nodes', function () {
-    var datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks });
-    after(function (done) { datasource.close(done); });
+    var datasource, getDatasource = function () { return datasource; };
+    before(function (done) {
+      datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks });
+      datasource.on('initialized', done);
+    });
+    after(function (done) {
+      datasource.close(done);
+    });
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'the empty query',
       { features: { triplePattern: true } },
       6, 6,
@@ -97,12 +109,12 @@ describe('HdtDatasource', function () {
         { subject: 'a',       predicate: 'b', object: 'genid:c3' },
       ]);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for a blank subject',
       { suject: '_:a', features: { triplePattern: true } },
       6, 6);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as subject',
       { subject: 'genid:a', features: { triplePattern: true } },
       3, 3,
@@ -112,7 +124,7 @@ describe('HdtDatasource', function () {
         { subject: 'genid:a', predicate: 'b', object: 'c3' },
       ]);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as object',
       { object: 'genid:c1', features: { triplePattern: true } },
       1, 1,
@@ -122,11 +134,17 @@ describe('HdtDatasource', function () {
   });
 
   describe('A HdtDatasource instance with blank nodes and a blank node prefix', function () {
-    var datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks,
-                                         blankNodePrefix: 'http://example.org/.well-known/genid/' });
-    after(function (done) { datasource.close(done); });
+    var datasource, getDatasource = function () { return datasource; };
+    before(function (done) {
+      datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks,
+                                       blankNodePrefix: 'http://example.org/.well-known/genid/' });
+      datasource.on('initialized', done);
+    });
+    after(function (done) {
+      datasource.close(done);
+    });
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'the empty query',
       { features: { triplePattern: true } },
       6, 6,
@@ -139,12 +157,12 @@ describe('HdtDatasource', function () {
         { subject: 'a', predicate: 'b', object: 'http://example.org/.well-known/genid/c3' },
       ]);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for a blank subject',
       { suject: '_:a', features: { triplePattern: true } },
       6, 6);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as subject',
       { subject: 'http://example.org/.well-known/genid/a', features: { triplePattern: true } },
       3, 3,
@@ -154,7 +172,7 @@ describe('HdtDatasource', function () {
         { subject: 'http://example.org/.well-known/genid/a', predicate: 'b', object: 'c3' },
       ]);
 
-    itShouldExecute(datasource,
+    itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as object',
       { object: 'http://example.org/.well-known/genid/c1', features: { triplePattern: true } },
       1, 1,
@@ -164,12 +182,12 @@ describe('HdtDatasource', function () {
   });
 });
 
-function itShouldExecute(datasource, name, query,
+function itShouldExecute(getDatasource, name, query,
                          expectedResultsCount, expectedTotalCount, expectedTriples) {
   describe('executing ' + name, function () {
     var resultsCount = 0, totalCount, triples = [];
     before(function (done) {
-      var result = datasource.select(query);
+      var result = getDatasource().select(query);
       result.on('metadata', function (metadata) { totalCount = metadata.totalCount; });
       result.on('data', function (triple) { resultsCount++; expectedTriples && triples.push(triple); });
       result.on('end', done);

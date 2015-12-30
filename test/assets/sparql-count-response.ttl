@@ -1,7 +1,0 @@
-@prefix res: <http://www.w3.org/2005/sparql-results#> .
-
-# Result from a COUNT query (6 triples)
-_:_ a res:ResultSet .
-_:_ res:resultVariable "callret-0" .
-_:_ res:solution [
-      res:binding [ res:variable "callret-0" ; res:value 12345678 ] ] .

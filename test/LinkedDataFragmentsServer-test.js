@@ -76,7 +76,7 @@ describe('LinkedDataFragmentsServer', function () {
         controller.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'Application error: No controller for /unsupported');
+        response.should.have.property('text', 'Application error: No controller for /unsupported\n');
       }).end(done);
     });
 
@@ -85,7 +85,7 @@ describe('LinkedDataFragmentsServer', function () {
         controller.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'Application error: error message');
+        response.should.have.property('text', 'Application error: error message\n');
       }).end(done);
     });
   });
@@ -165,7 +165,7 @@ describe('LinkedDataFragmentsServer', function () {
         controllerB.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'Application error: No controller for /unsupported');
+        response.should.have.property('text', 'Application error: No controller for /unsupported\n');
       }).end(done);
     });
 
@@ -175,7 +175,7 @@ describe('LinkedDataFragmentsServer', function () {
         controllerB.handleRequest.should.not.have.been.called;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'Application error: error message A');
+        response.should.have.property('text', 'Application error: error message A\n');
       }).end(done);
     });
 
@@ -185,7 +185,7 @@ describe('LinkedDataFragmentsServer', function () {
         controllerB.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 500);
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
-        response.should.have.property('text', 'Application error: error message B');
+        response.should.have.property('text', 'Application error: error message B\n');
       }).end(done);
     });
   });
