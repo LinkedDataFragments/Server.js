@@ -30,7 +30,7 @@
     "lodash": "^2.4.0",
     "lru-cache": "^2.5.0",
     "uritemplate": "^0.3.0",
-    "rdf2html": "^0.1.0"
+    "rdf2html": "git://github.com/rubensworks/rdf2html.git#52d274cffc1d95e137a44169a433dc3b7f586cc2"
   },
   "optionalDependencies": {
     "hdt": "^1.1.0",
