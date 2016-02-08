@@ -6,6 +6,7 @@
 <http://ex.org/data#dataset> <http://rdfs.org/ns/void#uriLookupEndpoint> "http://ex.org/data{?subject,predicate,object}".
 <http://ex.org/data#dataset> <http://www.w3.org/ns/hydra/core#search> _:triplePattern.
 _:triplePattern <http://www.w3.org/ns/hydra/core#template> "http://ex.org/data{?subject,predicate,object}".
+_:triplePattern <http://www.w3.org/ns/hydra/core#variableRepresentation> <http://www.w3.org/ns/hydra/core#ExplicitRepresentation>.
 _:triplePattern <http://www.w3.org/ns/hydra/core#mapping> _:subject.
 _:triplePattern <http://www.w3.org/ns/hydra/core#mapping> _:predicate.
 _:triplePattern <http://www.w3.org/ns/hydra/core#mapping> _:object.
@@ -16,17 +17,16 @@ _:predicate <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/0
 _:object <http://www.w3.org/ns/hydra/core#variable> "object".
 _:object <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object>.
 <http://ex.org/data?fragment> <http://rdfs.org/ns/void#subset> <http://ex.org/data?fragment&page=3>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#Collection>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#PagedCollection>.
+<http://ex.org/data?fragment&page=3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#PartialCollectionView>.
 <http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/title> "Linked Data Fragment of My data"@en.
 <http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/description> "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."@en.
 <http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/source> <http://ex.org/data#dataset>.
 <http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#totalItems> "1234"^^<http://www.w3.org/2001/XMLSchema#integer>.
 <http://ex.org/data?fragment&page=3> <http://rdfs.org/ns/void#triples> "1234"^^<http://www.w3.org/2001/XMLSchema#integer>.
 <http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#itemsPerPage> "100"^^<http://www.w3.org/2001/XMLSchema#integer>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#firstPage> <http://ex.org/data?fragment&page=1>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#previousPage> <http://ex.org/data?fragment&page=2>.
-<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#nextPage> <http://ex.org/data?fragment&page=4>.
+<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#first> <http://ex.org/data?fragment&page=1>.
+<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#previous> <http://ex.org/data?fragment&page=2>.
+<http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#next> <http://ex.org/data?fragment&page=4>.
 <a> <b> <c>.
 <a> <d> <e>.
 <f> <g> <h>.

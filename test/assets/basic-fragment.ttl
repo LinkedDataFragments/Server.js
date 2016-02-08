@@ -10,6 +10,7 @@
     void:uriLookupEndpoint "http://ex.org/data{?subject,predicate,object}";
     hydra:search _:triplePattern.
 _:triplePattern hydra:template "http://ex.org/data{?subject,predicate,object}";
+    hydra:variableRepresentation hydra:ExplicitRepresentation;
     hydra:mapping _:subject, _:predicate, _:object.
 _:subject hydra:variable "subject";
     hydra:property rdf:subject.
@@ -18,16 +19,16 @@ _:predicate hydra:variable "predicate";
 _:object hydra:variable "object";
     hydra:property rdf:object.
 <http://ex.org/data?fragment> void:subset <http://ex.org/data?fragment&page=3>.
-<http://ex.org/data?fragment&page=3> a hydra:Collection, hydra:PagedCollection;
+<http://ex.org/data?fragment&page=3> a hydra:PartialCollectionView;
     dcterms:title "Linked Data Fragment of My data"@en;
     dcterms:description "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."@en;
     dcterms:source <http://ex.org/data#dataset>;
     hydra:totalItems "1234"^^xsd:integer;
     void:triples "1234"^^xsd:integer;
     hydra:itemsPerPage "100"^^xsd:integer;
-    hydra:firstPage <http://ex.org/data?fragment&page=1>;
-    hydra:previousPage <http://ex.org/data?fragment&page=2>;
-    hydra:nextPage <http://ex.org/data?fragment&page=4>.
+    hydra:first <http://ex.org/data?fragment&page=1>;
+    hydra:previous <http://ex.org/data?fragment&page=2>;
+    hydra:next <http://ex.org/data?fragment&page=4>.
 <a> <b> <c>;
     <d> <e>.
 <f> <g> <h>.
