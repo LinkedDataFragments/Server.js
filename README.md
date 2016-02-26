@@ -138,7 +138,16 @@ and change `location` from `/` to `/my/data` (excluding a trailing slash).
 
 ## Use HTTPS and WebID
 
-The server can be configured to use HTTPS and authenticate clients through [WebID](https://www.w3.org/wiki/WebID). 
+The server can be configured to authenticate clients through [WebID](https://www.w3.org/wiki/WebID). WebID uses HTTPS and SSL certificates to create a trusted peer network.
+
+### Create WebID, keys and certificates
+
+1. Create a WebID
+2. Create the CA certificate
+2. Create a certificate including the WebID
+3. Sign certificates from clients
+
+### Configure the server
 
 ```json
 {
