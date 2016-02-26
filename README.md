@@ -136,6 +136,24 @@ If you would like to proxy the data in a subfolder such as `http://example.org/m
 modify the `baseURL` in your `config.json` to `"http://example.org/my/data"`
 and change `location` from `/` to `/my/data` (excluding a trailing slash).
 
+## Use HTTPS and WebID
+
+The server can be configured to use HTTPS and authenticate clients through [WebID](https://www.w3.org/wiki/WebID). 
+
+```json
+{
+  "protocol": "https",
+  "ssl": {
+    "keys" : {
+      "key": "keys/certs/server/my-server.key.pem",
+      "ca": ["keys/certs/server/my-root-ca.crt.pem"],
+      "cert": "keys/certs/server/my-server.crt.pem"
+    }
+  }
+...
+}  
+```
+
 ## License
 The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/).
 
