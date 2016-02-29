@@ -142,12 +142,65 @@ The server can be configured to authenticate clients through [WebID](https://www
 
 ### Create WebID, keys and certificates
 
-1. Create a WebID
-2. Create the CA certificate
-2. Create a certificate including the WebID
-3. Sign certificates from clients
+1. Create the CA certificate
+
+You'll need a Root Certificate Authority (private key) to sign the certificates of trusted clients.
+
+```bash
+openssl genrsa \
+  -out certs/ca/my-root-ca.key.pem \
+  2048
+```
+
+Self-sign your Root Certificate Authority by creating a certificate request.
+Since this is private, the details can be anything you like.
+
+```bash
+openssl req \
+  -x509 \
+  -new \
+  -nodes \
+  -key certs/ca/my-root-ca.key.pem \
+  -days 3652 \
+  -out certs/ca/my-root-ca.crt.pem \
+  -subj "/C=US/ST=Utah/L=Provo/O=ACME Signing Authority Inc/CN=example.com"
+```
+
+3. Create a server certificate
+
+
+Create a private key to create certificates.
+
+```bash
+openssl genrsa \
+  -out certs/server/my-server.key.pem \
+  2048
+```
+
+Create a certificate request for your server.
+
+```bash
+openssl req -new \
+    -key certs/server/my-server.key.pem \
+    -out certs/tmp/my-server.csr.pem \
+    -subj "/C=US/ST=Utah/L=Provo/O=ACME Service/CN=example.com"
+```
+
+Finally, sign the request from your server with your Root CA.
+
+```bash
+openssl x509 \
+    -req -in certs/tmp/my-server.csr.pem \
+    -CA certs/ca/my-root-ca.crt.pem \
+    -CAkey certs/ca/my-root-ca.key.pem \
+    -CAcreateserial \
+    -out certs/server/my-server.crt.pem \
+    -days 1095
+```
 
 ### Configure the server
+
+The server can be easily configured to use HTTPS in combination with WebID like so.
 
 ```json
 {
@@ -159,8 +212,25 @@ The server can be configured to authenticate clients through [WebID](https://www
       "cert": "keys/certs/server/my-server.crt.pem"
     }
   }
-...
 }  
+```
+
+With this configuration, the server will use WebID Authentication over TLS to authenticate trusted clients.
+Make sure the client's certificate is signed by your Root CA beforehand.
+
+### Sign certificates from clients
+
+To add a client to your pool of trusted peers, you must collect and sign its certificate before communicating.
+After signing, you return the certificate to the client.
+
+```bash
+openssl x509 \
+  -req -in certs/tmp/my-app-client.csr.pem \
+  -CA certs/ca/my-root-ca.crt.pem \
+  -CAkey certs/ca/my-root-ca.key.pem \
+  -CAcreateserial \
+  -out certs/client/my-app-client.crt.pem \
+  -days 1095
 ```
 
 ## License
