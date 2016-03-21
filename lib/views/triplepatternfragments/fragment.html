@@ -7,6 +7,8 @@
 <form action="?" method="GET" property="hydra:search" resource="#triplePattern">
   <fieldset resource="#triplePattern">
     <legend>Query <%= datasource.title %> by triple pattern</legend>
+    <span property="hydra:template" content="<%= datasource.templateUrl %>" lang=""></span>
+    <span property="hydra:variableRepresentation" resource="hydra:ExplicitRepresentation"></span>
     <ul>
 <% ['subject', 'predicate', 'object'].forEach(function (component) { -%>
       <li property="hydra:mapping" resource="#<%= component %>">
@@ -107,11 +109,11 @@ function pageLinks(fragment) {
 -%>
   <ul class="links">
     <% if (hasPrev) { -%>
-    <li><a href="<%= fragment.firstPageUrl %>" rel="first" property="hydra:firstPage">first</a></li>
-    <li><a href="<%= fragment.previousPageUrl %>" rel="prev" property="hydra:previousPage">previous</a></li>
+    <li><a href="<%= fragment.firstPageUrl %>" rel="first" property="hydra:first">first</a></li>
+    <li><a href="<%= fragment.previousPageUrl %>" rel="prev" property="hydra:previous">previous</a></li>
     <% } -%>
     <% if (hasNext) { -%>
-    <li><a href="<%= fragment.nextPageUrl %>" rel="next" property="hydra:nextPage">next</a></li>
+    <li><a href="<%= fragment.nextPageUrl %>" rel="next" property="hydra:next">next</a></li>
     <% } -%>
   </ul>
 <%

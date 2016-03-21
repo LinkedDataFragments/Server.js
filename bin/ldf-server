@@ -98,7 +98,7 @@ else {
 
   // Create all data sources
   var datasources = config.datasources, datasourceBase = baseURLPath.substr(1), dereference = config.dereference;
-  for (var datasourceName in datasources) {
+  Object.keys(datasources).forEach(function (datasourceName) {
     var datasourceConfig = config.datasources[datasourceName];
     delete datasources[datasourceName];
     if (datasourceConfig.enabled !== false) {
@@ -117,17 +117,19 @@ else {
         //  datasourceConfig.settings.memento = datasourceConfig.memento || false;
         // Create the data source
         var datasource = instantiate(datasourceConfig, '../lib/datasources/');
+        datasource.on('error', datasourceError);
         datasourceConfig.datasource = datasource;
         datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
         datasourceConfig.title = datasourceConfig.title || datasourceName;
 
       }
-      catch (error) {
+      catch (error) { datasourceError(error); }
+      function datasourceError(error) {
         delete datasources[datasourcePath];
-        process.stderr.write('Could not load datasource ' + datasourceName + ': ' + error.message + '\n');
+        process.stderr.write('WARNING: skipped datasource ' + datasourceName + '. ' + error.message + '\n');
       }
     }
-  }
+  });
 
   // Create index data source
   var indexPath = datasourceBase.replace(/\/$/, '');
