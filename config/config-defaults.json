@@ -29,6 +29,7 @@
     "TriplePatternFragmentsController",
     "AssetsController",
     "DereferenceController",
+    "TimegateController",
     "NotFoundController"
   ],
 
