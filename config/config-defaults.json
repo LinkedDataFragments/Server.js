@@ -40,5 +40,11 @@
     }
   },
 
+  "extensions": {
+    "TriplePatternFragmentsController": [
+      "MementoControllerExtension"
+    ]
+  },
+
   "logging": { "enabled": false, "file": "access.log" }
 }
