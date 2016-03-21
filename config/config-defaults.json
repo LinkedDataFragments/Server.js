@@ -32,5 +32,12 @@
     "NotFoundController"
   ],
 
+  "response": {
+    "headers": {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Expose-Headers": "Link, Memento-Datetime"
+    }
+  },
+
   "logging": { "enabled": false, "file": "access.log" }
 }
