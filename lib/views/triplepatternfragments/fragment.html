@@ -25,7 +25,7 @@
 </form>
 </div>
 
-<%- extensions.Info %>
+<%- extensions.Before %>
 
 <h3>Matches in <%= datasource.title %> for <em class="pattern"><%= query.patternString %></em></h3>
 <%
@@ -117,6 +117,9 @@ function pageLinks(fragment) {
 <%
 }
 -%>
+
+<%- extensions.After %>
+
 <aside id="about">
   <h3>About <%= datasource.title %></h3>
   <ul>
