@@ -1,0 +1,51 @@
+{
+  "title": "Memento-aware server",
+
+  "datasources": {
+    "dbpedia2015": {
+      "title": "DBpedia 2015",
+      "type": "HdtDatasource",
+      "settings": {
+        "file": "data/dbpedia2015en.hdt"
+      },
+      "memento": {
+        "interval": ["2014-09-14T11:59:59Z", "2015-04-15T00:00:00Z"]
+      }
+    },
+    "dbpedia2014": {
+      "title": "DBpedia 2014",
+      "type": "HdtDatasource",
+      "settings": {
+        "file": "data/dbpedia2014en.hdt"
+      },
+      "memento": {
+        "interval": ["2013-06-15T11:59:59Z", "2014-09-15T00:00:00Z"]
+      }
+    }
+  },
+
+  "timegates": {
+    "baseURL": "/timegate/",
+    "mementos": {
+      "dbpedia": {
+        "versions": [
+          "dbpedia2015",
+          "dbpedia2014"
+        ]
+      }
+    }
+  },
+
+  "prefixes": {
+    "rdf":         "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs":        "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd":         "http://www.w3.org/2001/XMLSchema#",
+    "dc":          "http://purl.org/dc/terms/",
+    "foaf":        "http://xmlns.com/foaf/0.1/",
+    "dbpedia":     "http://dbpedia.org/resource/",
+    "dbpedia-owl": "http://dbpedia.org/ontology/",
+    "dbpprop":     "http://dbpedia.org/property/",
+    "hydra":       "http://www.w3.org/ns/hydra/core#",
+    "void":        "http://rdfs.org/ns/void#"
+  }
+}

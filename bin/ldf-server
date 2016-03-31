@@ -175,12 +175,14 @@ else {
 
 // Instantiates an object from the given description
 function instantiate(description, includePath) {
-  var absolutePath = includePath ? path.resolve(__dirname, includePath) : '',
-      type = path.join(absolutePath, description.type || description),
-      Constructor = constructors[type];
-  if (!Constructor)
-    Constructor = constructors[type] = require(type);
-  return new Constructor(_.defaults(description.settings || {}, config));
+  var type = description.type || description,
+      typePath = path.join(includePath ? path.resolve(__dirname, includePath) : '', type),
+      Constructor = constructors[typePath] || (constructors[typePath] = require(typePath)),
+      extensions = config.extensions && config.extensions[type] || [],
+      settings = _.defaults(description.settings || {}, {
+        extensions: extensions.map(function (x) { return instantiate(x, includePath); }),
+      }, config);
+  return new Constructor(settings, config);
 }
 
 // Instantiates all objects from the given descriptions

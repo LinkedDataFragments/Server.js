@@ -29,8 +29,22 @@
     "TriplePatternFragmentsController",
     "AssetsController",
     "DereferenceController",
+    "TimegateController",
     "NotFoundController"
   ],
+
+  "response": {
+    "headers": {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Expose-Headers": "Link, Memento-Datetime"
+    }
+  },
+
+  "extensions": {
+    "TriplePatternFragmentsController": [
+      "MementoControllerExtension"
+    ]
+  },
 
   "logging": { "enabled": false, "file": "access.log" }
 }
