@@ -140,12 +140,12 @@ and change `location` from `/` to `/my/data` (excluding a trailing slash).
 
 If you want to rapidly deploy the server as a microservice, you can build a [Docker](https://www.docker.com/) container as follows:
 
-```
-docker build -t ldf-server .
+```bash
+$ docker build -t ldf-server .
 ```
 After that, you can run your newly created container:
-```
-docker run -p 3000:3000 -t -i --rm -v $(pwd)/config.json:/tmp/config.json ldf-server /tmp/config.json
+```bash
+$ docker run -p 3000:3000 -t -i --rm -v $(pwd)/config.json:/tmp/config.json ldf-server /tmp/config.json
 ```
 
 ### _(Optional)_ Host historical version of datasets
