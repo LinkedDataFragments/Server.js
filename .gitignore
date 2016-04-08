@@ -1,6 +1,9 @@
 node_modules
-config
 data
 summaries
 *.log
 *.hdt.index
+
+# Ignore deployment configuration files, but keep defaults (for npm package)
+config/*.json
+!config/config-defaults.json
