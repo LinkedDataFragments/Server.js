@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "qejs": "^3.0.0",
-    "n3": "^0.4.5",
+    "n3": "git://github.com/rubensworks/N3.js.git#87cae2914751c93fdeb8c005b6c445d002b6f446",
     "jsonld": "^0.3.0",
     "request": "^2.27.0",
     "mime": "^1.2.11",
