@@ -53,7 +53,7 @@
 </div>
 <ul class="triples">
 <% triples.forEach(function (triple) {
-    var subject = triple.subject, predicate = triple.predicate, object = triple.object, context = triple.context;
+    var subject = triple.subject, predicate = triple.predicate, object = triple.object, context = triple.graph;
 -%>
     <li>
       <a href="?subject=<%= encodeURIComponent(subject) %>"><%
