@@ -25,6 +25,12 @@ describe('LinkedDataFragmentsServer', function () {
       server = new LinkedDataFragmentsServer({
         controllers: [ controller ],
         log: sinon.stub(),
+        response: {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'My-Header': 'value',
+          },
+        }
       });
       client = request.agent(server);
     });
@@ -32,9 +38,10 @@ describe('LinkedDataFragmentsServer', function () {
       controller.handleRequest.reset();
     });
 
-    it('should send CORS headers', function (done) {
+    it('should send the configured headers', function (done) {
       client.head('/').expect(function (response) {
         response.headers.should.have.property('access-control-allow-origin', '*');
+        response.headers.should.have.property('my-header', 'value');
       }).end(done);
     });
 
