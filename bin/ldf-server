@@ -7,6 +7,7 @@ var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
     cluster = require('cluster'),
+    util = require('../lib/Util'),
     LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
     IndexDatasource = require('../lib/datasources/IndexDatasource'),
     ViewCollection = require('../lib/views/ViewCollection.js');
@@ -114,7 +115,8 @@ else {
             dereference[blankNodePath + datasourcePath + '/'] = datasourcePath;
         }
         // Create the data source
-        var datasource = instantiate(datasourceConfig, '../lib/datasources/');
+        var datasource = util.instantiate(config, datasourceConfig, '../lib/datasources/');
+        datasource.indexes = [];
         datasource.on('error', datasourceError);
         datasourceConfig.datasource = datasource;
         datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
@@ -124,6 +126,39 @@ else {
       function datasourceError(error) {
         delete datasources[datasourcePath];
         process.stderr.write('WARNING: skipped datasource ' + datasourceName + '. ' + error.message + '\n');
+      }
+    }
+  });
+
+  // Create all indexes
+  var indexes = config.indexes, indexBase = baseURLPath.substr(1);
+  Object.keys(indexes).forEach(function (indexName) {
+    var indexConfig = config.indexes[indexName];
+    delete indexes[indexName];
+    if (indexConfig.enabled !== false) {
+      try {
+        // Avoid illegal URI characters in data source path
+        var indexPath = indexBase + encodeURI(indexName);
+        indexes[indexPath] = indexConfig;
+        indexConfig.settings = _.defaults(indexConfig.settings || {}, config);
+        indexConfig.settings.id = indexName;
+
+        var datasource = datasources[indexConfig.datasource];
+        if(!datasource)
+          throw new Error('The index ' + indexName + ' is refering to a non existing datasource ' + indexConfig.datasource);
+
+        // Create the index
+        var index = util.instantiate(config, indexConfig, '../lib/indexes/');
+        datasource.datasource.indexes.push(index);
+        index.on('error', indexError);
+        indexConfig.index = index;
+        indexConfig.url = baseURLRoot + '/' + indexPath + '#index';
+        indexConfig.title = indexConfig.title || indexName;
+      }
+      catch (error) { indexError(error); }
+      function indexError(error) {
+        delete indexes[indexPath];
+        process.stderr.write('WARNING: skipped index ' + indexName + '. ' + error.message + '\n');
       }
     }
   });
@@ -141,10 +176,10 @@ else {
   config.assetsPath = baseURLPath + 'assets/';
 
   // Set up routers, views, and controllers
-  config.routers = instantiateAll(config.routers,  '../lib/routers/');
+  config.routers = util.instantiateAll(config, config.routers,  '../lib/routers/');
   config.views = new ViewCollection();
-  config.views.addViews(instantiateAll(findFiles('../lib/views', /\.js$/)));
-  config.controllers = instantiateAll(config.controllers, '../lib/controllers/');
+  config.views.addViews(util.instantiateAll(config, findFiles('../lib/views', /\.js$/)));
+  config.controllers = util.instantiateAll(config, config.controllers, '../lib/controllers/');
 
   // Set up access logging
   var loggingSettings = _.defaults(config.logging, configDefaults.logging);
@@ -170,23 +205,6 @@ else {
     server.stop();
     process.on('SIGINT', function () { process.exit(1); });
   });
-}
-
-
-// Instantiates an object from the given description
-function instantiate(description, includePath) {
-  var absolutePath = includePath ? path.resolve(__dirname, includePath) : '',
-      type = path.join(absolutePath, description.type || description),
-      Constructor = constructors[type];
-  if (!Constructor)
-    Constructor = constructors[type] = require(type);
-  return new Constructor(_.defaults(description.settings || {}, config));
-}
-
-// Instantiates all objects from the given descriptions
-function instantiateAll(descriptions, includePath) {
-  return (_.isArray(descriptions) ? _.map : _.mapValues)
-         (descriptions, function (description) { return instantiate(description, includePath); });
 }
 
 // Recursively finds files in a folder whose name matches the pattern
