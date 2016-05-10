@@ -143,9 +143,9 @@ else {
         indexConfig.settings = _.defaults(indexConfig.settings || {}, config);
         indexConfig.settings.id = indexName;
 
-        var datasource = datasources[indexConfig.datasource];
+        var datasource = datasources[indexName];
         if(!datasource)
-          throw new Error('The index ' + indexName + ' is refering to a non existing datasource ' + indexConfig.datasource);
+          throw new Error('The index ' + indexName + ' is referring to a non existing datasource ' + indexName);
 
         // Create the index
         var index = util.instantiate(config, indexConfig, '../lib/indexes/');
