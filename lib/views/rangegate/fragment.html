@@ -1,0 +1,115 @@
+<% /*! @license ©2016 Ruben Taelman - Multimedia Lab / iMinds / Ghent University */ -%>
+<div resource="<%= datasource.url %>" typeof="void:datasource hydra:Collection">
+<h2><a href="<%= datasource.url %>"><%= capitalizeFirst(datasource.title) %></a></h2>
+
+<form action="?" method="GET" property="hydra:search" resource="#triplePattern">
+  <fieldset resource="#rangePattern">
+    <legend>Query <%= datasource.title %> by range pattern</legend>
+    <span property="hydra:template" content="<%= datasource.templateUrl %>" lang=""></span>
+    <span property="hydra:variableRepresentation" resource="hydra:ExplicitRepresentation"></span>
+    <ul>
+<% ['initial', 'final'].forEach(function (component) { -%>
+      <li property="hydra:mapping" resource="#<%= component %>">
+        <label for="<%= component %>"
+               about="#<%= component %>" property="hydra:variable" lang=""><%= component %></label>
+       <input class="uri" id="<%= component %>" name="<%= component %>"
+              about="#<%= component %>" property="hydra:property" resource="rdf:<%= component %>" <%
+            %> value="<%= query.rangeGateBounds[component] || '' %>" />
+      </li>
+<% }); -%>
+    </ul>
+  </fieldset>
+  <p>
+    <input type="submit" value="Find matching ranges" />
+  </p>
+</form>
+</div>
+
+<%- extensions.Info %>
+
+<h3>Matches in <%= datasource.title %> for <em class="pattern"><%= query.patternString %></em></h3>
+<%
+  var totalEstimate = metadata.totalCount,
+      offset = query.offset || 0, limit = query.limit || ranges.length,
+      start = offset + 1, end = offset + ranges.length,
+      hasPrev = offset > 0, hasNext = totalEstimate > end,
+      initial = query.rangeGateBounds.initial, final = query.rangeGateBounds.final;
+%>
+<div class="counts">
+<% if (ranges.length) { %>
+  Showing ranges <%= formatNumber(start) %> to <%= formatNumber(end) %> of
+  <%= totalEstimate === end ? '' : '±'
+  %><span property="void:triples hydra:totalItems" datatype="xsd:integer" content="<%= totalEstimate %>"><%=
+    formatNumber(totalEstimate)
+  %></span>
+  with <span property="hydra:itemsPerPage" datatype="xsd:integer" content="<%= limit %>"><%=
+    formatNumber(limit)
+  %></span> ranges per page.
+  <% pageLinks(fragment); -%>
+<% } else { %>
+  <p>
+    <%= capitalizeFirst(datasource.title) %> contains
+    <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="0">
+      no <% if (totalEstimate > 0) { %>more<% } %>
+    </span>
+    ranges that match this pattern.
+  </p>
+<% } %>
+</div>
+<ul class="triples">
+    <% ranges.forEach(function (range) {
+    var initial = range.initial, final = range.final;
+    -%>
+    <li>
+        <a href="?initial=<%= encodeURIComponent(initial) %>"><%
+            %><abbr title="<%= initial %>"><%= shorten(initial) %></abbr><%
+            %></a> - <a href="?final=<%= encodeURIComponent(final) %>"><%
+        %><abbr title="<%= final %>"><%= shorten(final) %></abbr><%
+        %></a>
+        <i>(<a href="<%= range.uri %>">open</a>)</i>
+    </li>
+    <% }); -%>
+</ul>
+
+<% pageLinks(fragment); -%>
+
+<%
+function capitalizeFirst(string) {
+  return string && !/[A-Z]/.test(string) ? string[0].toUpperCase() + string.slice(1) : string;
+}
+
+function shorten(entity) {
+  return entity.match(/([^\/#]*)[\/#]?$/)[1] || entity;
+}
+
+function formatNumber(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function pageLinks(fragment) {
+  if (!hasPrev && !hasNext) return;
+-%>
+  <ul class="links">
+    <% if (hasPrev) { -%>
+    <li><a href="<%= fragment.firstPageUrl %>" rel="first" property="hydra:first">first</a></li>
+    <li><a href="<%= fragment.previousPageUrl %>" rel="prev" property="hydra:previous">previous</a></li>
+    <% } -%>
+    <% if (hasNext) { -%>
+    <li><a href="<%= fragment.nextPageUrl %>" rel="next" property="hydra:next">next</a></li>
+    <% } -%>
+  </ul>
+<%
+}
+-%>
+<aside id="about">
+  <h3>About <%= datasource.title %></h3>
+  <ul>
+    <li><a href="<%= datasource.homepage || datasource.url %>" target="_blank"><%= datasource.title %></a><%
+        if (datasource.description) { %> – <%= datasource.description %><% } %></li>
+    <% if (datasource.copyright) { %><li><%= datasource.copyright %></li><% } %>
+    <% if (datasource.license || datasource.licenseUrl)
+    { %><li><a href="<%= datasource.licenseUrl || '#' %>" target="_blank"><%=
+              datasource.license || datasource.licenseUrl
+          %></a></li><% } %>
+  </ul>
+</aside>
