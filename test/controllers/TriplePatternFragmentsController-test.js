@@ -70,16 +70,16 @@ describe('TriplePatternFragmentsController', function () {
       it('should call the first router with the request and an empty query', function () {
         routerA.extractQueryParams.should.have.been.calledOnce;
 
-        var extractQueryParamsArgs = routerA.extractQueryParams.firstCall.args;
-        extractQueryParamsArgs[0].should.have.property('url');
-        extractQueryParamsArgs[0].url.should.have.property('path', '/my-datasource?a=b&c=d');
-        extractQueryParamsArgs[0].url.should.have.property('pathname', '/my-datasource');
-        extractQueryParamsArgs[0].url.should.have.property('query');
-        extractQueryParamsArgs[0].url.query.should.deep.equal({ a: 'b', c: 'd' });
+        var args = routerA.extractQueryParams.firstCall.args;
+        expect(args[0]).to.have.property('url');
+        expect(args[0].url).to.have.property('path', '/my-datasource?a=b&c=d');
+        expect(args[0].url).to.have.property('pathname', '/my-datasource');
+        expect(args[0].url).to.have.property('query');
+        expect(args[0].url.query).to.deep.equal({ a: 'b', c: 'd' });
 
-        extractQueryParamsArgs[1].should.be.an('object');
-        extractQueryParamsArgs[1].should.have.property('features');
-        extractQueryParamsArgs[1].features.should.be.an('array');
+        expect(args[1]).to.be.an('object');
+        expect(args[1]).to.have.property('features');
+        expect(args[1].features).to.be.an('array');
       });
 
       it('should call the second router with the same request and query', function () {
