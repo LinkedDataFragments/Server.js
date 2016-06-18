@@ -26,10 +26,10 @@
 
   "controllers": [
     "SummaryController",
+    "TimegateController",
     "TriplePatternFragmentsController",
     "AssetsController",
     "DereferenceController",
-    "TimegateController",
     "NotFoundController"
   ],
 
