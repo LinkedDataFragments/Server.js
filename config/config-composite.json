@@ -11,18 +11,21 @@
       }
     },
     "hdt": {
+      "hide": true,
       "title": "HDT",
       "type": "HdtDatasource",
       "description": "A test HDT datasource",
       "settings": { "file": "test/assets/test.hdt" }
     },
     "ttl": {
+      "hide": true,
       "title": "Turtle",
       "type": "TurtleDatasource",
       "description": "A test turtle datasource",
       "settings": { "file": "test/assets/test.ttl" }
     },
     "jsonld": {
+      "hide": true,
       "title": "JSONLD",
       "type": "JsonLdDatasource",
       "description": "A test jsonld datasource",
