@@ -91,7 +91,7 @@ describe('CompositeDatasource', function () {
     itShouldExecute(getDatasource,
       'a query for an existing predicate',
       { predicate: 'http://example.org/p1', limit: 10, features: { triplePattern: true, limit: true } },
-      10, 220 + 110); // 220 is an inexact count from the HDT files, the 110 from the ttl file is exact.
+      10, 112);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing predicate',
