@@ -7,7 +7,7 @@
       "type": "CompositeDatasource",
       "description": "A test composite datasource",
       "settings": {
-        "references": [ "hdt", "ttl", "jsonld" ]
+        "references": [ "hdt", "ttl", "jsonld", "hdtext" ]
       }
     },
     "hdt": {
@@ -30,6 +30,13 @@
       "type": "JsonLdDatasource",
       "description": "A test jsonld datasource",
       "settings": { "file": "test/assets/test.jsonld" }
+    },
+    "hdtext": {
+      "hide": true,
+      "title": "HDT-EXT",
+      "type": "ExternalHdtDatasource",
+      "description": "A blank test HDT datasource",
+      "settings": { "file": "test/assets/test-blank.hdt" }
     }
   }
 }
