@@ -91,7 +91,7 @@ describe('CompositeDatasource', function () {
     itShouldExecute(getDatasource,
       'a query for an existing predicate',
       { predicate: 'http://example.org/p1', limit: 10, features: { triplePattern: true, limit: true } },
-      10, 112);
+      10, 111);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing predicate',
