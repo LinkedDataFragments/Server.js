@@ -1,0 +1,42 @@
+{
+  "title": "My Composite Linked Data Fragments server",
+
+  "datasources": {
+    "test-composite": {
+      "title": "Composite Test",
+      "type": "CompositeDatasource",
+      "description": "A test composite datasource",
+      "settings": {
+        "references": [ "hdt", "ttl", "jsonld", "hdtext" ]
+      }
+    },
+    "hdt": {
+      "hide": true,
+      "title": "HDT",
+      "type": "HdtDatasource",
+      "description": "A test HDT datasource",
+      "settings": { "file": "test/assets/test.hdt" }
+    },
+    "ttl": {
+      "hide": true,
+      "title": "Turtle",
+      "type": "TurtleDatasource",
+      "description": "A test turtle datasource",
+      "settings": { "file": "test/assets/test.ttl" }
+    },
+    "jsonld": {
+      "hide": true,
+      "title": "JSONLD",
+      "type": "JsonLdDatasource",
+      "description": "A test jsonld datasource",
+      "settings": { "file": "test/assets/test.jsonld" }
+    },
+    "hdtext": {
+      "hide": true,
+      "title": "HDT-EXT",
+      "type": "ExternalHdtDatasource",
+      "description": "A blank test HDT datasource",
+      "settings": { "file": "test/assets/test-blank.hdt" }
+    }
+  }
+}
