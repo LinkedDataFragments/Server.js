@@ -68,7 +68,7 @@ describe('HdtDatasource', function () {
     itShouldExecute(getDatasource,
       'a query for an existing predicate',
       { predicate: 'http://example.org/p1', limit: 10, features: { triplePattern: true, limit: true } },
-      10, 20);
+      10, 110);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing predicate',
