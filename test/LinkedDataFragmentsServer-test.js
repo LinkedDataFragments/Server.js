@@ -1,9 +1,6 @@
 var LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer');
 
-var request = require('supertest'),
-    fs = require('fs'),
-    http = require('http'),
-    url = require('url');
+var request = require('supertest');
 
 describe('LinkedDataFragmentsServer', function () {
   describe('A LinkedDataFragmentsServer instance with one controller', function () {
@@ -12,25 +9,25 @@ describe('LinkedDataFragmentsServer', function () {
       controller = {
         handleRequest: sinon.spy(function (request, response, next) {
           switch (request.url) {
-            case '/handle':
-              response.end('body contents');
-              break;
-            case '/error':
-              throw new Error('error message');
-            default:
-              next();
+          case '/handle':
+            response.end('body contents');
+            break;
+          case '/error':
+            throw new Error('error message');
+          default:
+            next();
           }
         }),
       };
       server = new LinkedDataFragmentsServer({
-        controllers: [ controller ],
+        controllers: [controller],
         log: sinon.stub(),
         response: {
           headers: {
             'Access-Control-Allow-Origin': '*',
             'My-Header': 'value',
           },
-        }
+        },
       });
       client = request.agent(server);
     });
@@ -103,32 +100,32 @@ describe('LinkedDataFragmentsServer', function () {
       controllerA = {
         handleRequest: sinon.spy(function (request, response, next) {
           switch (request.url) {
-            case '/handleA':
-              response.end('body contents A');
-              break;
-            case '/errorA':
-              throw new Error('error message A');
-            default:
-              next();
+          case '/handleA':
+            response.end('body contents A');
+            break;
+          case '/errorA':
+            throw new Error('error message A');
+          default:
+            next();
           }
         }),
       };
       controllerB = {
         handleRequest: sinon.spy(function (request, response, next) {
           switch (request.url) {
-            case '/handleB':
-              response.end('body contents B');
-              break;
-            case '/errorB':
-              next(new Error('error message B'));
-              break;
-            default:
-              next();
+          case '/handleB':
+            response.end('body contents B');
+            break;
+          case '/errorB':
+            next(new Error('error message B'));
+            break;
+          default:
+            next();
           }
         }),
       };
       server = new LinkedDataFragmentsServer({
-        controllers: [ controllerA, controllerB ],
+        controllers: [controllerA, controllerB],
         log: sinon.stub(),
       });
       client = request.agent(server);

@@ -2,9 +2,7 @@ var TriplePatternFragmentsController = require('../../lib/controllers/TriplePatt
 
 var request = require('supertest'),
     DummyServer = require('./DummyServer'),
-    fs = require('fs'),
-    http = require('http'),
-    url = require('url');
+    http = require('http');
 
 var TriplePatternFragmentsHtmlView = require('../../lib/views/triplepatternfragments/TriplePatternFragmentsHtmlView.js'),
     TriplePatternFragmentsRdfView  = require('../../lib/views/triplepatternfragments/TriplePatternFragmentsRdfView.js');
@@ -29,12 +27,14 @@ describe('TriplePatternFragmentsController', function () {
     before(function () {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
-      routerC = { extractQueryParams: sinon.spy(function (request, query) {
-        query.features.datasource = true;
-        query.features.other = true;
-        query.datasource = 'my-datasource';
-        query.other = 'other';
-      })};
+      routerC = {
+        extractQueryParams: sinon.spy(function (request, query) {
+          query.features.datasource = true;
+          query.features.other = true;
+          query.datasource = 'my-datasource';
+          query.other = 'other';
+        }),
+      };
       datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().returns({ stream: 'items' }),
@@ -61,10 +61,9 @@ describe('TriplePatternFragmentsController', function () {
     }
 
     describe('receiving a request for a fragment', function () {
-      var response;
       before(function (done) {
         resetAll();
-        response = client.get('/my-datasource?a=b&c=d').end(done);
+        client.get('/my-datasource?a=b&c=d').end(done);
       });
 
       it('should call the first router with the request and an empty query', function () {
@@ -138,7 +137,7 @@ describe('TriplePatternFragmentsController', function () {
             pageUrl:         'https://example.org/my-datasource?a=b&c=d',
             firstPageUrl:    'https://example.org/my-datasource?a=b&c=d&page=1',
             nextPageUrl:     'https://example.org/my-datasource?a=b&c=d&page=2',
-            previousPageUrl: null
+            previousPageUrl: null,
           },
           resultStream: {
             stream: 'items',
@@ -175,15 +174,19 @@ describe('TriplePatternFragmentsController', function () {
     before(function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub().returns({ on: function (event, callback) {
-          if (event === 'end' || event === 'metadata')
-            setImmediate(callback, {});
-        }}),
+        select: sinon.stub().returns({
+          on: function (event, callback) {
+            if (event === 'end' || event === 'metadata')
+              setImmediate(callback, {});
+          },
+        }),
       };
-      var router = { extractQueryParams: function (request, query) {
-        query.features.datasource = true;
-        query.datasource = 'my-datasource';
-      }};
+      var router = {
+        extractQueryParams: function (request, query) {
+          query.features.datasource = true;
+          query.datasource = 'my-datasource';
+        },
+      };
       htmlView = new TriplePatternFragmentsHtmlView();
       rdfView = new TriplePatternFragmentsRdfView();
       sinon.spy(htmlView, 'render');
@@ -313,10 +316,12 @@ describe('TriplePatternFragmentsController', function () {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub(),
       };
-      var router = { extractQueryParams: function (request, query) {
-        query.features.datasource = true;
-        query.datasource = 'my-datasource';
-      }};
+      var router = {
+        extractQueryParams: function (request, query) {
+          query.features.datasource = true;
+          query.datasource = 'my-datasource';
+        },
+      };
       controller = new TriplePatternFragmentsController({
         routers: [router],
         datasources: { 'my-datasource': { datasource: datasource } },
@@ -368,10 +373,12 @@ describe('TriplePatternFragmentsController', function () {
   describe('A TriplePatternFragmentsController instance with a datasource that synchronously errors', function () {
     var controller, client, router, datasource, error, view;
     before(function () {
-      router = { extractQueryParams: sinon.spy(function (request, query) {
-        query.features.datasource = true;
-        query.datasource = 'my-datasource';
-      })};
+      router = {
+        extractQueryParams: sinon.spy(function (request, query) {
+          query.features.datasource = true;
+          query.datasource = 'my-datasource';
+        }),
+      };
       error = new Error('datasource error'),
       datasource = {
         supportsQuery: sinon.stub().returns(true),
@@ -390,11 +397,9 @@ describe('TriplePatternFragmentsController', function () {
     }
 
     describe('receiving a request for a fragment', function () {
-      var response;
       before(function (done) {
         resetAll();
-        client.get('/my-datasource?a=b&c=d')
-              .end(function (error, res) { response = res; done(error); });
+        client.get('/my-datasource?a=b&c=d').end(done);
       });
 
       it('should emit the error', function () {
@@ -406,10 +411,12 @@ describe('TriplePatternFragmentsController', function () {
   describe('A TriplePatternFragmentsController instance with a datasource that asynchronously errors', function () {
     var controller, client, router, datasource, error, view;
     before(function () {
-      router = { extractQueryParams: sinon.spy(function (request, query) {
-        query.features.datasource = true;
-        query.datasource = 'my-datasource';
-      })};
+      router = {
+        extractQueryParams: sinon.spy(function (request, query) {
+          query.features.datasource = true;
+          query.datasource = 'my-datasource';
+        }),
+      };
       error = new Error('datasource error'),
       datasource = {
         supportsQuery: sinon.stub().returns(true),
@@ -429,11 +436,9 @@ describe('TriplePatternFragmentsController', function () {
     }
 
     describe('receiving a request for a fragment', function () {
-      var response;
       before(function (done) {
         resetAll();
-        client.get('/my-datasource?a=b&c=d')
-              .end(function (error, res) { response = res; done(error); });
+        client.get('/my-datasource?a=b&c=d').end(done);
       });
 
       it('should emit the error', function () {

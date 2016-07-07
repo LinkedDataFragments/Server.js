@@ -31,7 +31,8 @@ describe('HdtDatasource', function () {
   });
 
   describe('A HdtDatasource instance for an example HDT file', function () {
-    var datasource, getDatasource = function () { return datasource; };
+    var datasource;
+    function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new HdtDatasource({ file: exampleHdtFile });
       datasource.on('initialized', done);
@@ -87,7 +88,8 @@ describe('HdtDatasource', function () {
   });
 
   describe('A HdtDatasource instance with blank nodes', function () {
-    var datasource, getDatasource = function () { return datasource; };
+    var datasource;
+    function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks });
       datasource.on('initialized', done);
@@ -134,7 +136,8 @@ describe('HdtDatasource', function () {
   });
 
   describe('A HdtDatasource instance with blank nodes and a blank node prefix', function () {
-    var datasource, getDatasource = function () { return datasource; };
+    var datasource;
+    function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks,
                                        blankNodePrefix: 'http://example.org/.well-known/genid/' });

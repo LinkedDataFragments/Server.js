@@ -44,7 +44,7 @@ describe('ViewCollection', function () {
     describe('when a client requests HTML', function () {
       var viewDetails, request, response;
       before(function () {
-        request = { headers: { accept: 'text/html' } };
+        request = { headers: { accept: 'text/html' } };
         response = {};
         viewDetails = viewCollection.matchView('MyView1', request, response);
       });
@@ -59,7 +59,7 @@ describe('ViewCollection', function () {
     describe('when a client requests TriG', function () {
       var viewDetails, request, response;
       before(function () {
-        request = { headers: { accept: 'application/trig' } };
+        request = { headers: { accept: 'application/trig' } };
         response = {};
         viewDetails = viewCollection.matchView('MyView1', request, response);
       });
@@ -89,7 +89,7 @@ describe('ViewCollection', function () {
     describe('when matching a request of one view type as HTML', function () {
       var viewDetails, request, response;
       before(function () {
-        request = { headers: { accept: 'text/html' } };
+        request = { headers: { accept: 'text/html' } };
         response = {};
         viewDetails = viewCollection.matchView('MyView1', request, response);
       });
@@ -104,7 +104,7 @@ describe('ViewCollection', function () {
     describe('when matching a request of one view type as TriG', function () {
       var viewDetails, request, response;
       before(function () {
-        request = { headers: { accept: 'application/trig' } };
+        request = { headers: { accept: 'application/trig' } };
         response = {};
         viewDetails = viewCollection.matchView('MyView1', request, response);
       });
@@ -119,7 +119,7 @@ describe('ViewCollection', function () {
     describe('when matching a request of another view type as HTML', function () {
       var viewDetails, request, response;
       before(function () {
-        request = { headers: { accept: 'text/html' } };
+        request = { headers: { accept: 'text/html' } };
         response = {};
         viewDetails = viewCollection.matchView('MyView2', request, response);
       });

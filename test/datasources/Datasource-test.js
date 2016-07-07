@@ -72,7 +72,7 @@ describe('Datasource', function () {
       datasource = new Datasource();
       datasource._initialize = sinon.stub();
       Object.defineProperty(datasource, 'supportedFeatures', {
-        value: { all: true }
+        value: { all: true },
       });
       datasource.on('initialized', initializedListener = sinon.stub());
       datasource.on('error', errorListener = sinon.stub());
@@ -212,10 +212,10 @@ describe('Datasource', function () {
     });
 
     it('should not support queries with unsupported features', function () {
-      datasource.supportsQuery({ features: { c: true} }).should.be.false;
-      datasource.supportsQuery({ features: { a: true, c: true} }).should.be.false;
-      datasource.supportsQuery({ features: { b: true, c: true} }).should.be.false;
-      datasource.supportsQuery({ features: { a: true, b: true, c: true} }).should.be.false;
+      datasource.supportsQuery({ features: { c: true } }).should.be.false;
+      datasource.supportsQuery({ features: { a: true, c: true } }).should.be.false;
+      datasource.supportsQuery({ features: { b: true, c: true } }).should.be.false;
+      datasource.supportsQuery({ features: { a: true, b: true, c: true } }).should.be.false;
     });
 
     it('should not attach an error listener on select if none was passed', function () {

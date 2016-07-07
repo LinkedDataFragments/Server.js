@@ -10,12 +10,12 @@ var exampleTurtleUrl = 'file://' + path.join(__dirname, '../assets/test.ttl');
 
 describe('CompositeDatasource', function () {
   var datasources = {
-    "data_0": { datasource: new HdtDatasource({ file: exampleHdtFile }), size: 132 },
-    "data_1": { datasource: new HdtDatasource({ file: exampleHdtFileWithBlanks }), size: 6 },
-    "data_2": { datasource: new TurtleDatasource({ url: exampleTurtleUrl }), size: 132 }
+    data0: { datasource: new HdtDatasource({ file: exampleHdtFile }), size: 132 },
+    data1: { datasource: new HdtDatasource({ file: exampleHdtFileWithBlanks }), size: 6 },
+    data2: { datasource: new TurtleDatasource({ url: exampleTurtleUrl }), size: 132 },
   };
   var references = Object.keys(datasources);
-  var totalSize = Object.keys(datasources).reduce(function(acc, key) {
+  var totalSize = Object.keys(datasources).reduce(function (acc, key) {
     return acc + datasources[key].size;
   }, 0);
 
@@ -44,7 +44,8 @@ describe('CompositeDatasource', function () {
   });
 
   describe('A CompositeDatasource instance for two HdtDatasources', function () {
-    var datasource, getDatasource = function () { return datasource; };
+    var datasource;
+    function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new CompositeDatasource({ datasources: datasources, references: references });
       datasource.on('initialized', done);

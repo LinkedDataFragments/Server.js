@@ -28,10 +28,8 @@ describe('Controller', function () {
     });
 
     describe('receiving a request', function () {
-      var response;
       before(function (done) {
-        client.get('/path?a=b')
-              .end(function (error, res) { response = res; done(error); });
+        client.get('/path?a=b').end(done);
       });
 
       it('should call _handleRequest with request, response and next', function () {
@@ -69,10 +67,8 @@ describe('Controller', function () {
     });
 
     describe('receiving a request', function () {
-      var response;
       before(function (done) {
-        client.get('/path?a=b')
-              .end(function (error, res) { response = res; done(error); });
+        client.get('/path?a=b').end(done);
       });
 
       it('should call _handleRequest with request, response and next', function () {
@@ -89,7 +85,7 @@ describe('Controller', function () {
         var request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
         request.parsedUrl.should.deep.equal({
-          protocol: 'http:', host: 'example.org:1234', hostname: 'example.org', port: "1234",
+          protocol: 'http:', host: 'example.org:1234', hostname: 'example.org', port: '1234',
           path: '/path?a=b', pathname: '/path', href: undefined, auth: undefined,
           query: { a: 'b' }, search: undefined, hash: undefined, slashes: true,
         });

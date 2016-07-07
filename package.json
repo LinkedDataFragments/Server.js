@@ -15,8 +15,8 @@
     "url": "https://github.com/LinkedDataFragments/Server.js/issues"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
-    "hint": "./node_modules/jshint/bin/jshint bin/* lib test"
+    "test": "mocha",
+    "lint": "eslint bin/* lib test"
   },
   "dependencies": {
     "qejs": "^3.0.0",
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "chai": "^1.9.0",
-    "jshint": "^2.1.10",
+    "eslint": "^3.0.1",
     "mocha": "^1.17.1",
     "pre-commit": "^0.0.9",
     "sinon": "1.10.3",
@@ -44,7 +44,7 @@
     "supertest": "^0.13.0"
   },
   "pre-commit": [
-    "hint",
+    "lint",
     "test"
   ]
 }

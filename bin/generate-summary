@@ -1,18 +1,16 @@
 #!/usr/bin/env node
-
 /*! @license ©2014 Miel Vander Sande - Multimedia Lab / iMindata / Ghent University */
 /** This script generates data summaries for a certain server dataset  */
 
-var _ = require('lodash'),
-  N3 = require('n3'),
-  fs = require('fs'),
-  path = require('path'),
-  _ = require('lodash');
+var N3 = require('n3'),
+    fs = require('fs'),
+    path = require('path'),
+    _ = require('lodash');
 
 var regex = /^(http[s]?:\/?\/?[^:\/\s]+\/).*/;
 
-var DS_NS = 'http://semweb.mmlab.be/ns/datasummaries#',
-  RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+var DS_NS  = 'http://semweb.mmlab.be/ns/datasummaries#',
+    RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
 // Parse arguments
 var args = process.argv.slice(2);
@@ -23,24 +21,21 @@ if (args.length < 1 || args.length > 2) {
 
 // Init variables
 var configFile = args[0],
-  config = JSON.parse(fs.readFileSync(configFile)),
-  datasources = config.datasources || {},
-  datasourceNames = args[1] ? [args[1]] : (config.datasources && _.keys(config.datasources));
+    config = JSON.parse(fs.readFileSync(configFile)),
+    datasources = config.datasources || {},
+    datasourceNames = args[1] ? [args[1]] : (datasources && _.keys(datasources));
 
 // Configure preset URLs
 var baseURL = config.baseURL ? config.baseURL.replace(/\/?$/, '/') : '/',
-  baseURLRoot = baseURL.match(/^(?:https?:\/\/[^\/]+)?/)[0],
-  baseURLPath = baseURL.substr(baseURLRoot.length),
-  blankNodePath = baseURLRoot ? '/.well-known/genid/' : '',
-  blankNodePrefix = blankNodePath ? baseURLRoot + blankNodePath : 'genid:',
-  hostname = require('url').parse(baseURL).hostname,
-  datasourceBase = baseURLPath.substr(1);
+    baseURLRoot = baseURL.match(/^(?:https?:\/\/[^\/]+)?/)[0],
+    baseURLPath = baseURL.substr(baseURLRoot.length),
+    datasourceBase = baseURLPath.substr(1);
 
 generate(datasourceNames.pop());
 
 function generate(datasourceName) {
   // Create data source
-  var datasourceConfig = config.datasources[datasourceName];
+  var datasourceConfig = datasources[datasourceName];
 
   try {
     // Avoid illegal URI characters in data source path
@@ -48,55 +43,40 @@ function generate(datasourceName) {
 
     // Retrieve the data source class and settings
     var Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
-      settings = _.defaults(datasourceConfig.settings || {}, config);
+        settings = _.defaults(datasourceConfig.settings || {}, config);
 
     // Create the data source
     var datasource = new Datasource(settings),
-      url = baseURLRoot + '/' + datasourcePath;
+        url = baseURLRoot + '/' + datasourcePath;
 
-    var writer = N3.Writer({
-      prefixes: {
-        'ds': DS_NS,
-        'rdf': RDF_NS
-      }
-    });
+    var writer = new N3.Writer({ prefixes: { ds: DS_NS, rdf: RDF_NS } });
 
     fromDataSource(url, datasource, function (triple) {
       writer.addTriple(triple);
     }, function () {
       writer.end(function (error, result) {
-        //console.log(result);
         fs.appendFileSync(datasourceName + '.ttl', result);
         (datasourceNames.length > 0) && generate(datasourceNames.pop());
       });
     });
-
-  } catch (error) {
+  }
+  catch (error) {
     process.stderr.write('Could not load datasource ' + datasourceName + ': ' + error.message + '\n');
     return process.exit(1);
   }
 }
 
 function fromDataSource(uri, datasource, callback, end, chunksize) {
-  var hrstart = process.hrtime();
+  var capabilities = Object.create(null);
 
-  var capabilities = Object.create(null),
-    supportsQuery = datasource.supportsQuery({
-      features: {
-        limit: true,
-        offset: true
-      }
-    });
-
-  if (supportsQuery) {
+  // Process dataset in batches when possible
+  if (datasource.supportsQuery({ features: { limit: true, offset: true } }))
     processSet(chunksize || 100000);
-  } else {
-    // Process dataset at once
-    datasource.select({}, function (err) {
-        console.error('Error occured', err);
-      })
-      .on('data', extractSummary)
-      .on('end', endSummary);
+  // Otherwise, process dataset at once
+  else {
+    datasource.select({}, console.log)
+              .on('data', extractSummary)
+              .on('end', endSummary);
   }
 
   // Processes DataSource in chunks
@@ -104,46 +84,36 @@ function fromDataSource(uri, datasource, callback, end, chunksize) {
     offset = offset || 0;
     var count = 0;
 
-    var stream = datasource.select({
-        limit: limit,
-        offset: offset
-      }, function (err) {
-        console.error('Error occured', err);
-      })
-      .on('metadata', function (metadata) {
-        var progress = Math.round((offset / metadata.totalCount) * 100);
-        console.log(progress);
+    var stream = datasource.select({ limit: limit, offset: offset }, console.error)
+        .on('metadata', function (metadata) {
+          var progress = Math.round((offset / metadata.totalCount) * 100);
+          console.log(progress);
 
-        stream.on('data', function (triple) {
-          count++;
-          extractSummary(triple);
-          triple = null;
+          stream.on('data', function (triple) {
+            count++;
+            extractSummary(triple);
+            triple = null;
+          });
+
+          stream.on('end', function () {
+            stream.removeAllListeners();
+            stream = null;
+
+            if (count < limit)
+              endSummary();
+            else
+              setImmediate(function () { processSet(limit, offset + limit); });
+          });
         });
-
-        stream.on('end', function () {
-          stream.removeAllListeners();
-          stream = null;
-
-          if (count < limit)
-            endSummary();
-          else
-            setImmediate(function () {
-              processSet(limit, offset + limit);
-            });
-        });
-      });
   }
 
   function extractSummary(triple) {
     // Check is a capability already exists
     if (!capabilities[triple.predicate])
-      capabilities[triple.predicate] = {
-        subjectAuth: {},
-        objectAuth: {}
-      };
+      capabilities[triple.predicate] = { subjectAuth: {}, objectAuth: {} };
 
     var subjectAuth = regex.exec(triple.subject),
-      objectAuth = regex.exec(triple.object);
+        objectAuth = regex.exec(triple.object);
 
     if (subjectAuth !== null) {
       subjectAuth = subjectAuth[1].toLowerCase();
@@ -157,45 +127,19 @@ function fromDataSource(uri, datasource, callback, end, chunksize) {
   }
 
   function endSummary() {
-    var cnt = 0,
-      baseUrl = '_:summary';
+    var cnt = 0;
 
     for (var predicate in capabilities) {
       var bnode = '_:cap' + cnt++;
-      callback({
-        subject: baseURL,
-        predicate: DS_NS + 'capability',
-        object: bnode
-      });
-
-      callback({
-        subject: bnode,
-        predicate: DS_NS + 'predicate',
-        object: predicate
-      });
+      callback({ subject: baseURL, predicate: DS_NS + 'capability', object: bnode });
+      callback({ subject: bnode, predicate: DS_NS + 'predicate', object: predicate });
 
       var capability = capabilities[predicate];
-
-      for (var subjectAuth in capability.subjectAuth) {
-        callback({
-          subject: bnode,
-          predicate: DS_NS + 'sbjAuthority',
-          object: subjectAuth
-        });
-      }
-
-      for (var objectAuth in capability.objectAuth) {
-        callback({
-          subject: bnode,
-          predicate: DS_NS + 'objAuthority',
-          object: objectAuth
-        });
-      }
+      for (var subjectAuth in capability.subjectAuth)
+        callback({ subject: bnode, predicate: DS_NS + 'sbjAuthority', object: subjectAuth });
+      for (var objectAuth in capability.objectAuth)
+        callback({ subject: bnode, predicate: DS_NS + 'objAuthority', object: objectAuth });
     }
-
-    var hrend = process.hrtime(hrstart);
-    //console.error('Data Summary completed %d ms', (hrend[0] * 1e9 + hrend[1]) / 1000000);
-    console.log(100);
     end();
   }
 }

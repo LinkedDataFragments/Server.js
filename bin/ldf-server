@@ -99,12 +99,12 @@ else {
   // Create all data sources
   var datasources = config.datasources, datasourceBase = baseURLPath.substr(1), dereference = config.dereference;
   Object.keys(datasources).forEach(function (datasourceName) {
-    var datasourceConfig = config.datasources[datasourceName];
+    var datasourceConfig = config.datasources[datasourceName], datasourcePath;
     delete datasources[datasourceName];
     if (datasourceConfig.enabled !== false) {
       try {
         // Avoid illegal URI characters in data source path
-        var datasourcePath = datasourceBase + encodeURI(datasourceName);
+        datasourcePath = datasourceBase + encodeURI(datasourceName);
         datasources[datasourcePath] = datasourceConfig;
         // Set up blank-node-to-IRI translation, with dereferenceable URLs when possible
         datasourceConfig.settings = _.defaults(datasourceConfig.settings || {}, config);
@@ -146,8 +146,9 @@ else {
   config.views.addViews(instantiateAll(findFiles('../lib/views', /\.js$/)));
   config.controllers = instantiateAll(config.controllers, '../lib/controllers/');
 
-  // Set up access logging
+  // Set up logging
   var loggingSettings = _.defaults(config.logging, configDefaults.logging);
+  config.log = console.log;
   if (loggingSettings.enabled) {
     var accesslog = require('access-log');
     config.accesslogger = function (request, response) {
@@ -187,8 +188,8 @@ function instantiate(description, includePath) {
 
 // Instantiates all objects from the given descriptions
 function instantiateAll(descriptions, includePath) {
-  return (_.isArray(descriptions) ? _.map : _.mapValues)
-         (descriptions, function (description) { return instantiate(description, includePath); });
+  return (_.isArray(descriptions) ? _.map : _.mapValues)(descriptions,
+           function (description) { return instantiate(description, includePath); });
 }
 
 // Recursively finds files in a folder whose name matches the pattern

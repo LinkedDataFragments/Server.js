@@ -2,7 +2,8 @@ var AssetsController = require('../../lib/controllers/AssetsController');
 
 var request = require('supertest'),
     DummyServer = require('./DummyServer'),
-    fs = require('fs');
+    fs = require('fs'),
+    path = require('path');
 
 describe('AssetsController', function () {
   describe('The AssetsController module', function () {
@@ -22,21 +23,13 @@ describe('AssetsController', function () {
   describe('An AssetsController instance', function () {
     var controller, client;
     before(function () {
-      var datasource = {
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub(),
-      };
-      var router = { extractQueryParams: function (request, query) {
-        query.features.datasource = true;
-        query.datasource = request.url.pathname.substr(1);
-      }};
       controller = new AssetsController();
       client = request.agent(new DummyServer(controller));
     });
 
     it('should correctly serve SVG assets', function (done) {
       client.get('/assets/logo').expect(function (response) {
-        var asset = fs.readFileSync(__dirname + '/../../assets/logo.svg', 'utf8');
+        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/logo.svg'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/svg+xml');
@@ -47,7 +40,7 @@ describe('AssetsController', function () {
 
     it('should correctly serve CSS assets', function (done) {
       client.get('/assets/style').expect(function (response) {
-        var asset = fs.readFileSync(__dirname + '/../../assets/style.css', 'utf8');
+        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/style.css'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/css;charset=utf-8');
@@ -58,7 +51,7 @@ describe('AssetsController', function () {
 
     it('should correctly serve ICO assets', function (done) {
       client.get('/favicon.ico').expect(function (response) {
-        var asset = fs.readFileSync(__dirname + '/../../assets/favicon.ico', 'utf8');
+        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/favicon.ico'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/x-icon');

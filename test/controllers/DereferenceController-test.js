@@ -21,14 +21,6 @@ describe('DereferenceController', function () {
   describe('A DereferenceController instance', function () {
     var controller, client;
     before(function () {
-      var datasource = {
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub(),
-      };
-      var router = { extractQueryParams: function (request, query) {
-        query.features.datasource = true;
-        query.datasource = request.url.pathname.substr(1);
-      }};
       controller = new DereferenceController({ dereference: { '/resource/': 'dbpedia/2014' } });
       client = request.agent(new DummyServer(controller));
     });
@@ -70,10 +62,8 @@ describe('DereferenceController', function () {
     });
 
     describe('receiving a request for a non-defererenced URL', function () {
-      var response;
       before(function (done) {
-        client.get('/otherresource/Mickey_Mouse')
-              .end(function (error, res) { response = res; done(error); });
+        client.get('/otherresource/Mickey_Mouse').end(done);
       });
 
       it('should hand over to the next controller', function () {

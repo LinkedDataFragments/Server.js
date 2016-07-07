@@ -78,9 +78,9 @@ describe('View', function () {
       it('should call _render with the given options', function () {
         var view = new View(),
             request = {}, response = { getHeader: sinon.stub().returns('text/html') },
-            options = { a: 'b' }, done = function () {};
+            options = { a: 'b' };
         view._render = sinon.spy();
-        view.render(options, request, response, done);
+        view.render(options, request, response, noop);
         response.getHeader.should.have.been.calledOnce;
         response.getHeader.should.have.been.calledWith('Content-Type');
         view._render.getCall(0).args.should.have.length(4);
@@ -96,9 +96,9 @@ describe('View', function () {
       it('should call _render with the combined defaults and options', function () {
         var view = new View(null, null, { c: 'd' }),
             request = {}, response = { getHeader: sinon.stub().returns('text/html') },
-            options = { a: 'b' }, done = function () {};
+            options = { a: 'b' };
         view._render = sinon.spy();
-        view.render(options, request, response, done);
+        view.render(options, request, response, noop);
         response.getHeader.should.have.been.calledOnce;
         response.getHeader.should.have.been.calledWith('Content-Type');
         view._render.should.have.been.calledOnce;
@@ -111,3 +111,5 @@ describe('View', function () {
     });
   });
 });
+
+function noop() {}

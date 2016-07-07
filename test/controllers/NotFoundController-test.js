@@ -1,8 +1,7 @@
 var NotFoundController = require('../../lib/controllers/NotFoundController');
 
 var request = require('supertest'),
-    DummyServer = require('./DummyServer'),
-    fs = require('fs');
+    DummyServer = require('./DummyServer');
 
 var NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView.js'),
     NotFoundRdfView = require('../../lib/views/notfound/NotFoundRdfView.js');
@@ -59,7 +58,7 @@ describe('NotFoundController', function () {
   });
 
   describe('A NotFoundController instance with HTML and RDF views', function () {
-    var controller, htmlView, rdfView, views, datasources, client;
+    var controller, htmlView, rdfView, datasources, client;
     before(function () {
       htmlView = new NotFoundHtmlView();
       rdfView  = new NotFoundRdfView();

@@ -3,13 +3,13 @@ var URL = require('url'),
     Writable = require('stream').Writable;
 
 // Set up the sinon stubbing library
-var sinon = global.sinon = require('sinon');
+global.sinon = require('sinon');
 
 // Set up the Chai assertion library
-var chai = global.chai = require('chai'),
-    should = global.should = chai.should(),
-    expect = global.expect = chai.expect,
-    test = global.test = {};
+var chai = require('chai');
+global.test = {};
+global.expect = chai.expect;
+global.should = chai.should();
 chai.use(require('sinon-chai'));
 
 // Test helper for the extractQueryParams function of routers
