@@ -63,7 +63,7 @@ describe('LinkedDataFragmentsServer', function () {
       client.head('/handle').expect(function (response) {
         controller.handleRequest.should.have.been.calledOnce;
         response.should.have.property('statusCode', 200);
-        response.should.have.property('text', '');
+        response.body.should.not.have.property('length');
       }).end(done);
     });
 
