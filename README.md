@@ -142,7 +142,7 @@ The server can be configured to authenticate clients through [WebID](https://www
 
 ### Create WebID, keys and certificates
 
-1. Create the CA certificate
+#### Create the CA certificate
 
 You'll need a Root Certificate Authority (private key) to sign the certificates of trusted clients.
 
@@ -166,7 +166,7 @@ openssl req \
   -subj "/C=US/ST=Utah/L=Provo/O=ACME Signing Authority Inc/CN=example.com"
 ```
 
-3. Create a server certificate
+#### Create a server certificate
 
 
 Create a private key to create certificates.
