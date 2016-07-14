@@ -3,6 +3,9 @@
   "description": "Linked Data Fragments Server",
   "version": "2.0.3",
   "license": "MIT",
+  "engines": {
+    "node": ">=4.0"
+  },
   "bin": {
     "ldf-server": "./bin/ldf-server"
   },
