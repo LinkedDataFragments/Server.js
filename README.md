@@ -142,6 +142,14 @@ The server can be configured to authenticate clients through [WebID](https://www
 
 ### Create WebID, keys and certificates
 
+To secure your server using HTTPS, you need certificates. To generate these, use the `./make-server-certificates.sh` script we included in the server software under the keys folder. Pay close attention to enter the correct information for your domain! The first argument of the script takes the FQDN (domain name) of your server, the second argument the port on which the server runs, and the third to sixth arguments the country, state, locale, and organization, respectively. For example:
+```bash
+./make-server-certificates.sh example.test.iminds.be \
+8900 BE Oost-Vlaanderen Ghent iMinds
+```
+
+Alternatively, you could also generate the certificates manually, as follows:
+
 1. Create the CA certificate
 
 You'll need a Root Certificate Authority (private key) to sign the certificates of trusted clients.
@@ -231,6 +239,17 @@ openssl x509 \
   -CAcreateserial \
   -out certs/client/my-app-client.crt.pem \
   -days 1095
+```
+
+To test your own server setup from the same machine, you can generate trusted client certificates using the ./make-trusted-client-certificates.sh script we included in the server software under the keys folder. The first argument of the script takes the FQDN (domain name) of your server, the second argument the WebID of the client, and the third to sixth arguments the country, state, locale, and organization, respectively. For example:
+```bash
+./make-trusted-client-certificates.sh combust.test.iminds.be \
+“http:\/\/combust.test.iminds.be\/combusttestclient.ttl#webid” \
+BE Oost-Vlaanderen Ghent iMinds
+```
+To test the setup, import the client certificates keys/certs/my-app-client.crt.pem  and keys/certs/my-app-client.p12 into your browser. Just make sure the client’s WebID includes the correct modulus, which you can obtain with the following command:
+```bash
+openssl rsa -in keys/certs/client/my-app-client.key.pem -modulus -noout
 ```
 
 ## License
