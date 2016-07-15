@@ -241,13 +241,13 @@ openssl x509 \
   -days 1095
 ```
 
-To test your own server setup from the same machine, you can generate trusted client certificates using the ./make-trusted-client-certificates.sh script we included in the server software under the keys folder. The first argument of the script takes the FQDN (domain name) of your server, the second argument the WebID of the client, and the third to sixth arguments the country, state, locale, and organization, respectively. For example:
+To test your own server setup from the same machine, you can generate trusted client certificates using the `./make-trusted-client-certificates.sh` script we included in the server software under the keys folder. The first argument of the script takes the FQDN (domain name) of your server, the second argument the WebID of the client, and the third to sixth arguments the country, state, locale, and organization, respectively. For example:
 ```bash
 ./make-trusted-client-certificates.sh combust.test.iminds.be \
 "http:\/\/combust.test.iminds.be\/combusttestclient.ttl#webid" \
 BE Oost-Vlaanderen Ghent iMinds
 ```
-To test the setup, import the client certificates keys/certs/my-app-client.crt.pem  and keys/certs/my-app-client.p12 into your browser. Just make sure the client’s WebID includes the correct modulus, which you can obtain with the following command:
+To test the setup, import the client certificates `keys/certs/my-app-client.crt.pem`  and `keys/certs/my-app-client.p12` into your browser. Just make sure the client’s WebID includes the correct modulus, which you can obtain with the following command:
 ```bash
 openssl rsa -in keys/certs/client/my-app-client.key.pem -modulus -noout
 ```
