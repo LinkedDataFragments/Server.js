@@ -159,10 +159,20 @@ else {
     };
   }
 
-  // Create and start server
-  var server = new LinkedDataFragmentsServer(config);
-  server.listen(port);
-  console.log('Worker %d running on http://localhost:%d/.', process.pid, port);
+  // Create server, and start it when all data sources are ready
+  var server = new LinkedDataFragmentsServer(config),
+      pending = _.size(datasources);
+  _.each(datasources, function (settings) {
+    var ready = _.once(startWhenReady);
+    settings.datasource.once('initialized', ready);
+    settings.datasource.once('error', ready);
+  });
+  function startWhenReady() {
+    if (!--pending) {
+      server.listen(port);
+      console.log('Worker %d running on http://localhost:%d/.', process.pid, port);
+    }
+  }
 
   // Terminate gracefully if possible
   process.once('SIGINT', function () {
