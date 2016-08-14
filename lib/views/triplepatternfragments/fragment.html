@@ -120,6 +120,8 @@ function pageLinks(fragment) {
 
 <%- extensions.After %>
 
+<% if (datasource.description || datasource.copyright ||
+       datasource.license || datasource.licenseUrl) { %>
 <aside id="about">
   <h3>About <%= datasource.title %></h3>
   <ul>
@@ -132,3 +134,4 @@ function pageLinks(fragment) {
           %></a></li><% } %>
   </ul>
 </aside>
+<% } %>
