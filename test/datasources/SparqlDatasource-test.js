@@ -1,5 +1,7 @@
+/*! @license MIT ©2013-2016 Ruben Verborgh - Ghent University / iMinds */
+var SparqlDatasource = require('../../lib/datasources/SparqlDatasource');
+
 var Datasource = require('../../lib/datasources/Datasource'),
-    SparqlDatasource = require('../../lib/datasources/SparqlDatasource'),
     fs = require('fs'),
     path = require('path'),
     URL = require('url');

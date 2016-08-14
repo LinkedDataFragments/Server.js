@@ -1,3 +1,5 @@
+/*! @license MIT ©2013-2016 Ruben Verborgh - Ghent University / iMinds */
+
 var URL = require('url'),
     Readable = require('stream').Readable,
     Writable = require('stream').Writable;

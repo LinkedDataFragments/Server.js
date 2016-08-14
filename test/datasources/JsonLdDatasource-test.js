@@ -1,5 +1,7 @@
+/*! @license MIT ©2014-2016 Ruben Verborgh - Ghent University / iMinds */
+var JsonLdDatasource = require('../../lib/datasources/JsonLdDatasource');
+
 var Datasource = require('../../lib/datasources/Datasource'),
-    JsonLdDatasource = require('../../lib/datasources/JsonLdDatasource'),
     path = require('path');
 
 var exampleJsonLdUrl = 'file://' + path.join(__dirname, '../assets/test.jsonld');

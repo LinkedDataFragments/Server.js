@@ -1,3 +1,4 @@
+/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
 var TriplePatternRouter = require('../../lib/routers/TriplePatternRouter');
 
 describe('TriplePatternRouter', function () {

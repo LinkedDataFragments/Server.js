@@ -1,5 +1,7 @@
+/*! @license MIT ©2014-2016 Ruben Verborgh - Ghent University / iMinds */
+var HdtDatasource = require('../../lib/datasources/HdtDatasource');
+
 var Datasource = require('../../lib/datasources/Datasource'),
-    HdtDatasource = require('../../lib/datasources/HdtDatasource'),
     path = require('path');
 
 var exampleHdtFile = path.join(__dirname, '../assets/test.hdt');

@@ -1,5 +1,7 @@
-var TriplePatternFragmentsRdfView = require('../../../lib/views/triplepatternfragments/TriplePatternFragmentsRdfView'),
-    _ = require('lodash'),
+/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
+var TriplePatternFragmentsRdfView = require('../../../lib/views/triplepatternfragments/TriplePatternFragmentsRdfView');
+
+var _ = require('lodash'),
     fs = require('fs'),
     path = require('path');
 

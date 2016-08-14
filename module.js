@@ -1,6 +1,5 @@
-/*! @license ©2015 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */
-
-/** Exports of the ldf-server package for use as a submodule (as opposed to standalone) */
+/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
+/* Exports of the ldf-server package for use as a submodule (as opposed to standalone) */
 
 var fs = require('fs'),
     path = require('path');

@@ -1,3 +1,5 @@
+/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
+
 var http = require('http');
 
 /* Dummy server that emulates LinkedDataFragmentsServer */

@@ -155,5 +155,8 @@ You can [enable the Memento protocol](https://github.com/LinkedDataFragments/Ser
 ## License
 The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/).
 
-This code is copyrighted by [iMinds – Ghent University](http://mmlab.be/)
+## License
+The Linked Data Fragments client is written by [Ruben Verborgh](http://ruben.verborgh.org/) and colleagues.
+
+This code is copyrighted by [Ghent University – iMinds](http://datasciencelab.ugent.be/)
 and released under the [MIT license](http://opensource.org/licenses/MIT).

@@ -1,3 +1,4 @@
+/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
 var PageRouter = require('../../lib/routers/PageRouter');
 
 describe('PageRouter', function () {

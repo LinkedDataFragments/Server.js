@@ -1,7 +1,9 @@
+/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
+var CompositeDatasource = require('../../lib/datasources/CompositeDatasource');
+
 var Datasource = require('../../lib/datasources/Datasource'),
     HdtDatasource = require('../../lib/datasources/HdtDatasource'),
     TurtleDatasource = require('../../lib/datasources/TurtleDatasource'),
-    CompositeDatasource = require('../../lib/datasources/CompositeDatasource'),
     path = require('path');
 
 var exampleHdtFile = path.join(__dirname, '../assets/test.hdt');

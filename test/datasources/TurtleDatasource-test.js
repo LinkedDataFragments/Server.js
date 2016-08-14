@@ -1,5 +1,7 @@
+/*! @license MIT ©2014-2016 Ruben Verborgh - Ghent University / iMinds */
+var TurtleDatasource = require('../../lib/datasources/TurtleDatasource');
+
 var Datasource = require('../../lib/datasources/Datasource'),
-    TurtleDatasource = require('../../lib/datasources/TurtleDatasource'),
     path = require('path');
 
 var exampleTurtleUrl = 'file://' + path.join(__dirname, '../assets/test.ttl');

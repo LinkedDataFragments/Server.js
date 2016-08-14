@@ -1,3 +1,4 @@
+/*! @license MIT ©2013-2016 Ruben Verborgh - Ghent University / iMinds */
 var Datasource = require('../../lib/datasources/Datasource');
 
 var EventEmitter = require('events');

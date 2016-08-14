@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-/*! @license ©2013 Ruben Verborgh - Multimedia Lab / iMinds / Ghent University */
-
-/** Standalone Linked Data Fragments Server */
+/*! @license MIT ©2013-2016 Ruben Verborgh - Ghent University / iMinds */
+/* Standalone Linked Data Fragments Server */
 
 var _ = require('lodash'),
     fs = require('fs'),

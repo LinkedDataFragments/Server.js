@@ -1,3 +1,4 @@
+/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
 var SummaryController = require('../../lib/controllers/SummaryController');
 
 var request = require('supertest'),
@@ -5,7 +6,7 @@ var request = require('supertest'),
     fs = require('fs'),
     path = require('path');
 
-var SummaryRdfView  = require('../../lib/views/summary/SummaryRdfView.js');
+var SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js');
 
 describe('SummaryController', function () {
   describe('The SummaryController module', function () {

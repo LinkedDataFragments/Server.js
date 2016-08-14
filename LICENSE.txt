@@ -1,6 +1,7 @@
 The MIT License (MIT)
 
-Copyright © 2013–2014 Ruben Verborgh, Multimedia Lab, Ghent University — iMinds, Belgium
+Copyright © 2013–2016 Ruben Verborgh, Miel Vander Sande
+Ghent University / iMinds, Belgium
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
