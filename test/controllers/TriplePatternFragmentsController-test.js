@@ -39,6 +39,7 @@ describe('TriplePatternFragmentsController', function () {
       datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().returns({ stream: 'items' }),
+        supportedFeatures: { triplePattern: true },
       };
       datasources = { 'my-datasource': { title: 'My data', datasource: datasource } };
       view = new TriplePatternFragmentsRdfView(),
@@ -181,6 +182,7 @@ describe('TriplePatternFragmentsController', function () {
               setImmediate(callback, {});
           },
         }),
+        supportedFeatures: { triplePattern: true },
       };
       var router = {
         extractQueryParams: function (request, query) {
@@ -316,6 +318,7 @@ describe('TriplePatternFragmentsController', function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub(),
+        supportedFeatures: { triplePattern: true },
       };
       var router = {
         extractQueryParams: function (request, query) {
@@ -384,6 +387,7 @@ describe('TriplePatternFragmentsController', function () {
       datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().throws(error),
+        supportedFeatures: { triplePattern: true },
       };
       view = new TriplePatternFragmentsRdfView(),
       controller = new TriplePatternFragmentsController({
@@ -422,6 +426,7 @@ describe('TriplePatternFragmentsController', function () {
       datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: function (query, callback) { setImmediate(callback.bind(null, error)); },
+        supportedFeatures: { triplePattern: true },
       };
       view = new TriplePatternFragmentsRdfView(),
       view.render = sinon.stub(); // avoid writing a partial body
