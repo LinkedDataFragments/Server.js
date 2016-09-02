@@ -1,0 +1,49 @@
+{
+  "title": "My Composite Linked Data Fragments server",
+
+  "datasources": {
+    "test-composite": {
+      "title": "Composite Test",
+      "type": "CompositeDatasource",
+      "description": "A test quad composite datasource",
+      "settings": {
+        "references": [ "hdt", "ttl", "jsonld", "hdtext", "trig" ]
+      }
+    },
+    "hdt": {
+      "hide": true,
+      "title": "HDT",
+      "type": "HdtDatasource",
+      "description": "A test HDT datasource",
+      "settings": { "file": "test/assets/test.hdt", "graph": "http://example.org/graph0" }
+    },
+    "ttl": {
+      "hide": true,
+      "title": "Turtle",
+      "type": "TurtleDatasource",
+      "description": "A test turtle datasource",
+      "settings": { "file": "test/assets/test.ttl", "graph": "http://example.org/graph1" }
+    },
+    "jsonld": {
+      "hide": true,
+      "title": "JSONLD",
+      "type": "JsonLdDatasource",
+      "description": "A test jsonld datasource",
+      "settings": { "file": "test/assets/test.jsonld", "graph": "http://example.org/graph2" }
+    },
+    "hdtext": {
+      "hide": true,
+      "title": "HDT-EXT",
+      "type": "ExternalHdtDatasource",
+      "description": "A blank test HDT datasource",
+      "settings": { "file": "test/assets/test-blank.hdt", "graph": "http://example.org/graph3" }
+    },
+    "trig": {
+      "hide": true,
+      "title": "Trig",
+      "type": "TrigDatasource",
+      "description": "A test Trig datasource",
+      "settings": { "file": "test/assets/test.trig" }
+    }
+  }
+}

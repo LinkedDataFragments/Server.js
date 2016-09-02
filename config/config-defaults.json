@@ -29,8 +29,8 @@
   "controllers": [
     "SummaryController",
     "TimegateController",
-    "QuadPatternFragmentsController",
     "TriplePatternFragmentsController",
+    "QuadPatternFragmentsController",
     "AssetsController",
     "DereferenceController",
     "NotFoundController"

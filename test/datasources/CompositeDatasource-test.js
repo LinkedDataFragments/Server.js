@@ -4,18 +4,26 @@ var CompositeDatasource = require('../../lib/datasources/CompositeDatasource');
 var Datasource = require('../../lib/datasources/Datasource'),
     HdtDatasource = require('../../lib/datasources/HdtDatasource'),
     TurtleDatasource = require('../../lib/datasources/TurtleDatasource'),
+    TrigDatasource = require('../../lib/datasources/TrigDatasource'),
     path = require('path');
 
 var exampleHdtFile = path.join(__dirname, '../assets/test.hdt');
 var exampleHdtFileWithBlanks = path.join(__dirname, '../assets/test-blank.hdt');
 var exampleTurtleUrl = 'file://' + path.join(__dirname, '../assets/test.ttl');
+var exampleTrigUrl = 'file://' + path.join(__dirname, '../assets/test.trig');
 
 describe('CompositeDatasource', function () {
   var datasources = {
-    data0: { datasource: new HdtDatasource({ file: exampleHdtFile }), size: 132 },
-    data1: { datasource: new HdtDatasource({ file: exampleHdtFileWithBlanks }), size: 6 },
-    data2: { datasource: new TurtleDatasource({ url: exampleTurtleUrl }), size: 132 },
+    data0: { settings: { file: exampleHdtFile }, datasourceType: HdtDatasource, size: 132 },
+    data1: { settings: { file: exampleHdtFileWithBlanks, graph: 'http://example.org/graph0' }, datasourceType: HdtDatasource, size: 6 },
+    data2: { settings: { url: exampleTurtleUrl }, datasourceType: TurtleDatasource, size: 132 },
+    data3: { settings: { url: exampleTrigUrl }, datasourceType: TrigDatasource, size: 7 },
   };
+  Object.keys(datasources).forEach(function (datasourceId) {
+    var datasource = datasources[datasourceId];
+    var DatasourceType = datasource.datasourceType;
+    datasource.datasource = new DatasourceType(datasource.settings);
+  });
   var references = Object.keys(datasources);
   var totalSize = Object.keys(datasources).reduce(function (acc, key) {
     return acc + datasources[key].size;
@@ -45,7 +53,7 @@ describe('CompositeDatasource', function () {
     });
   });
 
-  describe('A CompositeDatasource instance for two HdtDatasources', function () {
+  describe('A CompositeDatasource instance for 4 Datasources', function () {
     var datasource;
     function getDatasource() { return datasource; }
     before(function (done) {
@@ -59,6 +67,11 @@ describe('CompositeDatasource', function () {
     itShouldExecute(getDatasource,
       'the empty query',
       { features: { triplePattern: true } },
+      totalSize, totalSize);
+
+    itShouldExecute(getDatasource,
+      'the empty quad query',
+      { features: { triplePattern: true, quadPattern: true } },
       totalSize, totalSize);
 
     itShouldExecute(getDatasource,
@@ -110,6 +123,31 @@ describe('CompositeDatasource', function () {
       'a query for a non-existing object',
       { object: 'http://example.org/s1',    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
+
+    itShouldExecute(getDatasource,
+      'a query for an existing graph',
+      { graph: 'http://example.org/bob',    limit: 10, features: { quadPattern: true, triplePattern: true, limit: true } },
+      3, 3);
+
+    itShouldExecute(getDatasource,
+      'a query for a non-existing graph',
+      { graph: 'http://example.org/notbob', limit: 10, features: { quadPattern: true, triplePattern: true, limit: true } },
+      0, 0);
+
+    itShouldExecute(getDatasource,
+      'a query for the default graph',
+      { graph: 'undefined#defaultGraph',    limit: 10, features: { quadPattern: true, triplePattern: true, limit: true } },
+      10, 266);
+
+    itShouldExecute(getDatasource,
+      'a query for the default graph without a limit',
+      { graph: 'undefined#defaultGraph',    features: { quadPattern: true, triplePattern: true, limit: true } },
+      266, 266);
+
+    itShouldExecute(getDatasource,
+      'a query for graph0',
+      { graph: 'http://example.org/graph0', limit: 10, features: { quadPattern: true, triplePattern: true, limit: true } },
+      6, 6);
   });
 });
 
