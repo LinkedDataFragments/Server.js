@@ -5,6 +5,8 @@
 <form action="?" method="GET" property="hydra:search" resource="#quadPattern">
   <fieldset resource="#quadPattern">
     <legend>Query <%= datasource.title %> by quad pattern</legend>
+    <span property="hydra:template" content="<%= datasource.templateUrl %>" lang=""></span>
+    <span property="hydra:variableRepresentation" resource="hydra:ExplicitRepresentation"></span>
     <ul>
 <% ['subject', 'predicate', 'object', 'graph'].forEach(function (component) { -%>
       <li property="hydra:mapping" resource="#<%= component %>">
