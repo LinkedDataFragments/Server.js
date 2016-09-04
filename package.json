@@ -22,15 +22,15 @@
     "lint": "eslint bin/* lib test"
   },
   "dependencies": {
-    "qejs": "^3.0.5",
-    "q": "^1.4.1",
-    "n3": "^0.5.0",
     "jsonld": "^0.4.11",
-    "request": "^2.72.0",
-    "mime": "^1.3.4",
-    "negotiate": "^1.0.1",
     "lodash": "^2.4.2",
     "lru-cache": "^4.0.1",
+    "mime": "^1.3.4",
+    "n3": "^0.6.0",
+    "negotiate": "^1.0.1",
+    "q": "^1.4.1",
+    "qejs": "^3.0.5",
+    "request": "^2.72.0",
     "uritemplate": "^0.3.4"
   },
   "optionalDependencies": {
@@ -39,12 +39,12 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^3.0.1",
-    "mocha": "^2.5.3",
+    "eslint": "^3.4.0",
+    "mocha": "^3.0.2",
     "pre-commit": "^1.1.3",
     "sinon": "^1.17.4",
     "sinon-chai": "^2.8.0",
-    "supertest": "^1.2.0"
+    "supertest": "^2.0.0"
   },
   "pre-commit": [
     "lint",
