@@ -50,10 +50,10 @@
 
   "ssl": {
     "keys" : {
-      "key": "localhost.key'",
+      "key": "localhost.key",
       "ca": [],
       "cert": "localhost.crt.pem"
-    },
+    }
   },
 
   "logging": { "enabled": false, "file": "access.log" }

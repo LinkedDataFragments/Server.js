@@ -22,10 +22,14 @@ var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/
     workers = parseInt(args[2], 10) || config.workers,
     constructors = {};
 
+// Setup protocol
+var protocolBaseUrl = config.baseURL.match(/^(.*?):\/\/.*/);
+config.protocol =  protocolBaseUrl ? protocolBaseUrl[1] : config.protocol;
+
 // Start up a cluster master
 if (cluster.isMaster) {
   // Create workers
-  console.log('Master %d running on http://localhost:%d/.', process.pid, port);
+  console.log('Master %d running on %s://localhost:%d/.', process.pid, config.protocol, port);
   for (var i = 0; i < workers; i++)
     cluster.fork();
 
@@ -170,7 +174,7 @@ else {
   function startWhenReady() {
     if (!--pending) {
       server.listen(port);
-      console.log('Worker %d running on http://localhost:%d/.', process.pid, port);
+      console.log('Worker %d running on %s://localhost:%d/.', process.pid, config.protocol, port);
     }
   }
 
