@@ -1,0 +1,14 @@
+<% /* @license MIT ©2013-2016 Miel Vander Sande - Ghent University / iMinds */ -%>
+<% inherits('base') %>
+<h2>Not authorized to access resource</h2>
+<p>
+  The resource with URL <code><%= url %></code> cannot be accessed. <%= reason %>
+</p>
+
+<h3>Available datasets</h3>
+<ul>
+<% for (var datasourceName in datasources) {
+     var datasource = datasources[datasourceName]; %>
+  <li><a href="<%= datasource.url.replace(/#.*$/, '') %>"><%= datasource.title %></a></li>
+<% } %>
+</ul>
