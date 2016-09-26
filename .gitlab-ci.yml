@@ -1,0 +1,16 @@
+image: node:latest
+
+before_script:
+  - npm install
+
+cache:
+  paths:
+  - node_modules/
+
+test_all:
+  script:
+   - npm test
+
+test_lint:
+  script:
+   - npm run lint
