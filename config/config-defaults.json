@@ -1,7 +1,6 @@
 {
   "title": "Linked Data Fragments server",
   "baseURL": "/",
-  "protocol": "http",
 
   "port": 3000,
   "workers": 1,

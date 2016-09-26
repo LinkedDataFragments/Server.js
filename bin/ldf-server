@@ -20,16 +20,14 @@ var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/
     config = _.defaults(JSON.parse(fs.readFileSync(args[0])), configDefaults),
     port = parseInt(args[1], 10) || config.port,
     workers = parseInt(args[2], 10) || config.workers,
+    protocolMatch = (config.baseURL || '').match(/^(\w+):/),
+    protocol = config.protocol = protocolMatch ? protocolMatch[1] : 'http',
     constructors = {};
-
-// Setup protocol
-var protocolBaseUrl = config.baseURL.match(/^(.*?):\/\/.*/);
-config.protocol =  protocolBaseUrl ? protocolBaseUrl[1] : config.protocol;
 
 // Start up a cluster master
 if (cluster.isMaster) {
   // Create workers
-  console.log('Master %d running on %s://localhost:%d/.', process.pid, config.protocol, port);
+  console.log('Master %d running on %s://localhost:%d/.', process.pid, protocol, port);
   for (var i = 0; i < workers; i++)
     cluster.fork();
 
@@ -174,7 +172,7 @@ else {
   function startWhenReady() {
     if (!--pending) {
       server.listen(port);
-      console.log('Worker %d running on %s://localhost:%d/.', process.pid, config.protocol, port);
+      console.log('Worker %d running on %s://localhost:%d/.', process.pid, protocol, port);
     }
   }
 
