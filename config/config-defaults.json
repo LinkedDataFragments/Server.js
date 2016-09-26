@@ -50,9 +50,9 @@
 
   "ssl": {
     "keys" : {
-      "key": "localhost.key",
-      "ca": [],
-      "cert": "localhost.crt.pem"
+      "key":  "config/localhost.key",
+      "cert": "config/localhost.crt",
+      "ca": []
     }
   },
 
