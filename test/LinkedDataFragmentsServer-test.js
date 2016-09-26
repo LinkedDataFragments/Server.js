@@ -23,6 +23,7 @@ describe('LinkedDataFragmentsServer', function () {
       server = new LinkedDataFragmentsServer({
         controllers: [controller],
         log: sinon.stub(),
+        protocol: 'http',
         response: {
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -127,6 +128,7 @@ describe('LinkedDataFragmentsServer', function () {
       };
       server = new LinkedDataFragmentsServer({
         controllers: [controllerA, controllerB],
+        protocol: 'http',
         log: sinon.stub(),
       });
       client = request.agent(server);

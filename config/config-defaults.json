@@ -47,5 +47,13 @@
     ]
   },
 
+  "ssl": {
+    "keys" : {
+      "key":  "config/localhost.key",
+      "cert": "config/localhost.crt",
+      "ca": []
+    }
+  },
+
   "logging": { "enabled": false, "file": "access.log" }
 }
