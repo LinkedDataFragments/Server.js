@@ -152,7 +152,7 @@ describe('SparqlDatasource', function () {
         request.onThirdCall().returns(test.createHttpResponse(turtleResult, 'text/turtle'));
 
         result = datasource.select({ subject: 'abc', features: { triplePattern: true } });
-        result.on('metadata', function (metadata) { totalCount = metadata.totalCount; });
+        result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
         firstArgsCopy = JSON.parse(JSON.stringify(request.firstCall.args[0]));
       });
 
@@ -271,7 +271,7 @@ function itShouldExecute(datasource, request, name, query, constructQuery, count
       request.onSecondCall().returns(test.createHttpResponse(countResult, 'text/csv'));
 
       result = datasource.select(query);
-      result.on('metadata', function (metadata) { totalCount = metadata.totalCount; });
+      result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
     });
 
     it('should request a matching CONSTRUCT query', function () {
