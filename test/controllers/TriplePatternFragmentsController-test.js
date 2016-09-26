@@ -140,7 +140,7 @@ describe('TriplePatternFragmentsController', function () {
             nextPageUrl:     'https://example.org/my-datasource?a=b&c=d&page=2',
             previousPageUrl: null,
           },
-          resultStream: {
+          results: {
             stream: 'items',
           },
           prefixes: prefixes,

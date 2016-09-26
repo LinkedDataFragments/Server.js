@@ -3,7 +3,8 @@ var TriplePatternFragmentsRdfView = require('../../../lib/views/triplepatternfra
 
 var _ = require('lodash'),
     fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    AsyncIterator = require('asynciterator');
 
 describe('TriplePatternFragmentsRdfView', function () {
   describe('The TriplePatternFragmentsRdfView module', function () {
@@ -65,13 +66,13 @@ describe('TriplePatternFragmentsRdfView', function () {
         }
 
         describe('with an empty triple stream', function () {
-          var resultStream = test.streamFromArray([]);
+          var results = AsyncIterator.empty();
           var response = test.createStreamCapture();
           before(function (done) {
-            settings.resultStream = resultStream;
+            settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
-            resultStream.emit('metadata', { totalCount: 1234 });
+            results.setProperty('metadata', { totalCount: 1234 });
           });
 
           it('should only write data source metadata', function () {
@@ -80,19 +81,18 @@ describe('TriplePatternFragmentsRdfView', function () {
         });
 
         describe('with a non-empty triple stream that writes metadata first', function () {
-          var resultStream = test.streamFromArray([
+          var results = AsyncIterator.fromArray([
             { subject: 'a', predicate: 'b', object: 'c' },
             { subject: 'a', predicate: 'd', object: 'e' },
             { subject: 'f', predicate: 'g', object: 'h' },
           ]);
-          resultStream.pause();
           var response = test.createStreamCapture();
           before(function (done) {
-            settings.resultStream = resultStream;
+            settings.results = new AsyncIterator.TransformIterator();
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
-            resultStream.emit('metadata', { totalCount: 1234 });
-            resultStream.resume();
+            settings.results.setProperty('metadata', { totalCount: 1234 });
+            settings.results.source = results;
           });
 
           it('should write data and metadata', function () {
@@ -101,18 +101,18 @@ describe('TriplePatternFragmentsRdfView', function () {
         });
 
         describe('with a non-empty triple stream that writes metadata afterwards', function () {
-          var resultStream = test.streamFromArray([
+          var results = AsyncIterator.fromArray([
             { subject: 'a', predicate: 'b', object: 'c' },
             { subject: 'a', predicate: 'd', object: 'e' },
             { subject: 'f', predicate: 'g', object: 'h' },
           ]);
           var response = test.createStreamCapture();
           before(function (done) {
-            settings.resultStream = resultStream;
+            settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
             setImmediate(function () {
-              resultStream.emit('metadata', { totalCount: 1234 });
+              results.setProperty('metadata', { totalCount: 1234 });
             });
           });
 
@@ -122,7 +122,7 @@ describe('TriplePatternFragmentsRdfView', function () {
         });
 
         describe('with a query with a limit but no offset', function () {
-          var resultStream = test.streamFromArray([]);
+          var results = AsyncIterator.empty();
           var settings = {
             datasource: { },
             fragment: {
@@ -135,10 +135,10 @@ describe('TriplePatternFragmentsRdfView', function () {
           };
           var response = test.createStreamCapture();
           before(function (done) {
-            settings.resultStream = resultStream;
+            settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
-            resultStream.emit('metadata', { totalCount: 1234 });
+            results.setProperty('metadata', { totalCount: 1234 });
           });
 
           it('should write a first page link', function () {
@@ -155,7 +155,7 @@ describe('TriplePatternFragmentsRdfView', function () {
         });
 
         describe('with a query with a limit and offset before the end', function () {
-          var resultStream = test.streamFromArray([]);
+          var results = AsyncIterator.empty();
           var settings = {
             datasource: { },
             fragment: {
@@ -168,10 +168,10 @@ describe('TriplePatternFragmentsRdfView', function () {
           };
           var response = test.createStreamCapture();
           before(function (done) {
-            settings.resultStream = resultStream;
+            settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
-            resultStream.emit('metadata', { totalCount: 1234 });
+            results.setProperty('metadata', { totalCount: 1234 });
           });
 
           it('should write a first page link', function () {
@@ -188,7 +188,7 @@ describe('TriplePatternFragmentsRdfView', function () {
         });
 
         describe('with a query with a limit and offset past the end', function () {
-          var resultStream = test.streamFromArray([]);
+          var results = AsyncIterator.empty();
           var settings = {
             datasource: { },
             fragment: {
@@ -201,10 +201,10 @@ describe('TriplePatternFragmentsRdfView', function () {
           };
           var response = test.createStreamCapture();
           before(function (done) {
-            settings.resultStream = resultStream;
+            settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
-            resultStream.emit('metadata', { totalCount: 1234 });
+            results.setProperty('metadata', { totalCount: 1234 });
           });
 
           it('should write a first page link', function () {

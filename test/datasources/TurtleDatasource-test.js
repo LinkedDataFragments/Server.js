@@ -87,7 +87,7 @@ function itShouldExecute(datasource, name, query, expectedResultsCount, expected
     var resultsCount = 0, totalCount;
     before(function (done) {
       var result = datasource.select(query);
-      result.on('metadata', function (metadata) { totalCount = metadata.totalCount; });
+      result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
       result.on('data', function (triple) { resultsCount++; });
       result.on('end', done);
     });

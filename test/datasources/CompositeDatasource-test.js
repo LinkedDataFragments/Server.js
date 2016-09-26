@@ -119,7 +119,7 @@ function itShouldExecute(getDatasource, name, query,
     var resultsCount = 0, totalCount, triples = [];
     before(function (done) {
       var result = getDatasource().select(query);
-      result.on('metadata', function (metadata) { totalCount = metadata.totalCount; });
+      result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
       result.on('data', function (triple) { resultsCount++; expectedTriples && triples.push(triple); });
       result.on('end', done);
     });

@@ -85,7 +85,7 @@ function fromDataSource(uri, datasource, callback, end, chunksize) {
     var count = 0;
 
     var stream = datasource.select({ limit: limit, offset: offset }, console.error)
-        .on('metadata', function (metadata) {
+        .getProperty('metadata', function (metadata) {
           var progress = Math.round((offset / metadata.totalCount) * 100);
           console.log(progress);
 
