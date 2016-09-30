@@ -17,7 +17,8 @@
     "owl":   "http://www.w3.org/2002/07/owl#",
     "xsd":   "http://www.w3.org/2001/XMLSchema#",
     "hydra": "http://www.w3.org/ns/hydra/core#",
-    "void":  "http://rdfs.org/ns/void#"
+    "void":  "http://rdfs.org/ns/void#",
+    "mdi":   "http://w3id.org/multidimensional-interface/ontology#"
   },
 
   "routers": [
