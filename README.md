@@ -1,4 +1,10 @@
-# Linked Data Fragments Server <img src="http://linkeddatafragments.org/images/logo.svg" width="100" align="right" alt="" />
+# Linked Data Fragments Server
+<img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
+
+[![Build Status](https://travis-ci.org/LinkedDataFragments/Server.js.svg?branch=master)](https://travis-ci.org/LinkedDataFragments/Server.js)
+[![npm version](https://badge.fury.io/js/ldf-server.svg)](https://www.npmjs.com/package/ldf-server)
+[![Docker Automated Build](https://img.shields.io/docker/automated/linkeddatafragments/server.js.svg)](https://hub.docker.com/r/linkeddatafragments/server.js/)
+
 On today's Web, Linked Data is published in different ways,
 which include [data dumps](http://downloads.dbpedia.org/3.9/en/),
 [subject pages](http://dbpedia.org/page/Linked_data),
