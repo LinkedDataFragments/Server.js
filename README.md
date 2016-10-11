@@ -31,7 +31,7 @@ An example server is available at [data.linkeddatafragments.org](http://data.lin
 
 ## Install the server
 
-This server requires [Node.js](http://nodejs.org/) 0.10 or higher
+This server requires [Node.js](http://nodejs.org/) 4.0 or higher
 and is tested on OSX and Linux.
 To install, execute:
 ```bash
