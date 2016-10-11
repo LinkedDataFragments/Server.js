@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/*! @license MIT ©2014-2016 Miel Vander Sande - Ghent University / iMinds */
+/*! @license MIT ©2014-2016 Miel Vander Sande, Ghent University - imec */
 /* This script generates data summaries for a certain server dataset  */
 
 var N3 = require('n3'),

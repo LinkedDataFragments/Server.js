@@ -1,4 +1,4 @@
-/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
+/*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 var ViewCollection = require('../../lib/views/ViewCollection');
 
 var View = require('../../lib/views/View');

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/*! @license MIT ©2013-2016 Ruben Verborgh - Ghent University / iMinds */
+/*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 /* Standalone Linked Data Fragments Server */
 
 var _ = require('lodash'),

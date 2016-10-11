@@ -1,4 +1,4 @@
-/*! @license MIT ©2014-2016 Ruben Verborgh - Ghent University / iMinds */
+/*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 var HdtDatasource = require('../../lib/datasources/HdtDatasource');
 
 var Datasource = require('../../lib/datasources/Datasource'),

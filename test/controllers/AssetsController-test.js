@@ -1,4 +1,4 @@
-/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
+/*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 var AssetsController = require('../../lib/controllers/AssetsController');
 
 var request = require('supertest'),

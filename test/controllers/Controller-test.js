@@ -1,4 +1,4 @@
-/*! @license MIT ©2015-2016 Ruben Verborgh - Ghent University / iMinds */
+/*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 var Controller = require('../../lib/controllers/Controller');
 
 var http = require('http'),

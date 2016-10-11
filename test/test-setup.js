@@ -1,4 +1,4 @@
-/*! @license MIT ©2013-2016 Ruben Verborgh - Ghent University / iMinds */
+/*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
 var URL = require('url'),
     Readable = require('stream').Readable,
