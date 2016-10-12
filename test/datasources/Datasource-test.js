@@ -1,7 +1,11 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 var Datasource = require('../../lib/datasources/Datasource');
 
-var EventEmitter = require('events');
+var EventEmitter = require('events'),
+    fs = require('fs'),
+    path = require('path');
+
+var exampleFile = path.join(__dirname, '../assets/test.ttl');
 
 describe('Datasource', function () {
   describe('The Datasource module', function () {
@@ -52,6 +56,56 @@ describe('Datasource', function () {
     it('should throw an error when trying to execute a supported query', function () {
       (function () { datasource.select({ features: {} }); })
       .should.throw('_executeQuery has not been implemented');
+    });
+
+    describe('fetching a resource', function () {
+      it('fetches an existing resource', function (done) {
+        var result = datasource._fetch({ url: 'file://' + exampleFile }), buffer = '';
+        result.on('data', function (d) { buffer += d; });
+        result.on('end', function () {
+          buffer.should.equal(fs.readFileSync(exampleFile, 'utf8'));
+          done();
+        });
+        result.on('error', done);
+      });
+
+      it('assumes file:// as the default protocol', function (done) {
+        var result = datasource._fetch({ url: exampleFile }), buffer = '';
+        result.on('data', function (d) { buffer += d; });
+        result.on('end', function () {
+          buffer.should.equal(fs.readFileSync(exampleFile, 'utf8'));
+          done();
+        });
+        result.on('error', done);
+      });
+
+      it('emits an error when the protocol is unknown', function (done) {
+        var result = datasource._fetch({ url: 'myprotocol:abc' });
+        result.on('error', function (error) {
+          error.message.should.contain('Unknown protocol: myprotocol');
+          done();
+        });
+      });
+
+      it('emits an error on the datasource when no error listener is attached to the result', function (done) {
+        var result = datasource._fetch({ url: exampleFile + 'notfound' });
+        result.on('data', done);
+        datasource.on('error', function (error) {
+          error.message.should.contain('ENOENT: no such file or directory');
+          done();
+        });
+      });
+
+      it('does not emit an error on the datasource when an error listener is attached to the result', function (done) {
+        var result = datasource._fetch({ url: exampleFile + 'notfound' });
+        result.on('error', function (error) {
+          error.message.should.contain('ENOENT: no such file or directory');
+          done();
+        });
+        datasource.on('error', function (error) {
+          done(error);
+        });
+      });
     });
 
     describe('when closed without a callback', function () {
