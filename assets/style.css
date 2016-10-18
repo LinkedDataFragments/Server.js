@@ -188,8 +188,11 @@ ul.triples li:hover {
 ul.triples li:not(:hover) a {
   color: inherit;
 }
-ul.triples a:nth-child(2) {
-  margin: 0 1em;
+ul.triples a {
+  margin-right: 1em;
+}
+ul.triples a:last-child {
+  margin-right: 0;
 }
 abbr {
   border: none;
