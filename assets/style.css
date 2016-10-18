@@ -193,6 +193,7 @@ ul.triples a:nth-child(2) {
 }
 abbr {
   border: none;
+  text-decoration: none;
 }
 
 .index {
