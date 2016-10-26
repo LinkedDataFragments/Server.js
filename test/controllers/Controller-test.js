@@ -36,7 +36,6 @@ describe('Controller', function () {
       it('should call _handleRequest with request, response and next', function () {
         controller._handleRequest.should.have.been.calledOnce;
         var args = controller._handleRequest.getCall(0).args;
-        args.should.have.length(3);
         args[0].should.have.property('url');
         args[1].should.be.an.instanceof(http.ServerResponse);
         args[2].should.be.an.instanceof(Function);
@@ -75,7 +74,6 @@ describe('Controller', function () {
       it('should call _handleRequest with request, response and next', function () {
         controller._handleRequest.should.have.been.calledOnce;
         var args = controller._handleRequest.getCall(0).args;
-        args.should.have.length(3);
         args[0].should.have.property('url');
         args[1].should.be.an.instanceof(http.ServerResponse);
         args[2].should.be.an.instanceof(Function);
