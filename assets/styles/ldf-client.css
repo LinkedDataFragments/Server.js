@@ -1,0 +1,498 @@
+/*! @license MIT ©2014–2016 Ruben Verborgh, Ghent University – imec */
+
+html, input, textarea, button {
+  -webkit-text-size-adjust: none;
+}
+* {
+  outline: none !important;
+}
+
+h1 {
+  margin-bottom: 1em;
+}
+
+h2 {
+  margin-top: 1em;
+}
+
+p {
+  margin: .5em 0;
+}
+
+a, button, label {
+  font-weight: bold;
+}
+label {
+  float: none;
+  display: inline;
+  width: auto;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+.ldf-client, .ldf-client * {
+  max-width: 100%;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+fieldset > ul > li {
+  margin: .3em 0;
+  clear: both;
+}
+fieldset > ul > li:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+select {
+  width: 430px;
+}
+
+.timing {
+  float: right;
+  font-size: 10pt;
+  padding: .7em 0;
+}
+
+.chosen {
+  float: right;
+}
+
+input.datetime {
+  float: right;
+  font-size: 13px;
+  border: 1px solid #999999;
+  border-radius: 3px;
+}
+
+.details {
+  display: none;
+}
+.details-toggle {
+  display: block;
+  width:  24px;
+  height: 24px;
+  margin: 0 -35px;
+  float: right;
+  cursor: pointer;
+  background: url(../images/memento.svg) no-repeat center center / contain;
+  opacity: .8;
+}
+.details-toggle:hover, .details-toggle.enabled {
+  opacity: 1;
+}
+.details-toggle.enabled {
+  background-image: url(../images/memento.svg#active);
+  width: 25px; /* for Chrome */
+}
+
+textarea {
+  box-sizing: border-box;
+  min-height: 11em;
+  width: 100%;
+  padding-left: 1em;
+  border: none;
+  cursor: pointer;
+  font-size: .95em;
+  background-color: transparent;
+}
+
+.results {
+  height: 23.5em;
+  font-size: 10pt;
+  margin: .5em 0 1em;
+  line-height: 1.5;
+}
+.results a {
+  font-weight: normal;
+  color: inherit;
+}
+.result {
+  width: calc(100% - 2px);
+}
+.result dl {
+  border: 1px solid #1a5f76;
+  margin: 0 0 1em;
+  border-radius: 5px;
+}
+.result:hover dl {
+  border-color: #e77a0a;
+}
+.result dl:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.result dt {
+  float: left;
+  clear: left;
+  background-color: #1a5f76;
+  color: white;
+  font-style: normal;
+  font-weight: bold;
+  padding: 0 .5em;
+  margin: 0 .5em 0 0;
+}
+.result:hover dt {
+  background-color: #e77a0a;
+}
+.result dd {
+  margin: 0 .5em 0 1em;
+  color: #1a5f76;
+  font-size: 100%;
+}
+.result dt:last-of-type {
+  border-radius: 0 0 0 5px;
+}
+.results .text {
+  white-space: pre-wrap;
+  margin-right: -999999px; /* avoid that long URLs alter body width */
+}
+
+.log {
+  color: #666;
+  height: 6.3em;
+  font-size: 9pt;
+  line-height: 1.6;
+  margin: .5em -999999px 1em 0;
+}
+.log p {
+  margin: 0;
+}
+.log a {
+  font-weight: normal;
+}
+
+.results, .log {
+  width: 100%;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  contain: layout;
+}
+
+footer {
+  font-size: .8em;
+}
+
+@media (max-width: 725px) {
+  body {
+    padding: .1em 1em;
+    font-size: 10pt;
+  }
+  h1 {
+    font-size: 1.4em;
+  }
+  header img {
+    height: 70px;
+  }
+  header p {
+    margin: 0 0 .5em;
+  }
+
+  select {
+    width: 350px;
+  }
+  .chosen, input.datetime {
+    float: none;
+    margin-bottom: 0;
+  }
+  .details-toggle {
+    display: inline-block;
+    margin: 0 0 -8px 10px;
+  }
+
+  .log {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 550px) {
+  h1 {
+    ine-height: 1.2;
+  }
+  header p, .logo {
+    display: none;
+  }
+  label {
+    display: block;
+  }
+  select {
+    width: 250px;
+  }
+}
+
+
+
+/*
+ * Styling below derived from
+ * Chosen, a Select Box Enhancer for jQuery and Prototype
+ * by Patrick Filler for Harvest, http://getharvest.com
+ *
+ * Version 1.4.2
+ * Full source at https://github.com/harvesthq/chosen
+ * Copyright (c) 2011-2015 Harvest http://getharvest.com
+ *
+ * MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
+*/
+
+.chosen {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 13px;
+  zoom: 1;
+  *display: inline;
+  user-select: none;
+}
+.chosen * {
+  box-sizing: border-box;
+}
+.chosen .chosen-drop {
+  position: absolute;
+  top: 100%;
+  left: -9999px;
+  z-index: 1010;
+  width: 100%;
+  border: 1px solid #999999;
+  border-top: 0;
+  background: #fff;
+}
+.chosen.chosen-with-drop .chosen-drop {
+  left: 0;
+}
+.chosen a {
+  cursor: pointer;
+}
+
+
+.chosen-single .chosen-single {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  padding: 0 0 0 8px;
+  height: 25px;
+  border: 1px solid #999999;
+  border-radius: 3px;
+  background-color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 24px;
+  font-weight: normal;
+  color: inherit;
+}
+.chosen-single .chosen-single span {
+  display: block;
+  overflow: hidden;
+  margin-right: 26px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chosen-single .chosen-single-with-deselect span {
+  margin-right: 38px;
+}
+.chosen-single .chosen-single abbr {
+  position: absolute;
+  top: 6px;
+  right: 26px;
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: url('../images/chosen-sprite.png') -42px 1px no-repeat;
+  font-size: 1px;
+}
+.chosen-single .chosen-single abbr:hover {
+  background-position: -42px -10px;
+}
+.chosen-single .chosen-single div {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  width: 18px;
+  height: 100%;
+}
+.chosen-single .chosen-single div b {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: url('../images/chosen-sprite.png') no-repeat 0px 2px;
+}
+.chosen-single .chosen-search {
+  position: relative;
+  z-index: 1010;
+  margin: 0;
+  padding: 3px 4px;
+  white-space: nowrap;
+}
+.chosen-single .chosen-search input[type="text"] {
+  margin: 1px 0;
+  padding: 4px 20px 4px 5px;
+  width: 100%;
+  height: auto;
+  outline: 0;
+  border: 1px solid #999999;
+  background: white url('../images/chosen-sprite.png') no-repeat 100% -20px;
+  background: url('../images/chosen-sprite.png') no-repeat 100% -20px;
+  font-size: 1em;
+  line-height: normal;
+  border-radius: 0;
+}
+.chosen-single .chosen-drop {
+  margin-top: -1px;
+  border-radius: 0 0 4px 4px;
+  background-clip: padding-box;
+}
+.chosen-single.chosen-single-nosearch .chosen-search {
+  position: absolute;
+  left: -9999px;
+}
+
+.chosen-results {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: 0 4px 4px 0;
+  padding: 0 0 0 4px;
+  max-height: 240px;
+  -webkit-overflow-scrolling: touch;
+}
+.chosen-results li {
+  display: none;
+  margin: 0;
+  padding: 5px 6px;
+  list-style: none;
+  line-height: 15px;
+  word-wrap: break-word;
+  -webkit-touch-callout: none;
+}
+li.active-result {
+  display: list-item;
+  cursor: pointer;
+}
+li.highlighted {
+  background-color: #1a5f76;
+  color: #fff;
+}
+li.no-results {
+  display: none;
+}
+.chosen-results li em {
+  font-style: normal;
+  text-decoration: underline;
+}
+
+.chosen-choices {
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0 5px;
+  width: 100%;
+  height: auto !important;
+  height: 1%;
+  border: 1px solid #999999;
+  border-radius: 3px;
+  background-color: #fff;
+  cursor: text;
+}
+.chosen-choices li {
+  float: left;
+  list-style: none;
+}
+li.search-field {
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+}
+li.search-field input[type="text"] {
+  margin: 1px 0;
+  padding: 0;
+  height: 20px;
+  outline: 0;
+  border: 0 !important;
+  font-size: 100%;
+  line-height: normal;
+  border-radius: 0;
+}
+li.search-choice {
+  position: relative;
+  margin: 1px 5px 1px 0;
+  padding: 3px 20px 3px 5px;
+  max-width: 100%;
+  border-radius: 3px;
+  background-color: #f6f6f6;
+  border: 1px solid #cacaca;
+  line-height: 13px;
+  cursor: default;
+}
+li.search-choice:hover {
+  background-color: #ececec;
+}
+li.search-choice span {
+  word-wrap: break-word;
+}
+li.search-choice .search-choice-close {
+  position: absolute;
+  top: 4px;
+  right: 3px;
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: url('../images/chosen-sprite.png') -42px 1px no-repeat;
+  font-size: 1px;
+}
+li.search-choice .search-choice-close:hover {
+  background-position: -42px -10px;
+}
+li.search-choice-focus {
+  background: #d4d4d4;
+}
+li.search-choice-focus .search-choice-close {
+  background-position: -42px -10px;
+}
+.chosen-results {
+  margin: 0;
+  padding: 0;
+}
+.chosen-drop .result-selected {
+  display: list-item;
+  cursor: default;
+}
+
+.chosen-active.chosen-with-drop .chosen-single {
+  border: 1px solid #999999;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.chosen-active.chosen-with-drop .chosen-single div {
+  border-left: none;
+}
+.chosen-active.chosen-with-drop .chosen-single div b {
+  background-position: -18px 2px;
+}
+.chosen-active .chosen-choices {
+  z-index: 100;
+  max-height: 500px;
+}
+
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 144dpi), only screen and (min-resolution: 1.5dppx) {
+  .chosen-rtl .chosen-search input[type="text"],
+  .chosen-single .chosen-single abbr,
+  .chosen-single .chosen-single div b,
+  .chosen-single .chosen-search input[type="text"],
+  .chosen-multi .chosen-choices .search-choice .search-choice-close,
+  .chosen .chosen-results-scroll-down span,
+  .chosen .chosen-results-scroll-up span {
+    background-image: url('../images/chosen-sprite@2x.png') !important;
+    background-size: 52px 37px !important;
+    background-repeat: no-repeat !important;
+  }
+}

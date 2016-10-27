@@ -76,20 +76,16 @@
     <li>
       <button class="start">Execute query</button>
       <button class="stop" style="display:none">Stop execution</button>
+      <span class="timing"></span>
     </li>
 
     <li>
       <label>Query results</label>
-      <pre class="results"></pre>
-    </li>
-
-    <li>
-      <label>Execution log</label>
-      <pre class="log"></pre>
+      <div class="results"></div>
     </li>
   </ul>
 </fieldset>
 
-<link rel="stylesheet" href="/assets/styles/ldf-query-ui" />
-<script src="/assets/scripts/ldf-query-ui"></script>
+<link rel="stylesheet" href="/assets/styles/ldf-client" />
+<script src="/assets/scripts/ldf-client-ui-packaged"></script>
 <script>jQuery(function($){$(".ldf-client").queryui({settings:"/assets/queries"})})</script>
