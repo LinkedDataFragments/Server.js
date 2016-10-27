@@ -29,8 +29,8 @@ describe('AssetsController', function () {
     });
 
     it('should correctly serve SVG assets', function (done) {
-      client.get('/assets/logo').expect(function (response) {
-        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/logo.svg'), 'utf8');
+      client.get('/assets/images/logo').expect(function (response) {
+        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/images/logo.svg'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/svg+xml');
@@ -40,8 +40,8 @@ describe('AssetsController', function () {
     });
 
     it('should correctly serve CSS assets', function (done) {
-      client.get('/assets/style').expect(function (response) {
-        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/style.css'), 'utf8');
+      client.get('/assets/styles/ldf-server').expect(function (response) {
+        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/styles/ldf-server.css'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/css;charset=utf-8');
