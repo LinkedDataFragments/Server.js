@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/LinkedDataFragments/Server.js.svg?branch=master)](https://travis-ci.org/LinkedDataFragments/Server.js)
 [![npm version](https://badge.fury.io/js/ldf-server.svg)](https://www.npmjs.com/package/ldf-server)
 [![Docker Automated Build](https://img.shields.io/docker/automated/linkeddatafragments/server.js.svg)](https://hub.docker.com/r/linkeddatafragments/server.js/)
+[![DOI](https://zenodo.org/badge/16891600.svg)](https://zenodo.org/badge/latestdoi/16891600)
 
 On today's Web, Linked Data is published in different ways,
 which include [data dumps](http://downloads.dbpedia.org/3.9/en/),

@@ -141,8 +141,10 @@ describe('HdtDatasource', function () {
     var datasource;
     function getDatasource() { return datasource; }
     before(function (done) {
-      datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks,
-                                       blankNodePrefix: 'http://example.org/.well-known/genid/' });
+      datasource = new HdtDatasource({
+        file: exampleHdtFileWithBlanks,
+        blankNodePrefix: 'http://example.org/.well-known/genid/',
+      });
       datasource.on('initialized', done);
     });
     after(function (done) {

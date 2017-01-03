@@ -4,6 +4,7 @@ before_script:
   - npm install
 
 cache:
+  key: "$CI_PROJECT_PATH/$CI_BUILD_REF_NAME/$NODE_VERSION"
   paths:
   - node_modules/
 
