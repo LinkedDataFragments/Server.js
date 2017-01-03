@@ -218,6 +218,13 @@ describe('QuadPatternRouter', function () {
             { a: 1 },
             { a: 1 },
           ],
+          [
+            'the default graph as graph parameter',
+            'http://example.org/?graph=urn%3Aldf%3AdefaultGraph',
+            'should add the default graph to the query',
+            { a: 1 },
+            { a: 1, features: { quadPattern: true }, graph: '' },
+          ],
         ]
         .forEach(function (args) { test.extractQueryParams.apply(router, args); });
       });
