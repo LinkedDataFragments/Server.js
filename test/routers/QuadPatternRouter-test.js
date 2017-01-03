@@ -1,23 +1,23 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var TriplePatternRouter = require('../../lib/routers/TriplePatternRouter');
+var QuadPatternRouter = require('../../lib/routers/QuadPatternRouter');
 
-describe('TriplePatternRouter', function () {
-  describe('The TriplePatternRouter module', function () {
+describe('QuadPatternRouter', function () {
+  describe('The QuadPatternRouter module', function () {
     it('should be a function', function () {
-      TriplePatternRouter.should.be.a('function');
+      QuadPatternRouter.should.be.a('function');
     });
 
-    it('should be a TriplePatternRouter constructor', function () {
-      new TriplePatternRouter().should.be.an.instanceof(TriplePatternRouter);
+    it('should be a QuadPatternRouter constructor', function () {
+      new QuadPatternRouter().should.be.an.instanceof(QuadPatternRouter);
     });
 
-    it('should create new TriplePatternRouter objects', function () {
-      TriplePatternRouter().should.be.an.instanceof(TriplePatternRouter);
+    it('should create new QuadPatternRouter objects', function () {
+      QuadPatternRouter().should.be.an.instanceof(QuadPatternRouter);
     });
   });
 
-  describe('A TriplePatternRouter instance', function () {
-    var router = new TriplePatternRouter();
+  describe('A QuadPatternRouter instance', function () {
+    var router = new QuadPatternRouter();
 
     describe('extractUrlParams', function () {
       describe('with an existing query', function () {
@@ -176,14 +176,56 @@ describe('TriplePatternRouter', function () {
             { a: 1 },
             { a: 1, features: { triplePattern: true }, object: '"foo"^^http://example.org/foo#bar' },
           ],
+          [
+            'a URL with an empty graph parameter',
+            'http://example.org/?graph=',
+            'should not add the graph to the query',
+            { a: 1 },
+            { a: 1 },
+          ],
+          [
+            'a URL with an IRI graph parameter',
+            'http://example.org/?graph=http%3A%2F%2Fexample.org%2Ffoo%23bar',
+            'should add the graph to the query',
+            { a: 1 },
+            { a: 1, features: { quadPattern: true }, graph: 'http://example.org/foo#bar' },
+          ],
+          [
+            'a URL with an IRI graph parameter in angular brackets',
+            'http://example.org/?graph=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
+            'should add the graph to the query',
+            { a: 1 },
+            { a: 1, features: { quadPattern: true }, graph: 'http://example.org/foo#bar' },
+          ],
+          [
+            'a URL with a variable graph parameter',
+            'http://example.org/?graph=%3Ffoo',
+            'should not add the graph to the query',
+            { a: 1 },
+            { a: 1 },
+          ],
+          [
+            'a URL with a blank graph parameter',
+            'http://example.org/?graph=_:foo',
+            'should not add the graph to the query',
+            { a: 1 },
+            { a: 1 },
+          ],
+          [
+            'a URL with a literal graph parameter',
+            'http://example.org/?graph=%22foo%22',
+            'should not add the graph to the query',
+            { a: 1 },
+            { a: 1 },
+          ],
         ]
         .forEach(function (args) { test.extractQueryParams.apply(router, args); });
       });
     });
   });
 
-  describe('A TriplePatternRouter instance with prefixes', function () {
-    var router = new TriplePatternRouter({
+  describe('A QuadPatternRouter instance with prefixes', function () {
+    var router = new QuadPatternRouter({
       prefixes: {
         foo:  'http://example.org/foo#',
         http: 'http://www.w3.org/2011/http#',
@@ -367,6 +409,55 @@ describe('TriplePatternRouter', function () {
             'should add the object to the query',
             { a: 1 },
             { a: 1, features: { triplePattern: true }, object: '"foo"^^http://example.org/foo#bar' },
+          ],
+          [
+            'a URL with an empty graph parameter',
+            'http://example.org/?graph=',
+            'should not add the graph to the query',
+            { a: 1 },
+            { a: 1 },
+          ],
+          [
+            'a URL with an IRI graph parameter',
+            'http://example.org/?graph=http%3A%2F%2Fexample.org%2Ffoo%23bar',
+            'should add the graph to the query',
+            { a: 1 },
+            { a: 1, features: { quadPattern: true }, graph: 'http://example.org/foo#bar' },
+          ],
+          [
+            'a URL with a prefixed name graph parameter',
+            'http://example.org/?graph=foo%3Abar',
+            'should add the expanded graph to the query',
+            { a: 1 },
+            { a: 1, features: { quadPattern: true }, graph: 'http://example.org/foo#bar' },
+          ],
+          [
+            'a URL with a prefixed name graph parameter with the "http" prefix',
+            'http://example.org/?graph=http%3AConnection',
+            'should add the expanded graph to the query',
+            { a: 1 },
+            { a: 1, features: { quadPattern: true }, graph: 'http://www.w3.org/2011/http#Connection' },
+          ],
+          [
+            'a URL with a prefixed name graph parameter with an unknown prefix',
+            'http://example.org/?graph=bar%3Afoo',
+            'should add the non-expanded graph to the query',
+            { a: 1 },
+            { a: 1, features: { quadPattern: true }, graph: 'bar:foo' },
+          ],
+          [
+            'a URL with an IRI graph parameter in angular brackets',
+            'http://example.org/?graph=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
+            'should add the non-expanded graph to the query',
+            { a: 1 },
+            { a: 1, features: { quadPattern: true }, graph: 'http://example.org/foo#bar' },
+          ],
+          [
+            'a URL with a prefixed name graph parameter in angular brackets',
+            'http://example.org/?graph=%3Cfoo%3Abar%3E',
+            'should add the non-expanded graph to the query',
+            { a: 1 },
+            { a: 1, features: { quadPattern: true }, graph: 'foo:bar' },
           ],
         ]
         .forEach(function (args) { test.extractQueryParams.apply(router, args); });

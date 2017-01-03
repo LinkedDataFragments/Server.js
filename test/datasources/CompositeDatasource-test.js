@@ -71,7 +71,7 @@ describe('CompositeDatasource', function () {
 
     itShouldExecute(getDatasource,
       'the empty quad query',
-      { features: { triplePattern: true, quadPattern: true } },
+      { features: { quadPattern: true } },
       totalSize, totalSize);
 
     itShouldExecute(getDatasource,
@@ -126,27 +126,27 @@ describe('CompositeDatasource', function () {
 
     itShouldExecute(getDatasource,
       'a query for an existing graph',
-      { graph: 'http://example.org/bob',    limit: 10, features: { quadPattern: true, triplePattern: true, limit: true } },
+      { graph: 'http://example.org/bob',    limit: 10, features: { quadPattern: true, limit: true } },
       3, 3);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing graph',
-      { graph: 'http://example.org/notbob', limit: 10, features: { quadPattern: true, triplePattern: true, limit: true } },
+      { graph: 'http://example.org/notbob', limit: 10, features: { quadPattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for the default graph',
-      { graph: 'undefined#defaultGraph',    limit: 10, features: { quadPattern: true, triplePattern: true, limit: true } },
+      { graph: 'undefined#defaultGraph',    limit: 10, features: { quadPattern: true, limit: true } },
       10, 266);
 
     itShouldExecute(getDatasource,
       'a query for the default graph without a limit',
-      { graph: 'undefined#defaultGraph',    features: { quadPattern: true, triplePattern: true, limit: true } },
+      { graph: 'undefined#defaultGraph',    features: { quadPattern: true, limit: true } },
       266, 266);
 
     itShouldExecute(getDatasource,
       'a query for graph0',
-      { graph: 'http://example.org/graph0', limit: 10, features: { quadPattern: true, triplePattern: true, limit: true } },
+      { graph: 'http://example.org/graph0', limit: 10, features: { quadPattern: true, limit: true } },
       6, 6);
   });
 });

@@ -27,7 +27,7 @@
 
   "routers": [
     { "type": "DatasourceRouter" },
-    { "type": "TriplePatternRouter" },
+    { "type": "QuadPatternRouter" },
     { "type": "PageRouter", "settings": { "pageSize": 100 } }
   ],
 
