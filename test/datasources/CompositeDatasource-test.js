@@ -136,12 +136,12 @@ describe('CompositeDatasource', function () {
 
     itShouldExecute(getDatasource,
       'a query for the default graph',
-      { graph: 'undefined#defaultGraph',    limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: 'urn:ldf:defaultGraph',      limit: 10, features: { quadPattern: true, limit: true } },
       10, 266);
 
     itShouldExecute(getDatasource,
       'a query for the default graph without a limit',
-      { graph: 'undefined#defaultGraph',    features: { quadPattern: true, limit: true } },
+      { graph: 'urn:ldf:defaultGraph',      features: { quadPattern: true, limit: true } },
       266, 266);
 
     itShouldExecute(getDatasource,
