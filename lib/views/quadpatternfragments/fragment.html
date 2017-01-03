@@ -83,8 +83,8 @@
       N3Util.getLiteralValue(object)
       %></span>"</a>
     <% } -%>
-    <a href="?graph=<%= encodeURIComponent(graph) %>"><%
-      %><abbr title="<%= graph %>"><%= shorten(graph) %></abbr><%
+    <a href="?graph=<%= encodeURIComponent(graph || 'urn:ldf:defaultGraph') %>"><%
+      %><abbr title="<%= graph %>"><%= graph ? shorten(graph) : '(default)' %></abbr><%
       %></a>.
   </li>
 <% }); -%>
