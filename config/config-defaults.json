@@ -22,7 +22,6 @@
   "routers": [
     "DatasourceRouter",
     "QuadPatternRouter",
-    "TriplePatternRouter",
     "PageRouter"
   ],
 
