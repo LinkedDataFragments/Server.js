@@ -1,38 +1,38 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
-var TurtleDatasource = require('../../lib/datasources/TurtleDatasource');
+var N3Datasource = require('../../lib/datasources/N3Datasource');
 
 var Datasource = require('../../lib/datasources/Datasource'),
     path = require('path');
 
 var exampleTurtleUrl = 'file://' + path.join(__dirname, '../assets/test.ttl');
 
-describe('TurtleDatasource', function () {
-  describe('The TurtleDatasource module', function () {
+describe('N3Datasource', function () {
+  describe('The N3Datasource module', function () {
     it('should be a function', function () {
-      TurtleDatasource.should.be.a('function');
+      N3Datasource.should.be.a('function');
     });
 
-    it('should be a TurtleDatasource constructor', function (done) {
-      var instance = new TurtleDatasource({ url: exampleTurtleUrl });
-      instance.should.be.an.instanceof(TurtleDatasource);
+    it('should be a N3Datasource constructor', function (done) {
+      var instance = new N3Datasource({ url: exampleTurtleUrl });
+      instance.should.be.an.instanceof(N3Datasource);
       instance.close(done);
     });
 
-    it('should create TurtleDatasource objects', function (done) {
-      var instance = TurtleDatasource({ url: exampleTurtleUrl });
-      instance.should.be.an.instanceof(TurtleDatasource);
+    it('should create N3Datasource objects', function (done) {
+      var instance = N3Datasource({ url: exampleTurtleUrl });
+      instance.should.be.an.instanceof(N3Datasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', function (done) {
-      var instance = new TurtleDatasource({ url: exampleTurtleUrl });
+      var instance = new N3Datasource({ url: exampleTurtleUrl });
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
   });
 
-  describe('A TurtleDatasource instance for an example Turtle file', function () {
-    var datasource = new TurtleDatasource({ url: exampleTurtleUrl });
+  describe('A N3Datasource instance for an example Turtle file', function () {
+    var datasource = new N3Datasource({ url: exampleTurtleUrl });
     after(function (done) { datasource.close(done); });
 
     itShouldExecute(datasource,

@@ -3,8 +3,7 @@ var CompositeDatasource = require('../../lib/datasources/CompositeDatasource');
 
 var Datasource = require('../../lib/datasources/Datasource'),
     HdtDatasource = require('../../lib/datasources/HdtDatasource'),
-    TurtleDatasource = require('../../lib/datasources/TurtleDatasource'),
-    TrigDatasource = require('../../lib/datasources/TrigDatasource'),
+    N3Datasource = require('../../lib/datasources/N3Datasource'),
     path = require('path');
 
 var exampleHdtFile = path.join(__dirname, '../assets/test.hdt');
@@ -16,8 +15,8 @@ describe('CompositeDatasource', function () {
   var datasources = {
     data0: { settings: { file: exampleHdtFile }, datasourceType: HdtDatasource, size: 132 },
     data1: { settings: { file: exampleHdtFileWithBlanks, graph: 'http://example.org/graph0' }, datasourceType: HdtDatasource, size: 6 },
-    data2: { settings: { url: exampleTurtleUrl }, datasourceType: TurtleDatasource, size: 132 },
-    data3: { settings: { url: exampleTrigUrl }, datasourceType: TrigDatasource, size: 7 },
+    data2: { settings: { url: exampleTurtleUrl }, datasourceType: N3Datasource, size: 132 },
+    data3: { settings: { url: exampleTrigUrl }, datasourceType: N3Datasource, size: 7 },
   };
   Object.keys(datasources).forEach(function (datasourceId) {
     var datasource = datasources[datasourceId];

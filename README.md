@@ -70,8 +70,10 @@ and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
 
 The following sources are supported out of the box:
 - HDT files ([`HdtDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/HdtDatasource.js) with `file` setting)
-- N-Triples documents ([`TurtleDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/TurtleDatasource.js) with `url` setting)
+- N-Triples documents ([`NTriplesDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/NTriplesDatasource.js) with `url` setting)
 - Turtle documents ([`TurtleDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/TurtleDatasource.js) with `url` setting)
+- N-Quads documents ([`NQuadsDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/NQuadsDatasource.js) with `url` setting)
+- TriG documents ([`TrigDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/TrigDatasource.js) with `url` setting)
 - JSON-LD documents ([`JsonLdDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/JsonLdDatasource.js) with `url` setting)
 - SPARQL endpoints ([`SparqlDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/SparqlDatasource.js) with `endpoint` and optionally `defaultGraph` settings)
 
