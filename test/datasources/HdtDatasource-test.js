@@ -87,6 +87,11 @@ describe('HdtDatasource', function () {
       'a query for a non-existing object',
       { object: 'http://example.org/s1',    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
+
+    itShouldExecute(getDatasource,
+      'a query for a non-default graph',
+      { object: 'http://example.org/s1', graph: 'g', features: { quadPattern: true } },
+      0, 0);
   });
 
   describe('A HdtDatasource instance with blank nodes', function () {
