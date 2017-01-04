@@ -79,6 +79,16 @@ describe('JsonLdDatasource', function () {
       'a query for a non-existing object',
       { object: 'http://example.org/s1',    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
+
+    itShouldExecute(datasource,
+      'a query for an existing graph',
+      { graph: 'http://example.org/g',      limit: 10, features: { quadPattern: true, limit: true } },
+      10, 10);
+
+    itShouldExecute(datasource,
+      'a query for a non-existing graph',
+      { graph: 'http://example.org/s1',     limit: 10, features: { quadPattern: true, limit: true } },
+      0, 0);
   });
 });
 
