@@ -286,4 +286,59 @@ describe('Datasource', function () {
       onError.should.have.been.calledWith(error);
     });
   });
+
+  describe('A Datasource instance with a graph property', function () {
+    var datasource = new Datasource({
+      graph: 'http://example.org/#mygraph',
+    });
+    Object.defineProperty(datasource, 'supportedFeatures', {
+      enumerable: true,
+      value: { custom: true },
+    });
+    datasource._executeQuery = sinon.spy(function (query, destination) {
+      destination._push({ subject: 's', predicate: 'p', object: 'o1' });
+      destination._push({ subject: 's', predicate: 'p', object: 'o2', graph: '' });
+      destination._push({ subject: 's', predicate: 'p', object: 'o3', graph: 'g' });
+      destination.close();
+    });
+
+    beforeEach(function () {
+      datasource._executeQuery.reset();
+    });
+
+    it('should move triples in the default graph to the given graph', function (done) {
+      var result = datasource.select({ features: { custom: true } }, done), quads = [];
+      result.on('data', function (q) { quads.push(q); });
+      result.on('end', function () {
+        quads.should.deep.equal([
+          { subject: 's', predicate: 'p', object: 'o1', graph: 'http://example.org/#mygraph' },
+          { subject: 's', predicate: 'p', object: 'o2', graph: 'http://example.org/#mygraph' },
+          { subject: 's', predicate: 'p', object: 'o3', graph: 'g' },
+        ]);
+        done();
+      });
+    });
+
+    it('should query the given graph as the default graph', function () {
+      datasource.select({
+        graph: 'http://example.org/#mygraph',
+        features: { custom: true },
+      });
+      datasource._executeQuery.args[0][0].should.deep.equal({
+        graph: '',
+        features: { custom: true },
+      });
+    });
+
+    it('should query the default graph as the empty graph', function () {
+      datasource.select({
+        graph: '',
+        features: { custom: true },
+      });
+      datasource._executeQuery.args[0][0].should.deep.equal({
+        graph: 'urn:ldf:emptyGraph',
+        features: { custom: true },
+      });
+    });
+  });
 });
