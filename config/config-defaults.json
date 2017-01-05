@@ -28,7 +28,6 @@
   "controllers": [
     "SummaryController",
     "TimegateController",
-    "TriplePatternFragmentsController",
     "QuadPatternFragmentsController",
     "AssetsController",
     "DereferenceController",
@@ -44,7 +43,7 @@
   },
 
   "extensions": {
-    "TriplePatternFragmentsController": [
+    "QuadPatternFragmentsController": [
       "MementoControllerExtension"
     ]
   },
