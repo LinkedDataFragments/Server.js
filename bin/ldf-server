@@ -133,6 +133,7 @@ else {
   var indexPath = datasourceBase.replace(/\/$/, '');
   datasources[indexPath] = datasources[indexPath] || {
     url: baseURLRoot + '/' + indexPath + '#dataset',
+    hide: true,
     role: 'index',
     title: 'dataset index',
     datasource: new IndexDatasource({ datasources: datasources }),
