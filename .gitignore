@@ -4,7 +4,8 @@ summaries
 *.log
 *.hdt.index*
 
-# Ignore deployment configuration files, but keep defaults (for npm package)
+# Ignore deployment configuration files, but keep defaults and examples
 config.json
 config/*.json
 !config/config-defaults.json
+!config/config-example*.json
