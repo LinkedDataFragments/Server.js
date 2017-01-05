@@ -3,22 +3,25 @@
 <http://ex.org/data#dataset> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#Collection>.
 <http://ex.org/data#dataset> <http://rdfs.org/ns/void#subset> <http://ex.org/data?fragment&page=3>.
 <http://ex.org/data#dataset> <http://rdfs.org/ns/void#subset> <http://ex.org/data?fragment>.
-<http://ex.org/data#dataset> <http://www.w3.org/ns/hydra/core#search> _:triplePattern.
-_:triplePattern <http://www.w3.org/ns/hydra/core#template> "http://ex.org/data{?subject,predicate,object}".
-_:triplePattern <http://www.w3.org/ns/hydra/core#variableRepresentation> <http://www.w3.org/ns/hydra/core#ExplicitRepresentation>.
-_:triplePattern <http://www.w3.org/ns/hydra/core#mapping> _:subject.
-_:triplePattern <http://www.w3.org/ns/hydra/core#mapping> _:predicate.
-_:triplePattern <http://www.w3.org/ns/hydra/core#mapping> _:object.
+<http://ex.org/data#dataset> <http://www.w3.org/TR/sparql11-service-description/#defaultGraph> <urn:ldf:defaultGraph>.
+<http://ex.org/data#dataset> <http://www.w3.org/ns/hydra/core#search> _:pattern.
+_:pattern <http://www.w3.org/ns/hydra/core#template> "http://ex.org/data{?subject,predicate,object,graph}".
+_:pattern <http://www.w3.org/ns/hydra/core#variableRepresentation> <http://www.w3.org/ns/hydra/core#ExplicitRepresentation>.
+_:pattern <http://www.w3.org/ns/hydra/core#mapping> _:subject.
+_:pattern <http://www.w3.org/ns/hydra/core#mapping> _:predicate.
+_:pattern <http://www.w3.org/ns/hydra/core#mapping> _:object.
 _:subject <http://www.w3.org/ns/hydra/core#variable> "subject".
 _:subject <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject>.
 _:predicate <http://www.w3.org/ns/hydra/core#variable> "predicate".
 _:predicate <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate>.
 _:object <http://www.w3.org/ns/hydra/core#variable> "object".
 _:object <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object>.
+_:graph <http://www.w3.org/ns/hydra/core#variable> "graph".
+_:graph <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/TR/sparql11-service-description/#graph>.
 <http://ex.org/data?fragment> <http://rdfs.org/ns/void#subset> <http://ex.org/data?fragment&page=3>.
 <http://ex.org/data?fragment&page=3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#PartialCollectionView>.
 <http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/title> "Linked Data Fragment of My data"@en.
-<http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/description> "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."@en.
+<http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/description> "Triple/Quad Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c ?d }."@en.
 <http://ex.org/data?fragment&page=3> <http://purl.org/dc/terms/source> <http://ex.org/data#dataset>.
 <http://ex.org/data?fragment&page=3> <http://www.w3.org/ns/hydra/core#totalItems> "1234"^^<http://www.w3.org/2001/XMLSchema#integer>.
 <http://ex.org/data?fragment&page=3> <http://rdfs.org/ns/void#triples> "1234"^^<http://www.w3.org/2001/XMLSchema#integer>.

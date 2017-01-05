@@ -1,34 +1,34 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var TriplePatternFragmentsRdfView = require('../../../lib/views/triplepatternfragments/TriplePatternFragmentsRdfView');
+var QuadPatternFragmentsRdfView = require('../../../lib/views/quadpatternfragments/QuadPatternFragmentsRdfView');
 
 var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
     AsyncIterator = require('asynciterator');
 
-describe('TriplePatternFragmentsRdfView', function () {
-  describe('The TriplePatternFragmentsRdfView module', function () {
+describe('QuadPatternFragmentsRdfView', function () {
+  describe('The QuadPatternFragmentsRdfView module', function () {
     it('should be a function', function () {
-      TriplePatternFragmentsRdfView.should.be.a('function');
+      QuadPatternFragmentsRdfView.should.be.a('function');
     });
 
-    it('should be a TriplePatternFragmentsRdfView constructor', function () {
-      new TriplePatternFragmentsRdfView().should.be.an.instanceof(TriplePatternFragmentsRdfView);
+    it('should be a QuadPatternFragmentsRdfView constructor', function () {
+      new QuadPatternFragmentsRdfView().should.be.an.instanceof(QuadPatternFragmentsRdfView);
     });
 
-    it('should create new TriplePatternFragmentsRdfView objects', function () {
-      TriplePatternFragmentsRdfView().should.be.an.instanceof(TriplePatternFragmentsRdfView);
+    it('should create new QuadPatternFragmentsRdfView objects', function () {
+      QuadPatternFragmentsRdfView().should.be.an.instanceof(QuadPatternFragmentsRdfView);
     });
   });
 
-  describe('A TriplePatternFragmentsRdfView instance', function () {
-    var view = new TriplePatternFragmentsRdfView();
+  describe('A QuadPatternFragmentsRdfView instance', function () {
+    var view = new QuadPatternFragmentsRdfView();
     var settings = {
       datasource: {
         title: 'My data',
         index: 'http://ex.org/#dataset',
         url: 'http://ex.org/data#dataset',
-        templateUrl: 'http://ex.org/data{?subject,predicate,object}',
+        templateUrl: 'http://ex.org/data{?subject,predicate,object,graph}',
       },
       fragment: {
         url:             'http://ex.org/data?fragment',
@@ -47,7 +47,7 @@ describe('TriplePatternFragmentsRdfView', function () {
       query: {
         offset: 200,
         limit: 100,
-        patternString: '{ a ?b ?c }',
+        patternString: '{ a ?b ?c ?d }',
       },
     };
 
