@@ -121,7 +121,7 @@ input[type=submit]:hover {
   border-color: #666666;
 }
 input[type=submit]:active {
-  padding: 6px 7px 4px 9px;
+  margin: 0 0 1px 1px;
 }
 .uri {
   font-family: "Droid Sans Mono", monospace;
