@@ -1,17 +1,21 @@
 <% /* @license MIT ©2013-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */ -%>
 <%
   var sd = 'http://www.w3.org/TR/sparql11-service-description/#';
+
+  var patternKind = datasource.supportsQuads ? 'triple/quad' : 'triple';
+  var components = !datasource.supportsQuads ? ['subject', 'predicate', 'object']
+                                             : ['subject', 'predicate', 'object', 'graph'];
 %>
 <div resource="<%= datasource.url %>" typeof="void:datasource hydra:Collection">
 <h2><a href="<%= datasource.url %>"><%= capitalizeFirst(datasource.title) %></a></h2>
 
 <form action="?" method="GET" property="hydra:search" resource="#pattern">
   <fieldset resource="#pattern">
-    <legend>Search <%= datasource.title %> by triple/quad pattern</legend>
+    <legend>Search <%= datasource.title %> by <%= patternKind %> pattern</legend>
     <span property="hydra:template" content="<%= datasource.templateUrl %>" lang=""></span>
     <span property="hydra:variableRepresentation" resource="hydra:ExplicitRepresentation"></span>
     <ul>
-<% ['subject', 'predicate', 'object', 'graph'].forEach(function (component) { -%>
+<% components.forEach(function (component) { -%>
       <li property="hydra:mapping" resource="#<%= component %>">
         <label for="<%= component %>"
                about="#<%= component %>" property="hydra:variable" lang=""><%= component %></label>
@@ -74,8 +78,8 @@
     <a href="?object=<%= encodeURIComponent(object) %>" resource="<%= subject %>"><%
       %><abbr title="<%= object %>" property="<%= predicate %>" resource="<%= object %>"><%=
         shorten(object)
-        %></abbr></a>
-    <% } else {
+        %></abbr></a><%
+    } else {
     var type = N3Util.getLiteralType(object),
         language = N3Util.getLiteralLanguage(object);
     -%>
@@ -84,11 +88,13 @@
       if (!language) { %>datatype="<%= type %>"<% }
       else { %>lang="<%= language %>" xml:lang="<%= language %>"<% } %>><%=
       N3Util.getLiteralValue(object)
-      %></span>"</a>
-    <% } -%>
+      %></span>"</a><%
+    }
+    if (datasource.supportsQuads) { -%>
     <a href="?graph=<%= encodeURIComponent(graph || 'urn:ldf:defaultGraph') %>"><%
       %><abbr title="<%= graph %>"><%= graph ? shorten(graph) : '(default)' %></abbr><%
-      %></a>.
+      %></a><% }
+    -%>.
   </li>
 <% }); -%>
 </ul>

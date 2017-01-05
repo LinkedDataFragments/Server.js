@@ -6,12 +6,12 @@
   <h2>Available datasets</h2>
   <p>Browse the following datasets as <a href="http://linkeddatafragments.org/in-depth/#tpf">Triple/Quad Pattern Fragments</a>:</p>
   <dl class="datasets">
-    <% for (var datasourceName in datasources) {
+    <% Object.keys(datasources).forEach(function (datasourceName) {
          var datasource = datasources[datasourceName];
-         if (datasource.hide) continue; %>
+         if (datasource.hide) return; %>
         <dt><a href="<%= datasource.url.replace(/#.*/, '') %>"><%= datasource.title %></a></dt>
         <dd><%= datasource.description || ' ' %></dd>
-    <% } %>
+    <% }); %>
   </dl>
   <p>The current dataset <em class="dataset">index</em> contains metadata about these datasets.</p>
 </div>

@@ -39,7 +39,7 @@ describe('QuadPatternFragmentsController', function () {
       datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().returns({ stream: 'items' }),
-        supportedFeatures: { triplePattern: true },
+        supportedFeatures: { quadPattern: true },
       };
       datasources = { 'my-datasource': { title: 'My data', datasource: datasource } };
       view = new QuadPatternFragmentsRdfView(),
@@ -133,6 +133,7 @@ describe('QuadPatternFragmentsController', function () {
             index: 'https://example.org/#dataset',
             url: 'https://example.org/my-datasource#dataset',
             templateUrl: 'https://example.org/my-datasource{?subject,predicate,object,graph}',
+            supportsQuads: true,
           },
           fragment: {
             url:             'https://example.org/my-datasource?a=b&c=d',
