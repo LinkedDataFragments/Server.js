@@ -146,12 +146,12 @@ footer {
   font-size: small;
 }
 footer * {
-  color: gray;
+  color: #999999;
   margin-right: 5px;
 }
 
 .counts {
-  color: gray;
+  color: #999999;
 }
 ul.links {
   margin: 0;
@@ -195,6 +195,9 @@ ul.quads a {
 ul.quads a:last-child {
   margin-right: 0;
 }
+ul.quads li:not(:hover) a:nth-child(4) {
+  color: #999999;
+}
 abbr {
   border: none;
   text-decoration: none;
@@ -213,7 +216,7 @@ dt {
   clear: left;
 }
 dd {
-  color: gray;
+  color: #999999;
   margin: .1em 0 0 12em;
   font-size: .95em;
 }
