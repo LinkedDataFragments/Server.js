@@ -7,9 +7,10 @@
 <http://ex.org/#dataset> hydra:member <http://ex.org/data#dataset>.
 <http://ex.org/data#dataset> a void:Dataset, hydra:Collection;
     void:subset <http://ex.org/data?fragment&page=3>, <http://ex.org/data?fragment>;
-    void:uriLookupEndpoint "http://ex.org/data{?subject,predicate,object}";
-    hydra:search _:triplePattern.
-_:triplePattern hydra:template "http://ex.org/data{?subject,predicate,object}";
+    void:uriLookupEndpoint "http://ex.org/data{?subject,predicate,object,graph}";
+    <http://www.w3.org/TR/sparql11-service-description/#defaultGraph> <urn:ldf:defaultGraph>;
+    hydra:search _:pattern.
+_:pattern hydra:template "http://ex.org/data{?subject,predicate,object,graph}";
     hydra:variableRepresentation hydra:ExplicitRepresentation;
     hydra:mapping _:subject, _:predicate, _:object.
 _:subject hydra:variable "subject";
@@ -18,10 +19,12 @@ _:predicate hydra:variable "predicate";
     hydra:property rdf:predicate.
 _:object hydra:variable "object";
     hydra:property rdf:object.
+_:graph hydra:variable "graph";
+    hydra:property <http://www.w3.org/TR/sparql11-service-description/#graph>.
 <http://ex.org/data?fragment> void:subset <http://ex.org/data?fragment&page=3>.
 <http://ex.org/data?fragment&page=3> a hydra:PartialCollectionView;
     dcterms:title "Linked Data Fragment of My data"@en;
-    dcterms:description "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."@en;
+    dcterms:description "Triple/Quad Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c ?d }."@en;
     dcterms:source <http://ex.org/data#dataset>;
     hydra:totalItems "1234"^^xsd:integer;
     void:triples "1234"^^xsd:integer;
