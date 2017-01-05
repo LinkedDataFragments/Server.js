@@ -29,6 +29,7 @@ describe('QuadPatternFragmentsRdfView', function () {
         index: 'http://ex.org/#dataset',
         url: 'http://ex.org/data#dataset',
         templateUrl: 'http://ex.org/data{?subject,predicate,object,graph}',
+        supportsQuads: true,
       },
       fragment: {
         url:             'http://ex.org/data?fragment',
