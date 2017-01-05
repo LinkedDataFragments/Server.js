@@ -1,29 +1,29 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var TriplePatternFragmentsController = require('../../lib/controllers/TriplePatternFragmentsController');
+var QuadPatternFragmentsController = require('../../lib/controllers/QuadPatternFragmentsController');
 
 var request = require('supertest'),
     DummyServer = require('./DummyServer'),
     http = require('http');
 
-var TriplePatternFragmentsHtmlView = require('../../lib/views/triplepatternfragments/TriplePatternFragmentsHtmlView.js'),
-    TriplePatternFragmentsRdfView  = require('../../lib/views/triplepatternfragments/TriplePatternFragmentsRdfView.js');
+var QuadPatternFragmentsHtmlView = require('../../lib/views/quadpatternfragments/QuadPatternFragmentsHtmlView.js'),
+    QuadPatternFragmentsRdfView  = require('../../lib/views/quadpatternfragments/QuadPatternFragmentsRdfView.js');
 
-describe('TriplePatternFragmentsController', function () {
-  describe('The TriplePatternFragmentsController module', function () {
+describe('QuadPatternFragmentsController', function () {
+  describe('The QuadPatternFragmentsController module', function () {
     it('should be a function', function () {
-      TriplePatternFragmentsController.should.be.a('function');
+      QuadPatternFragmentsController.should.be.a('function');
     });
 
-    it('should be a TriplePatternFragmentsController constructor', function () {
-      new TriplePatternFragmentsController().should.be.an.instanceof(TriplePatternFragmentsController);
+    it('should be a QuadPatternFragmentsController constructor', function () {
+      new QuadPatternFragmentsController().should.be.an.instanceof(QuadPatternFragmentsController);
     });
 
-    it('should create new TriplePatternFragmentsController objects', function () {
-      TriplePatternFragmentsController().should.be.an.instanceof(TriplePatternFragmentsController);
+    it('should create new QuadPatternFragmentsController objects', function () {
+      QuadPatternFragmentsController().should.be.an.instanceof(QuadPatternFragmentsController);
     });
   });
 
-  describe('A TriplePatternFragmentsController instance with 3 routers', function () {
+  describe('A QuadPatternFragmentsController instance with 3 routers', function () {
     var controller, client, routerA, routerB, routerC, datasource, datasources, view, prefixes;
     before(function () {
       routerA = { extractQueryParams: sinon.stub() };
@@ -42,10 +42,10 @@ describe('TriplePatternFragmentsController', function () {
         supportedFeatures: { triplePattern: true },
       };
       datasources = { 'my-datasource': { title: 'My data', datasource: datasource } };
-      view = new TriplePatternFragmentsRdfView(),
+      view = new QuadPatternFragmentsRdfView(),
       sinon.spy(view, 'render');
       prefixes = { a: 'a' };
-      controller = new TriplePatternFragmentsController({
+      controller = new QuadPatternFragmentsController({
         baseURL: 'https://example.org/base/?bar=foo',
         routers: [routerA, routerB, routerC],
         datasources: datasources,
@@ -132,7 +132,7 @@ describe('TriplePatternFragmentsController', function () {
             title: 'My data',
             index: 'https://example.org/#dataset',
             url: 'https://example.org/my-datasource#dataset',
-            templateUrl: 'https://example.org/my-datasource{?subject,predicate,object}',
+            templateUrl: 'https://example.org/my-datasource{?subject,predicate,object,graph}',
           },
           fragment: {
             url:             'https://example.org/my-datasource?a=b&c=d',
@@ -148,7 +148,7 @@ describe('TriplePatternFragmentsController', function () {
           query: query,
           datasources: datasources,
         });
-        query.should.have.property('patternString', '{ ?s ?p ?o }');
+        query.should.have.property('patternString', '{ ?s ?p ?o ?g }');
       });
     });
 
@@ -171,7 +171,7 @@ describe('TriplePatternFragmentsController', function () {
     });
   });
 
-  describe('A TriplePatternFragmentsController instance with 2 views', function () {
+  describe('A QuadPatternFragmentsController instance with 2 views', function () {
     var controller, client, htmlView, rdfView;
     before(function () {
       var datasource = {
@@ -190,11 +190,11 @@ describe('TriplePatternFragmentsController', function () {
           query.datasource = 'my-datasource';
         },
       };
-      htmlView = new TriplePatternFragmentsHtmlView();
-      rdfView = new TriplePatternFragmentsRdfView();
+      htmlView = new QuadPatternFragmentsHtmlView();
+      rdfView = new QuadPatternFragmentsRdfView();
       sinon.spy(htmlView, 'render');
       sinon.spy(rdfView, 'render');
-      controller = new TriplePatternFragmentsController({
+      controller = new QuadPatternFragmentsController({
         routers: [router],
         datasources: { 'my-datasource': { datasource: datasource } },
         views: [htmlView, rdfView],
@@ -312,7 +312,7 @@ describe('TriplePatternFragmentsController', function () {
     });
   });
 
-  describe('A TriplePatternFragmentsController instance without matching view', function () {
+  describe('A QuadPatternFragmentsController instance without matching view', function () {
     var controller, client;
     before(function () {
       var datasource = {
@@ -326,7 +326,7 @@ describe('TriplePatternFragmentsController', function () {
           query.datasource = 'my-datasource';
         },
       };
-      controller = new TriplePatternFragmentsController({
+      controller = new QuadPatternFragmentsController({
         routers: [router],
         datasources: { 'my-datasource': { datasource: datasource } },
       });
@@ -374,7 +374,7 @@ describe('TriplePatternFragmentsController', function () {
     });
   });
 
-  describe('A TriplePatternFragmentsController instance with a datasource that synchronously errors', function () {
+  describe('A QuadPatternFragmentsController instance with a datasource that synchronously errors', function () {
     var controller, client, router, datasource, error, view;
     before(function () {
       router = {
@@ -389,8 +389,8 @@ describe('TriplePatternFragmentsController', function () {
         select: sinon.stub().throws(error),
         supportedFeatures: { triplePattern: true },
       };
-      view = new TriplePatternFragmentsRdfView(),
-      controller = new TriplePatternFragmentsController({
+      view = new QuadPatternFragmentsRdfView(),
+      controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
         datasources: { 'my-datasource': { datasource: datasource } },
@@ -413,7 +413,7 @@ describe('TriplePatternFragmentsController', function () {
     });
   });
 
-  describe('A TriplePatternFragmentsController instance with a datasource that asynchronously errors', function () {
+  describe('A QuadPatternFragmentsController instance with a datasource that asynchronously errors', function () {
     var controller, client, router, datasource, error, view;
     before(function () {
       router = {
@@ -428,9 +428,9 @@ describe('TriplePatternFragmentsController', function () {
         select: function (query, callback) { setImmediate(callback.bind(null, error)); },
         supportedFeatures: { triplePattern: true },
       };
-      view = new TriplePatternFragmentsRdfView(),
+      view = new QuadPatternFragmentsRdfView(),
       view.render = sinon.stub(); // avoid writing a partial body
-      controller = new TriplePatternFragmentsController({
+      controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
         datasources: { 'my-datasource': { datasource: datasource } },
