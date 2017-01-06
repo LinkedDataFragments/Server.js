@@ -15,13 +15,15 @@
     <span property="hydra:template" content="<%= datasource.templateUrl %>" lang=""></span>
     <span property="hydra:variableRepresentation" resource="hydra:ExplicitRepresentation"></span>
     <ul>
-<% components.forEach(function (component) { -%>
+<% components.forEach(function (component, i) { -%>
       <li property="hydra:mapping" resource="#<%= component %>">
         <label for="<%= component %>"
                about="#<%= component %>" property="hydra:variable" lang=""><%= component %></label>
        <input class="uri" id="<%= component %>" name="<%= component %>"
-              about="#<%= component %>" property="hydra:property" resource="<%= component == 'graph' ? sd : 'rdf:' %><%= component %>" <%
-            %> value="<%= query[component] || '' %>" />
+              about="#<%= component %>" property="hydra:property" resource="<%= i === 3 ? sd : 'rdf:' %><%= component %>" <%
+           %> value="<%= query[component] ||
+                         // The empty string as graph means the default graph
+                         (i === 3 && query.graph === '' ? 'urn:ldf:defaultGraph' : '') %>" />
       </li>
 <% }); -%>
     </ul>
