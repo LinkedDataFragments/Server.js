@@ -94,7 +94,7 @@
     }
     if (datasource.supportsQuads) { -%>
     <a href="?graph=<%= encodeURIComponent(graph || 'urn:ldf:defaultGraph') %>"><%
-      %><abbr title="<%= graph %>"><%= graph ? shorten(graph) : '(default)' %></abbr><%
+      %><abbr title="<%= graph %>"><%= graph ? shorten(graph) : '@default' %></abbr><%
       %></a><% }
     -%>.
   </li>
