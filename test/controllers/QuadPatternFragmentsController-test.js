@@ -149,7 +149,7 @@ describe('QuadPatternFragmentsController', function () {
           query: query,
           datasources: datasources,
         });
-        query.should.have.property('patternString', '{ ?s ?p ?o ?g }');
+        query.should.have.property('patternString', '{ ?s ?p ?o ?g. }');
       });
     });
 
