@@ -10,6 +10,7 @@ _:pattern <http://www.w3.org/ns/hydra/core#variableRepresentation> <http://www.w
 _:pattern <http://www.w3.org/ns/hydra/core#mapping> _:subject.
 _:pattern <http://www.w3.org/ns/hydra/core#mapping> _:predicate.
 _:pattern <http://www.w3.org/ns/hydra/core#mapping> _:object.
+_:pattern <http://www.w3.org/ns/hydra/core#mapping> _:graph.
 _:subject <http://www.w3.org/ns/hydra/core#variable> "subject".
 _:subject <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject>.
 _:predicate <http://www.w3.org/ns/hydra/core#variable> "predicate".

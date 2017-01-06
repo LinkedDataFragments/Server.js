@@ -13,7 +13,7 @@
     hydra:search _:pattern.
 _:pattern hydra:template "http://ex.org/data{?subject,predicate,object,graph}";
     hydra:variableRepresentation hydra:ExplicitRepresentation;
-    hydra:mapping _:subject, _:predicate, _:object.
+    hydra:mapping _:subject, _:predicate, _:object, _:graph.
 _:subject hydra:variable "subject";
     hydra:property rdf:subject.
 _:predicate hydra:variable "predicate";

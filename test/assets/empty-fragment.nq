@@ -11,6 +11,7 @@ _:pattern <http://www.w3.org/ns/hydra/core#variableRepresentation> <http://www.w
 _:pattern <http://www.w3.org/ns/hydra/core#mapping> _:subject <http://ex.org/data?fragment#metadata>.
 _:pattern <http://www.w3.org/ns/hydra/core#mapping> _:predicate <http://ex.org/data?fragment#metadata>.
 _:pattern <http://www.w3.org/ns/hydra/core#mapping> _:object <http://ex.org/data?fragment#metadata>.
+_:pattern <http://www.w3.org/ns/hydra/core#mapping> _:graph <http://ex.org/data?fragment#metadata>.
 _:subject <http://www.w3.org/ns/hydra/core#variable> "subject" <http://ex.org/data?fragment#metadata>.
 _:subject <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <http://ex.org/data?fragment#metadata>.
 _:predicate <http://www.w3.org/ns/hydra/core#variable> "predicate" <http://ex.org/data?fragment#metadata>.
