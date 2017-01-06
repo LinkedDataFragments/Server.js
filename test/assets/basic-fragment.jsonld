@@ -32,6 +32,9 @@
         },
         {
           "@id": "_:object"
+        },
+        {
+          "@id": "_:graph"
         }
       ],
       "hydra:template": "http://ex.org/data{?subject,predicate,object,graph}",
