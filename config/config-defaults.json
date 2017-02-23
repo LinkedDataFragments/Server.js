@@ -22,7 +22,8 @@
   "routers": [
     "DatasourceRouter",
     "QuadPatternRouter",
-    "PageRouter"
+    "PageRouter",
+    "VersionRouter"
   ],
 
   "controllers": [
