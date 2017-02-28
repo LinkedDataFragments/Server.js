@@ -129,6 +129,7 @@ describe('QuadPatternFragmentsController', function () {
 
         settings.should.deep.equal({
           datasource: {
+            datasourceUrl: 'https://example.org/my-datasource',
             title: 'My data',
             index: 'https://example.org/#dataset',
             url: 'https://example.org/my-datasource#dataset',

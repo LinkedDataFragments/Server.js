@@ -16,7 +16,8 @@
     "xsd":   "http://www.w3.org/2001/XMLSchema#",
     "hydra": "http://www.w3.org/ns/hydra/core#",
     "void":  "http://rdfs.org/ns/void#",
-    "sd":    "http://www.w3.org/TR/sparql11-service-description/#"
+    "sd":    "http://www.w3.org/TR/sparql11-service-description/#",
+    "ver":   "http://example.org/version#"
   },
 
   "routers": [

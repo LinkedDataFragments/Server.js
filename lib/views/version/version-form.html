@@ -1,0 +1,60 @@
+<% /* @license MIT ©2017 Ruben Taelman, Ghent University - imec */ -%>
+
+<%
+    var versionTypes = ['VersionMaterialized', 'DeltaMaterialized', 'Version'];
+    var versionTypeLabels = ['Within', 'Between', 'All'];
+%>
+
+    <legend>For version</legend>
+<% versionTypes.forEach(function (versionType, i) { -%>
+    <label for="versionType<%= versionType %>"
+           about="#versionType<%= versionType %>" property="hydra:variable" lang=""><%= versionTypeLabels[i] %></label>
+    <input class="versionType" id="versionType<%= versionType %>" type="radio" name="versionType" <% if (query['versionType'] === versionType) { %> checked="checked" <% } %>
+           about="<%= versionType %>" property="hydra:property" resource="temp:versionType" value="<%= versionType %>" />
+<% }); -%>
+
+
+    <div class="versionTypeVersionMaterializedForm versionTypeForm">
+        <% /* Version Materialized */ %>
+        <label for="versionMaterializedVersion" about="#versionMaterialized" property="hydra:variable" lang="">Version</label>
+        <select class="version" id="versionMaterializedVersion" name="version" about="versionMaterialized" property="hydra:property" resource="temp:versionMaterialized">
+            <option value="">Latest</option>
+            <%  for (var version = 0; version < metadata.maxVersion + 1; version++) { -%>
+            <option value="<%= version %>" <% if (query['version'] === version) { %> selected="selected" <% } %>><%= version %></option>
+            <% } -%>
+        </select>
+    </div>
+
+    <div class="versionTypeDeltaMaterializedForm versionTypeForm">
+        <% /* Delta Materialized */ %>
+        <label for="deltaMaterializedVersionStart" about="#deltaMaterialized" property="hydra:variable" lang="">Start</label>
+        <select class="versionStart" id="deltaMaterializedVersionStart" name="versionStart" about="deltaMaterialized" property="hydra:property" resource="temp:deltaMaterialized">
+            <option value="">First</option>
+            <%  for (var version = 0; version < metadata.maxVersion + 1; version++) { -%>
+            <option value="<%= version %>" <% if (query['versionStart'] === version) { %> selected="selected" <% } %>><%= version %></option>
+            <% } -%>
+        </select><br />
+        <label for="deltaMaterializedVersionStart" about="#deltaMaterialized" property="hydra:variable" lang="">End</label>
+        <select class="versionEnd" id="deltaMaterializedVersionStart" name="versionEnd" about="deltaMaterialized" property="hydra:property" resource="temp:deltaMaterialized">
+            <option value="">Last</option>
+            <%  for (var version = 0; version < metadata.maxVersion + 1; version++) { -%>
+            <option value="<%= version %>" <% if (query['versionEnd'] === version) { %> selected="selected" <% } %>><%= version %></option>
+            <% } -%>
+        </select>
+    </div>
+
+    <div class="versionTypeVersionForm versionTypeForm">
+        <% /* Version */ %>
+        <% /* Needs no form */ %>
+    </div>
+
+<style type="text/css">
+    .versionTypeForm {
+        display:none;
+    }
+<% versionTypes.forEach(function (versionType, i) { -%>
+    input[type="radio"]#versionType<%= versionType %>:checked ~ .versionType<%= versionType %>Form {
+        display:block;
+    }
+<% }); -%>
+</style>
