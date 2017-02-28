@@ -1,5 +1,5 @@
 <% /* @license MIT ©2017 Ruben Taelman, Ghent University - imec */ -%>
-
+<div class="versionForm">
 <%
     var versionTypes = ['VersionMaterialized', 'DeltaMaterialized', 'Version'];
     var versionTypeLabels = ['Within', 'Between', 'All'];
@@ -11,14 +11,16 @@
            about="#versionType<%= versionType %>" property="hydra:variable" lang=""><%= versionTypeLabels[i] %></label>
     <input class="versionType" id="versionType<%= versionType %>" type="radio" name="versionType" <% if (query['versionType'] === versionType) { %> checked="checked" <% } %>
            about="<%= versionType %>" property="hydra:property" resource="temp:versionType" value="<%= versionType %>" />
+    <br />
 <% }); -%>
+    <br />
 
 
     <div class="versionTypeVersionMaterializedForm versionTypeForm">
         <% /* Version Materialized */ %>
         <label for="versionMaterializedVersion" about="#versionMaterialized" property="hydra:variable" lang="">Version</label>
         <select class="version" id="versionMaterializedVersion" name="version" about="versionMaterialized" property="hydra:property" resource="temp:versionMaterialized">
-            <option value="">Latest</option>
+            <option value="">Last</option>
             <%  for (var version = 0; version < metadata.maxVersion + 1; version++) { -%>
             <option value="<%= version %>" <% if (query['version'] === version) { %> selected="selected" <% } %>><%= version %></option>
             <% } -%>
@@ -47,6 +49,7 @@
         <% /* Version */ %>
         <% /* Needs no form */ %>
     </div>
+</div>
 
 <style type="text/css">
     .versionTypeForm {

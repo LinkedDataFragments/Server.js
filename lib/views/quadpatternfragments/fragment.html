@@ -11,6 +11,8 @@
 
 <form action="?" method="GET" property="hydra:search" resource="#pattern">
   <fieldset resource="#pattern">
+<%- extensions.FormBefore %>
+<div class="searchForm">
     <legend>Search <%= datasource.title %> by <%= patternKind %> pattern</legend>
     <span property="hydra:template" content="<%= datasource.templateUrl %>" lang=""></span>
     <span property="hydra:variableRepresentation" resource="hydra:ExplicitRepresentation"></span>
@@ -27,7 +29,8 @@
       </li>
 <% }); -%>
     </ul>
-<%- extensions.Form %>
+</div>
+<%- extensions.FormAfter %>
   </fieldset>
   <p>
     <input type="submit" value="Search" />

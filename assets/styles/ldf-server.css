@@ -100,7 +100,7 @@ input {
   outline: none;
   font-size: .95em;
 }
-fieldset input {
+fieldset input:not([type=radio]) {
   width: 500px;
   color: #be1622;
   background-color: transparent;
@@ -252,4 +252,13 @@ dd {
   ul.quads li {
     margin: 1em 0;
   }
+}
+
+.searchForm {
+  display: inline-block;
+}
+
+.versionForm {
+  float: right;
+  width: 150px;
 }
