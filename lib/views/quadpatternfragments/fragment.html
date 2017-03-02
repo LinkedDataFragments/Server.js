@@ -74,6 +74,7 @@
     var subject = quad.subject, predicate = quad.predicate, object = quad.object, graph = quad.graph;
 -%>
   <li>
+    <%- extensions.QuadBefore({ quad: quad }) %>
     <a href="?subject=<%= encodeURIComponent(subject) %>"><%
       %><abbr title="<%= subject %>"><%= shorten(subject) %></abbr><%
       %></a>
@@ -97,10 +98,11 @@
       %></span>"</a><%
     }
     if (datasource.supportsQuads) { -%>
-    <a href="?graph=<%= encodeURIComponent(graph || 'urn:ldf:defaultGraph') %>"><%
+    <a href="?graph=<%= encodeURIComponent(graph || 'urn:ldf:defaultGraph') %>" class="graph"><%
       %><abbr title="<%= graph %>"><%= graph ? shorten(graph) : '@default' %></abbr><%
       %></a><% }
     -%>.
+    <%- extensions.QuadAfter({ quad: quad }) %>
   </li>
 <% }); -%>
 </ul>

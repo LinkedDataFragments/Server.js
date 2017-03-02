@@ -195,7 +195,7 @@ ul.quads a {
 ul.quads a:last-child {
   margin-right: 0;
 }
-ul.quads li:not(:hover) a:nth-child(4) {
+ul.quads li:not(:hover) a.graph {
   color: #999999;
 }
 abbr {
@@ -261,4 +261,15 @@ dd {
 .versionForm {
   float: right;
   width: 150px;
+}
+.versions {
+  font-style: italic;
+}
+.addition {
+  font-weight: bold;
+  color: green;
+}
+.deletion {
+  font-weight: bold;
+  color: green;
 }

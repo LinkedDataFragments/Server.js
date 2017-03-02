@@ -1,0 +1,9 @@
+<% /* @license MIT ©2017 Ruben Taelman, Ghent University - imec */ -%>
+
+<%if (query.versionType === 'DeltaMaterialized') {
+    if (quad.addition) {-%>
+<span class="addition">+</span>
+<%} else {-%>
+<span class="deletion">-</span>
+<%}
+} -%>
