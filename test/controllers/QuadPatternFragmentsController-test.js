@@ -135,6 +135,7 @@ describe('QuadPatternFragmentsController', function () {
             url: 'https://example.org/my-datasource#dataset',
             templateUrl: 'https://example.org/my-datasource{?subject,predicate,object,graph}',
             supportsQuads: true,
+            supportsVersioning: false,
           },
           fragment: {
             url:             'https://example.org/my-datasource?a=b&c=d',
