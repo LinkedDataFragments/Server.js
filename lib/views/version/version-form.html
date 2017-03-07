@@ -2,23 +2,22 @@
 <div class="versionForm">
 <%
     var versionTypes = ['VersionMaterialized', 'DeltaMaterialized', 'Version'];
-    var versionTypeLabels = ['Within', 'Between', 'All'];
+    var versionTypeLabels = ['within', 'between', 'all'];
 %>
 
     <legend>For version</legend>
 <% versionTypes.forEach(function (versionType, i) { -%>
-    <label for="versionType<%= versionType %>"
-           about="#versionType<%= versionType %>" property="hydra:variable" lang=""><%= versionTypeLabels[i] %></label>
     <input class="versionType" id="versionType<%= versionType %>" type="radio" name="versionType" <% if (query['versionType'] === versionType) { %> checked="checked" <% } %>
            about="<%= versionType %>" property="hydra:property" resource="temp:versionType" value="<%= versionType %>" />
-    <br />
+    <label for="versionType<%= versionType %>" class="versionTypeLabel"
+           about="#versionType<%= versionType %>" property="hydra:variable" lang=""><%= versionTypeLabels[i] %></label>
 <% }); -%>
-    <br />
+    <br style="clear:both"/>
 
 
     <div class="versionTypeVersionMaterializedForm versionTypeForm">
         <% /* Version Materialized */ %>
-        <label for="versionMaterializedVersion" about="#versionMaterialized" property="hydra:variable" lang="">Version</label>
+        <label for="versionMaterializedVersion" about="#versionMaterialized" property="hydra:variable" lang="">version</label>
         <select class="version" id="versionMaterializedVersion" name="version" about="versionMaterialized" property="hydra:property" resource="temp:versionMaterialized">
             <option value="">Last</option>
             <%  for (var version = 0; version < metadata.maxVersion + 1; version++) { -%>
@@ -29,14 +28,14 @@
 
     <div class="versionTypeDeltaMaterializedForm versionTypeForm">
         <% /* Delta Materialized */ %>
-        <label for="deltaMaterializedVersionStart" about="#deltaMaterialized" property="hydra:variable" lang="">Start</label>
+        <label for="deltaMaterializedVersionStart" about="#deltaMaterialized" property="hydra:variable" lang="">start</label>
         <select class="versionStart" id="deltaMaterializedVersionStart" name="versionStart" about="deltaMaterialized" property="hydra:property" resource="temp:deltaMaterialized">
             <option value="">First</option>
             <%  for (var version = 0; version < metadata.maxVersion + 1; version++) { -%>
             <option value="<%= version %>" <% if (query['versionStart'] === version) { %> selected="selected" <% } %>><%= version %></option>
             <% } -%>
         </select><br />
-        <label for="deltaMaterializedVersionStart" about="#deltaMaterialized" property="hydra:variable" lang="">End</label>
+        <label for="deltaMaterializedVersionStart" about="#deltaMaterialized" property="hydra:variable" lang="">end</label>
         <select class="versionEnd" id="deltaMaterializedVersionStart" name="versionEnd" about="deltaMaterialized" property="hydra:property" resource="temp:deltaMaterialized">
             <option value="">Last</option>
             <%  for (var version = 0; version < metadata.maxVersion + 1; version++) { -%>
