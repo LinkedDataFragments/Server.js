@@ -4,7 +4,7 @@
  if (versionGraph) { -%>
 <span class="versions">@
 <%    metadata.versionGraphs[quad.versionGraph].versions.forEach(function (version) { -%>
-<a href="?version=<%= encodeURIComponent(version) %>" style="margin-right: 0em">&lt;<%= version %>&gt;</a>
+<a href="?versionType=VersionMaterialized&version=<%= encodeURIComponent(version) %>" style="margin-right: 0em">&lt;<%= version %>&gt;</a>
 <% });-%>
 </span>
 <% }-%>
