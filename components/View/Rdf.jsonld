@@ -1,0 +1,21 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:View/Rdf",
+      "@type": "AbstractClass",
+      "extends": "ldfc:View",
+      "comment": "RdfView is a base class for views that generate RDF responses",
+      "constructorArguments": [
+        {
+          "@id": "ldfc:View/Rdf#constructorArgumentsObject",
+          "@type": "ObjectMapping",
+          "extends": "ldfc:View#constructorArgumentsObject"
+        }
+      ]
+    }
+  ]
+}

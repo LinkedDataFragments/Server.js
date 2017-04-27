@@ -1,0 +1,18 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Datasource/JsonLd",
+      "@type": "Class",
+      "extends": "ldfc:Datasource",
+      "requireElement": "datasources.JsonLdDatasource",
+      "comment": "An JsonLdDatasource fetches data from a JSON-LD document",
+      "constructorArguments": {
+        "extends": "ldfc:Datasource#constructorArgumentsObject"
+      }
+    }
+  ]
+}

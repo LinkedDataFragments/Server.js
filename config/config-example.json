@@ -1,31 +1,53 @@
 {
-  "title": "My Linked Data Fragments server",
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld",
+  "@graph": [
+    {
+      "@id": "urn:ldf-server:my",
+      "@type": "Server",
+      "import": "config:config-defaults.json",
 
-  "datasources": {
-    "dbpedia": {
-      "title": "DBpedia 2014",
-      "type": "HdtDatasource",
-      "description": "DBpedia 2014 with an HDT back-end",
-      "settings": { "file": "data/dbpedia2014.hdt" }
+      "title": "My Linked Data Fragments server",
+
+      "datasources": [
+        {
+          "@id": "ex:myHdtDatasource",
+          "@type": "HdtDatasource",
+          "datasourceTitle": "DBpedia 2014",
+          "description": "DBpedia 2014 with an HDT back-end",
+          "datasourcePath": "dbpedia",
+          "hdtFile": "data/dbpedia2014.hdt"
+        },
+        {
+          "@id": "ex:mySparqlDatasource",
+          "@type": "SparqlDatasource",
+          "datasourceTitle": "DBpedia (Virtuoso)",
+          "description": "DBpedia with a Virtuoso back-end",
+          "datasourcePath": "dbpedia-sparql",
+          "sparqlEndpoint": "https://dbpedia.org/sparql"
+        }
+      ],
+
+      "prefixes": [
+        { "prefix": "rdf",         "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+        { "prefix": "rdfs",        "uri": "http://www.w3.org/2000/01/rdf-schema#" },
+        { "prefix": "xsd",         "uri": "http://www.w3.org/2001/XMLSchema#" },
+        { "prefix": "dc",          "uri": "http://purl.org/dc/terms/" },
+        { "prefix": "foaf",        "uri": "http://xmlns.com/foaf/0.1/" },
+        { "prefix": "dbpedia",     "uri": "http://dbpedia.org/resource/" },
+        { "prefix": "dbpedia-owl", "uri": "http://dbpedia.org/ontology/" },
+        { "prefix": "dbpprop",     "uri": "http://dbpedia.org/property/" },
+        { "prefix": "hydra",       "uri": "http://www.w3.org/ns/hydra/core#" },
+        { "prefix": "void",        "uri": "http://rdfs.org/ns/void#" }
+      ]
     },
-    "dbpedia-sparql": {
-      "title": "DBpedia (Virtuoso)",
-      "type": "SparqlDatasource",
-      "description": "DBpedia with a Virtuoso back-end",
-      "settings": { "endpoint": "https://dbpedia.org/sparql" }
+    {
+      "@id": "ldfc:Server#defaultDereferenceController",
+      "ldfs:dereference": [
+        {
+          "dereferencePath": "/resource/",
+          "dereferenceDatasource": "ex:myHdtDatasource"
+        }
+      ]
     }
-  },
-
-  "prefixes": {
-    "rdf":         "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "rdfs":        "http://www.w3.org/2000/01/rdf-schema#",
-    "xsd":         "http://www.w3.org/2001/XMLSchema#",
-    "dc":          "http://purl.org/dc/terms/",
-    "foaf":        "http://xmlns.com/foaf/0.1/",
-    "dbpedia":     "http://dbpedia.org/resource/",
-    "dbpedia-owl": "http://dbpedia.org/ontology/",
-    "dbpprop":     "http://dbpedia.org/property/",
-    "hydra":       "http://www.w3.org/ns/hydra/core#",
-    "void":        "http://rdfs.org/ns/void#"
-  }
+  ]
 }

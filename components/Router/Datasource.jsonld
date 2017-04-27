@@ -1,0 +1,34 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Router/Datasource",
+      "@type": "Class",
+      "extends": "ldfc:Router",
+      "requireElement": "routers.DatasourceRouter",
+      "comment": "A DatasourceRouter routes URLs to data sources",
+      "parameters": [
+        {
+          "@id": "ldfc:Router/Datasource#urlData",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#urlData",
+            "from": "ldfc:Server"
+          }
+        }
+      ],
+      "constructorArguments": [
+        {
+          "fields": [
+            {
+              "@id": "ldfc:Server#urlDataField"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Controller",
+      "@type": "AbstractClass",
+      "parameters": [
+        {
+          "@id": "ldfc:Controller#prefix",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#prefix",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:Controller#datasource",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#datasource",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:Controller#viewCollection",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#viewCollection",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:Controller#urlData",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#urlData",
+            "from": "ldfc:Server"
+          }
+        }
+      ],
+      "constructorArguments": {
+        "@id": "ldfc:Controller#constructorArgumentsObject",
+        "fields": [
+          {
+            "@id": "ldfc:Server#prefixField"
+          },
+          {
+            "@id": "ldfc:Server#datasourceField"
+          },
+          {
+            "@id": "ldfc:Server#viewField"
+          },
+          {
+            "@id": "ldfc:Server#urlDataField"
+          }
+        ]
+      }
+    }
+  ]
+}

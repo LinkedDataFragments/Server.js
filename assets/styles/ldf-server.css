@@ -100,7 +100,7 @@ input {
   outline: none;
   font-size: .95em;
 }
-fieldset input {
+fieldset input:not([type=radio]) {
   width: 500px;
   color: #be1622;
   background-color: transparent;
@@ -195,7 +195,7 @@ ul.quads a {
 ul.quads a:last-child {
   margin-right: 0;
 }
-ul.quads li:not(:hover) a:nth-child(4) {
+ul.quads li:not(:hover) a.graph {
   color: #999999;
 }
 abbr {
@@ -252,4 +252,8 @@ dd {
   ul.quads li {
     margin: 1em 0;
   }
+}
+
+.searchForm {
+  display: inline-block;
 }

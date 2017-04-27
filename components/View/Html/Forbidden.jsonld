@@ -1,0 +1,20 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:View/Html/Forbidden",
+      "@type": "Class",
+      "extends": "ldfc:View/Html",
+      "requireElement": "views.forbidden.ForbiddenHtmlView",
+      "comment": "A ForbiddenHtmlView represents a 401 response in HTML",
+      "constructorArguments": [
+        {
+          "extends": "ldfc:View/Html#constructorArgumentsObject"
+        }
+      ]
+    }
+  ]
+}

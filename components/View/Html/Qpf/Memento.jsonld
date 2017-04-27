@@ -1,0 +1,47 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:View/Html/Qpf/Memento",
+      "@type": "Class",
+      "extends": "ldfc:View/Html",
+      "requireElement": "views.memento.Memento",
+      "comment": "A MementoHtmlViewExtension extends the Quad Pattern Fragments HTML view with Memento details",
+      "parameters": [
+        {
+          "@id": "ldfc:Controller/Timegate#timegatePath"
+        },
+        {
+          "@id": "ldfc:Controller/Timegate#memento"
+        },
+        {
+          "@id": "ldfc:View/Html/Qpf/Memento#datasource",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#datasource",
+            "from": "ldfc:Server"
+          }
+        }
+      ],
+      "constructorArguments": [
+        {
+          "extends": "ldfc:View/Html#constructorArgumentsObject",
+          "fields": [
+            {
+              "@id": "ldfc:Controller/Timegate#timeGatesField"
+            },
+            {
+              "@id": "ldfc:Server#routerField"
+            },
+            {
+              "@id": "ldfc:Server#datasourceField"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Controller/NotFound",
+      "@type": "Class",
+      "extends": "ldfc:Controller",
+      "requireElement": "controllers.NotFoundController",
+      "comment": "A NotFoundController responds to requests that cannot be resolved",
+      "constructorArguments": {
+        "extends": "ldfc:Controller#constructorArgumentsObject"
+      }
+    }
+  ]
+}

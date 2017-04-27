@@ -1,0 +1,53 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Controller/Assets",
+      "@type": "Class",
+      "extends": "ldfc:Controller",
+      "requireElement": "controllers.AssetsController",
+      "comment": "An AssetsController responds to requests for assets",
+      "parameters": [
+        {
+          "@id": "ldfc:Controller/Assets#dir",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#assetsDir",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:Controller/Assets#path",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#assetsPath",
+            "from": "ldfc:Server"
+          }
+        }
+      ],
+      "constructorArguments": {
+        "extends": "ldfc:Controller#constructorArgumentsObject",
+        "fields": [
+          {
+            "keyRaw": "summaries",
+            "value": {
+              "fields": [
+                {
+                  "keyRaw": "assetsFolder",
+                  "value": "ldfc:Server#assetsDir"
+                },
+                {
+                  "keyRaw": "path",
+                  "value": "ldfc:Server#assetsPath"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

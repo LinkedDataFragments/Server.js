@@ -1,0 +1,311 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Server",
+      "@type": "Class",
+      "requireElement": "LinkedDataFragmentsServerWorker",
+      "comment": "LinkedDataFragmentsServer is an HTTP server that provides access to Linked Data Fragments",
+      "parameters": [
+        {
+          "@id": "ldfc:Server#name",
+          "comment": "The server name",
+          "range": "xsd:string",
+          "unique": true,
+          "default": "Linked Data Fragments server"
+        },
+        {
+          "@id": "ldfc:Server#baseURL",
+          "comment": "The base URL path for the server",
+          "range": "xsd:string",
+          "unique": true,
+          "default": "/"
+        },
+        {
+          "@id": "ldfc:Server#urlData",
+          "comment": "The UrlData helper object",
+          "range": "ldfc:UrlData",
+          "unique": true,
+          "default": {
+            "@id": "ldfc:Server#defaultUrlData",
+            "@type": "ldfc:UrlData"
+          }
+        },
+        {
+          "@id": "ldfc:Server#port",
+          "comment": "The port the server will bind with",
+          "range": "xsd:integer",
+          "unique": true,
+          "default": 3000
+        },
+        {
+          "@id": "ldfc:Server#workers",
+          "comment": "The number of server instances that will be started",
+          "range": "xsd:integer",
+          "unique": true,
+          "default": 1
+        },
+        {
+          "@id": "ldfc:Server#protocol",
+          "comment": "Explicitly set the protocol, default will be the protocol derived from the baseURL",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:Server#datasource",
+          "comment": "A datasource for the server",
+          "range": "ldfc:Datasource"
+        },
+        {
+          "@id": "ldfc:Server#prefix",
+          "comment": "The URI prefixes that will be used",
+          "default": [
+            { "prefix": "rdf",         "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+            { "prefix": "rdfs",        "uri": "http://www.w3.org/2000/01/rdf-schema#" },
+            { "prefix": "owl",         "uri": "http://www.w3.org/2002/07/owl#" },
+            { "prefix": "xsd",         "uri": "http://www.w3.org/2001/XMLSchema#" },
+            { "prefix": "hydra",       "uri": "http://www.w3.org/ns/hydra/core#" },
+            { "prefix": "void",        "uri": "http://rdfs.org/ns/void#" },
+            { "prefix": "sd",          "uri": "http://www.w3.org/TR/sparql11-service-description/#" }
+          ]
+        },
+        {
+          "@id": "ldfc:Server#router",
+          "comment": "A router for the server",
+          "range": "ldfc:Router"
+        },
+        {
+          "@id": "ldfc:Server#controller",
+          "comment": "A controller for the server",
+          "range": "ldfc:Controller"
+        },
+        {
+          "@id": "ldfc:Server#viewCollection",
+          "comment": "A ViewCollection provides access to content-negotiated views by name",
+          "range": "ldfc:View/Collection",
+          "unique": true,
+          "default": [
+            {
+              "@id": "ldfc:Server#defaultViewCollection",
+              "@type": "ViewCollection"
+            }
+          ]
+        },
+        {
+          "@id": "ldfc:Server#view",
+          "comment": "A view for the server",
+          "range": "ldfc:View"
+        },
+        {
+          "@id": "ldfc:Server#responseHeader",
+          "comment": "Configuration for the server response data",
+          "range": {
+            "@id": "ldfc:Server#Response"
+          },
+          "default": [
+            { "headerName": "Access-Control-Allow-Origin",   "headerValue": "*" },
+            { "headerName": "Access-Control-Allow-Headers",  "headerValue": "Accept-Datetime" },
+            { "headerName": "Access-Control-Expose-Headers", "headerValue": "Content-Location,Link,Memento-Datetime" }
+          ]
+        },
+        {
+          "@id": "ldfc:Server#sslKey",
+          "comment": "Path to an SSL key",
+          "range": "xsd:string",
+          "unique": true,
+          "default": "config/certs/localhost-server.key"
+        },
+        {
+          "@id": "ldfc:Server#sslCert",
+          "comment": "Path to an SSL certificate",
+          "range": "xsd:string",
+          "unique": true,
+          "default": "config/certs/localhost-server.crt"
+        },
+        {
+          "@id": "ldfc:Server#sslCa",
+          "comment": "Path to an SSL certificate authority",
+          "range": "xsd:string",
+          "unique": true,
+          "default": "config/certs/localhost-ca.crt"
+        },
+        {
+          "@id": "ldfc:Server#logging",
+          "comment": "If the server should perform logging",
+          "range": "xsd:boolean",
+          "unique": true,
+          "default": false
+        },
+        {
+          "@id": "ldfc:Server#loggingFile",
+          "comment": "Path to a log file",
+          "range": "xsd:string",
+          "unique": true,
+          "default": "access.log"
+        },
+        {
+          "@id": "ldfc:Server#assetsPath",
+          "comment": "URL matching for assets",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:Server#assetsDir",
+          "comment": "Path to a directory where assets can be found",
+          "range": "xsd:string",
+          "unique": true,
+          "default": "file://../assets/"
+        },
+        {
+          "@id": "ldfc:Server#dereference",
+          "comment": "A dereferencing for a datasource to a path",
+          "range": {
+            "@id": "ldfc:Server#Dereferencement",
+            "rdfs:hasProperty": [
+              { "@id": "ldfc:Server#dereferenceDatasource" },
+              { "@id": "ldfc:Server#dereferencePath" }
+            ]
+          }
+        }
+      ],
+      "constructorArguments": {
+        "fields": [
+          {
+            "@id": "ldfc:Server#titleField",
+            "keyRaw": "title",
+            "value": "ldfc:Server#name"
+          },
+          {
+            "keyRaw": "baseURL",
+            "value": "ldfc:Server#baseURL"
+          },
+          {
+            "@id": "ldfc:Server#urlDataField",
+            "keyRaw": "urlData",
+            "value": "ldfc:Server#urlData"
+          },
+          {
+            "keyRaw": "port",
+            "value": "ldfc:Server#port"
+          },
+          {
+            "keyRaw": "protocol",
+            "value": "ldfc:Server#protocol"
+          },
+          {
+            "keyRaw": "workers",
+            "value": "ldfc:Server#workers"
+          },
+          {
+            "@id": "ldfc:Server#datasourceField",
+            "keyRaw": "datasources",
+            "value": {
+              "fields": [
+                {
+                  "collectEntries": "ldfc:Server#datasource",
+                  "key": "ldfc:Datasource#path",
+                  "value": "rdf:object"
+                }
+              ]
+            }
+          },
+          {
+            "@id": "ldfc:Server#prefixField",
+            "keyRaw": "prefixes",
+            "value": {
+              "fields": [
+                {
+                  "collectEntries": "ldfc:Server#prefix",
+                  "key": "rdfa:prefix",
+                  "value": "rdfa:uri"
+                }
+              ]
+            }
+          },
+          {
+            "@id": "ldfc:Server#routerField",
+            "keyRaw": "routers",
+            "value": "ldfc:Server#router"
+          },
+          {
+            "keyRaw": "controllers",
+            "value": "ldfc:Server#controller"
+          },
+          {
+            "@id": "ldfc:Server#viewField",
+            "keyRaw": "views",
+            "value": "ldfc:Server#viewCollection"
+          },
+          {
+            "@id": "ldfc:Server#viewsRawField",
+            "keyRaw": "viewsRaw",
+            "value": "ldfc:Server#view"
+          },
+          {
+            "keyRaw": "response",
+            "value": {
+              "fields": [
+                {
+                  "keyRaw": "header",
+                  "value": {
+                    "fields": [
+                      {
+                        "collectEntries": "ldfc:Server#responseHeader",
+                        "key": "ldfc:Server#headerName",
+                        "value": "ldfc:Server#headerValue"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "keyRaw": "ssl",
+            "value": {
+              "fields": [
+                {
+                  "keyRaw": "keys",
+                  "value": {
+                    "fields": [
+                      {
+                        "keyRaw": "key",
+                        "value": "ldfc:Server#sslKey"
+                      },
+                      {
+                        "keyRaw": "cert",
+                        "value": "ldfc:Server#sslCert"
+                      },
+                      {
+                        "keyRaw": "ca",
+                        "value": "ldfc:Server#sslCa"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "keyRaw": "logging",
+            "value": {
+              "fields": [
+                {
+                  "keyRaw": "enabled",
+                  "value": "ldfc:Server#logging"
+                },
+                {
+                  "keyRaw": "file",
+                  "value": "ldfc:Server#loggingFile"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

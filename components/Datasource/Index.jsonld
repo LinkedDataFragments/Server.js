@@ -1,0 +1,33 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Datasource/Index",
+      "@type": "Class",
+      "extends": "ldfc:Datasource",
+      "requireElement": "datasources.IndexDatasource",
+      "comment": "An IndexDatasource is a datasource that lists other data sources",
+      "parameters": [
+        {
+          "@id": "ldfc:Datasource/Index#datasource",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#datasource",
+            "from": "ldfc:Server"
+          }
+        }
+      ],
+      "constructorArguments": {
+        "extends": "ldfc:Datasource#constructorArgumentsObject",
+        "fields": [
+          {
+            "@id": "ldfc:Server#datasourceField"
+          }
+        ]
+      }
+    }
+  ]
+}

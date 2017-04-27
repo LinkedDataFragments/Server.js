@@ -32,6 +32,7 @@ describe('SparqlDatasource', function () {
   describe('A SparqlDatasource instance', function () {
     var request = sinon.stub();
     var datasource = new SparqlDatasource({ endpoint: 'http://ex.org/sparql', request: request });
+    datasource.initialize();
 
     it('should indicate support for its features', function () {
       datasource.supportedFeatures.should.deep.equal({

@@ -1,0 +1,139 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Datasource",
+      "@type": "AbstractClass",
+      "comment": "An Datasource loads and queries data",
+      "parameters": [
+        {
+          "@id": "ldfc:Datasource#title",
+          "comment": "The datasource name",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:Datasource#description",
+          "comment": "The datasource description",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:Datasource#path",
+          "comment": "The relative path to the datasource from the baseURL",
+          "range": "xsd:string",
+          "unique": true,
+          "required": true
+        },
+        {
+          "@id": "ldfc:Datasource#enabled",
+          "comment": "If the datasource is enabled, by default true",
+          "range": "xsd:boolean",
+          "unique": true,
+          "default": true
+        },
+        {
+          "@id": "ldfc:Datasource#hide",
+          "comment": "If the datasource must be hide from the index, by default false",
+          "range": "xsd:boolean",
+          "unique": true,
+          "default": false
+        },
+        {
+          "@id": "ldfc:Datasource#graph",
+          "comment": "The default graph of the datasource",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:Datasource#urlData",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#urlData",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:Datasource#license",
+          "comment": "The license of the datasource",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:Datasource#licenseUrl",
+          "comment": "A link to the license of the datasource",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:Datasource#copyright",
+          "comment": "The copyright statement of the datasource",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:Datasource#homepage",
+          "comment": "The homepage url of the datasource",
+          "range": "xsd:string",
+          "unique": true
+        }
+      ],
+      "constructorArguments": {
+        "@id": "ldfc:Datasource#constructorArgumentsObject",
+        "fields": [
+          {
+            "keyRaw": "id",
+            "value": "rdf:subject"
+          },
+          {
+            "keyRaw": "title",
+            "value": "ldfc:Datasource#title"
+          },
+          {
+            "keyRaw": "description",
+            "value": "ldfc:Datasource#description"
+          },
+          {
+            "keyRaw": "path",
+            "value": "ldfc:Datasource#path"
+          },
+          {
+            "keyRaw": "enabled",
+            "value": "ldfc:Datasource#enabled"
+          },
+          {
+            "keyRaw": "hide",
+            "value": "ldfc:Datasource#hide"
+          },
+          {
+            "keyRaw": "graph",
+            "value": "ldfc:Datasource#graph"
+          },
+          {
+            "keyRaw": "urlData",
+            "value": "ldfc:Server#urlData"
+          },
+          {
+            "keyRaw": "license",
+            "value": "ldfc:Datasource#license"
+          },
+          {
+            "keyRaw": "licenseUrl",
+            "value": "ldfc:Datasource#licenseUrl"
+          },
+          {
+            "keyRaw": "copyright",
+            "value": "ldfc:Datasource#copyright"
+          },
+          {
+            "keyRaw": "homepage",
+            "value": "ldfc:Datasource#homepage"
+          }
+        ]
+      }
+    }
+  ]
+}

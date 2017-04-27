@@ -33,6 +33,7 @@ describe('JsonLdDatasource', function () {
 
   describe('A JsonLdDatasource instance for an example JsonLd file', function () {
     var datasource = new JsonLdDatasource({ url: exampleJsonLdUrl });
+    datasource.initialize();
     after(function (done) { datasource.close(done); });
 
     itShouldExecute(datasource,

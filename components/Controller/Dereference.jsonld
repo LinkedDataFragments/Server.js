@@ -1,0 +1,42 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Controller/Dereference",
+      "@type": "Class",
+      "extends": "ldfc:Controller",
+      "requireElement": "controllers.DereferenceController",
+      "comment": "A DeferenceController responds to dereferencing requests",
+      "parameters": [
+        {
+          "@id": "ldfc:Controller/Dereference#dereference",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#dereference",
+            "from": "ldfc:Server"
+          }
+        }
+      ],
+      "constructorArguments": {
+        "extends": "ldfc:Controller#constructorArgumentsObject",
+        "fields": [
+          {
+            "keyRaw": "dereference",
+            "value": {
+              "fields": [
+                {
+                  "collectEntries": "ldfc:Server#dereference",
+                  "key": "ldfc:Server#dereferencePath",
+                  "value": "ldfc:Server#dereferenceDatasource"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

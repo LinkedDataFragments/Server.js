@@ -1,0 +1,19 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+
+  "routers": [
+    {
+      "@id": "config:sets/routers.json#myDatasourceRouter",
+      "@type": "ldfc:Router/Datasource"
+    },
+    {
+      "@id": "config:sets/routers.json#myQuadPatternRouter",
+      "@type": "ldfc:Router/QuadPattern"
+    },
+    {
+      "@id": "config:sets/routers.json#myPageRouter",
+      "@type": "ldfc:Router/Page"
+    }
+  ]
+}

@@ -22,7 +22,7 @@ describe('DereferenceController', function () {
   describe('A DereferenceController instance', function () {
     var controller, client;
     before(function () {
-      controller = new DereferenceController({ dereference: { '/resource/': 'dbpedia/2014' } });
+      controller = new DereferenceController({ dereference: { '/resource/': { path: 'dbpedia/2014' } } });
       client = request.agent(new DummyServer(controller));
     });
 

@@ -1,0 +1,40 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:View",
+      "@type": "AbstractClass",
+      "comment": "View is a base class for objects that generate server responses",
+      "parameters": [
+        {
+          "@id": "ldfc:View#extension",
+          "range": "ldfc:View"
+        },
+        {
+          "@id": "ldfc:View#urlData",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#urlData",
+            "from": "ldfc:Server"
+          }
+        }
+      ],
+      "constructorArguments": {
+        "@id": "ldfc:View#constructorArgumentsObject",
+        "fields": [
+          {
+            "keyRaw": "views",
+            "value": "ldfc:View#extension"
+          },
+          {
+            "keyRaw": "urlData",
+            "value": "ldfc:Server#urlData"
+          }
+        ]
+      }
+    }
+  ]
+}

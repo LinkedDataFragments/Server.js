@@ -1,0 +1,20 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:View/Rdf/Qpf",
+      "@type": "Class",
+      "extends": "ldfc:View/Rdf",
+      "requireElement": "views.quadpatternfragments.QuadPatternFragmentsRdfView",
+      "comment": "A QuadPatternFragmentsRdfView represents a TPF or QPF in RDF",
+      "constructorArguments": [
+        {
+          "extends": "ldfc:View/Rdf#constructorArgumentsObject"
+        }
+      ]
+    }
+  ]
+}

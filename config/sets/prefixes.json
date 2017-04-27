@@ -1,0 +1,13 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+
+  "prefixes": [
+    { "prefix": "rdf",         "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+    { "prefix": "rdfs",        "uri": "http://www.w3.org/2000/01/rdf-schema#" },
+    { "prefix": "owl",         "uri": "http://www.w3.org/2002/07/owl#" },
+    { "prefix": "xsd",         "uri": "http://www.w3.org/2001/XMLSchema#" },
+    { "prefix": "hydra",       "uri": "http://www.w3.org/ns/hydra/core#" },
+    { "prefix": "void",        "uri": "http://rdfs.org/ns/void#" }
+  ]
+}

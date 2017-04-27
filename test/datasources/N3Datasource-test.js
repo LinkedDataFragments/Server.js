@@ -33,6 +33,7 @@ describe('N3Datasource', function () {
 
   describe('A N3Datasource instance for an example Turtle file', function () {
     var datasource = new N3Datasource({ url: exampleTurtleUrl });
+    datasource.initialize();
     after(function (done) { datasource.close(done); });
 
     itShouldExecute(datasource,

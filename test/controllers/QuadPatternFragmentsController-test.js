@@ -6,7 +6,8 @@ var request = require('supertest'),
     http = require('http');
 
 var QuadPatternFragmentsHtmlView = require('../../lib/views/quadpatternfragments/QuadPatternFragmentsHtmlView.js'),
-    QuadPatternFragmentsRdfView  = require('../../lib/views/quadpatternfragments/QuadPatternFragmentsRdfView.js');
+    QuadPatternFragmentsRdfView  = require('../../lib/views/quadpatternfragments/QuadPatternFragmentsRdfView.js'),
+    UrlData                      = require('../../lib/UrlData.js');
 
 describe('QuadPatternFragmentsController', function () {
   describe('The QuadPatternFragmentsController module', function () {
@@ -32,21 +33,22 @@ describe('QuadPatternFragmentsController', function () {
         extractQueryParams: sinon.spy(function (request, query) {
           query.features.datasource = true;
           query.features.other = true;
-          query.datasource = 'my-datasource';
+          query.datasource = '/my-datasource';
           query.other = 'other';
         }),
       };
       datasource = {
+        title: 'My data',
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().returns({ stream: 'items' }),
         supportedFeatures: { quadPattern: true },
       };
-      datasources = { 'my-datasource': { title: 'My data', datasource: datasource } };
+      datasources = { 'my-datasource': datasource };
       view = new QuadPatternFragmentsRdfView(),
       sinon.spy(view, 'render');
       prefixes = { a: 'a' };
       controller = new QuadPatternFragmentsController({
-        baseURL: 'https://example.org/base/?bar=foo',
+        urlData: new UrlData({ baseURL: 'https://example.org/base/?bar=foo' }),
         routers: [routerA, routerB, routerC],
         datasources: datasources,
         views: [view],
@@ -127,28 +129,24 @@ describe('QuadPatternFragmentsController', function () {
         var query = routerC.extractQueryParams.firstCall.args[1];
         var settings = view.render.firstCall.args[0];
 
-        settings.should.deep.equal({
-          datasource: {
-            title: 'My data',
-            index: 'https://example.org/#dataset',
-            url: 'https://example.org/my-datasource#dataset',
-            templateUrl: 'https://example.org/my-datasource{?subject,predicate,object,graph}',
-            supportsQuads: true,
-          },
-          fragment: {
-            url:             'https://example.org/my-datasource?a=b&c=d',
-            pageUrl:         'https://example.org/my-datasource?a=b&c=d',
-            firstPageUrl:    'https://example.org/my-datasource?a=b&c=d&page=1',
-            nextPageUrl:     'https://example.org/my-datasource?a=b&c=d&page=2',
-            previousPageUrl: null,
-          },
-          results: {
-            stream: 'items',
-          },
-          prefixes: prefixes,
-          query: query,
-          datasources: datasources,
+        settings.datasource.should.have.property('title', 'My data');
+        settings.datasource.should.have.property('index', 'https://example.org/#dataset');
+        settings.datasource.should.have.property('url', 'https://example.org/my-datasource#dataset');
+        settings.datasource.should.have.property('templateUrl', 'https://example.org/my-datasource{?subject,predicate,object,graph}');
+        settings.datasource.should.have.property('supportsQuads', true);
+        settings.fragment.should.deep.equal({
+          url:             'https://example.org/my-datasource?a=b&c=d',
+          pageUrl:         'https://example.org/my-datasource?a=b&c=d',
+          firstPageUrl:    'https://example.org/my-datasource?a=b&c=d&page=1',
+          nextPageUrl:     'https://example.org/my-datasource?a=b&c=d&page=2',
+          previousPageUrl: null,
         });
+        settings.results.should.deep.equal({
+          stream: 'items',
+        });
+        settings.prefixes.should.deep.equal(prefixes);
+        settings.query.should.deep.equal(query);
+        settings.datasources.should.deep.equal({ '/my-datasource': datasource });
         query.should.have.property('patternString', '{ ?s ?p ?o ?g. }');
       });
     });
@@ -188,7 +186,7 @@ describe('QuadPatternFragmentsController', function () {
       var router = {
         extractQueryParams: function (request, query) {
           query.features.datasource = true;
-          query.datasource = 'my-datasource';
+          query.datasource = '/my-datasource';
         },
       };
       htmlView = new QuadPatternFragmentsHtmlView();
@@ -197,7 +195,7 @@ describe('QuadPatternFragmentsController', function () {
       sinon.spy(rdfView, 'render');
       controller = new QuadPatternFragmentsController({
         routers: [router],
-        datasources: { 'my-datasource': { datasource: datasource } },
+        datasources: { 'my-datasource': datasource },
         views: [htmlView, rdfView],
       });
       client = request.agent(new DummyServer(controller));
@@ -324,12 +322,12 @@ describe('QuadPatternFragmentsController', function () {
       var router = {
         extractQueryParams: function (request, query) {
           query.features.datasource = true;
-          query.datasource = 'my-datasource';
+          query.datasource = '/my-datasource';
         },
       };
       controller = new QuadPatternFragmentsController({
         routers: [router],
-        datasources: { 'my-datasource': { datasource: datasource } },
+        datasources: { 'my-datasource': datasource },
       });
       client = request.agent(new DummyServer(controller));
     });
@@ -381,7 +379,7 @@ describe('QuadPatternFragmentsController', function () {
       router = {
         extractQueryParams: sinon.spy(function (request, query) {
           query.features.datasource = true;
-          query.datasource = 'my-datasource';
+          query.datasource = '/my-datasource';
         }),
       };
       error = new Error('datasource error'),
@@ -394,7 +392,7 @@ describe('QuadPatternFragmentsController', function () {
       controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
-        datasources: { 'my-datasource': { datasource: datasource } },
+        datasources: { '/my-datasource': datasource },
       });
       client = request.agent(new DummyServer(controller));
     });
@@ -420,7 +418,7 @@ describe('QuadPatternFragmentsController', function () {
       router = {
         extractQueryParams: sinon.spy(function (request, query) {
           query.features.datasource = true;
-          query.datasource = 'my-datasource';
+          query.datasource = '/my-datasource';
         }),
       };
       error = new Error('datasource error'),
@@ -434,7 +432,7 @@ describe('QuadPatternFragmentsController', function () {
       controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
-        datasources: { 'my-datasource': { datasource: datasource } },
+        datasources: { 'my-datasource': datasource },
       });
       client = request.agent(new DummyServer(controller));
     });

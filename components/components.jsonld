@@ -1,0 +1,57 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/server",
+  "@type": "Module",
+  "requireName": "ldf-server",
+  "import": [
+    "files-ldfc:components/Controller/Assets.jsonld",
+    "files-ldfc:components/Controller/Dereference.jsonld",
+    "files-ldfc:components/Controller/NotFound.jsonld",
+    "files-ldfc:components/Controller/QuadPatternFragments.jsonld",
+    "files-ldfc:components/Controller/Summary.jsonld",
+    "files-ldfc:components/Controller/Timegate.jsonld",
+
+    "files-ldfc:components/ControllerExtension/Memento.jsonld",
+    "files-ldfc:components/ControllerExtension/WebId.jsonld",
+
+    "files-ldfc:components/Datasource/Composite.jsonld",
+    "files-ldfc:components/Datasource/Empty.jsonld",
+    "files-ldfc:components/Datasource/Hdt.jsonld",
+    "files-ldfc:components/Datasource/Index.jsonld",
+    "files-ldfc:components/Datasource/JsonLd.jsonld",
+    "files-ldfc:components/Datasource/Memory.jsonld",
+    "files-ldfc:components/Datasource/N3.jsonld",
+    "files-ldfc:components/Datasource/NQuads.jsonld",
+    "files-ldfc:components/Datasource/NTriples.jsonld",
+    "files-ldfc:components/Datasource/Sparql.jsonld",
+    "files-ldfc:components/Datasource/Trig.jsonld",
+    "files-ldfc:components/Datasource/Turtle.jsonld",
+
+    "files-ldfc:components/Router/Datasource.jsonld",
+    "files-ldfc:components/Router/Page.jsonld",
+    "files-ldfc:components/Router/QuadPattern.jsonld",
+
+    "files-ldfc:components/View/Html/Qpf/Memento.jsonld",
+    "files-ldfc:components/View/Html/Qpf/Summary.jsonld",
+    "files-ldfc:components/View/Html/Error.jsonld",
+    "files-ldfc:components/View/Html/Forbidden.jsonld",
+    "files-ldfc:components/View/Html/NotFound.jsonld",
+    "files-ldfc:components/View/Html/Qpf.jsonld",
+    "files-ldfc:components/View/Rdf/Qpf/Summary.jsonld",
+    "files-ldfc:components/View/Rdf/Error.jsonld",
+    "files-ldfc:components/View/Rdf/NotFound.jsonld",
+    "files-ldfc:components/View/Rdf/Qpf.jsonld",
+    "files-ldfc:components/View/Rdf/Summary.jsonld",
+    "files-ldfc:components/View/Collection.jsonld",
+    "files-ldfc:components/View/Html.jsonld",
+    "files-ldfc:components/View/Rdf.jsonld",
+
+    "files-ldfc:components/Controller.jsonld",
+    "files-ldfc:components/ControllerExtension.jsonld",
+    "files-ldfc:components/Datasource.jsonld",
+    "files-ldfc:components/Router.jsonld",
+    "files-ldfc:components/Server.jsonld",
+    "files-ldfc:components/UrlData.jsonld",
+    "files-ldfc:components/View.jsonld"
+  ]
+}

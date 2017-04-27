@@ -11,6 +11,8 @@
 
 <form action="?" method="GET" property="hydra:search" resource="#pattern">
   <fieldset resource="#pattern">
+  <%- extensions.FormBefore %>
+  <div class="searchForm">
     <legend>Search <%= datasource.title %> by <%= patternKind %> pattern</legend>
     <span property="hydra:template" content="<%= datasource.templateUrl %>" lang=""></span>
     <span property="hydra:variableRepresentation" resource="hydra:ExplicitRepresentation"></span>
@@ -27,6 +29,8 @@
       </li>
 <% }); -%>
     </ul>
+  </div>
+  <%- extensions.FormAfter %>
   </fieldset>
   <p>
     <input type="submit" value="Search" />
@@ -67,17 +71,18 @@
 </div>
 <ul class="quads">
 <% quads.forEach(function (quad) {
-    var subject = quad.subject, predicate = quad.predicate, object = quad.object, graph = quad.graph;
+    var subject = quad.subject, predicate = quad.predicate, object = quad.object, graph = quad.graph, urlAppendix = quad.urlAppendix ? quad.urlAppendix : '';
 -%>
   <li>
-    <a href="?subject=<%= encodeURIComponent(subject) %>"><%
+    <%- extensions.QuadBefore({ quad: quad }) %>
+    <a href="?subject=<%= encodeURIComponent(subject) + urlAppendix %>"><%
       %><abbr title="<%= subject %>"><%= shorten(subject) %></abbr><%
       %></a>
-    <a href="?predicate=<%= encodeURIComponent(predicate) %>"><%
+    <a href="?predicate=<%= encodeURIComponent(predicate) + urlAppendix %>"><%
       %><abbr title="<%= predicate %>"><%= shorten(predicate) %></abbr><%
       %></a>
     <% if (!N3Util.isLiteral(object)) { -%>
-    <a href="?object=<%= encodeURIComponent(object) %>" resource="<%= subject %>"><%
+    <a href="?object=<%= encodeURIComponent(object) + urlAppendix %>" resource="<%= subject %>"><%
       %><abbr title="<%= object %>" property="<%= predicate %>" resource="<%= object %>"><%=
         shorten(object)
         %></abbr></a><%
@@ -85,7 +90,7 @@
     var type = N3Util.getLiteralType(object),
         language = N3Util.getLiteralLanguage(object);
     -%>
-    <a href="?object=<%= encodeURIComponent(object) %>" resource="<%= subject %>"><%
+    <a href="?object=<%= encodeURIComponent(object) + urlAppendix %>" resource="<%= subject %>"><%
       %>"<span property="<%= predicate %>" <%
       if (!language) { %>datatype="<%= type %>"<% }
       else { %>lang="<%= language %>" xml:lang="<%= language %>"<% } %>><%=
@@ -93,10 +98,11 @@
       %></span>"</a><%
     }
     if (datasource.supportsQuads) { -%>
-    <a href="?graph=<%= encodeURIComponent(graph || 'urn:ldf:defaultGraph') %>"><%
+    <a href="?graph=<%= encodeURIComponent(graph || 'urn:ldf:defaultGraph') + urlAppendix %>" class="graph"><%
       %><abbr title="<%= graph %>"><%= graph ? shorten(graph) : '@default' %></abbr><%
       %></a><% }
     -%>.
+    <%- extensions.QuadAfter({ quad: quad }) %>
   </li>
 <% }); -%>
 </ul>

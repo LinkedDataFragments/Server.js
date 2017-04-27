@@ -28,7 +28,7 @@ describe('SummaryController', function () {
     before(function () {
       controller = new SummaryController({
         views: [new SummaryRdfView()],
-        summaries: { dir: '../../test/assets' },
+        summaries: { dir: path.join(__dirname, '/../assets') },
         prefixes: {
           ds: 'http://semweb.mmlab.be/ns/datasummaries#',
           rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',

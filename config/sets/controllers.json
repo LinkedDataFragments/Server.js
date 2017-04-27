@@ -1,0 +1,23 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+
+  "controllers": [
+    {
+      "@id": "config:sets/controllers.json#myQuadPatternFragmentsController",
+      "@type": "ldfc:Controller/QuadPatternFragments"
+    },
+    {
+      "@id": "config:sets/controllers.json#myAssetsController",
+      "@type": "ldfc:Controller/Assets"
+    },
+    {
+      "@id": "config:sets/controllers.json#myDereferenceController",
+      "@type": "ldfc:Controller/Dereference"
+    },
+    {
+      "@id": "config:sets/controllers.json#myNotFoundController",
+      "@type": "ldfc:Controller/NotFound"
+    }
+  ]
+}

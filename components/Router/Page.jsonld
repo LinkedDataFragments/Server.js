@@ -1,0 +1,32 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Router/Page",
+      "@type": "Class",
+      "extends": "ldfc:Router",
+      "requireElement": "routers.PageRouter",
+      "comment": "A PageRouter routes page numbers to offsets",
+      "parameters": [
+        {
+          "@id": "ldfc:Router/Page#pageSize",
+          "comment": "The triple page size, which defaults to 100",
+          "range": "xsd:integer",
+          "unique": true,
+          "default": 100
+        }
+      ],
+      "constructorArguments": {
+        "fields": [
+          {
+            "keyRaw": "pageSize",
+            "value": "ldfc:Router/Page#pageSize"
+          }
+        ]
+      }
+    }
+  ]
+}

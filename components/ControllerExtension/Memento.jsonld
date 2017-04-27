@@ -1,0 +1,55 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:ControllerExtension/Memento",
+      "@type": "Class",
+      "extends": "ldfc:ControllerExtension",
+      "requireElement": "controllers.MementoControllerExtension",
+      "comment": "A MementoControllerExtension extends Triple Pattern Fragments responses with Memento headers",
+      "parameters": [
+        {
+          "@id": "ldfc:Controller/Timegate#timegatePath"
+        },
+        {
+          "@id": "ldfc:Controller/Timegate#memento"
+        },
+        {
+          "@id": "ldfc:ControllerExtension/Memento#datasource",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#datasource",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:ControllerExtension/Memento#urlData",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#urlData",
+            "from": "ldfc:Server"
+          }
+        }
+      ],
+      "constructorArguments": {
+        "fields": [
+          {
+            "@id": "ldfc:Controller/Timegate#timeGatesField"
+          },
+          {
+            "@id": "ldfc:Server#routerField"
+          },
+          {
+            "@id": "ldfc:Server#datasourceField"
+          },
+          {
+            "@id": "ldfc:Server#urlDataField"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,50 +1,78 @@
 #!/usr/bin/env node
-/*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
+/*! @license MIT ©2013-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* Standalone Linked Data Fragments Server */
 
-var _ = require('lodash'),
-    fs = require('fs'),
-    path = require('path'),
-    cluster = require('cluster'),
-    LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
-    IndexDatasource = require('../lib/datasources/IndexDatasource'),
-    ViewCollection = require('../lib/views/ViewCollection.js');
+var cluster = require('cluster'),
+    ComponentsLoader = require('componentsjs').Loader;
 
 // Parse arguments
 var args = process.argv.slice(2);
-if (args.length < 1 || args.length > 3 || /^--?h(elp)?$/.test(args[0])) {
-  console.log('usage: server config.json [port [workers]]');
+if (args.length < 1 || args.length > 4 || /^--?h(elp)?$/.test(args[0])) {
+  console.log('usage: server config.json [port [workers [componentConfigUri]]]');
   return process.exit(1);
 }
-var configDefaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/config-defaults.json'))),
-    config = _.defaults(JSON.parse(fs.readFileSync(args[0])), configDefaults),
-    port = parseInt(args[1], 10) || config.port,
-    workers = parseInt(args[2], 10) || config.workers,
-    protocol = config.protocol,
-    constructors = {};
 
-// Determine protocol
-if (!protocol) {
-  var protocolMatch = (config.baseURL || '').match(/^(\w+):/);
-  protocol = config.protocol = protocolMatch ? protocolMatch[1] : 'http';
-}
+var cliPort = parseInt(args[1], 10),
+    cliWorkers = parseInt(args[2], 10),
+    configUri = args[3] || 'urn:ldf-server:my';
 
-// Start up a cluster master
-if (cluster.isMaster) {
+var loader = new ComponentsLoader({ scanGlobal: true });
+loader.registerAvailableModuleResources()
+  .then(function () {
+    // Start up a cluster master
+    if (cluster.isMaster) {
+      return loader.getConfigConstructorFromUrl(configUri, args[0])
+        .then(function (constructor) {
+          return constructor.makeArguments(true).then(function (args) {
+            startClusterMaster(args[0]);
+          });
+        })
+        .catch(function (e) {
+          console.error('Config error:');
+          console.error(e);
+          process.exit(1);
+        });
+    }
+    else {
+      return loader.instantiateFromUrl(configUri, args[0])
+        .then(function (worker) {
+          worker.run(cliPort);
+        })
+        .catch(function (e) {
+          console.error('Instantiation error:');
+          console.error(e);
+          process.exit(1);
+        });
+    }
+  })
+  .catch(function (e) {
+    console.error('Component definition error:');
+    console.error(e);
+    process.exit(1);
+  });
+
+function startClusterMaster(config) {
+  var workers = cliWorkers || config.workers || 1;
+
   // Create workers
-  console.log('Master %d running on %s://localhost:%d/.', process.pid, protocol, port);
+  console.log('Master %d running.', process.pid);
   for (var i = 0; i < workers; i++)
     cluster.fork();
 
   // Respawn crashed workers
   cluster.on('listening', function (worker) {
     worker.once('exit', function (code, signal) {
-      if (!worker.suicide) {
+      if (!worker.exitedAfterDisconnect) {
         console.log('Worker %d died with %s. Starting new worker.',
-                    worker.process.pid, code || signal);
+          worker.process.pid, code || signal);
         cluster.fork();
       }
     });
+  });
+
+  // Disconnect from cluster on SIGINT, so that the process can cleanly terminate
+  process.once('SIGINT', function () {
+    cluster.disconnect();
   });
 
   // Respawn workers one by one when receiving a SIGHUP signal
@@ -66,7 +94,7 @@ if (cluster.isMaster) {
             return newWorker.kill(), respawnNext(); // Dead workers are replaced automatically
           worker.once('exit', function () {
             console.log('Worker %d replaces killed worker %d.',
-                        newWorker.process.pid, worker.process.pid);
+              newWorker.process.pid, worker.process.pid);
             respawnNext();
           });
           worker.kill();
@@ -77,7 +105,7 @@ if (cluster.isMaster) {
         function abort(code, signal) {
           if (!newWorker.suicide) {
             console.log('Respawning aborted because worker %d died with %s.',
-                        newWorker.process.pid, code || signal);
+              newWorker.process.pid, code || signal);
             process.addListener('SIGHUP', respawn);
             process.removeListener('SIGHUP', respawnPending);
           }
@@ -92,134 +120,4 @@ if (cluster.isMaster) {
     })();
     function respawnPending() { console.log('Respawning already in progress'); }
   });
-}
-// Start up a worker
-else {
-  // Configure preset URLs
-  var baseURL = config.baseURL = config.baseURL.replace(/\/?$/, '/'),
-      baseURLRoot = baseURL.match(/^(?:https?:\/\/[^\/]+)?/)[0],
-      baseURLPath = baseURL.substr(baseURLRoot.length),
-      blankNodePath = baseURLRoot ? '/.well-known/genid/' : '',
-      blankNodePrefix = blankNodePath ? baseURLRoot + blankNodePath : 'genid:';
-
-  // Create all data sources
-  var datasources = config.datasources, datasourceBase = baseURLPath.substr(1), dereference = config.dereference;
-  Object.keys(datasources).forEach(function (datasourceName) {
-    var datasourceConfig = config.datasources[datasourceName], datasourcePath;
-    delete datasources[datasourceName];
-    if (datasourceConfig.enabled !== false) {
-      try {
-        // Avoid illegal URI characters in data source path
-        datasourcePath = datasourceBase + encodeURI(datasourceName);
-        datasources[datasourcePath] = datasourceConfig;
-        // Set up blank-node-to-IRI translation, with dereferenceable URLs when possible
-        datasourceConfig.settings = _.defaults(datasourceConfig.settings || {}, config);
-        if (!datasourceConfig.settings.blankNodePrefix) {
-          datasourceConfig.settings.blankNodePrefix = blankNodePrefix + datasourcePath + '/';
-          if (blankNodePath)
-            dereference[blankNodePath + datasourcePath + '/'] = datasourcePath;
-        }
-        // Create the data source
-        var datasource = instantiate(datasourceConfig, '../lib/datasources/');
-        datasource.on('error', datasourceError);
-        datasourceConfig.datasource = datasource;
-        datasourceConfig.url = baseURLRoot + '/' + datasourcePath + '#dataset';
-        datasourceConfig.title = datasourceConfig.title || datasourceName;
-      }
-      catch (error) { datasourceError(error); }
-      function datasourceError(error) {
-        delete datasources[datasourcePath];
-        process.stderr.write('WARNING: skipped datasource ' + datasourceName + '. ' + error.message + '\n');
-      }
-    }
-  });
-
-  // Create index data source
-  var indexPath = datasourceBase.replace(/\/$/, '');
-  datasources[indexPath] = datasources[indexPath] || {
-    url: baseURLRoot + '/' + indexPath + '#dataset',
-    hide: true,
-    role: 'index',
-    title: 'dataset index',
-    datasource: new IndexDatasource({ datasources: datasources }),
-  };
-
-  // Set up assets
-  config.assetsPath = baseURLPath + 'assets/';
-
-  // Set up routers, views, and controllers
-  config.routers = instantiateAll(config.routers,  '../lib/routers/');
-  config.views = new ViewCollection();
-  config.views.addViews(instantiateAll(findFiles('../lib/views', /\.js$/)));
-  config.controllers = instantiateAll(config.controllers, '../lib/controllers/');
-
-  // Set up logging
-  var loggingSettings = _.defaults(config.logging, configDefaults.logging);
-  config.log = console.log;
-  if (loggingSettings.enabled) {
-    var accesslog = require('access-log');
-    config.accesslogger = function (request, response) {
-      accesslog(request, response, loggingSettings.format, function (logEntry) {
-        if (loggingSettings.file) {
-          fs.appendFile(loggingSettings.file, logEntry + '\n', function (error) {
-            error && process.stderr.write('Error when writing to access log file: ' + error);
-          });
-        }
-        else console.log(logEntry);
-      });
-    };
-  }
-
-  // Create server, and start it when all data sources are ready
-  var server = new LinkedDataFragmentsServer(config),
-      pending = _.size(datasources);
-  _.each(datasources, function (settings) {
-    var ready = _.once(startWhenReady);
-    settings.datasource.once('initialized', ready);
-    settings.datasource.once('error', ready);
-  });
-  function startWhenReady() {
-    if (!--pending) {
-      server.listen(port);
-      console.log('Worker %d running on %s://localhost:%d/.', process.pid, protocol, port);
-    }
-  }
-
-  // Terminate gracefully if possible
-  process.once('SIGINT', function () {
-    console.log('Stopping worker', process.pid);
-    server.stop();
-    process.on('SIGINT', function () { process.exit(1); });
-  });
-}
-
-
-// Instantiates an object from the given description
-function instantiate(description, includePath) {
-  var type = description.type || description,
-      typePath = path.join(includePath ? path.resolve(__dirname, includePath) : '', type),
-      Constructor = constructors[typePath] || (constructors[typePath] = require(typePath)),
-      extensions = config.extensions && config.extensions[type] || [],
-      settings = _.defaults(description.settings || {}, {
-        extensions: extensions.map(function (x) { return instantiate(x, includePath); }),
-      }, config);
-  return new Constructor(settings, config);
-}
-
-// Instantiates all objects from the given descriptions
-function instantiateAll(descriptions, includePath) {
-  return (_.isArray(descriptions) ? _.map : _.mapValues)(descriptions,
-           function (description) { return instantiate(description, includePath); });
-}
-
-// Recursively finds files in a folder whose name matches the pattern
-function findFiles(folder, pattern, includeCurrentFolder) {
-  folder = path.resolve(__dirname, folder);
-  return _.flatten(_.compact(fs.readdirSync(folder).map(function (name) {
-    name = path.join(folder, name);
-    if (fs.statSync(name).isDirectory())
-      return findFiles(name, pattern, true);
-    else if (includeCurrentFolder && pattern.test(name))
-      return name;
-  })));
 }

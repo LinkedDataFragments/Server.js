@@ -1,0 +1,33 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Router/QuadPattern",
+      "@type": "Class",
+      "extends": "ldfc:Router",
+      "requireElement": "routers.QuadPatternRouter",
+      "comment": "A QuadPatternRouter routes basic quad patterns",
+      "parameters": [
+        {
+          "@id": "ldfc:QuadPattern/Page#routerPrefix",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#prefix",
+            "from": "ldfc:Server"
+          },
+          "unique": true
+        }
+      ],
+      "constructorArguments": {
+        "fields": [
+          {
+            "@id": "ldfc:Server#prefixField"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Controller/QuadPatternFragments",
+      "@type": "Class",
+      "extends": "ldfc:Controller",
+      "requireElement": "controllers.QuadPatternFragmentsController",
+      "comment": "A QuadPatternFragmentsController responds to requests for TPFs and QPFs",
+      "parameters": [
+        {
+          "@id": "ldfc:Controller/QuadPatternFragments#router",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#router",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:Controller/QuadPatternFragments#controllerExtension",
+          "comment": "An extension for this controller",
+          "range": {
+            "@id": "ldfc:ControllerExtension",
+            "extends": "AbstractClass"
+          }
+        }
+      ],
+      "constructorArguments": {
+        "extends": "ldfc:Controller#constructorArgumentsObject",
+        "fields": [
+          {
+            "@id": "ldfc:Server#routerField"
+          },
+          {
+            "keyRaw": "extensions",
+            "value": "ldfc:Controller/QuadPatternFragments#controllerExtension"
+          }
+        ]
+      }
+    }
+  ]
+}

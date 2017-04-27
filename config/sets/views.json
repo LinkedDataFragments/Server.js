@@ -1,0 +1,35 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+
+  "views": [
+    {
+      "@id": "config:sets/views.json#myErrorHtmlView",
+      "@type": "ErrorHtmlView"
+    },
+    {
+      "@id": "config:sets/views.json#myErrorRdfView",
+      "@type": "ErrorRdfView"
+    },
+    {
+      "@id": "config:sets/views.json#myForbiddenHtmlView",
+      "@type": "ForbiddenHtmlView"
+    },
+    {
+      "@id": "config:sets/views.json#myNotFoundHtmlView",
+      "@type": "NotFoundHtmlView"
+    },
+    {
+      "@id": "config:sets/views.json#myNotFoundRdfView",
+      "@type": "NotFoundRdfView"
+    },
+    {
+      "@id": "config:sets/views.json#myQpfHtmlView",
+      "@type": "QpfHtmlView"
+    },
+    {
+      "@id": "config:sets/views.json#myQpfRdfView",
+      "@type": "QpfRdfView"
+    }
+  ]
+}

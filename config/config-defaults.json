@@ -1,64 +1,12 @@
 {
-  "title": "Linked Data Fragments server",
-  "baseURL": "/",
-
-  "port": 3000,
-  "workers": 1,
-
-  "datasources": {},
-
-  "dereference": {},
-
-  "prefixes": {
-    "rdf":   "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "rdfs":  "http://www.w3.org/2000/01/rdf-schema#",
-    "owl":   "http://www.w3.org/2002/07/owl#",
-    "xsd":   "http://www.w3.org/2001/XMLSchema#",
-    "hydra": "http://www.w3.org/ns/hydra/core#",
-    "void":  "http://rdfs.org/ns/void#",
-    "sd":    "http://www.w3.org/TR/sparql11-service-description/#"
-  },
-
-  "routers": [
-    "DatasourceRouter",
-    "QuadPatternRouter",
-    "PageRouter"
-  ],
-
-  "controllers": [
-    "SummaryController",
-    "TimegateController",
-    "QuadPatternFragmentsController",
-    "AssetsController",
-    "DereferenceController",
-    "NotFoundController"
-  ],
-
-  "response": {
-    "headers": {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Accept-Datetime,Accept",
-      "Access-Control-Expose-Headers": "Content-Location,Link,Memento-Datetime"
-    }
-  },
-
-  "extensions": {
-    "QuadPatternFragmentsController": [
-      "MementoControllerExtension"
-    ]
-  },
-
-  "ssl": {
-    "keys" : {
-      "key":  "config/certs/localhost-server.key",
-      "cert": "config/certs/localhost-server.crt",
-      "ca": [ "config/certs/localhost-ca.crt" ]
-    }
-  },
-
-  "logging": {
-    "enabled": false,
-    "file": "access.log",
-    "format": null
-  }
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+  "@type": "Server",
+  "import": [
+    "config:sets/controllers.json",
+    "config:sets/datasources.json",
+    "config:sets/prefixes.json",
+    "config:sets/routers.json",
+    "config:sets/views.json"
+  ]
 }

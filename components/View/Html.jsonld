@@ -1,0 +1,76 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:View/Html",
+      "@type": "AbstractClass",
+      "extends": "ldfc:View",
+      "comment": "HtmlView is a base class for views that generate HTML responses",
+      "parameters": [
+        {
+          "@id": "ldfc:View/Html#cache",
+          "comment": "If views should be cached",
+          "range": "xsd:boolean",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:View/Html#n3Util",
+          "comment": "The N3Util class",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:View/Html#urlData",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#urlData",
+            "from": "ldfc:Server"
+          },
+          "unique": true
+        },
+        {
+          "@id": "ldfc:View/Html#title",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#name",
+            "from": "ldfc:Server"
+          },
+          "unique": true
+        },
+        {
+          "@id": "ldfc:View/Html#header",
+          "comment": "The view header title",
+          "unique": true
+        }
+      ],
+      "constructorArguments": [
+        {
+          "@id": "ldfc:View/Html#constructorArgumentsObject",
+          "extends": "ldfc:View#constructorArgumentsObject",
+          "fields": [
+            {
+              "keyRaw": "cache",
+              "value": "ldfc:View/Html#cache"
+            },
+            {
+              "keyRaw": "N3Util",
+              "value": "ldfc:View/Html#n3Util"
+            },
+            {
+              "@id": "ldfc:Server#urlDataField"
+            },
+            {
+              "@id": "ldfc:Server#titleField"
+            },
+            {
+              "keyRaw": "header",
+              "value": "ldfc:View/Html#header"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

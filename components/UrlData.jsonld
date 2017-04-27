@@ -1,0 +1,68 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:UrlData",
+      "@type": "Class",
+      "requireElement": "UrlData",
+      "comment": "A data object class for preset URL information",
+      "parameters": [
+        {
+          "@id": "ldfc:UrlData#baseURL",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#baseURL",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:UrlData#assetsPath",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#assetsPath",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:UrlData#assetsDir",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#assetsDir",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldfc:UrlData#protocol",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#protocol",
+            "from": "ldfc:Server"
+          }
+        }
+      ],
+      "constructorArguments": {
+        "fields": [
+          {
+            "keyRaw": "baseURL",
+            "value": "ldfc:Server#baseURL"
+          },
+          {
+            "keyRaw": "assetsPath",
+            "value": "ldfc:Server#assetsPath"
+          },
+          {
+            "keyRaw": "assetsDir",
+            "value": "ldfc:Server#assetsDir"
+          },
+          {
+            "keyRaw": "protocol",
+            "value": "ldfc:Server#protocol"
+          }
+        ]
+      }
+    }
+  ]
+}

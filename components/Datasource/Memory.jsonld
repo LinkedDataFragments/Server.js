@@ -1,0 +1,40 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/server",
+  "components": [
+    {
+      "@id": "ldfc:Datasource/Memory",
+      "@type": "AbstractClass",
+      "extends": "ldfc:Datasource",
+      "parameters": [
+        {
+          "@id": "ldfc:Datasource/Memory#file",
+          "comment": "The dataset file path",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfc:Datasource/Memory#url",
+          "comment": "The dataset file URL",
+          "range": "xsd:string",
+          "unique": true
+        }
+      ],
+      "constructorArguments": {
+        "extends": "ldfc:Datasource#constructorArgumentsObject",
+        "fields": [
+          {
+            "keyRaw": "file",
+            "value": "ldfc:Datasource/Memory#file"
+          },
+          {
+            "keyRaw": "url",
+            "value": "ldfc:Datasource/Memory#url"
+          }
+        ]
+      }
+    }
+  ]
+}

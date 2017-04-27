@@ -15,18 +15,21 @@ describe('HdtDatasource', function () {
 
     it('should be an HdtDatasource constructor', function (done) {
       var instance = new HdtDatasource({ file: exampleHdtFile });
+      instance.initialize();
       instance.should.be.an.instanceof(HdtDatasource);
       instance.close(done);
     });
 
     it('should create HdtDatasource objects', function (done) {
       var instance = HdtDatasource({ file: exampleHdtFile });
+      instance.initialize();
       instance.should.be.an.instanceof(HdtDatasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', function (done) {
       var instance = new HdtDatasource({ file: exampleHdtFile });
+      instance.initialize();
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
@@ -37,6 +40,7 @@ describe('HdtDatasource', function () {
     function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new HdtDatasource({ file: exampleHdtFile });
+      datasource.initialize();
       datasource.on('initialized', done);
     });
     after(function (done) {
@@ -99,6 +103,7 @@ describe('HdtDatasource', function () {
     function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks });
+      datasource.initialize();
       datasource.on('initialized', done);
     });
     after(function (done) {
@@ -150,6 +155,7 @@ describe('HdtDatasource', function () {
         file: exampleHdtFileWithBlanks,
         blankNodePrefix: 'http://example.org/.well-known/genid/',
       });
+      datasource.initialize();
       datasource.on('initialized', done);
     });
     after(function (done) {

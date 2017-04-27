@@ -22,6 +22,7 @@ describe('CompositeDatasource', function () {
     var datasource = datasources[datasourceId];
     var DatasourceType = datasource.datasourceType;
     datasource.datasource = new DatasourceType(datasource.settings);
+    datasource.datasource.initialize();
   });
   var references = Object.keys(datasources);
   var totalSize = Object.keys(datasources).reduce(function (acc, key) {
@@ -57,6 +58,7 @@ describe('CompositeDatasource', function () {
     function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new CompositeDatasource({ datasources: datasources, references: references });
+      datasource.initialize();
       datasource.on('initialized', done);
     });
     after(function (done) {
@@ -136,12 +138,12 @@ describe('CompositeDatasource', function () {
     itShouldExecute(getDatasource,
       'a query for the default graph',
       { graph: '',                          limit: 10, features: { quadPattern: true, limit: true } },
-      10, 271);
+      10, 266);
 
     itShouldExecute(getDatasource,
       'a query for the default graph without a limit',
       { graph: '',                          features: { quadPattern: true, limit: true } },
-      271, 271);
+      266, 266);
 
     itShouldExecute(getDatasource,
       'a query for graph0',

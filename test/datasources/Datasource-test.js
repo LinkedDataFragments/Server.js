@@ -32,6 +32,7 @@ describe('Datasource', function () {
 
   describe('A Datasource instance', function () {
     var datasource = new Datasource();
+    datasource.initialize();
 
     it('should not indicate support for any features', function () {
       datasource.supportedFeatures.should.deep.equal({});
@@ -131,6 +132,7 @@ describe('Datasource', function () {
       });
       datasource.on('initialized', initializedListener = sinon.stub());
       datasource.on('error', errorListener = sinon.stub());
+      datasource.initialize();
     });
 
     describe('after construction', function () {
@@ -192,6 +194,7 @@ describe('Datasource', function () {
       datasource._initialize = sinon.stub().throws(error);
       datasource.on('initialized', initializedListener = sinon.stub());
       datasource.on('error', errorListener = sinon.stub());
+      datasource.initialize();
     });
 
     describe('after the initializer calls the callback', function () {
@@ -222,6 +225,7 @@ describe('Datasource', function () {
       datasource._initialize = sinon.stub().callsArgWith(0, error);
       datasource.on('initialized', initializedListener = sinon.stub());
       datasource.on('error', errorListener = sinon.stub());
+      datasource.initialize();
     });
 
     describe('after the initializer calls the callback', function () {
@@ -251,6 +255,7 @@ describe('Datasource', function () {
       value: { a: true, b: true, c: false },
     });
     datasource._executeQuery = sinon.stub();
+    datasource.initialize();
 
     it('should support the empty query', function () {
       datasource.supportsQuery({}).should.be.true;
@@ -295,6 +300,7 @@ describe('Datasource', function () {
       enumerable: true,
       value: { custom: true },
     });
+    datasource.initialize();
     datasource._executeQuery = sinon.spy(function (query, destination) {
       destination._push({ subject: 's', predicate: 'p', object: 'o1' });
       destination._push({ subject: 's', predicate: 'p', object: 'o2', graph: '' });

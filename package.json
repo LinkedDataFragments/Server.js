@@ -2,6 +2,15 @@
   "name": "ldf-server",
   "description": "Linked Data Fragments Server",
   "version": "2.2.5",
+  "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core",
+  "lsd:components": "components/components.jsonld",
+  "lsd:contexts": {
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld": "components/context.jsonld"
+  },
+  "lsd:importPaths": {
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/": "components/",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/config/": "config/"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=6.0"
@@ -27,6 +36,7 @@
     "jsonld": "^0.4.11",
     "lodash": "^2.4.2",
     "lru-cache": "^4.0.1",
+    "componentsjs": "3.3.0",
     "mime": "^1.3.4",
     "n3": "^0.9.0",
     "negotiate": "^1.0.1",
