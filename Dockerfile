@@ -1,4 +1,4 @@
-FROM node:4.2.2
+FROM node:4
 
 # Install location
 ENV dir /var/www/ldf-server
