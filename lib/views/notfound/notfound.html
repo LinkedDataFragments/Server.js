@@ -8,7 +8,8 @@
 <h3>Available datasets</h3>
 <ul>
 <% for (var datasourceName in datasources) {
-     var datasource = datasources[datasourceName]; %>
+     var datasource = datasources[datasourceName];
+     if (datasource.hide) continue; %>
   <li><a href="<%= datasource.url.replace(/#.*$/, '') %>"><%= datasource.title %></a></li>
 <% } %>
 </ul>
