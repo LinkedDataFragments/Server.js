@@ -252,7 +252,7 @@ describe('SparqlDatasource', function () {
 
         result = datasource.select({ subject: 'abcdef', features: { triplePattern: true } });
         result.on('error', function (e) { error = e; done(); });
-        request.getCall(1).callArgWith(1, Error('query response error'));
+        request.returnValues[1].emit('error', new Error('query response error'));
       });
 
       it('should emit an error', function () {
