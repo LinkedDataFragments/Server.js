@@ -3,6 +3,10 @@
     node: true,
   },
 
+  globals: {
+    Promise: true,
+  },
+
   rules: {
     // Possible Errors
     comma-dangle: [2, "always-multiline"],
