@@ -246,17 +246,17 @@ describe('SparqlDatasource', function () {
     });
 
     describe('when the count query request errors', function () {
-      var result, error;
-      before(function (done) {
+      var result, totalCount;
+      before(function () {
         request.reset();
 
         result = datasource.select({ subject: 'abcdef', features: { triplePattern: true } });
-        result.on('error', function (e) { error = e; done(); });
-        request.returnValues[1].emit('error', new Error('query response error'));
+        request.returnValues[1].emit('error', new Error());
+        result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
       });
 
-      it('should emit an error', function () {
-        error.should.have.property('message', 'Error accessing SPARQL endpoint http://ex.org/sparql: query response error');
+      it('should emit a high count estimate', function () {
+        expect(totalCount).to.equal(1e9);
       });
     });
   });
