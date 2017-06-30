@@ -9,10 +9,10 @@
       "settings": { "file": "data/dbpedia2014.hdt" }
     },
     "dbpedia-sparql": {
-      "title": "DBpedia 3.9 (Virtuoso)",
+      "title": "DBpedia (Virtuoso)",
       "type": "SparqlDatasource",
-      "description": "DBpedia 3.9 with a Virtuoso back-end",
-      "settings": { "endpoint": "https://dbpedia.org/sparql", "defaultGraph": "http://dbpedia.org" }
+      "description": "DBpedia with a Virtuoso back-end",
+      "settings": { "endpoint": "https://dbpedia.org/sparql" }
     }
   },
 

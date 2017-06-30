@@ -2,7 +2,13 @@
 @prefix dbpedia:	<http://dbpedia.org/resource/> .
 @prefix dbpedia-owl:	<http://dbpedia.org/ontology/> .
 
-# Result from a CONSTRUCT query (50 triples)
+# Result from a CONSTRUCT query (50 triples) and 5 triples in the default graph
+<http://www.openlinksw.com/virtrdf-data-formats#default-iid>	rdf:type	<http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat> .
+<http://www.openlinksw.com/virtrdf-data-formats#default-iid-nullable>	rdf:type	<http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat> .
+<http://www.openlinksw.com/virtrdf-data-formats#default-iid-nonblank>	rdf:type	<http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat> .
+<http://www.openlinksw.com/virtrdf-data-formats#default-iid-nonblank-nullable>	rdf:type	<http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat> .
+<http://www.openlinksw.com/virtrdf-data-formats#default>	rdf:type	<http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat> .
+<http://dbpedia.org> {
 dbpedia:Aamir_Zaki	rdf:type	dbpedia-owl:Artist .
 dbpedia:Ahmad_Morid	rdf:type	dbpedia-owl:Artist .
 dbpedia:Al_Milgrom	rdf:type	dbpedia-owl:Artist .
@@ -53,3 +59,4 @@ dbpedia:Cheyne_Coates	rdf:type	dbpedia-owl:Artist .
 dbpedia:Christian_Beranek	rdf:type	dbpedia-owl:Artist .
 <http://dbpedia.org/resource/Chuck_Billy_(vocalist)>	rdf:type	dbpedia-owl:Artist .
 dbpedia:Chuck_Prophet	rdf:type	dbpedia-owl:Artist .
+}
