@@ -6,7 +6,7 @@ var Datasource = require('../../lib/datasources/Datasource'),
     path = require('path'),
     URL = require('url');
 
-var trigResult = fs.readFileSync(path.join(__dirname, '../assets/sparql-quads-response.trig'));
+var jsonResult = fs.readFileSync(path.join(__dirname, '../assets/sparql-quads-response.json'));
 var countResult = '"c"\n12345678\n';
 
 describe('SparqlDatasource', function () {
@@ -35,6 +35,7 @@ describe('SparqlDatasource', function () {
 
     it('should indicate support for its features', function () {
       datasource.supportedFeatures.should.deep.equal({
+        triplePattern: true,
         quadPattern: true,
         limit: true,
         offset: true,
@@ -65,62 +66,61 @@ describe('SparqlDatasource', function () {
     itShouldExecute(datasource, request,
       'the empty query',
       { features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH ?g{?s ?p ?o}} WHERE {GRAPH ?g{?s ?p ?o}}',
+      'SELECT * WHERE {GRAPH ?g{?s ?p ?o}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p ?o}}');
 
     itShouldExecute(datasource, request,
       'an empty query with a limit',
       { limit: 100, features: { limit: true } },
-      'CONSTRUCT {GRAPH ?g{?s ?p ?o}} WHERE {GRAPH ?g{?s ?p ?o}} LIMIT 100',
+      'SELECT * WHERE {GRAPH ?g{?s ?p ?o}} LIMIT 100',
       null /* count should be cached, since this pattern already occurred above */);
 
     itShouldExecute(datasource, request,
       'an empty query with a limit and an offset',
       { limit: 100, offset: 200, features: { limit: true, offset: true } },
-      'CONSTRUCT {GRAPH ?g{?s ?p ?o}} WHERE {GRAPH ?g{?s ?p ?o}} LIMIT 100 OFFSET 200',
+      'SELECT * WHERE {GRAPH ?g{?s ?p ?o}} LIMIT 100 OFFSET 200',
       null /* count should be cached, since this pattern already occurred above */);
 
     itShouldExecute(datasource, request,
       'a query for a subject IRI',
       { subject: 'http://example.org/bar#foo', features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH ?g{<http://example.org/bar#foo> ?p ?o}} WHERE {GRAPH ?g{<http://example.org/bar#foo> ?p ?o}}',
+      'SELECT * WHERE {GRAPH ?g{<http://example.org/bar#foo> ?p ?o}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{<http://example.org/bar#foo> ?p ?o}}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate IRI',
       { predicate: 'http://example.org/bar#foo', features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH ?g{?s <http://example.org/bar#foo> ?o}} WHERE {GRAPH ?g{?s <http://example.org/bar#foo> ?o}}',
+      'SELECT * WHERE {GRAPH ?g{?s <http://example.org/bar#foo> ?o}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s <http://example.org/bar#foo> ?o}}');
 
     itShouldExecute(datasource, request,
       'a query for an object IRI',
       { object: 'http://example.org/bar#foo', features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH ?g{?s ?p <http://example.org/bar#foo>}} WHERE {GRAPH ?g{?s ?p <http://example.org/bar#foo>}}',
+      'SELECT * WHERE {GRAPH ?g{?s ?p <http://example.org/bar#foo>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p <http://example.org/bar#foo>}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal',
       { object: '"a literal"', features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH ?g{?s ?p "a literal"}} WHERE {GRAPH ?g{?s ?p "a literal"}}',
+      'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with newlines and quotes',
       { object: '"a\rb\nc"\r\n\\""', features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""}} WHERE {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""}}',
+      'SELECT * WHERE {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a language',
       { object: '"a literal"@nl-be', features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH ?g{?s ?p "a literal"@nl-be}} WHERE {GRAPH ?g{?s ?p "a literal"@nl-be}}',
+      'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"@nl-be}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"@nl-be}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a type',
       { object: '"a literal"^^http://ex.org/foo#literal', features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}} ' +
-          'WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}',
+      'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}');
 
     itShouldExecute(datasource, request,
@@ -128,8 +128,7 @@ describe('SparqlDatasource', function () {
       { predicate: 'http://example.org/bar#foo',
         object: 'http://example.org/baz#bar',
         features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
-          'WHERE {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}}',
+      'SELECT * WHERE {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}}');
 
     itShouldExecute(datasource, request,
@@ -138,15 +137,14 @@ describe('SparqlDatasource', function () {
         object: 'http://example.org/baz#bar',
         limit: 50, offset: 150,
         features: { quadPattern: true, offset: true, limit: true } },
-      'CONSTRUCT {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
-          'WHERE {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
+      'SELECT * WHERE {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
           'LIMIT 50 OFFSET 150',
       null /* count should be cached, since this pattern already occurred above */);
 
     itShouldExecute(datasource, request,
       'a query for a graph IRI',
       { graph: 'http://dbpedia.org', features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH <http://dbpedia.org>{?s ?p ?o}} WHERE {GRAPH <http://dbpedia.org>{?s ?p ?o}}',
+      'SELECT * WHERE {GRAPH <http://dbpedia.org>{?s ?p ?o}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH <http://dbpedia.org>{?s ?p ?o}}');
 
     itShouldExecute(datasource, request,
@@ -154,8 +152,7 @@ describe('SparqlDatasource', function () {
       { predicate: 'http://example.org/bar#foo',
         graph: 'http://dbpedia.org',
         features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> ?o}} ' +
-        'WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> ?o}}',
+      'SELECT * WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> ?o}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> ?o}}');
 
     itShouldExecute(datasource, request,
@@ -164,8 +161,7 @@ describe('SparqlDatasource', function () {
         object: 'http://example.org/baz#bar',
         graph: 'http://dbpedia.org',
         features: { quadPattern: true } },
-      'CONSTRUCT {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
-      'WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}}',
+      'SELECT * WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}}',
       'SELECT (COUNT(*) AS ?c) ' +
         'WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}}');
 
@@ -176,88 +172,31 @@ describe('SparqlDatasource', function () {
         graph: 'http://dbpedia.org',
         limit: 50, offset: 150,
         features: { quadPattern: true, offset: true, limit: true } },
-      'CONSTRUCT {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
-      'WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
+      'SELECT * WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
       'LIMIT 50 OFFSET 150',
       null /* count should be cached, since this pattern already occurred above */);
 
-    describe('when the first Trig request fails', function () {
-      var result, totalCount, firstArgsCopy;
-      before(function () {
-        request.reset();
-        request.onFirstCall().returns(test.createHttpResponse('invalid Trig', 'application/trig'));
-        request.onSecondCall().returns(test.createHttpResponse(countResult, 'text/csv'));
-        request.onThirdCall().returns(test.createHttpResponse(trigResult, 'application/trig'));
-
-        result = datasource.select({ subject: 'abc', features: { quadPattern: true } });
-        result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
-        firstArgsCopy = JSON.parse(JSON.stringify(request.firstCall.args[0]));
-      });
-
-      it('should request a matching CONSTRUCT query the first time', function () {
-        request.should.have.been.called;
-        var url = URL.parse(firstArgsCopy.url, true);
-        (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
-        url.query.query.should.equal('CONSTRUCT {GRAPH ?g{<abc> ?p ?o}} WHERE {GRAPH ?g{<abc> ?p ?o}}');
-      });
-
-      it('should ask for Turtle the first time', function () {
-        request.should.have.been.called;
-        firstArgsCopy.headers.should.deep.equal(
-          { accept: 'application/x-trig;q=1.0,application/trig;q=0.95,' +
-                    'text/turtle;q=0.9,application/n-triples;q=0.5,text/n3;q=0.3' });
-      });
-
-      it('should request a matching COUNT query', function () {
-        request.should.have.been.calledThrice;
-        var url = URL.parse(request.secondCall.args[0].url, true);
-        (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
-        url.query.query.should.equal('SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{<abc> ?p ?o}}');
-      });
-
-      it('should request a matching CONSTRUCT query the second time', function () {
-        request.should.have.been.calledThrice;
-        var url = URL.parse(request.thirdCall.args[0].url, true);
-        (url.protocol + '//' + url.host + url.pathname).should.equal('http://ex.org/sparql');
-        url.query.query.should.equal('CONSTRUCT {GRAPH ?g{<abc> ?p ?o}} WHERE {GRAPH ?g{<abc> ?p ?o}}');
-      });
-
-      it('should ask for N-Triples the second time', function () {
-        request.should.have.been.calledThrice;
-        request.thirdCall.args[0].headers.should.deep.equal({ accept: 'application/n-triples' });
-      });
-
-      it('should emit all triples in the SPARQL response', function (done) {
-        result.should.be.a.streamWithLength(55, done);
-      });
-
-      it('should emit the extracted count', function () {
-        expect(totalCount).to.equal(12345678);
-      });
-    });
-
-    describe('when invalid Trig is returned in response to the data query', function () {
+    describe('when invalid JSON is returned in response to the data query', function () {
       var result, error;
       before(function (done) {
         request.reset();
-        request.onFirstCall().returns(test.createHttpResponse('invalid', 'application/trig'));
+        request.onFirstCall().returns(test.createHttpResponse('invalid', 'application/sparql-results+json'));
         request.onSecondCall().returns(test.createHttpResponse(countResult, 'text/csv'));
-        request.onThirdCall().returns(test.createHttpResponse('invalid', 'application/trig'));
 
         result = datasource.select({ subject: 'abcd', features: { quadPattern: true } });
         result.on('error', function (e) { error = e; done(); });
       });
 
       it('should emit an error', function () {
-        error.should.have.property('message', 'Error accessing SPARQL endpoint http://ex.org/sparql: The endpoint returned an invalid Turtle response.');
+        error.should.have.property('message', 'Error accessing SPARQL endpoint http://ex.org/sparql: The endpoint returned an invalid SPARQL results JSON response.');
       });
     });
 
-    describe('when invalid Turtle is returned in response to the count query', function () {
+    describe('when invalid JSON is returned in response to the count query', function () {
       var result, error;
       before(function (done) {
         request.reset();
-        request.onFirstCall().returns(test.createHttpResponse(trigResult, 'application/trig'));
+        request.onFirstCall().returns(test.createHttpResponse(jsonResult, 'application/sparql-results+json'));
         request.onSecondCall().returns(test.createHttpResponse('invalid', 'application/trig'));
 
         result = datasource.select({ subject: 'abcde', features: { quadPattern: true } });
@@ -298,6 +237,44 @@ describe('SparqlDatasource', function () {
         expect(totalCount).to.equal(1e9);
       });
     });
+
+    describe('when a JSON URI value is received', function () {
+      var component = { type: 'uri', value: 'http://example.org/someuri' };
+      it('should deserialize it as an N3.js URI', function () {
+        expect(datasource._jsonValueToQuadComponent(component)).to.equal('http://example.org/someuri');
+      });
+    });
+
+    describe('when a JSON literal value is received', function () {
+      var component = { type: 'literal', value: 'somevalue' };
+      it('should deserialize it as an N3.js literal', function () {
+        expect(datasource._jsonValueToQuadComponent(component)).to.equal('"somevalue"');
+      });
+    });
+
+    describe('when a JSON literal value with a language is received', function () {
+      var component = { 'type': 'literal', 'value': 'somevalue', 'xml:lang': 'en' };
+      it('should deserialize it as an N3.js literal with the language', function () {
+        expect(datasource._jsonValueToQuadComponent(component)).to.equal('"somevalue"@en');
+      });
+    });
+
+    describe('when a JSON literal value with a datatype is received', function () {
+      var component = { type: 'literal', value: 'somevalue', datatype: 'http://www.w3.org/2001/XMLSchema#integer' };
+      it('should deserialize it as an N3.js literal with the datatype', function () {
+        expect(datasource._jsonValueToQuadComponent(component))
+          .to.equal('"somevalue"^^<http://www.w3.org/2001/XMLSchema#integer>');
+      });
+    });
+
+    describe('when a JSON literal value with a language and datatype is received', function () {
+      var component = { 'type': 'literal', 'value': 'somevalue', 'xml:lang': 'en',
+        'datatype': 'http://www.w3.org/2001/XMLSchema#integer' };
+      it('should deserialize it as an N3.js literal with the language and datatype', function () {
+        expect(datasource._jsonValueToQuadComponent(component))
+          .to.equal('"somevalue"^^<http://www.w3.org/2001/XMLSchema#integer>@en');
+      });
+    });
   });
 });
 
@@ -306,7 +283,7 @@ function itShouldExecute(datasource, request, name, query, constructQuery, count
     var result, totalCount;
     before(function () {
       request.reset();
-      request.onFirstCall().returns(test.createHttpResponse(trigResult, 'application/trig'));
+      request.onFirstCall().returns(test.createHttpResponse(jsonResult, 'application/sparql-results+json'));
       request.onSecondCall().returns(test.createHttpResponse(countResult, 'text/csv'));
 
       result = datasource.select(query);
