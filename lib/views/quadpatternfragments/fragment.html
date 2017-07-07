@@ -1,6 +1,6 @@
 <% /* @license MIT ©2013-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */ -%>
 <%
-  var sd = 'http://www.w3.org/TR/sparql11-service-description/#';
+  var sd = 'http://www.w3.org/ns/sparql-service-description#';
 
   var patternKind = datasource.supportsQuads ? 'triple/quad' : 'triple';
   var components = !datasource.supportsQuads ? ['subject', 'predicate', 'object']

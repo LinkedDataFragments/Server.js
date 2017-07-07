@@ -9,7 +9,7 @@
 <http://ex.org/#dataset> hydra:member <http://ex.org/data#dataset>.
 <http://ex.org/data#dataset> a void:Dataset, hydra:Collection;
     void:subset <http://ex.org/data?fragment&page=3>, <http://ex.org/data?fragment>;
-    <http://www.w3.org/TR/sparql11-service-description/#defaultGraph> <urn:ldf:defaultGraph>;
+    <http://www.w3.org/ns/sparql-service-description#defaultGraph> <urn:ldf:defaultGraph>;
     hydra:search _:pattern.
 _:pattern hydra:template "http://ex.org/data{?subject,predicate,object,graph}";
     hydra:variableRepresentation hydra:ExplicitRepresentation;
@@ -21,7 +21,7 @@ _:predicate hydra:variable "predicate";
 _:object hydra:variable "object";
     hydra:property rdf:object.
 _:graph hydra:variable "graph";
-    hydra:property <http://www.w3.org/TR/sparql11-service-description/#graph>
+    hydra:property <http://www.w3.org/ns/sparql-service-description#graph>
 }
 <a> <b> <c>;
     <d> <e>.

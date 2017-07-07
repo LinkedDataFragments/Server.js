@@ -3,7 +3,7 @@
 <http://ex.org/data#dataset> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#Collection>.
 <http://ex.org/data#dataset> <http://rdfs.org/ns/void#subset> <http://ex.org/data?fragment&page=3>.
 <http://ex.org/data#dataset> <http://rdfs.org/ns/void#subset> <http://ex.org/data?fragment>.
-<http://ex.org/data#dataset> <http://www.w3.org/TR/sparql11-service-description/#defaultGraph> <urn:ldf:defaultGraph>.
+<http://ex.org/data#dataset> <http://www.w3.org/ns/sparql-service-description#defaultGraph> <urn:ldf:defaultGraph>.
 <http://ex.org/data#dataset> <http://www.w3.org/ns/hydra/core#search> _:pattern.
 _:pattern <http://www.w3.org/ns/hydra/core#template> "http://ex.org/data{?subject,predicate,object,graph}".
 _:pattern <http://www.w3.org/ns/hydra/core#variableRepresentation> <http://www.w3.org/ns/hydra/core#ExplicitRepresentation>.
@@ -18,7 +18,7 @@ _:predicate <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/0
 _:object <http://www.w3.org/ns/hydra/core#variable> "object".
 _:object <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object>.
 _:graph <http://www.w3.org/ns/hydra/core#variable> "graph".
-_:graph <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/TR/sparql11-service-description/#graph>.
+_:graph <http://www.w3.org/ns/hydra/core#property> <http://www.w3.org/ns/sparql-service-description#graph>.
 <a> <b> <c>.
 <a> <d> <e>.
 <f> <g> <h>.
