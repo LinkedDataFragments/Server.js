@@ -10,7 +10,7 @@
     {
       "@id": "_:graph",
       "hydra:property": {
-        "@id": "http://www.w3.org/TR/sparql11-service-description/#graph"
+        "@id": "http://www.w3.org/ns/sparql-service-description#graph"
       },
       "hydra:variable": "graph"
     },
@@ -77,11 +77,11 @@
         }
       ],
       "void:uriLookupEndpoint": "http://ex.org/data{?subject,predicate,object,graph}",
-      "http://www.w3.org/TR/sparql11-service-description/#defaultGraph": {
-        "@id": "urn:ldf:defaultGraph"
-      },
       "hydra:search": {
         "@id": "_:pattern"
+      },
+      "http://www.w3.org/ns/sparql-service-description#defaultGraph": {
+        "@id": "urn:ldf:defaultGraph"
       }
     },
     {
