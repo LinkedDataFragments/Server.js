@@ -172,11 +172,11 @@ With native HTTPS, the server will establish the SSL layer. Set the following va
         }
       }
     }  
-  
+
 If you decide to let a proxy handle HTTPS, use this configuration to run the server as `http`, but construct links as `https` (so clients don't break):
 
      {
-       "protocol": "https",
+       "protocol": "http",
        "baseURL": "https://data.example.org/",
        "ssl": {
          "keys" : {
