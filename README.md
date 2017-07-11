@@ -143,6 +143,51 @@ If you would like to proxy the data in a subfolder such as `http://example.org/m
 modify the `baseURL` in your `config.json` to `"http://example.org/my/data"`
 and change `location` from `/` to `/my/data` (excluding a trailing slash).
 
+### _(Optional)_ Running under HTTPS
+
+HTTPS can be enabled in two ways: natively by the server, or through a proxy (explained above).
+
+With native HTTPS, the server will establish the SSL layer. Set the following values in your config file to enable this:
+
+     {
+       "protocol": "https",
+       "ssl": {
+         "keys" : {
+           "key": "./private-key-server.key.pem",
+           "ca": ["./root-ca.crt.pem"],
+           "cert": "./server-certificate.crt.pem"
+        }
+      }
+    }  
+  
+  If `protocol`is not specified, it will derive the protocol from the `baseURL`. Hence, HTTPS can also be enabled as such:
+
+     {
+       "baseURL": "https://data.example.org/",
+       "ssl": {
+         "keys" : {
+           "key": "./private-key-server.key.pem",
+           "ca": ["./root-ca.crt.pem"],
+           "cert": "./server-certificate.crt.pem"
+        }
+      }
+    }  
+  
+If you decide to let a proxy handle HTTPS, use this configuration to run the server as `http`, but construct links as `https` (so clients don't break):
+
+     {
+       "protocol": "https",
+       "baseURL": "https://data.example.org/",
+       "ssl": {
+         "keys" : {
+           "key": "./private-key-server.key.pem",
+           "ca": ["./root-ca.crt.pem"],
+           "cert": "./server-certificate.crt.pem"
+        }
+      }
+    }  
+
+
 ### _(Optional)_ Running in a Docker container
 
 If you want to rapidly deploy the server as a microservice, you can build a [Docker](https://www.docker.com/) container as follows:
