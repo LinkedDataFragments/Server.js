@@ -241,28 +241,28 @@ describe('SparqlDatasource', function () {
     describe('when a JSON URI value is received', function () {
       var component = { type: 'uri', value: 'http://example.org/someuri' };
       it('should deserialize it as an N3.js URI', function () {
-        expect(datasource._jsonValueToQuadComponent(component)).to.equal('http://example.org/someuri');
+        expect(datasource._parseJsonEntity(component)).to.equal('http://example.org/someuri');
       });
     });
 
     describe('when a JSON literal value is received', function () {
       var component = { type: 'literal', value: 'somevalue' };
       it('should deserialize it as an N3.js literal', function () {
-        expect(datasource._jsonValueToQuadComponent(component)).to.equal('"somevalue"');
+        expect(datasource._parseJsonEntity(component)).to.equal('"somevalue"');
       });
     });
 
     describe('when a JSON literal value with a language is received', function () {
       var component = { 'type': 'literal', 'value': 'somevalue', 'xml:lang': 'en' };
       it('should deserialize it as an N3.js literal with the language', function () {
-        expect(datasource._jsonValueToQuadComponent(component)).to.equal('"somevalue"@en');
+        expect(datasource._parseJsonEntity(component)).to.equal('"somevalue"@en');
       });
     });
 
     describe('when a JSON literal value with a datatype is received', function () {
       var component = { type: 'literal', value: 'somevalue', datatype: 'http://www.w3.org/2001/XMLSchema#integer' };
       it('should deserialize it as an N3.js literal with the datatype', function () {
-        expect(datasource._jsonValueToQuadComponent(component))
+        expect(datasource._parseJsonEntity(component))
           .to.equal('"somevalue"^^<http://www.w3.org/2001/XMLSchema#integer>');
       });
     });
@@ -271,7 +271,7 @@ describe('SparqlDatasource', function () {
       var component = { 'type': 'literal', 'value': 'somevalue', 'xml:lang': 'en',
         'datatype': 'http://www.w3.org/2001/XMLSchema#integer' };
       it('should deserialize it as an N3.js literal with the language and datatype', function () {
-        expect(datasource._jsonValueToQuadComponent(component))
+        expect(datasource._parseJsonEntity(component))
           .to.equal('"somevalue"^^<http://www.w3.org/2001/XMLSchema#integer>@en');
       });
     });
