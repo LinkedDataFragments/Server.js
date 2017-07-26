@@ -142,6 +142,26 @@ describe('SparqlDatasource', function () {
       null /* count should be cached, since this pattern already occurred above */);
 
     itShouldExecute(datasource, request,
+      'a query for a predicate and object URI for the default graph',
+      { predicate: 'http://example.org/bar#foo',
+        object: 'http://example.org/baz#bar',
+        graph: '',
+        features: { quadPattern: true } },
+      'SELECT * WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}',
+      'SELECT (COUNT(*) AS ?c) WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}');
+
+    itShouldExecute(datasource, request,
+      'a query for a predicate and object URI for the default graph with offset and limit',
+      { predicate: 'http://example.org/bar#foo',
+        object: 'http://example.org/baz#bar',
+        graph: '',
+        limit: 50, offset: 150,
+        features: { quadPattern: true, offset: true, limit: true } },
+      'SELECT * WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>} ' +
+      'LIMIT 50 OFFSET 150',
+      null /* count should be cached, since this pattern already occurred above */);
+
+    itShouldExecute(datasource, request,
       'a query for a graph IRI',
       { graph: 'http://dbpedia.org', features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH <http://dbpedia.org>{?s ?p ?o}}',
