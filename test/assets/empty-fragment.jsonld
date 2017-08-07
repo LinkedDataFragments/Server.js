@@ -66,7 +66,6 @@
           "@id": "http://ex.org/data?fragment"
         }
       ],
-      "void:uriLookupEndpoint": "http://ex.org/data{?subject,predicate,object}",
       "hydra:search": {
         "@id": "_:triplePattern"
       }

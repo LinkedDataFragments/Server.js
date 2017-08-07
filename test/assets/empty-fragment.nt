@@ -3,7 +3,6 @@
 <http://ex.org/data#dataset> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/hydra/core#Collection>.
 <http://ex.org/data#dataset> <http://rdfs.org/ns/void#subset> <http://ex.org/data?fragment&page=3>.
 <http://ex.org/data#dataset> <http://rdfs.org/ns/void#subset> <http://ex.org/data?fragment>.
-<http://ex.org/data#dataset> <http://rdfs.org/ns/void#uriLookupEndpoint> "http://ex.org/data{?subject,predicate,object}".
 <http://ex.org/data#dataset> <http://www.w3.org/ns/hydra/core#search> _:triplePattern.
 _:triplePattern <http://www.w3.org/ns/hydra/core#template> "http://ex.org/data{?subject,predicate,object}".
 _:triplePattern <http://www.w3.org/ns/hydra/core#variableRepresentation> <http://www.w3.org/ns/hydra/core#ExplicitRepresentation>.

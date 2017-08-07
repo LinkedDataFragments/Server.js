@@ -7,7 +7,6 @@
 <http://ex.org/#dataset> hydra:member <http://ex.org/data#dataset>.
 <http://ex.org/data#dataset> a void:Dataset, hydra:Collection;
     void:subset <http://ex.org/data?fragment&page=3>, <http://ex.org/data?fragment>;
-    void:uriLookupEndpoint "http://ex.org/data{?subject,predicate,object}";
     hydra:search _:triplePattern.
 _:triplePattern hydra:template "http://ex.org/data{?subject,predicate,object}";
     hydra:variableRepresentation hydra:ExplicitRepresentation;
