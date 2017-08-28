@@ -58,6 +58,91 @@ describe('Controller', function () {
     });
   });
 
+  describe('A Controller instance without baseURL using Forwarded header', function () {
+    var controller, client;
+    before(function () {
+      controller = new Controller();
+      sinon.spy(controller, '_handleRequest');
+      client = request.agent(new DummyServer(controller));
+    });
+
+    describe('receiving a request', function () {
+      before(function (done) {
+        client
+          .get('/path?a=b')
+          .set('X-Forward-Host', 'foo:5000')
+          // NOTE: the priority will go to the Forwarded header over the X-Forward-Host header
+          .set('Forwarded', 'proto=https;host="bar:8000"')
+          .end(done);
+      });
+
+      it('should call _handleRequest with request, response and next', function () {
+        controller._handleRequest.should.have.been.calledOnce;
+        var args = controller._handleRequest.getCall(0).args;
+        args[0].should.have.property('url');
+        args[1].should.be.an.instanceof(http.ServerResponse);
+        args[2].should.be.an.instanceof(Function);
+      });
+
+      it('should extend _handleRequest with the original URL as parsedUrl property', function () {
+        controller._handleRequest.should.have.been.calledOnce;
+        var request = controller._handleRequest.getCall(0).args[0];
+        request.should.have.property('parsedUrl');
+        request.parsedUrl.should.deep.equal({
+          protocol: 'https:', host: 'bar:8000', hostname: undefined, port: undefined,
+          path: '/path?a=b', pathname: '/path', href: undefined, auth: undefined,
+          query: { a: 'b' }, search: undefined, hash: undefined, slashes: undefined,
+        });
+      });
+
+      it('should hand over to the next controller', function () {
+        controller.next.should.have.been.calledOnce;
+      });
+    });
+  });
+
+  describe('A Controller instance without baseURL using X-Forward-* headers', function () {
+    var controller, client;
+    before(function () {
+      controller = new Controller();
+      sinon.spy(controller, '_handleRequest');
+      client = request.agent(new DummyServer(controller));
+    });
+
+    describe('receiving a request', function () {
+      before(function (done) {
+        client
+          .get('/path?a=b')
+          .set('X-Forward-Host', 'foo:5000')
+          .set('X-Forward-Proto', 'https')
+          .end(done);
+      });
+
+      it('should call _handleRequest with request, response and next', function () {
+        controller._handleRequest.should.have.been.calledOnce;
+        var args = controller._handleRequest.getCall(0).args;
+        args[0].should.have.property('url');
+        args[1].should.be.an.instanceof(http.ServerResponse);
+        args[2].should.be.an.instanceof(Function);
+      });
+
+      it('should extend _handleRequest with the original URL as parsedUrl property', function () {
+        controller._handleRequest.should.have.been.calledOnce;
+        var request = controller._handleRequest.getCall(0).args[0];
+        request.should.have.property('parsedUrl');
+        request.parsedUrl.should.deep.equal({
+          protocol: 'https:', host: 'foo:5000', hostname: undefined, port: undefined,
+          path: '/path?a=b', pathname: '/path', href: undefined, auth: undefined,
+          query: { a: 'b' }, search: undefined, hash: undefined, slashes: undefined,
+        });
+      });
+
+      it('should hand over to the next controller', function () {
+        controller.next.should.have.been.calledOnce;
+      });
+    });
+  });
+
   describe('A Controller instance with baseURL', function () {
     var controller, client;
     before(function () {
