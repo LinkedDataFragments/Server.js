@@ -178,14 +178,7 @@ If you decide to let a proxy handle HTTPS, use this configuration to run the ser
      {
        "protocol": "http",
        "baseURL": "https://data.example.org/",
-       "ssl": {
-         "keys" : {
-           "key": "./private-key-server.key.pem",
-           "ca": ["./root-ca.crt.pem"],
-           "cert": "./server-certificate.crt.pem"
-        }
-      }
-    }  
+     }  
 
 
 ### _(Optional)_ Running in a Docker container
