@@ -70,8 +70,8 @@ describe('Controller', function () {
       before(function (done) {
         client
           .get('/path?a=b')
-          .set('X-Forward-Host', 'foo:5000')
-          // NOTE: the priority will go to the Forwarded header over the X-Forward-Host header
+          .set('X-Forwarded-Host', 'foo:5000')
+          // NOTE: the priority will go to the Forwarded header over the X-Forwarded-Host header
           .set('Forwarded', 'proto=https;host="bar:8000"')
           .end(done);
       });
@@ -101,7 +101,7 @@ describe('Controller', function () {
     });
   });
 
-  describe('A Controller instance without baseURL using X-Forward-* headers', function () {
+  describe('A Controller instance without baseURL using X-Forwarded-* headers', function () {
     var controller, client;
     before(function () {
       controller = new Controller();
@@ -113,8 +113,8 @@ describe('Controller', function () {
       before(function (done) {
         client
           .get('/path?a=b')
-          .set('X-Forward-Host', 'foo:5000')
-          .set('X-Forward-Proto', 'https')
+          .set('X-Forwarded-Host', 'foo:5000')
+          .set('X-Forwarded-Proto', 'https')
           .end(done);
       });
 
