@@ -1,4 +1,4 @@
-FROM node:4.8.3
+FROM node:4.8.4-slim
 
 # Install location
 ENV dir /var/www/ldf-server
@@ -7,7 +7,11 @@ ENV dir /var/www/ldf-server
 ADD . ${dir}
 
 # Install the node module
-RUN cd ${dir} && npm install
+RUN apt-get update && \
+    apt-get install -y g++ make python && \
+    cd ${dir} && npm install && \
+    apt-get remove -y g++ make python && apt-get autoremove -y && \
+    rm -rf /var/cache/apt/archives
 
 # Expose the default port
 EXPOSE 3000
