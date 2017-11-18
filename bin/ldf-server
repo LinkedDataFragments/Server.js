@@ -193,7 +193,9 @@ else {
 // Instantiates an object from the given description
 function instantiate(description, includePath) {
   var type = description.type || description,
-      typePath = path.join(includePath ? path.resolve(__dirname, includePath) : '', type),
+      typePath = description.typePath ?
+        path.join(process.cwd(), description.typePath) :
+	path.join(includePath ? path.resolve(__dirname, includePath) : '', type),
       Constructor = constructors[typePath] || (constructors[typePath] = require(typePath)),
       extensions = config.extensions && config.extensions[type] || [],
       settings = _.defaults(description.settings || {}, {
