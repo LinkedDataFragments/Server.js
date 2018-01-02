@@ -5,5 +5,6 @@ summaries
 *.hdt.index*
 
 # Ignore deployment configuration files, but keep defaults (for npm package)
+config.json
 config/*.json
 !config/config-defaults.json
