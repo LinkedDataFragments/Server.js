@@ -158,10 +158,13 @@ else {
   if (loggingSettings.enabled) {
     var accesslog = require('access-log');
     config.accesslogger = function (request, response) {
-      accesslog(request, response, null, function (logEntry) {
-        fs.appendFile(loggingSettings.file, logEntry + '\n', function (error) {
-          error && process.stderr.write('Error when writing to access log file: ' + error);
-        });
+      accesslog(request, response, loggingSettings.format, function (logEntry) {
+        if (loggingSettings.file) {
+          fs.appendFile(loggingSettings.file, logEntry + '\n', function (error) {
+            error && process.stderr.write('Error when writing to access log file: ' + error);
+          });
+        }
+        else console.log(logEntry);
       });
     };
   }
