@@ -55,5 +55,9 @@
     }
   },
 
-  "logging": { "enabled": false, "file": "access.log" }
+  "logging": {
+    "enabled": false,
+    "file": "access.log",
+    "format": null
+  }
 }
