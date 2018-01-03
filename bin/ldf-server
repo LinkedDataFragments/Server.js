@@ -173,8 +173,8 @@ else {
     var settings = datasources[datasourceName]
     var ready = _.once(startWhenReady);
     settings.datasource.once('initialized', function () {
-      console.log("Initialized %s (%d pending)", datasourceName, pending)
-      ready()
+      console.log("Initialized %s (%d pending)", datasourceName, pending);
+      ready();
     });
     settings.datasource.once('error', ready);
   });
