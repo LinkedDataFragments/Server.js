@@ -169,9 +169,13 @@ else {
   // Create server, and start it when all data sources are ready
   var server = new LinkedDataFragmentsServer(config),
       pending = _.size(datasources);
-  _.each(datasources, function (settings) {
+  Object.keys(datasources).forEach(function (datasourceName) {
+    var settings = datasources[datasourceName]
     var ready = _.once(startWhenReady);
-    settings.datasource.once('initialized', ready);
+    settings.datasource.once('initialized', function () {
+      console.log("Initialized %s (%d pending)", datasourceName, pending)
+      ready()
+    });
     settings.datasource.once('error', ready);
   });
   function startWhenReady() {
