@@ -1,4 +1,4 @@
-FROM node:4.8.4-slim
+FROM node:8-slim
 
 # Install location
 ENV dir /var/www/ldf-server
