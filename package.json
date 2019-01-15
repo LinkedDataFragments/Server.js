@@ -1,7 +1,7 @@
 {
   "name": "ldf-server",
   "description": "Linked Data Fragments Server",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "license": "MIT",
   "engines": {
     "node": ">=6.0"
