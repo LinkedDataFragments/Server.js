@@ -36,7 +36,7 @@
   "response": {
     "headers": {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Accept-Datetime",
+      "Access-Control-Allow-Headers": "Accept-Datetime,Accept",
       "Access-Control-Expose-Headers": "Content-Location,Link,Memento-Datetime"
     }
   },
