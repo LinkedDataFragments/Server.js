@@ -1,8 +1,7 @@
 var AmfController = require('../../lib/controllers/AmfController');
 
 var request = require('supertest'),
-  DummyServer = require('./DummyServer'),
-  fs = require('fs');
+    DummyServer = require('./DummyServer');
 
 var AmfRdfView = require('../../lib/views/Amf/AmfRdfView.js');
 
@@ -27,42 +26,35 @@ describe('AmfController', function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().returns({ on: function (event, callback) {
-          if (event === 'end' || event === 'metadata')
+          if (event === 'end' || event === 'metadata')
             setImmediate(callback, {});
-        }})
-      };
-      var router = {
-        extractQueryParams: function (request, query) {
-          query.features.datasource = true;
-          query.datasource = request.url.pathname.substr(1);
-        }
+        } }),
       };
       controller = new AmfController({
         views: [new AmfRdfView()],
         prefixes: {
           amf: 'http://semweb.mmlab.be/ns/membership#',
-          rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+          rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         },
-        datasources: { 'amf': { title: 'My data', datasource: datasource } },
+        datasources: { amf: { title: 'My data', datasource: datasource } },
         cache: {
           get: function () {
             return null;
           },
-          set: function () {}
-        } // Dummy cache
+          set: function () {},
+        }, // Dummy cache
       });
       client = request.agent(new DummyServer(controller));
     });
 
     it('should correctly serve Amf in TURTLE', function (done) {
       client.get('/amf/amf').set('Accept', 'text/turtle').expect(function (response) {
-        console.log(response.text);
-        //var amf = fs.readFileSync(__dirname + '/../assets/amf.ttl', 'utf8');
+        // var amf = fs.readFileSync(__dirname + '/../assets/amf.ttl', 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
         response.headers.should.have.property('cache-control', 'public,max-age=604800');
-        //response.should.have.property('text', Amf);
+        // response.should.have.property('text', Amf);
       }).end(done);
     });
 
