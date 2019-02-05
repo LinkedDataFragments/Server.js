@@ -25,10 +25,14 @@ describe('AmfController', function () {
     before(function () {
       var datasource = {
         supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub().returns({ on: function (event, callback) {
-          if (event === 'end' || event === 'metadata')
+        select: sinon.stub().returns({
+          on: function (event, callback) {
             setImmediate(callback, {});
-        } }),
+          },
+          getProperty: function (event, callback) {
+            setImmediate(callback, { totalCount: 10 });
+          },
+        }),
       };
       controller = new AmfController({
         views: [new AmfRdfView()],
