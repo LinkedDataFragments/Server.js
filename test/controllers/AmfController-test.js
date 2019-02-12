@@ -3,7 +3,7 @@ var AmfController = require('../../lib/controllers/AmfController');
 var request = require('supertest'),
     DummyServer = require('./DummyServer');
 
-var AmfRdfView = require('../../lib/views/Amf/AmfRdfView.js');
+var AmfRdfView = require('../../lib/views/amf/AmfRdfView.js');
 
 describe('AmfController', function () {
   describe('The AmfController module', function () {
