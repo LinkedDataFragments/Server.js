@@ -27,7 +27,7 @@ describe('AmfController', function () {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().returns({
           on: function (event, callback) {
-            setImmediate(callback, {});
+            setImmediate(callback, { subject: 'A', predicate: 'B', object: 'C' });
           },
           getProperty: function (event, callback) {
             setImmediate(callback, { totalCount: 10 });
@@ -41,12 +41,7 @@ describe('AmfController', function () {
           rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         },
         datasources: { amf: { title: 'My data', datasource: datasource } },
-        cache: {
-          get: function () {
-            return null;
-          },
-          set: function () {},
-        }, // Dummy cache
+        cache: false, // Dummy cache
       });
       client = request.agent(new DummyServer(controller));
     });
