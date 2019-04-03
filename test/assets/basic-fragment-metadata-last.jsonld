@@ -1,5 +1,6 @@
 {
-  "@context": {
+  "@context":
+  {
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "hydra": "http://www.w3.org/ns/hydra/core#",
@@ -8,101 +9,191 @@
   },
   "@graph": [
     {
-      "@id": "_:object",
-      "hydra:property": {
-        "@id": "rdf:object"
-      },
-      "hydra:variable": "object"
-    },
-    {
-      "@id": "_:predicate",
-      "hydra:property": {
-        "@id": "rdf:predicate"
-      },
-      "hydra:variable": "predicate"
-    },
-    {
-      "@id": "_:subject",
-      "hydra:property": {
-        "@id": "rdf:subject"
-      },
-      "hydra:variable": "subject"
-    },
-    {
-      "@id": "_:triplePattern",
-      "hydra:mapping": [
+      "@id": "http://ex.org/data?fragment#metadata",
+      "@graph": [
         {
-          "@id": "_:subject"
+          "@id": "http://ex.org/#dataset",
+          "hydra:member": [
+            {
+              "@id": "http://ex.org/data#dataset"
+            }
+          ]
         },
         {
-          "@id": "_:predicate"
+          "@id": "http://ex.org/data#dataset",
+          "@type": [
+            "void:Dataset"
+            ,
+            "hydra:Collection"
+          ],
+          "void:subset": [
+            {
+              "@id": "http://ex.org/data?fragment&page=3"
+            }
+            ,
+            {
+              "@id": "http://ex.org/data?fragment"
+            }
+          ],
+          "hydra:search": [
+            {
+              "@id": "_:triplePattern"
+            }
+          ]
         },
         {
-          "@id": "_:object"
+          "@id": "_:triplePattern",
+          "hydra:template": [
+            {
+              "@value": "http://ex.org/data{?subject,predicate,object}"
+            }
+          ],
+          "hydra:variableRepresentation": [
+            {
+              "@id": "hydra:ExplicitRepresentation"
+            }
+          ],
+          "hydra:mapping": [
+            {
+              "@id": "_:subject"
+            }
+            ,
+            {
+              "@id": "_:predicate"
+            }
+            ,
+            {
+              "@id": "_:object"
+            }
+          ]
+        },
+        {
+          "@id": "_:subject",
+          "hydra:variable": [
+            {
+              "@value": "subject"
+            }
+          ],
+          "hydra:property": [
+            {
+              "@id": "rdf:subject"
+            }
+          ]
+        },
+        {
+          "@id": "_:predicate",
+          "hydra:variable": [
+            {
+              "@value": "predicate"
+            }
+          ],
+          "hydra:property": [
+            {
+              "@id": "rdf:predicate"
+            }
+          ]
+        },
+        {
+          "@id": "_:object",
+          "hydra:variable": [
+            {
+              "@value": "object"
+            }
+          ],
+          "hydra:property": [
+            {
+              "@id": "rdf:object"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@id": "a",
+      "b": [
+        {
+          "@id": "c"
         }
       ],
-      "hydra:template": "http://ex.org/data{?subject,predicate,object}",
-      "hydra:variableRepresentation": {
-        "@id": "hydra:ExplicitRepresentation"
-      }
-    },
-    {
-      "@id": "http://ex.org/#dataset",
-      "hydra:member": {
-        "@id": "http://ex.org/data#dataset"
-      }
-    },
-    {
-      "@id": "http://ex.org/data#dataset",
-      "@type": [
-        "void:Dataset",
-        "hydra:Collection"
-      ],
-      "void:subset": [
+      "d": [
         {
-          "@id": "http://ex.org/data?fragment&page=3"
+          "@id": "e"
+        }
+      ]
+    },
+    {
+      "@id": "f",
+      "g": [
+        {
+          "@id": "h"
+        }
+      ]
+    },
+    {
+      "@id": "http://ex.org/data?fragment#metadata",
+      "@graph": [
+        {
+          "@id": "http://ex.org/data?fragment",
+          "void:subset": [
+            {
+              "@id": "http://ex.org/data?fragment&page=3"
+            }
+          ]
         },
         {
-          "@id": "http://ex.org/data?fragment"
+          "@id": "http://ex.org/data?fragment&page=3",
+          "@type": [
+            "hydra:PartialCollectionView"
+          ],
+          "dcterms:title": [
+            {
+              "@value": "Linked Data Fragment of My data",
+              "@language": "en"
+            }
+          ],
+          "dcterms:description": [
+            {
+              "@value": "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }.",
+              "@language": "en"
+            }
+          ],
+          "dcterms:source": [
+            {
+              "@id": "http://ex.org/data#dataset"
+            }
+          ],
+          "hydra:totalItems": [
+            {
+              "@value": 1234
+            }
+          ],
+          "void:triples": [
+            {
+              "@value": 1234
+            }
+          ],
+          "hydra:itemsPerPage": [
+            {
+              "@value": 100
+            }
+          ],
+          "hydra:first": [
+            {
+              "@id": "http://ex.org/data?fragment&page=1"
+            }
+          ],
+          "hydra:previous": [
+            {
+              "@id": "http://ex.org/data?fragment&page=2"
+            }
+          ],
+          "hydra:next": [
+            {
+              "@id": "http://ex.org/data?fragment&page=4"
+            }
+          ]
         }
-      ],
-      "hydra:search": {
-        "@id": "_:triplePattern"
-      }
-    },
-    {
-      "@id": "http://ex.org/data?fragment",
-      "void:subset": {
-        "@id": "http://ex.org/data?fragment&page=3"
-      }
-    },
-    {
-      "@id": "http://ex.org/data?fragment&page=3",
-      "@type": "hydra:PartialCollectionView",
-      "dcterms:description": {
-        "@language": "en",
-        "@value": "Triple Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c }."
-      },
-      "dcterms:source": {
-        "@id": "http://ex.org/data#dataset"
-      },
-      "dcterms:title": {
-        "@language": "en",
-        "@value": "Linked Data Fragment of My data"
-      },
-      "void:triples": 1234,
-      "hydra:first": {
-        "@id": "http://ex.org/data?fragment&page=1"
-      },
-      "hydra:itemsPerPage": 100,
-      "hydra:next": {
-        "@id": "http://ex.org/data?fragment&page=4"
-      },
-      "hydra:previous": {
-        "@id": "http://ex.org/data?fragment&page=2"
-      },
-      "hydra:totalItems": 1234
+      ]
     }
-  ],
-  "@id": "http://ex.org/data?fragment#metadata"
+  ]
 }
