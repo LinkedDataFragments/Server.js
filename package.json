@@ -7,7 +7,8 @@
     "node": ">=6.0"
   },
   "bin": {
-    "ldf-server": "./bin/ldf-server"
+    "ldf-server": "./bin/ldf-server",
+    "instant-ldf-server": "./bin/instant-ldf-server"
   },
   "main": "module.js",
   "repository": {
@@ -23,6 +24,7 @@
   },
   "dependencies": {
     "asynciterator": "^1.1.0",
+    "commander": "^2.20.0",
     "forwarded-parse": "^2.0.0",
     "jsonld": "^0.4.11",
     "lodash": "^2.4.2",

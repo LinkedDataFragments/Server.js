@@ -197,6 +197,16 @@ $ docker run -p 3000:3000 -t -i --rm -v $(pwd)/config.json:/tmp/config.json ldf-
 
 You can [enable the Memento protocol](https://github.com/LinkedDataFragments/Server.js/wiki/Configuring-Memento) to offer different versions of an evolving dataset.
 
+### Run the server even faster
+
+Basic usage of server requires the existance of a configuration file.
+This might be tedious if you quickly want to run a server with one or more local files.
+In this case, you can use `instant-ldf-server`,
+with at least one file path for the parameter `-d`.
+For example, `instant-ldf-server -d data.nt` runs a server with a Turtle data source reading from the file `data.nt`.
+Note that the type of data source is detected based on the extension of the file.
+The supported extensions are `ttl`, `nt`, `hdt`, and `jsonld`.
+
 ## License
 The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/).
 
