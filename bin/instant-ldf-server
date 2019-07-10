@@ -6,30 +6,25 @@ var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
     cluster = require('cluster'),
-    program = require('commander'),
     LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer'),
     IndexDatasource = require('../lib/datasources/IndexDatasource'),
     ViewCollection = require('../lib/views/ViewCollection.js');
 
+var args = process.argv.slice(2);
 
-program
-  .option('-p, --port [port]', 'Set port')
-  .option('-w, --workers [workers]', 'Set number of workers')
-  .option('-d, --datasources <datasources>', 'Comma-separated list of files', getDatasources)
-  .parse(process.argv);
-
-if (program.datasources === undefined) {
-  console.error('At least specify one datasource.');
+if (args.length === 0) {
+  console.error('At least provide one data source.');
   process.exit(1);
 }
 
+
 // Parse arguments
 var config = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/config-defaults.json'))),
-    port = parseInt(program.port, 10) || config.port,
-    workers = parseInt(program.workers, 10) || config.workers,
+    port = config.port,
+    workers = config.workers,
     protocol = config.protocol,
     constructors = {};
-config.datasources = program.datasources;
+config.datasources = getDatasources(args);
 
 // Determine protocol
 if (!protocol) {
@@ -231,9 +226,8 @@ function findFiles(folder, pattern, includeCurrentFolder) {
   })));
 }
 
-function getDatasources(datasourcesStr) {
+function getDatasources(dataSources) {
   var ldfDatasources = {};
-  var dataSources = datasourcesStr.split(',');
   _.each(dataSources, function (datasource) {
     var details = path.parse(datasource);
     var extension = details.ext;
