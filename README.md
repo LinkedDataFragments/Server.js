@@ -202,8 +202,8 @@ You can [enable the Memento protocol](https://github.com/LinkedDataFragments/Ser
 Basic usage of server requires the existance of a configuration file.
 This might be tedious if you quickly want to run a server with one or more local files.
 In this case, you can use `instant-ldf-server`,
-with at least one file path for the parameter `-d`.
-For example, `instant-ldf-server -d data.nt` runs a server with a Turtle data source reading from the file `data.nt`.
+with at least one file path.
+For example, `instant-ldf-server data.nt` runs a server with a Turtle data source reading from the file `data.nt`.
 Note that the type of data source is detected based on the extension of the file.
 The supported extensions are `ttl`, `nt`, `hdt`, and `jsonld`.
 
