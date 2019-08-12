@@ -199,7 +199,7 @@ You can [enable the Memento protocol](https://github.com/LinkedDataFragments/Ser
 
 ### Run the server even faster
 
-Basic usage of server requires the existance of a configuration file.
+Basic usage of server requires the existence of a configuration file.
 This might be tedious if you quickly want to run a server with one or more local files.
 In this case, you can use `instant-ldf-server`,
 with at least one file path.
