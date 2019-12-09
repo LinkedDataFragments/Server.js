@@ -62,7 +62,7 @@ and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
       "title": "DBpedia 3.9 (Virtuoso)",
       "type": "SparqlDatasource",
       "description": "DBpedia 3.9 with a Virtuoso back-end",
-      "settings": { "endpoint": "http://dbpedia.restdesc.org/", "defaultGraph": "http://dbpedia.org" }
+      "settings": { "endpoint": "https://dbpedia.org/sparql", "defaultGraph": "http://dbpedia.org" }
     }
   }
 }
