@@ -136,12 +136,12 @@ describe('CompositeDatasource', function () {
     itShouldExecute(getDatasource,
       'a query for the default graph',
       { graph: '',                          limit: 10, features: { quadPattern: true, limit: true } },
-      10, 266);
+      10, 271);
 
     itShouldExecute(getDatasource,
       'a query for the default graph without a limit',
       { graph: '',                          features: { quadPattern: true, limit: true } },
-      266, 266);
+      271, 271);
 
     itShouldExecute(getDatasource,
       'a query for graph0',
