@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=6.0"
+    "node": ">=10.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

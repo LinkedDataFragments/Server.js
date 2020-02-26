@@ -52,7 +52,7 @@ If you want to develop new features
 or use the (potentially unstable) in-development version,
 you can set up a development environment for this server.
 
-LDF Server requires [Node.JS](http://nodejs.org/) 6.0 or higher and the [Yarn](https://yarnpkg.com/en/) package manager.
+LDF Server requires [Node.JS](http://nodejs.org/) 10.0 or higher and the [Yarn](https://yarnpkg.com/en/) package manager.
 LDF Server is tested on OSX, Linux and Windows.
 
 This project can be setup by cloning and installing it as follows:
