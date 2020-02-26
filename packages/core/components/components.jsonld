@@ -1,5 +1,5 @@
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^1.0.0/components/context.jsonld",
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
   "@id": "npmd:@ldf/server",
   "@type": "Module",
   "requireName": "ldf-server",
