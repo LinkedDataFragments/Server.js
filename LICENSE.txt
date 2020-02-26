@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright © 2013–2016 Ruben Verborgh, Miel Vander Sande
+Copyright © 2013–now Ruben Verborgh, Miel Vander Sande, Ruben Taelman
 Ghent University – imec, Belgium
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

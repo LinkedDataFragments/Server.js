@@ -29,178 +29,49 @@ Each Triple Pattern Fragment offers:
 
 An example server is available at [data.linkeddatafragments.org](http://data.linkeddatafragments.org/).
 
+TODO: briefly explain configurations
+
+**If you just want to use this server, have a look at these default configurations**:
+* TODO
+
+This repository should be used by LDF Server module **developers** as it contains multiple LDF Server modules that can be composed.
+This repository is managed as a [monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md)
+using [Lerna](https://lernajs.io/).
 
 ## Install the server
 
-This server requires [Node.js](http://nodejs.org/) 4.0 or higher
-and is tested on OSX and Linux.
-To install, execute:
-```bash
-$ [sudo] npm install -g ldf-server
-```
-
+TODO: basic installation, and refer to packages for more details
 
 ## Use the server
 
-### Configure the data sources
+TODO: basic usage, and refer to packages for more details
 
-First, create a configuration file `config.json` similar to `config/config-example.json`,
-in which you detail your data sources.
-For example, this configuration uses an [HDT file](http://www.rdfhdt.org/)
-and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
-```json
-{
-  "title": "My Linked Data Fragments server",
-  "datasources": {
-    "dbpedia": {
-      "title": "DBpedia 2014",
-      "type": "HdtDatasource",
-      "description": "DBpedia 2014 with an HDT back-end",
-      "settings": { "file": "data/dbpedia2014.hdt" }
-    },
-    "dbpedia-sparql": {
-      "title": "DBpedia 3.9 (Virtuoso)",
-      "type": "SparqlDatasource",
-      "description": "DBpedia 3.9 with a Virtuoso back-end",
-      "settings": { "endpoint": "https://dbpedia.org/sparql", "defaultGraph": "http://dbpedia.org" }
-    }
-  }
-}
-```
+## Development Setup
 
-The following sources are supported out of the box:
-- HDT files ([`HdtDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/HdtDatasource.js) with `file` setting)
-- N-Triples documents ([`NTriplesDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/NTriplesDatasource.js) with `url` setting)
-- Turtle documents ([`TurtleDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/TurtleDatasource.js) with `url` setting)
-- N-Quads documents ([`NQuadsDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/NQuadsDatasource.js) with `url` setting)
-- TriG documents ([`TrigDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/TrigDatasource.js) with `url` setting)
-- JSON-LD documents ([`JsonLdDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/JsonLdDatasource.js) with `url` setting)
-- SPARQL endpoints ([`SparqlDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/SparqlDatasource.js) with `endpoint` and optionally `defaultGraph` settings)
+If you want to develop new features
+or use the (potentially unstable) in-development version,
+you can set up a development environment for this server.
 
-Support for new sources is possible by implementing the [`Datasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/Datasource.js) interface.
+LDF Server requires [Node.JS](http://nodejs.org/) 6.0 or higher and the [Yarn](https://yarnpkg.com/en/) package manager.
+LDF Server is tested on OSX, Linux and Windows.
 
-### Start the server
-
-After creating a configuration file, execute
-```bash
-$ ldf-server config.json 5000 4
-```
-Here, `5000` is the HTTP port on which the server will listen,
-and `4` the number of worker processes.
-
-Now visit `http://localhost:5000/` in your browser.
-
-### Reload running server
-
-You can reload the server without any downtime
-in order to load a new configuration or version.
-<br>
-In order to do this, you need the process ID of the server master process.
-<br>
-One possibility to obtain this are the server logs:
-```bash
-$ bin/ldf-server config.json
-Master 28106 running.
-Worker 28107 running on http://localhost:3000/.
-```
-
-If you send the server a `SIGHUP` signal:
-```bash
-$ kill -s SIGHUP 28106
-```
-it will reload by replacing its workers.
-
-Note that crashed or killed workers are always replaced automatically.
-
-### _(Optional)_ Set up a reverse proxy
-
-A typical Linked Data Fragments server will be exposed
-on a public domain or subdomain along with other applications.
-Therefore, you need to configure the server to run behind an HTTP reverse proxy.
-<br>
-To set this up, configure the server's public URL in your server's `config.json`:
-```json
-{
-  "title": "My Linked Data Fragments server",
-  "baseURL": "http://data.example.org/",
-  "datasources": { … }
-}
-```
-Then configure your reverse proxy to pass requests to your server.
-Here's an example for [nginx](http://nginx.org/):
-```nginx
-server {
-  server_name data.example.org;
-
-  location / {
-    proxy_pass http://127.0.0.1:3000$request_uri;
-    proxy_set_header Host $http_host;
-    proxy_pass_header Server;
-  }
-}
-```
-Change the value `3000` into the port on which your Linked Data Fragments server runs.
-
-If you would like to proxy the data in a subfolder such as `http://example.org/my/data`,
-modify the `baseURL` in your `config.json` to `"http://example.org/my/data"`
-and change `location` from `/` to `/my/data` (excluding a trailing slash).
-
-### _(Optional)_ Running under HTTPS
-
-HTTPS can be enabled in two ways: natively by the server, or through a proxy (explained above).
-
-With native HTTPS, the server will establish the SSL layer. Set the following values in your config file to enable this:
-
-     {
-       "protocol": "https",
-       "ssl": {
-         "keys" : {
-           "key": "./private-key-server.key.pem",
-           "ca": ["./root-ca.crt.pem"],
-           "cert": "./server-certificate.crt.pem"
-        }
-      }
-    }  
-  
-  If `protocol`is not specified, it will derive the protocol from the `baseURL`. Hence, HTTPS can also be enabled as such:
-
-     {
-       "baseURL": "https://data.example.org/",
-       "ssl": {
-         "keys" : {
-           "key": "./private-key-server.key.pem",
-           "ca": ["./root-ca.crt.pem"],
-           "cert": "./server-certificate.crt.pem"
-        }
-      }
-    }  
-
-If you decide to let a proxy handle HTTPS, use this configuration to run the server as `http`, but construct links as `https` (so clients don't break):
-
-     {
-       "protocol": "http",
-       "baseURL": "https://data.example.org/",
-     }  
-
-
-### _(Optional)_ Running in a Docker container
-
-If you want to rapidly deploy the server as a microservice, you can build a [Docker](https://www.docker.com/) container as follows:
+This project can be setup by cloning and installing it as follows:
 
 ```bash
-$ docker build -t ldf-server .
-```
-After that, you can run your newly created container:
-```bash
-$ docker run -p 3000:3000 -t -i --rm -v $(pwd)/config.json:/tmp/config.json ldf-server /tmp/config.json
+$ git clone https://github.com/LinkedDataFragments/Server.js.git
+$ cd comunica
+$ yarn install
 ```
 
-### _(Optional)_ Host historical version of datasets
+**Note: `npm install` is not supported at the moment, as this project makes use of Yarn's [workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) functionality**
 
-You can [enable the Memento protocol](https://github.com/LinkedDataFragments/Server.js/wiki/Configuring-Memento) to offer different versions of an evolving dataset.
+This will install the dependencies of all modules, and bootstrap the Lerna monorepo.
+After that, all [LDF Server packages](https://github.com/LinkedDataFragments/Server.js/tree/master/packages) are available in the `packages/` folder
+and can be used in a development environment.
 
-## License
-The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/).
+Furthermore, this will add [pre-commit hooks](https://www.npmjs.com/package/pre-commit)
+to build, lint and test.
+These hooks can temporarily be disabled at your own risk by adding the `-n` flag to the commit command.
 
 ## License
 The Linked Data Fragments client is written by [Ruben Verborgh](http://ruben.verborgh.org/) and colleagues.

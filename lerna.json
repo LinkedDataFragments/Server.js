@@ -1,0 +1,21 @@
+{
+  "lerna": "3.4.0",
+  "command": {
+    "publish": {
+      "ignoreChanges": [
+        "*.md"
+      ],
+      "message": "Bump to release version %s",
+      "allowBranch": "master",
+      "npmClient": "npm"
+    }
+  },
+  "packages": [
+    "packages/*"
+  ],
+  "useWorkspaces": true,
+  "version": "2.2.5",
+  "loglevel": "success",
+  "registry": "https://registry.npmjs.org/",
+  "npmClient": "yarn"
+}

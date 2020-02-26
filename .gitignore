@@ -9,3 +9,6 @@ config.json
 config/*.json
 !config/config-defaults.json
 !config/config-example*.json
+
+# Ignore dev environment files
+.idea
