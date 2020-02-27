@@ -7,7 +7,7 @@ It delegates queries to an sequence of other datasources.
 TODO: add documentation
 
 ## License
-The Linked Data Fragments client is written by [Ruben Verborgh](http://ruben.verborgh.org/) and colleagues.
+The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/) and colleagues.
 
 This code is copyrighted by [Ghent University – imec](http://idlab.ugent.be/)
 and released under the [MIT license](http://opensource.org/licenses/MIT).

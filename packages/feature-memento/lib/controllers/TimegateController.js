@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* An TimegateController responds to timegate requests */
 
-var Controller = require('./Controller'),
+var Controller = require('@ldf/core').controllers.Controller,
     _ = require('lodash'),
     url = require('url'),
     Util = require('../Util');

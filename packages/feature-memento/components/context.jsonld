@@ -1,0 +1,18 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    {
+      "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+      "ldffm": "npmd:@ldf/feature-memento/",
+      "files-ldffm": "ldffm:^3.0.0/",
+
+      "timegatePath": "ldfc:Controller/Timegate#timegatePath",
+      "memento": "ldfc:Controller/Timegate#memento",
+      "mementoVersions": "ldfc:Controller/Timegate#mementoVersions",
+      "mementoDatasource": "ldfc:Controller/Timegate#mementoDatasource",
+      "mementoVersionStart": "ldfc:Controller/Timegate#mementoVersionStart",
+      "mementoVersionEnd": "ldfc:Controller/Timegate#mementoVersionEnd",
+      "mementoOriginalBaseURL": "ldfc:Controller/Timegate#mementoOriginalBaseURL"
+    }
+  ]
+}

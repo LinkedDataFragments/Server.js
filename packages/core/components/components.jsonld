@@ -9,9 +9,7 @@
     "files-ldfc:components/Controller/NotFound.jsonld",
     "files-ldfc:components/Controller/QuadPatternFragments.jsonld",
     "files-ldfc:components/Controller/Summary.jsonld",
-    "files-ldfc:components/Controller/Timegate.jsonld",
 
-    "files-ldfc:components/ControllerExtension/Memento.jsonld",
     "files-ldfc:components/ControllerExtension/WebId.jsonld",
 
     "files-ldfc:components/Datasource/Empty.jsonld",
@@ -22,7 +20,6 @@
     "files-ldfc:components/Router/Page.jsonld",
     "files-ldfc:components/Router/QuadPattern.jsonld",
 
-    "files-ldfc:components/View/Html/Qpf/Memento.jsonld",
     "files-ldfc:components/View/Html/Qpf/Summary.jsonld",
     "files-ldfc:components/View/Html/Error.jsonld",
     "files-ldfc:components/View/Html/Forbidden.jsonld",

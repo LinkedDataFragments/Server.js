@@ -1,7 +1,7 @@
 /*! @license MIT ©2016 Miel Vander Sande, Ghent University - imec */
 /* A MementoControllerExtension extends Triple Pattern Fragments responses with Memento headers. */
 
-var Controller = require('./Controller'),
+var Controller = require('@ldf/core').controllers.Controller,
     TimegateController = require('./TimegateController'),
     url = require('url'),
     _ = require('lodash');

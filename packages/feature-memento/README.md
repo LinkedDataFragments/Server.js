@@ -1,8 +1,8 @@
 # Linked Data Fragments Server - SPARQL Datasource
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
-This module contains a SPARQL datasource for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
-It allows SPARQL endpoints to be used as a data proxy.
+This module adds support for the [Memento Protocol](http://mementoweb.org/about/) to the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
+If your Linked Data source evolve over time and has multiple versions, it makes access and query across the various versions straightforward. To enable the [Memento Protocol](http://mementoweb.org/about/), follow the guide below.
 
 TODO: add documentation
 

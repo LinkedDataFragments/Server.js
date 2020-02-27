@@ -1,24 +1,33 @@
 {
   "@context": [
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld"
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-memento/^3.0.0/components/context.jsonld"
   ],
-  "@id": "npmd:@ldf/server",
+  "@id": "npmd:@ldf/feature-memento",
   "components": [
     {
-      "@id": "ldfc:ControllerExtension/Memento",
+      "@id": "ldffm:ControllerExtension/Memento",
       "@type": "Class",
       "extends": "ldfc:ControllerExtension",
       "requireElement": "controllers.MementoControllerExtension",
       "comment": "A MementoControllerExtension extends Triple Pattern Fragments responses with Memento headers",
       "parameters": [
         {
-          "@id": "ldfc:Controller/Timegate#timegatePath"
+          "@id": "ldffm:Controller/Timegate#timegatePath"
         },
         {
-          "@id": "ldfc:Controller/Timegate#memento"
+          "@id": "ldffm:Controller/Timegate#memento"
         },
         {
-          "@id": "ldfc:ControllerExtension/Memento#datasource",
+          "@id": "ldffm:ControllerExtension/Memento#router",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#router",
+            "from": "ldfc:Server"
+          }
+        },
+        {
+          "@id": "ldffm:ControllerExtension/Memento#datasource",
           "inheritValues": {
             "@type": "InheritanceValue",
             "onParameter": "ldfc:Server#datasource",
@@ -26,7 +35,7 @@
           }
         },
         {
-          "@id": "ldfc:ControllerExtension/Memento#urlData",
+          "@id": "ldffm:ControllerExtension/Memento#urlData",
           "inheritValues": {
             "@type": "InheritanceValue",
             "onParameter": "ldfc:Server#urlData",
@@ -37,7 +46,7 @@
       "constructorArguments": {
         "fields": [
           {
-            "@id": "ldfc:Controller/Timegate#timeGatesField"
+            "@id": "ldffm:Controller/Timegate#timeGatesField"
           },
           {
             "@id": "ldfc:Server#routerField"

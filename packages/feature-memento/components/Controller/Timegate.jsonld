@@ -1,34 +1,35 @@
 {
   "@context": [
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld"
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-memento/^3.0.0/components/context.jsonld"
   ],
   "@graph": [
     {
-      "@id": "npmd:@ldf/server",
+      "@id": "npmd:@ldf/feature-memento",
       "components": [
         {
-          "@id": "ldfc:Controller/Timegate",
+          "@id": "ldffm:Controller/Timegate",
           "@type": "Class",
           "extends": "ldfc:Controller",
           "requireElement": "controllers.TimegateController",
           "comment": "A TimegateController responds to timegate requests",
           "parameters": [
             {
-              "@id": "ldfc:Controller/Timegate#timegatePath",
+              "@id": "ldffm:Controller/Timegate#timegatePath",
               "comment": "URL matching for the time gate",
               "range": "xsd:string",
               "unique": true,
               "inheritValues": {
                 "@type": "InheritanceValue",
-                "onParameter": "ldfc:Controller/Timegate#timegatePath",
+                "onParameter": "ldffm:Controller/Timegate#timegatePath",
                 "from": "ldfc:Server"
               }
             },
             {
-              "@id": "ldfc:Controller/Timegate#memento",
+              "@id": "ldffm:Controller/Timegate#memento",
               "comment": "Path to a directory where summaries can be found",
               "range": {
-                "@id": "ldfs:Memento",
+                "@id": "ldffm:Memento",
                 "rdfs:hasProperty": [
                   { "@id": "ldfc:Controller/Timegate#mementoVersion" },
                   { "@id": "ldfc:Controller/Timegate#mementoDatasource" },
@@ -39,7 +40,7 @@
               },
               "inheritValues": {
                 "@type": "InheritanceValue",
-                "onParameter": "ldfc:Controller/Timegate#memento",
+                "onParameter": "ldffm:Controller/Timegate#memento",
                 "from": "ldfc:Server"
               }
             }
@@ -48,41 +49,41 @@
             "extends": "ldfc:Controller#constructorArgumentsObject",
             "fields": [
               {
-                "@id": "ldfc:Controller/Timegate#timeGatesField",
+                "@id": "ldffm:Controller/Timegate#timeGatesField",
                 "keyRaw": "timegates",
                 "value": {
                   "fields": [
                     {
                       "keyRaw": "baseUrl",
-                      "value": "ldfc:Controller/Timegate#timegatePath"
+                      "value": "ldffm:Controller/Timegate#timegatePath"
                     },
                     {
                       "keyRaw": "mementos",
                       "value": {
                         "fields": [
                           {
-                            "collectEntries": "ldfc:Controller/Timegate#memento",
-                            "key": "ldfc:Controller/Timegate#timegatePath",
+                            "collectEntries": "ldffm:Controller/Timegate#memento",
+                            "key": "ldffm:Controller/Timegate#timegatePath",
                             "value": {
                               "elements": {
-                                "collectEntries": "ldfc:Controller/Timegate#versions",
+                                "collectEntries": "ldffm:Controller/Timegate#versions",
                                 "value": {
                                   "fields": [
                                     {
                                       "keyRaw": "datasource",
-                                      "value": "ldfc:Controller/Timegate#mementoDatasource"
+                                      "value": "ldffm:Controller/Timegate#mementoDatasource"
                                     },
                                     {
                                       "keyRaw": "initial",
-                                      "value": "ldfc:Controller/Timegate#mementoVersionStart"
+                                      "value": "ldffm:Controller/Timegate#mementoVersionStart"
                                     },
                                     {
                                       "keyRaw": "final",
-                                      "value": "ldfc:Controller/Timegate#mementoVersionEnd"
+                                      "value": "ldffm:Controller/Timegate#mementoVersionEnd"
                                     },
                                     {
                                       "keyRaw": "originalBaseURL",
-                                      "value": "ldfc:Controller/Timegate#mementoOriginalBaseURL"
+                                      "value": "ldffm:Controller/Timegate#mementoOriginalBaseURL"
                                     }
                                   ]
                                 }
@@ -110,10 +111,10 @@
       "@id": "ldfc:Server",
       "parameters": [
         {
-          "@id": "ldfc:Controller/Timegate#timegatePath"
+          "@id": "ldffm:Controller/Timegate#timegatePath"
         },
         {
-          "@id": "ldfc:Controller/Timegate#memento"
+          "@id": "ldffm:Controller/Timegate#memento"
         }
       ]
     }

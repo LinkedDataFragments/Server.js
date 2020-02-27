@@ -1,7 +1,7 @@
 /*! @license MIT ©2016 Ruben Verborgh, Ghent University - imec */
 /* A MementoHtmlViewExtension extends the Quad Pattern Fragments HTML view with Memento details. */
 
-var HtmlView = require('../HtmlView'),
+var HtmlView = require('@ldf/core').views.HtmlView,
     TimegateController = require('../../controllers/TimegateController'),
     path = require('path');
 

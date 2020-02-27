@@ -200,10 +200,7 @@ $ docker run -p 3000:3000 -t -i --rm -v $(pwd)/config.json:/tmp/config.json ldf-
 You can [enable the Memento protocol](https://github.com/LinkedDataFragments/Server.js/wiki/Configuring-Memento) to offer different versions of an evolving dataset.
 
 ## License
-The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/).
-
-## License
-The Linked Data Fragments client is written by [Ruben Verborgh](http://ruben.verborgh.org/) and colleagues.
+The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/) and colleagues.
 
 This code is copyrighted by [Ghent University – imec](http://idlab.ugent.be/)
 and released under the [MIT license](http://opensource.org/licenses/MIT).

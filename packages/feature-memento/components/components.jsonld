@@ -1,0 +1,11 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-memento/^3.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/feature-memento",
+  "@type": "Module",
+  "requireName": "@ldf/feature-memento",
+  "import": [
+    "files-ldffm:components/Controller/Timegate.jsonld",
+    "files-ldffm:components/ControllerExtension/Memento.jsonld",
+    "files-ldffm:components/View/Html/Qpf/Memento.jsonld"
+  ]
+}
