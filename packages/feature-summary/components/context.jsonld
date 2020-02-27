@@ -6,12 +6,12 @@
       "ldffs": "npmd:@ldf/feature-summary/",
       "files-ldffs": "ldffs:^3.0.0/",
 
-      "SummaryController": "ldfc:Controller/Summary",
-      "summaryDir": "ldfc:Controller/Summary#directory",
-      "summaryPath": "ldfc:Controller/Summary#path",
-      "SummaryQpfHtmlView": "ldfc:View/Html/Qpf/Summary",
-      "SummaryQpfRdfView": "ldfc:View/Rdf/Qpf/Summary",
-      "SummaryRdfView": "ldfc:View/Rdf/Summary"
+      "SummaryController": "ldffs:Controller/Summary",
+      "summaryDir": "ldffs:Controller/Summary#directory",
+      "summaryPath": "ldffs:Controller/Summary#path",
+      "SummaryQpfHtmlView": "ldffs:View/Html/Qpf/Summary",
+      "SummaryQpfRdfView": "ldffs:View/Rdf/Qpf/Summary",
+      "SummaryRdfView": "ldffs:View/Rdf/Summary"
     }
   ]
 }

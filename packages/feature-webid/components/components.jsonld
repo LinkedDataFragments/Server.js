@@ -1,0 +1,9 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-webid/^3.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/feature-webid",
+  "@type": "Module",
+  "requireName": "@ldf/feature-webid",
+  "import": [
+    "files-ldffw:components/ControllerExtension/WebId.jsonld"
+  ]
+}

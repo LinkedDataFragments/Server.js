@@ -7,8 +7,8 @@ var http = require('http'),
     N3 = require('n3'),
     n3parser = N3.Parser,
     N3Util = N3.Util,
-    Util = require('../Util'),
-    Controller = require('./Controller');
+    Util = require('@ldf/core').Util,
+    Controller = require('@ldf/core').controllers.Controller;
 
 var CERT_NS = 'http://www.w3.org/ns/auth/cert#';
 

@@ -1,0 +1,12 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    {
+      "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+      "ldffw": "npmd:@ldf/feature-webid/",
+      "files-ldffw": "ldffw:^3.0.0/",
+
+      "WebIdController": "ldffw:Controller/WebId"
+    }
+  ]
+}

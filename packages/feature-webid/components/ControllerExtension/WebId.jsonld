@@ -2,17 +2,17 @@
   "@context": [
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld"
   ],
-  "@id": "npmd:@ldf/server",
+  "@id": "npmd:@ldf/feature-webid",
   "components": [
     {
-      "@id": "ldfc:ControllerExtension/WebId",
+      "@id": "ldffw:ControllerExtension/WebId",
       "@type": "Class",
       "extends": "ldfc:ControllerExtension",
       "requireElement": "controllers.WebIDControllerExtension",
       "comment": "A WebIDControllerExtension extends Triple Pattern Fragments responses with WebID authentication",
       "parameters": [
         {
-          "@id": "ldfc:ControllerExtension/WebId#urlData",
+          "@id": "ldffw:ControllerExtension/WebId#urlData",
           "inheritValues": {
             "@type": "InheritanceValue",
             "onParameter": "ldfc:Server#urlData",

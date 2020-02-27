@@ -9,8 +9,6 @@
     "files-ldfc:components/Controller/NotFound.jsonld",
     "files-ldfc:components/Controller/QuadPatternFragments.jsonld",
 
-    "files-ldfc:components/ControllerExtension/WebId.jsonld",
-
     "files-ldfc:components/Datasource/Empty.jsonld",
     "files-ldfc:components/Datasource/Index.jsonld",
     "files-ldfc:components/Datasource/Memory.jsonld",
