@@ -1,0 +1,19 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-n3/^3.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/datasource-n3",
+  "components": [
+    {
+      "@id": "ldfdn:Datasource/NQuads",
+      "@type": "Class",
+      "extends": "ldfc:Datasource",
+      "requireElement": "datasources.NQuadsDatasource",
+      "comment": "An NQuadsDatasource fetches data from Turtle/TriG/N-Triples/N-Quads/N3 documents",
+      "constructorArguments": {
+        "extends": "ldfc:Datasource#constructorArgumentsObject"
+      }
+    }
+  ]
+}

@@ -62,7 +62,7 @@ describe('QuadPatternFragmentsRdfView', function () {
     function (extension, format) {
       describe('when render is called for ' + format, function () {
         function readAsset(name) {
-          var file = path.join(__dirname, '../../assets/', name + '.' + extension);
+          var file = path.join(__dirname, '../../../../../test/assets/', name + '.' + extension);
           return fs.readFileSync(file, 'utf8');
         }
 

@@ -1,0 +1,9 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-hdt/^3.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/datasource-hdt",
+  "@type": "Module",
+  "requireName": "@ldf/datasource-hdt",
+  "import": [
+    "files-ldfdh:components/Datasource/Hdt.jsonld"
+  ]
+}

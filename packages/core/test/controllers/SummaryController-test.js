@@ -28,7 +28,7 @@ describe('SummaryController', function () {
     before(function () {
       controller = new SummaryController({
         views: [new SummaryRdfView()],
-        summaries: { dir: path.join(__dirname, '/../assets') },
+        summaries: { dir: path.join(__dirname, '/../../../../test/assets') },
         prefixes: {
           ds: 'http://semweb.mmlab.be/ns/datasummaries#',
           rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -39,7 +39,7 @@ describe('SummaryController', function () {
 
     it('should correctly serve summary in Turtle', function (done) {
       client.get('/summaries/summary').set('Accept', 'text/turtle').expect(function (response) {
-        var summary = fs.readFileSync(path.join(__dirname, '/../assets/summary.ttl'), 'utf8');
+        var summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
@@ -50,7 +50,7 @@ describe('SummaryController', function () {
 
     it('should correctly serve summary in Trig', function (done) {
       client.get('/summaries/summary').expect(function (response) {
-        var summary = fs.readFileSync(path.join(__dirname, '/../assets/summary.ttl'), 'utf8');
+        var summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'application/trig;charset=utf-8');
@@ -61,7 +61,7 @@ describe('SummaryController', function () {
 
     it('should correctly serve summary in ntriples', function (done) {
       client.get('/summaries/summary').set('Accept', 'application/n-triples').expect(function (response) {
-        var summary = fs.readFileSync(path.join(__dirname, '/../assets/summary.nt'), 'utf8');
+        var summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'application/n-triples;charset=utf-8');

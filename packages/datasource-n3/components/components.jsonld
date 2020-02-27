@@ -1,0 +1,13 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-n3/^3.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/datasource-n3",
+  "@type": "Module",
+  "requireName": "@ldf/datasource-n3",
+  "import": [
+    "files-ldfdn:components/Datasource/N3.jsonld",
+    "files-ldfdn:components/Datasource/NQuads.jsonld",
+    "files-ldfdn:components/Datasource/NTriples.jsonld",
+    "files-ldfdn:components/Datasource/Trig.jsonld",
+    "files-ldfdn:components/Datasource/Turtle.jsonld"
+  ]
+}

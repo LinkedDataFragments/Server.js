@@ -1,0 +1,9 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-composite/^3.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/datasource-composite",
+  "@type": "Module",
+  "requireName": "@ldf/datasource-composite",
+  "import": [
+    "files-ldfdc:components/Datasource/Composite.jsonld"
+  ]
+}

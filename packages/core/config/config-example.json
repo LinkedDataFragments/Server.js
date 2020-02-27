@@ -1,5 +1,9 @@
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-hdt/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-sparql/^3.0.0/components/context.jsonld"
+  ],
   "@graph": [
     {
       "@id": "urn:ldf-server:my",

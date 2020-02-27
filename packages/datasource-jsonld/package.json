@@ -1,0 +1,35 @@
+{
+  "name": "@ldf/datasource-jsonld",
+  "description": "Linked Data Fragments Server - JSON-LD Datasource",
+  "version": "2.2.5",
+  "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-jsonld",
+  "lsd:components": "components/components.jsonld",
+  "lsd:contexts": {
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-jsonld/^3.0.0/components/context.jsonld": "components/context.jsonld"
+  },
+  "lsd:importPaths": {
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-jsonld/^3.0.0/components/": "components/"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-jsonld",
+  "bugs": {
+    "url": "https://github.com/LinkedDataFragments/Server.js/issues"
+  },
+  "scripts": {
+    "test": "mocha",
+    "lint": "eslint bin/* lib test"
+  },
+  "dependencies": {
+    "jsonld": "^0.4.11"
+  },
+  "peerDependencies": {
+    "@ldf/core": "2.2.5"
+  },
+  "devDependencies": {
+    "@ldf/core": "2.2.5"
+  }
+}

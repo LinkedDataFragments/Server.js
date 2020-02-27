@@ -2,7 +2,7 @@
   "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
   "@id": "npmd:@ldf/server",
   "@type": "Module",
-  "requireName": "ldf-server",
+  "requireName": "@ldf/core",
   "import": [
     "files-ldfc:components/Controller/Assets.jsonld",
     "files-ldfc:components/Controller/Dereference.jsonld",
@@ -14,18 +14,9 @@
     "files-ldfc:components/ControllerExtension/Memento.jsonld",
     "files-ldfc:components/ControllerExtension/WebId.jsonld",
 
-    "files-ldfc:components/Datasource/Composite.jsonld",
     "files-ldfc:components/Datasource/Empty.jsonld",
-    "files-ldfc:components/Datasource/Hdt.jsonld",
     "files-ldfc:components/Datasource/Index.jsonld",
-    "files-ldfc:components/Datasource/JsonLd.jsonld",
     "files-ldfc:components/Datasource/Memory.jsonld",
-    "files-ldfc:components/Datasource/N3.jsonld",
-    "files-ldfc:components/Datasource/NQuads.jsonld",
-    "files-ldfc:components/Datasource/NTriples.jsonld",
-    "files-ldfc:components/Datasource/Sparql.jsonld",
-    "files-ldfc:components/Datasource/Trig.jsonld",
-    "files-ldfc:components/Datasource/Turtle.jsonld",
 
     "files-ldfc:components/Router/Datasource.jsonld",
     "files-ldfc:components/Router/Page.jsonld",

@@ -1,0 +1,40 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-composite/^3.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/datasource-composite",
+  "components": [
+    {
+      "@id": "ldfdc:Datasource/Composite",
+      "@type": "Class",
+      "extends": "ldfc:Datasource",
+      "requireElement": "datasources.CompositeDatasource",
+      "comment": "A CompositeDatasource delegates queries to an consecutive list of datasources",
+      "parameters": [
+        {
+          "@id": "ldfdc:Datasource/Composite#compose",
+          "comment": "The datasource references list",
+          "range": "ldfc:Datasource"
+        }
+      ],
+      "constructorArguments": {
+        "extends": "ldfc:Datasource#constructorArgumentsObject",
+        "fields": [
+          {
+            "keyRaw": "references",
+            "value": {
+              "fields": [
+                {
+                  "collectEntries": "ldfdc:Datasource/Composite#compose",
+                  "key": "rdf:subject",
+                  "value": "rdf:object"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

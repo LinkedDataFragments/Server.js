@@ -5,7 +5,7 @@ var EventEmitter = require('events'),
     fs = require('fs'),
     path = require('path');
 
-var exampleFile = path.join(__dirname, '../assets/test.ttl');
+var exampleFile = path.join(__dirname, '../../../../test/assets/test.ttl');
 
 describe('Datasource', function () {
   describe('The Datasource module', function () {

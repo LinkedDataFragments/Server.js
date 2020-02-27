@@ -1,0 +1,12 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    {
+      "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+      "ldfdj": "npmd:@ldf/datasource-jsonld/",
+      "files-ldfdj": "ldfdj:^3.0.0/",
+
+      "JsonLdDatasource": "ldfdj:Datasource/JsonLd"
+    }
+  ]
+}

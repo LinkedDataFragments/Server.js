@@ -1,0 +1,14 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    {
+      "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+      "ldfdh": "npmd:@ldf/datasource-hdt/",
+      "files-ldfdh": "ldfdh:^3.0.0/",
+
+      "HdtDatasource": "ldfdh:Datasource/Hdt",
+      "hdtFile": "ldfdh:Datasource/Hdt#file",
+      "hdtExternal": "ldfdh:Datasource/Hdt#external"
+    }
+  ]
+}

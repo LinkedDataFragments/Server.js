@@ -36,18 +36,9 @@
 
       "MementoControllerExtension": "ldfc:ControllerExtension/Memento",
 
-      "CompositeDatasource": "ldfc:Datasource/Composite",
       "EmptyDatasource": "ldfc:Datasource/Empty",
-      "HdtDatasource": "ldfc:Datasource/Hdt",
       "IndexDatasource": "ldfc:Datasource/Index",
-      "JsonLdDatasource": "ldfc:Datasource/JsonLd",
       "MemoryDatasource": "ldfc:Datasource/Memory",
-      "N3Datasource": "ldfc:Datasource/N3",
-      "NQuadsDatasource": "ldfc:Datasource/NQuads",
-      "NTriplesDatasource": "ldfc:Datasource/NTriples",
-      "SparqlDatasource": "ldfc:Datasource/Sparql",
-      "TrigDatasource": "ldfc:Datasource/Trig",
-      "TurtleDatasource": "ldfc:Datasource/Turtle",
       "datasourceTitle": "ldfc:Datasource#title",
       "description": "ldfc:Datasource#description",
       "datasourcePath": "ldfc:Datasource#path",
@@ -58,15 +49,8 @@
       "licenseUrl": "ldfc:Datasource#licenseUrl",
       "copyright": "ldfc:Datasource#copyright",
       "homepage": "ldfc:Datasource#homepage",
-      "hdtFile": "ldfc:Datasource/Hdt#file",
-      "hdtExternal": "ldfc:Datasource/Hdt#external",
-      "sparqlEndpoint": "ldfc:Datasource/Sparql#endpoint",
       "datasourceFile": "ldfc:Datasource/Memory#file",
       "datasourceUrl": "ldfc:Datasource/Memory#url",
-      "compose": {
-        "@id": "ldfc:Datasource/Composite#compose",
-        "@type": "@id"
-      },
 
       "DatasourceRouter": "ldfc:Router/Datasource",
       "PageRouter": "ldfc:Router/Page",

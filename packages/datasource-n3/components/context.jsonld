@@ -1,0 +1,16 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    {
+      "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+      "ldfdn": "npmd:@ldf/datasource-n3/",
+      "files-ldfdn": "ldfdn:^3.0.0/",
+
+      "N3Datasource": "ldfdn:Datasource/N3",
+      "NQuadsDatasource": "ldfdn:Datasource/NQuads",
+      "NTriplesDatasource": "ldfdn:Datasource/NTriples",
+      "TrigDatasource": "ldfdn:Datasource/Trig",
+      "TurtleDatasource": "ldfdn:Datasource/Turtle"
+    }
+  ]
+}

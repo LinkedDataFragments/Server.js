@@ -1,0 +1,9 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-sparql/^3.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/datasource-sparql",
+  "@type": "Module",
+  "requireName": "@ldf/datasource-sparql",
+  "import": [
+    "files-ldfds:components/Datasource/Sparql.jsonld"
+  ]
+}

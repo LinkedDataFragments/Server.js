@@ -1,0 +1,13 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    {
+      "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+      "ldfds": "npmd:@ldf/datasource-sparql/",
+      "files-ldfds": "ldfds:^3.0.0/",
+
+      "SparqlDatasource": "ldfds:Datasource/Sparql",
+      "sparqlEndpoint": "ldfds:Datasource/Sparql#endpoint"
+    }
+  ]
+}

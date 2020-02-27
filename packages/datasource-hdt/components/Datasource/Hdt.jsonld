@@ -1,0 +1,43 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-hdt/^3.0.0/components/context.jsonld"
+  ],
+  "@id": "npmd:@ldf/datasource-hdt",
+  "components": [
+    {
+      "@id": "ldfdh:Datasource/Hdt",
+      "@type": "Class",
+      "extends": "ldfc:Datasource",
+      "requireElement": "datasources.HdtDatasource",
+      "comment": "An HdtDatasource loads and queries an HDT document in-process",
+      "parameters": [
+        {
+          "@id": "ldfdh:Datasource/Hdt#file",
+          "comment": "The HDT datasource source file",
+          "range": "xsd:string",
+          "unique": true
+        },
+        {
+          "@id": "ldfdh:Datasource/Hdt#external",
+          "comment": "Switch to external HDT datasource if true",
+          "range": "xsd:string",
+          "unique": true
+        }
+      ],
+      "constructorArguments": {
+        "extends": "ldfc:Datasource#constructorArgumentsObject",
+        "fields": [
+          {
+            "keyRaw": "file",
+            "value": "ldfdh:Datasource/Hdt#file"
+          },
+          {
+            "keyRaw": "external",
+            "value": "ldfdh:Datasource/Hdt#external"
+          }
+        ]
+      }
+    }
+  ]
+}
