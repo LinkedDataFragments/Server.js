@@ -24,8 +24,7 @@
   "scripts": {
     "test-changed": "lerna run test --since HEAD",
     "lint-changed": "lerna run lint --since HEAD",
-    "test": "lerna run test",
-    "test-ci": "lerna run test",
+    "test": "mocha \"packages/*/test/**/*-test.js\" --recursive --require ./test/test-setup --timeout 500",
     "lint": "lerna run lint",
     "clean": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules",
     "publish": "lerna publish",
