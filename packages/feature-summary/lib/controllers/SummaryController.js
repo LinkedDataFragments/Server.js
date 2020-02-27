@@ -1,11 +1,11 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* An SummaryController responds to requests for summaries */
 
-var Controller = require('./Controller'),
+var Controller = require('@ldf/core').controllers.Controller,
     fs = require('fs'),
     path = require('path'),
     StreamParser = require('n3').StreamParser,
-    Util = require('../Util');
+    Util = require('@ldf/core').Util;
 
 // Creates a new SummaryController
 function SummaryController(options) {

@@ -1,21 +1,22 @@
 {
   "@context": [
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld"
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-summary/^3.0.0/components/context.jsonld"
   ],
-  "@id": "npmd:@ldf/server",
+  "@id": "npmd:@ldf/feature-summary",
   "components": [
     {
-      "@id": "ldfc:View/Rdf/Qpf/Summary",
+      "@id": "ldffs:View/Rdf/Qpf/Summary",
       "@type": "Class",
       "extends": "ldfc:View/Rdf",
       "requireElement": "views.summary.QuadPatternFragmentsRdfView-Summary",
       "comment": "A SummaryRdfViewExtension extends the Quad Pattern Fragments RDF view with a summary link",
       "parameters": [
         {
-          "@id": "ldfc:Controller/Summary#directory"
+          "@id": "ldffs:Controller/Summary#directory"
         },
         {
-          "@id": "ldfc:Controller/Summary#path"
+          "@id": "ldffs:Controller/Summary#path"
         }
       ],
       "constructorArguments": [
@@ -23,7 +24,7 @@
           "extends": "ldfc:View/Rdf#constructorArgumentsObject",
           "fields": [
             {
-              "@id": "ldfc:Controller/Summary#constructorArgumentsObject_summaries"
+              "@id": "ldffs:Controller/Summary#constructorArgumentsObject_summaries"
             }
           ]
         }

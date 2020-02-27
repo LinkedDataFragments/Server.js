@@ -4,7 +4,7 @@ var Controller = require('../../lib/controllers/Controller'),
 
 var http = require('http'),
     request = require('supertest'),
-    DummyServer = require('./DummyServer');
+    DummyServer = require('../../../../test/DummyServer');
 
 describe('Controller', function () {
   describe('The Controller module', function () {

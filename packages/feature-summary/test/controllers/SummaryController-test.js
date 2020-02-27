@@ -2,7 +2,7 @@
 var SummaryController = require('../../lib/controllers/SummaryController');
 
 var request = require('supertest'),
-    DummyServer = require('./DummyServer'),
+    DummyServer = require('../../../../test/DummyServer'),
     fs = require('fs'),
     path = require('path');
 

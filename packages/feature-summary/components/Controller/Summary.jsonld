@@ -1,24 +1,25 @@
 {
   "@context": [
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld"
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-summary/^3.0.0/components/context.jsonld"
   ],
-  "@id": "npmd:@ldf/server",
+  "@id": "npmd:@ldf/feature-summary",
   "components": [
     {
-      "@id": "ldfc:Controller/Summary",
+      "@id": "ldffs:Controller/Summary",
       "@type": "Class",
       "extends": "ldfc:Controller",
       "requireElement": "controllers.SummaryController",
       "comment": "A SummaryController responds to requests for summaries",
       "parameters": [
         {
-          "@id": "ldfc:Controller/Summary#directory",
+          "@id": "ldffs:Controller/Summary#directory",
           "comment": "Path to a directory where summaries can be found",
           "range": "xsd:string",
           "unique": true
         },
         {
-          "@id": "ldfc:Controller/Summary#path",
+          "@id": "ldffs:Controller/Summary#path",
           "comment": "URL matching for summaries",
           "range": "xsd:string",
           "unique": true
@@ -28,17 +29,17 @@
         "extends": "ldfc:Controller#constructorArgumentsObject",
         "fields": [
           {
-            "@id": "ldfc:Controller/Summary#constructorArgumentsObject_summaries",
+            "@id": "ldffs:Controller/Summary#constructorArgumentsObject_summaries",
             "keyRaw": "summaries",
             "value": {
               "fields": [
                 {
                   "keyRaw": "dir",
-                  "value": "ldfc:Controller/Summary#directory"
+                  "value": "ldffs:Controller/Summary#directory"
                 },
                 {
                   "keyRaw": "path",
-                  "value": "ldfc:Controller/Summary#path"
+                  "value": "ldffs:Controller/Summary#path"
                 }
               ]
             }

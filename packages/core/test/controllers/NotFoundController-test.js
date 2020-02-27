@@ -2,7 +2,7 @@
 var NotFoundController = require('../../lib/controllers/NotFoundController');
 
 var request = require('supertest'),
-    DummyServer = require('./DummyServer');
+    DummyServer = require('../../../../test/DummyServer');
 
 var NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView.js'),
     NotFoundRdfView = require('../../lib/views/notfound/NotFoundRdfView.js');

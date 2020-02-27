@@ -1,4 +1,4 @@
-# Linked Data Fragments Server - SPARQL Datasource
+# Linked Data Fragments Server - Memento
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
 This module adds support for the [Memento Protocol](http://mementoweb.org/about/) to the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).

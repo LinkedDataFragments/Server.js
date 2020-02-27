@@ -2,7 +2,7 @@
 var DereferenceController = require('../../lib/controllers/DereferenceController');
 
 var request = require('supertest'),
-    DummyServer = require('./DummyServer');
+    DummyServer = require('../../../../test/DummyServer');
 
 describe('DereferenceController', function () {
   describe('The DereferenceController module', function () {

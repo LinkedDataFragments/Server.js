@@ -1,0 +1,12 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-summary/^3.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/feature-summary",
+  "@type": "Module",
+  "requireName": "@ldf/feature-summary",
+  "import": [
+    "files-ldffs:components/Controller/Summary.jsonld",
+    "files-ldffs:components/View/Html/Qpf/Summary.jsonld",
+    "files-ldffs:components/View/Rdf/Qpf/Summary.jsonld",
+    "files-ldffs:components/View/Rdf/Summary.jsonld"
+  ]
+}

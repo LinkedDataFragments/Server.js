@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* A SummaryRdfViewExtension extends the Quad Pattern Fragments RDF view with a summary link. */
 
-var RdfView = require('../RdfView');
+var RdfView = require('@ldf/core').views.RdfView;
 
 var ds = 'http://semweb.mmlab.be/ns/datasummaries#';
 

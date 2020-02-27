@@ -8,7 +8,6 @@
     "files-ldfc:components/Controller/Dereference.jsonld",
     "files-ldfc:components/Controller/NotFound.jsonld",
     "files-ldfc:components/Controller/QuadPatternFragments.jsonld",
-    "files-ldfc:components/Controller/Summary.jsonld",
 
     "files-ldfc:components/ControllerExtension/WebId.jsonld",
 
@@ -20,16 +19,13 @@
     "files-ldfc:components/Router/Page.jsonld",
     "files-ldfc:components/Router/QuadPattern.jsonld",
 
-    "files-ldfc:components/View/Html/Qpf/Summary.jsonld",
     "files-ldfc:components/View/Html/Error.jsonld",
     "files-ldfc:components/View/Html/Forbidden.jsonld",
     "files-ldfc:components/View/Html/NotFound.jsonld",
     "files-ldfc:components/View/Html/Qpf.jsonld",
-    "files-ldfc:components/View/Rdf/Qpf/Summary.jsonld",
     "files-ldfc:components/View/Rdf/Error.jsonld",
     "files-ldfc:components/View/Rdf/NotFound.jsonld",
     "files-ldfc:components/View/Rdf/Qpf.jsonld",
-    "files-ldfc:components/View/Rdf/Summary.jsonld",
     "files-ldfc:components/View/Collection.jsonld",
     "files-ldfc:components/View/Html.jsonld",
     "files-ldfc:components/View/Rdf.jsonld",

@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* A SummaryRdfView represents a data summary in RDF. */
 
-var RdfView = require('../RdfView');
+var RdfView = require('@ldf/core').views.RdfView;
 
 // Creates a new SummaryRdfView
 function SummaryRdfView(settings) {

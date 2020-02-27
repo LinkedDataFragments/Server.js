@@ -2,7 +2,7 @@
 var AssetsController = require('../../lib/controllers/AssetsController');
 
 var request = require('supertest'),
-    DummyServer = require('./DummyServer'),
+    DummyServer = require('../../../../test/DummyServer'),
     fs = require('fs'),
     path = require('path');
 

@@ -6,6 +6,9 @@
       "ldffm": "npmd:@ldf/feature-memento/",
       "files-ldffm": "ldffm:^3.0.0/",
 
+      "TimegateController": "ldffm:Controller/Timegate",
+      "MementoControllerExtension": "ldffm:ControllerExtension/Memento",
+      "MementoQpfHtmlView": "ldffm:View/Html/Qpf/Memento",
       "timegatePath": "ldfc:Controller/Timegate#timegatePath",
       "memento": "ldfc:Controller/Timegate#memento",
       "mementoVersions": "ldfc:Controller/Timegate#mementoVersions",

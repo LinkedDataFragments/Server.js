@@ -1,0 +1,17 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    {
+      "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+      "ldffs": "npmd:@ldf/feature-summary/",
+      "files-ldffs": "ldffs:^3.0.0/",
+
+      "SummaryController": "ldfc:Controller/Summary",
+      "summaryDir": "ldfc:Controller/Summary#directory",
+      "summaryPath": "ldfc:Controller/Summary#path",
+      "SummaryQpfHtmlView": "ldfc:View/Html/Qpf/Summary",
+      "SummaryQpfRdfView": "ldfc:View/Rdf/Qpf/Summary",
+      "SummaryRdfView": "ldfc:View/Rdf/Summary"
+    }
+  ]
+}

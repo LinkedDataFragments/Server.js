@@ -2,7 +2,7 @@
 var QuadPatternFragmentsController = require('../../lib/controllers/QuadPatternFragmentsController');
 
 var request = require('supertest'),
-    DummyServer = require('./DummyServer'),
+    DummyServer = require('../../../../test/DummyServer'),
     http = require('http');
 
 var QuadPatternFragmentsHtmlView = require('../../lib/views/quadpatternfragments/QuadPatternFragmentsHtmlView.js'),
