@@ -1,31 +1,43 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-/* Exports of the ldf-server package for use as a submodule (as opposed to standalone) */
+/* Exports of the components of this package */
 
-var fs = require('fs'),
-    path = require('path');
-
-// Export all modules in the `lib` folder
-module.exports = readModules(path.join(__dirname, 'lib'));
-
-// Reads modules in the given folder and subfolders
-function readModules(folder) {
-  var modules = {};
-  fs.readdirSync(folder).forEach(function (name) {
-    var location = path.join(folder, name), item = fs.statSync(location);
-    // Add script files by including them
-    if (item.isFile()) {
-      var scriptMatch = name.match(/(\w+)\.js$/);
-      if (scriptMatch) {
-        try { modules[scriptMatch[1]] = require(location); }
-        catch (error) {
-          console.error(error); // TODO
-        }
-      }
-    }
-    // Add folders by recursing over them
-    else if (item.isDirectory()) {
-      modules[name] = readModules(location);
-    }
-  });
-  return modules;
-}
+module.exports = {
+  controllers: {
+    AssetsController: require('./lib/controllers/AssetsController'),
+    Controller: require('./lib/controllers/Controller'),
+    DereferenceController: require('./lib/controllers/DereferenceController'),
+    ErrorController: require('./lib/controllers/ErrorController'),
+    NotFoundController: require('./lib/controllers/NotFoundController'),
+  },
+  datasources: {
+    Datasource: require('./lib/datasources/Datasource'),
+    EmptyDatasource: require('./lib/datasources/EmptyDatasource'),
+    IndexDatasource: require('./lib/datasources/IndexDatasource'),
+    MemoryDatasource: require('./lib/datasources/MemoryDatasource'),
+  },
+  routers: {
+    DatasourceRouter: require('./lib/routers/DatasourceRouter'),
+    PageRouter: require('./lib/routers/PageRouter'),
+  },
+  views: {
+    error: {
+      ErrorHtmlView: require('./lib/views/error/ErrorHtmlView'),
+      ErrorRdfView: require('./lib/views/error/ErrorRdfView'),
+    },
+    forbidden: {
+      ForbiddenHtmlView: require('./lib/views/forbidden/ForbiddenHtmlView'),
+    },
+    notfound: {
+      NotFoundHtmlView: require('./lib/views/notfound/NotFoundHtmlView'),
+      NotFoundRdfView: require('./lib/views/notfound/NotFoundRdfView'),
+    },
+    HtmlView: require('./lib/views/HtmlView'),
+    RdfView: require('./lib/views/RdfView'),
+    View: require('./lib/views/View'),
+    ViewCollection: require('./lib/views/ViewCollection'),
+  },
+  LinkedDataFragmentsServer: require('./lib/LinkedDataFragmentsServer'),
+  LinkedDataFragmentsServerWorker: require('./lib/LinkedDataFragmentsServerWorker'),
+  UrlData: require('./lib/UrlData'),
+  Util: require('./lib/Util'),
+};
