@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* A QuadPatternFragmentsRdfView represents a Quad Pattern Fragment in RDF. */
 
-var RdfView = require('../RdfView');
+var RdfView = require('@ldf/core').views.RdfView;
 
 var dcTerms = 'http://purl.org/dc/terms/',
     rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',

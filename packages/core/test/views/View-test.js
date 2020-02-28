@@ -1,5 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var View = require('../../lib/views/View');
+var View = require('../../lib/views/View'),
+    resolve = require('path').resolve;
 
 describe('View', function () {
   describe('The View module', function () {
@@ -86,7 +87,11 @@ describe('View', function () {
         response.getHeader.should.have.been.calledWith('Content-Type');
         view._render.getCall(0).args.should.have.length(4);
         view._render.should.have.been.calledOnce;
-        view._render.getCall(0).args[0].should.deep.equal({ a: 'b', contentType: 'text/html' });
+        view._render.getCall(0).args[0].should.deep.equal({
+          a: 'b',
+          contentType: 'text/html',
+          viewPathBase: resolve(__dirname, '../../lib/views/base.html'),
+        });
         view._render.getCall(0).args[1].should.equal(request);
         view._render.getCall(0).args[2].should.equal(response);
         view._render.getCall(0).args[3].should.be.an.instanceof(Function);
@@ -104,7 +109,12 @@ describe('View', function () {
         response.getHeader.should.have.been.calledWith('Content-Type');
         view._render.should.have.been.calledOnce;
         view._render.getCall(0).args.should.have.length(4);
-        view._render.getCall(0).args[0].should.deep.equal({ a: 'b', c: 'd', contentType: 'text/html' });
+        view._render.getCall(0).args[0].should.deep.equal({
+          a: 'b',
+          c: 'd',
+          contentType: 'text/html',
+          viewPathBase: resolve(__dirname, '../../lib/views/base.html'),
+        });
         view._render.getCall(0).args[1].should.equal(request);
         view._render.getCall(0).args[2].should.equal(response);
         view._render.getCall(0).args[3].should.be.an.instanceof(Function);

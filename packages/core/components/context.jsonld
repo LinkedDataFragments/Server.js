@@ -12,9 +12,6 @@
       "AssetsController": "ldfc:Controller/Assets",
       "DereferenceController": "ldfc:Controller/Dereference",
       "NotFoundController": "ldfc:Controller/NotFound",
-      "QuadPatternFragmentsController": "ldfc:Controller/QuadPatternFragments",
-      "TimegateController": "ldfc:Controller/Timegate",
-      "qpfControllerExtension": "ldfc:Controller/QuadPatternFragments#controllerExtension",
       "assetsDir": "ldfc:Controller/Assets#dir",
       "assetsPath": "ldfc:Controller/Assets#path",
       "dereference": "ldfc:Server#dereference",
@@ -23,8 +20,6 @@
         "@type": "@id"
       },
       "dereferencePath": "ldfc:Server#dereferencePath",
-
-      "MementoControllerExtension": "ldfc:ControllerExtension/Memento",
 
       "EmptyDatasource": "ldfc:Datasource/Empty",
       "IndexDatasource": "ldfc:Datasource/Index",
@@ -44,18 +39,13 @@
 
       "DatasourceRouter": "ldfc:Router/Datasource",
       "PageRouter": "ldfc:Router/Page",
-      "QuadPatternRouter": "ldfc:Router/QuadPattern",
       "pageSize": "ldfc:Router/Page#pageSize",
-      "routerPrefix": "ldfc:QuadPattern/Page#routerPrefix",
 
-      "MementoQpfHtmlView": "ldfc:View/Html/Qpf/Memento",
       "ErrorHtmlView": "ldfc:View/Html/Error",
       "ForbiddenHtmlView": "ldfc:View/Html/Forbidden",
       "NotFoundHtmlView": "ldfc:View/Html/NotFound",
-      "QpfHtmlView": "ldfc:View/Html/Qpf",
       "ErrorRdfView": "ldfc:View/Rdf/Error",
       "NotFoundRdfView": "ldfc:View/Rdf/NotFound",
-      "QpfRdfView": "ldfc:View/Rdf/Qpf",
       "ViewCollection": "ldfc:View/Collection",
       "HtmlView": "ldfc:View/Html",
       "RdfView": "ldfc:View/Rdf",

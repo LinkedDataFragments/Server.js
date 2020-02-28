@@ -2,6 +2,7 @@
 /* View is a base class for objects that generate server responses. */
 
 var _ = require('lodash'),
+    join = require('path').join,
     ViewCollection = require('./ViewCollection');
 
 // Creates a view with the given name
@@ -55,6 +56,10 @@ View.prototype.render = function (options, request, response, done) {
   var settings = _.defaults({}, options, this._defaults);
   if (!settings.contentType)
     settings.contentType = response.getHeader('Content-Type');
+
+  // Export our base view, so it can be reused by other modules
+  settings.viewPathBase = join(__dirname, 'base.html');
+
   // Render the view and end the response when done
   this._render(settings, request, response, function (error) {
     if (error)

@@ -1,0 +1,12 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-qpf/^3.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/feature-qpf",
+  "@type": "Module",
+  "requireName": "@ldf/feature-qpf",
+  "import": [
+    "files-ldffq:components/Controller/QuadPatternFragments.jsonld",
+    "files-ldffq:components/Router/QuadPattern.jsonld",
+    "files-ldffq:components/View/Html/Qpf.jsonld",
+    "files-ldffq:components/View/Rdf/Qpf.jsonld"
+  ]
+}

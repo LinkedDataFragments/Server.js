@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2018 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /** A QuadPatternFragmentsController responds to requests for TPFs and QPFs */
 
-var Controller = require('./Controller'),
+var Controller = require('@ldf/core').controllers.Controller,
     url = require('url'),
     _ = require('lodash'),
     N3Util = require('n3').Util;

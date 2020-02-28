@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var QuadPatternFragmentsRdfView = require('../../../lib/views/quadpatternfragments/QuadPatternFragmentsRdfView');
+var QuadPatternFragmentsRdfView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsRdfView;
 
 var _ = require('lodash'),
     fs = require('fs'),

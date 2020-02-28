@@ -1,13 +1,13 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var QuadPatternFragmentsController = require('../../lib/controllers/QuadPatternFragmentsController');
+var QuadPatternFragmentsController = require('../../').controllers.QuadPatternFragmentsController;
 
 var request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
     http = require('http');
 
-var QuadPatternFragmentsHtmlView = require('../../lib/views/quadpatternfragments/QuadPatternFragmentsHtmlView.js'),
-    QuadPatternFragmentsRdfView  = require('../../lib/views/quadpatternfragments/QuadPatternFragmentsRdfView.js'),
-    UrlData                      = require('../../lib/UrlData.js');
+var QuadPatternFragmentsHtmlView = require('../../').views.quadpatternfragments.QuadPatternFragmentsHtmlView,
+    QuadPatternFragmentsRdfView  = require('../../').views.quadpatternfragments.QuadPatternFragmentsRdfView,
+    UrlData                      = require('@ldf/core').UrlData;
 
 describe('QuadPatternFragmentsController', function () {
   describe('The QuadPatternFragmentsController module', function () {

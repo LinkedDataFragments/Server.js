@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var QuadPatternRouter = require('../../lib/routers/QuadPatternRouter');
+var QuadPatternRouter = require('../../').routers.QuadPatternRouter;
 
 describe('QuadPatternRouter', function () {
   describe('The QuadPatternRouter module', function () {

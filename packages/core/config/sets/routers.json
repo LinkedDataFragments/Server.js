@@ -1,5 +1,8 @@
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-qpf/^3.0.0/components/context.jsonld"
+  ],
   "@id": "urn:ldf-server:my",
 
   "routers": [
@@ -9,7 +12,7 @@
     },
     {
       "@id": "config:sets/routers.json#myQuadPatternRouter",
-      "@type": "ldfc:Router/QuadPattern"
+      "@type": "QuadPatternRouter"
     },
     {
       "@id": "config:sets/routers.json#myPageRouter",

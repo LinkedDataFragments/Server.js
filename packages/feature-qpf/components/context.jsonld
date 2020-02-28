@@ -1,0 +1,19 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    {
+      "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+      "ldffq": "npmd:@ldf/feature-qpf/",
+      "files-ldffq": "ldffq:^3.0.0/",
+
+      "QuadPatternFragmentsController": "ldffq:Controller/QuadPatternFragments",
+      "qpfControllerExtension": "ldffq:Controller/QuadPatternFragments#controllerExtension",
+
+      "QuadPatternRouter": "ldffq:Router/QuadPattern",
+      "routerPrefix": "ldffq:QuadPattern/Page#routerPrefix",
+
+      "QpfHtmlView": "ldffq:View/Html/Qpf",
+      "QpfRdfView": "ldffq:View/Rdf/Qpf"
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 /*! @license MIT ©2015-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* A QuadPatternFragmentsRdfView represents a TPF or QPF in HTML. */
 
-var HtmlView = require('../HtmlView');
+var HtmlView = require('@ldf/core').views.HtmlView,
+    join = require('path').join;
 
 // Creates a new QuadPatternFragmentsHtmlView
 function QuadPatternFragmentsHtmlView(settings) {
@@ -11,7 +12,7 @@ function QuadPatternFragmentsHtmlView(settings) {
 }
 HtmlView.extend(QuadPatternFragmentsHtmlView);
 
-QuadPatternFragmentsHtmlView.prototype.viewDirectory = 'quadpatternfragments/';
+QuadPatternFragmentsHtmlView.prototype.viewDirectory = __dirname;
 
 // Renders the view with the given settings to the response
 QuadPatternFragmentsHtmlView.prototype._render = function (settings, request, response, done) {
@@ -28,7 +29,7 @@ QuadPatternFragmentsHtmlView.prototype._render = function (settings, request, re
   function renderHtml() {
     var template = settings.datasource.role === 'index' ? 'index' : 'datasource';
     settings.extensions = { Before: null, FormBefore: null, FormAfter: null, QuadBefore: 'function', QuadAfter: 'function', After: null };
-    self._renderTemplate(self.viewDirectory + template, settings, request, response, done);
+    self._renderTemplate(join(self.viewDirectory, template), settings, request, response, done);
   }
 };
 
