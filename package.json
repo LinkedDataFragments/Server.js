@@ -25,7 +25,7 @@
     "test-changed": "lerna run test --since HEAD",
     "lint-changed": "lerna run lint --since HEAD",
     "test": "mocha \"packages/*/test/**/*-test.js\" --recursive --require ./test/test-setup --timeout 500",
-    "lint": "lerna run lint",
+    "lint": "eslint packages/*/bin/* packages/*/lib packages/*/test",
     "clean": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules",
     "publish": "lerna publish",
     "publish-bare": "lerna exec -- npm publish --silent",
