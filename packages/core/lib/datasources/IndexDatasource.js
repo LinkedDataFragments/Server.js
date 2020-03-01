@@ -9,12 +9,12 @@ var rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     voID = 'http://rdfs.org/ns/void#';
 
 // Creates a new IndexDatasource
-function IndexDatasource(options) {
-  if (!(this instanceof IndexDatasource))
-    return new IndexDatasource(options);
-  MemoryDatasource.call(this, options);
-  this._datasources = options ? options.datasources : {};
-  this.role = 'index';
+class IndexDatasource extends MemoryDatasource {
+  constructor(options) {
+    super(options);
+    this._datasources = options ? options.datasources : {};
+    this.role = 'index';
+  }
 }
 MemoryDatasource.extend(IndexDatasource);
 

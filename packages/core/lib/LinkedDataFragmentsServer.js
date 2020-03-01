@@ -8,49 +8,51 @@ var _ = require('lodash'),
     UrlData = require('./UrlData');
 
 // Creates a new LinkedDataFragmentsServer
-function LinkedDataFragmentsServer(options) {
-  // Create the HTTP(S) server
-  var server, sockets = 0;
-  var urlData = options && options.urlData ? options.urlData : new UrlData();
-  switch (urlData.protocol) {
-  case 'http':
-    server = require('http').createServer();
-    break;
-  case 'https':
-    var ssl = options.ssl || {}, authentication = options.authentication || {};
-    // WebID authentication requires a client certificate
-    if (authentication.webid)
-      ssl.requestCert = ssl.rejectUnauthorized = true;
-    server = require('https').createServer(_.assign(ssl, _.mapValues(ssl.keys, readHttpsOption)));
-    break;
-  default:
-    throw new Error('The configured protocol ' + urlData.protocol + ' is invalid.');
+class LinkedDataFragmentsServer {
+  constructor(options) {
+    // Create the HTTP(S) server
+    var server, sockets = 0;
+    var urlData = options && options.urlData ? options.urlData : new UrlData();
+    switch (urlData.protocol) {
+    case 'http':
+      server = require('http').createServer();
+      break;
+    case 'https':
+      var ssl = options.ssl || {}, authentication = options.authentication || {};
+      // WebID authentication requires a client certificate
+      if (authentication.webid)
+        ssl.requestCert = ssl.rejectUnauthorized = true;
+      server = require('https').createServer(_.assign(ssl, _.mapValues(ssl.keys, readHttpsOption)));
+      break;
+    default:
+      throw new Error('The configured protocol ' + urlData.protocol + ' is invalid.');
+    }
+    // Copy over members
+    for (var member in LinkedDataFragmentsServer.prototype)
+      server[member] = LinkedDataFragmentsServer.prototype[member];
+
+    // Assign settings
+    server._sockets = {};
+    server._log = options.log || _.noop;
+    server._accesslogger = options.accesslogger || _.noop;
+    server._controllers = options.controllers || [];
+    server._errorController = new ErrorController(options);
+    server._defaultHeaders = options.response && options.response.headers || {};
+
+    // Attach event listeners
+    server.on('error', function (error) { server._reportError(error); });
+    server.on('request', function (request, response) {
+      server._accesslogger(request, response);
+      try { server._processRequest(request, response); }
+      catch (error) { server._reportError(request, response, error); }
+    });
+    server.on('connection', function (socket) {
+      var socketId = sockets++;
+      server._sockets[socketId] = socket;
+      socket.on('close', function () { delete server._sockets[socketId]; });
+    });
+    return server;
   }
-  // Copy over members
-  for (var member in LinkedDataFragmentsServer.prototype)
-    server[member] = LinkedDataFragmentsServer.prototype[member];
-
-  // Assign settings
-  server._sockets = {};
-  server._log = options.log || _.noop;
-  server._accesslogger = options.accesslogger || _.noop;
-  server._controllers = options.controllers || [];
-  server._errorController = new ErrorController(options);
-  server._defaultHeaders = options.response && options.response.headers || {};
-
-  // Attach event listeners
-  server.on('error', function (error) { server._reportError(error); });
-  server.on('request', function (request, response) {
-    server._accesslogger(request, response);
-    try { server._processRequest(request, response); }
-    catch (error) { server._reportError(request, response, error); }
-  });
-  server.on('connection', function (socket) {
-    var socketId = sockets++;
-    server._sockets[socketId] = socket;
-    socket.on('close', function () { delete server._sockets[socketId]; });
-  });
-  return server;
 }
 
 // Handles an incoming HTTP request

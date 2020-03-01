@@ -19,13 +19,8 @@ describe('SparqlDatasource', function () {
       new SparqlDatasource().should.be.an.instanceof(SparqlDatasource);
     });
 
-    it('should create SparqlDatasource objects', function () {
-      SparqlDatasource().should.be.an.instanceof(SparqlDatasource);
-    });
-
     it('should create Datasource objects', function () {
       new SparqlDatasource().should.be.an.instanceof(Datasource);
-      SparqlDatasource().should.be.an.instanceof(Datasource);
     });
   });
 

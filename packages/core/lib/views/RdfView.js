@@ -18,10 +18,10 @@ var contentTypes = 'application/trig;q=0.9,application/n-quads;q=0.7,' +
                    'text/turtle;q=0.6,application/n-triples;q=0.5,text/n3;q=0.6';
 
 // Creates a new RDF view with the given name and settings
-function RdfView(viewName, settings) {
-  if (!(this instanceof RdfView))
-    return new RdfView(viewName, settings);
-  View.call(this, viewName, contentTypes, settings);
+class RdfView extends View {
+  constructor(viewName, settings) {
+    super(viewName, contentTypes, settings);
+  }
 }
 View.extend(RdfView);
 

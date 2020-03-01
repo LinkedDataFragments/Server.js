@@ -6,49 +6,51 @@ var _ = require('lodash'),
     LinkedDataFragmentsServer = require('./LinkedDataFragmentsServer');
 
 // Creates a new LinkedDataFragmentsServerWorker
-function LinkedDataFragmentsServerWorker(config) {
-  if (!config.datasources)
-    throw new Error('At least one datasource must be defined.');
-  if (!config.controllers)
-    throw new Error('At least one controller must be defined.');
-  if (!config.routers)
-    throw new Error('At least one router must be defined.');
+class LinkedDataFragmentsServerWorker {
+  constructor(config) {
+    if (!config.datasources)
+      throw new Error('At least one datasource must be defined.');
+    if (!config.controllers)
+      throw new Error('At least one controller must be defined.');
+    if (!config.routers)
+      throw new Error('At least one router must be defined.');
 
-  // Create all data sources
-  Object.keys(config.datasources).forEach(function (datasourceId) {
-    var datasource = config.datasources[datasourceId];
-    datasource.on('error', datasourceError);
-    function datasourceError(error) {
-      config.datasources[datasourceId].hide = true;
-      process.stderr.write('WARNING: skipped datasource ' + datasourceId + '. ' + error.message + '\n');
-    }
-  });
+    // Create all data sources
+    Object.keys(config.datasources).forEach(function (datasourceId) {
+      var datasource = config.datasources[datasourceId];
+      datasource.on('error', datasourceError);
+      function datasourceError(error) {
+        config.datasources[datasourceId].hide = true;
+        process.stderr.write('WARNING: skipped datasource ' + datasourceId + '. ' + error.message + '\n');
+      }
+    });
 
-  // Set up logging
-  var loggingSettings = config.logging;
-  // eslint-disable-next-line no-console
-  config.log = console.log;
-  if (loggingSettings.enabled) {
-    var accesslog = require('access-log');
-    config.accesslogger = function (request, response) {
-      accesslog(request, response, null, function (logEntry) {
-        fs.appendFile(loggingSettings.file, logEntry + '\n', function (error) {
-          error && process.stderr.write('Error when writing to access log file: ' + error);
+    // Set up logging
+    var loggingSettings = config.logging;
+    // eslint-disable-next-line no-console
+    config.log = console.log;
+    if (loggingSettings.enabled) {
+      var accesslog = require('access-log');
+      config.accesslogger = function (request, response) {
+        accesslog(request, response, null, function (logEntry) {
+          fs.appendFile(loggingSettings.file, logEntry + '\n', function (error) {
+            error && process.stderr.write('Error when writing to access log file: ' + error);
+          });
         });
-      });
-    };
+      };
+    }
+
+    // Make sure the 'last' controllers are last in the array and the 'first' are first.
+    var lastControllers = _.remove(config.controllers, function (controller) {
+      return controller._last;
+    });
+    var firstControllers = _.remove(config.controllers, function (controller) {
+      return controller._first;
+    });
+    config.controllers = firstControllers.concat(config.controllers.concat(lastControllers));
+
+    this._config = config;
   }
-
-  // Make sure the 'last' controllers are last in the array and the 'first' are first.
-  var lastControllers = _.remove(config.controllers, function (controller) {
-    return controller._last;
-  });
-  var firstControllers = _.remove(config.controllers, function (controller) {
-    return controller._first;
-  });
-  config.controllers = firstControllers.concat(config.controllers.concat(lastControllers));
-
-  this._config = config;
 }
 
 // Start the worker

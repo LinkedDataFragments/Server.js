@@ -2,11 +2,11 @@
 /* A PageRouter routes page numbers to offsets */
 
 // Creates a new PageRouter with the given page size, which defaults to 100.
-function PageRouter(config) {
-  if (!(this instanceof PageRouter))
-    return new PageRouter(config);
-  config = config || {};
-  this.pageSize = isFinite(config.pageSize) && config.pageSize > 1 ? ~~config.pageSize : 100;
+class PageRouter {
+  constructor(config) {
+    config = config || {};
+    this.pageSize = isFinite(config.pageSize) && config.pageSize > 1 ? ~~config.pageSize : 100;
+  }
 }
 
 // Extracts a page parameter from the request and adds it to the query

@@ -18,12 +18,6 @@ describe('N3Datasource', function () {
       instance.close(done);
     });
 
-    it('should create N3Datasource objects', function (done) {
-      var instance = N3Datasource({ url: exampleTurtleUrl });
-      instance.should.be.an.instanceof(N3Datasource);
-      instance.close(done);
-    });
-
     it('should create Datasource objects', function (done) {
       var instance = new N3Datasource({ url: exampleTurtleUrl });
       instance.should.be.an.instanceof(Datasource);

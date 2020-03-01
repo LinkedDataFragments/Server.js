@@ -11,18 +11,18 @@ var _ = require('lodash'),
     negotiate = require('negotiate'),
     Util = require('../Util');
 
-var ViewCollectionError = ViewCollection.ViewCollectionError =
-                          Util.createErrorType('ViewCollectionError');
 
 // Creates a new ViewCollection
-function ViewCollection(views) {
-  if (!(this instanceof ViewCollection))
-    return new ViewCollection(views);
-  this._views = {};        // Views keyed by name
-  this._viewMatchers = {}; // Views matchers keyed by name; each one matches one content type
-  views && this.addViews(views);
+class ViewCollection {
+  constructor(views) {
+    this._views = {};        // Views keyed by name
+    this._viewMatchers = {}; // Views matchers keyed by name; each one matches one content type
+    views && this.addViews(views);
+  }
 }
 
+var ViewCollectionError = ViewCollection.ViewCollectionError =
+                          Util.createErrorType('ViewCollectionError');
 // Adds the given view to the collection
 ViewCollection.prototype.addView = function (view) {
   // Add the view to the list per type

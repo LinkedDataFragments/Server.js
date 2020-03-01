@@ -10,17 +10,17 @@ var ENDPOINT_ERROR = 'Error accessing SPARQL endpoint';
 var INVALID_JSON_RESPONSE = 'The endpoint returned an invalid SPARQL results JSON response.';
 
 // Creates a new SparqlDatasource
-function SparqlDatasource(options) {
-  if (!(this instanceof SparqlDatasource))
-    return new SparqlDatasource(options);
-  Datasource.call(this, options);
-  this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
-  this._resolvingCountQueries = {};
+class SparqlDatasource extends Datasource {
+  constructor(options) {
+    super(options);
+    this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
+    this._resolvingCountQueries = {};
 
-  // Set endpoint URL and default graph
-  options = options || {};
-  this._endpoint = this._endpointUrl = (options.endpoint || '').replace(/[\?#][^]*$/, '');
-  this._endpointUrl += '?query=';
+    // Set endpoint URL and default graph
+    options = options || {};
+    this._endpoint = this._endpointUrl = (options.endpoint || '').replace(/[\?#][^]*$/, '');
+    this._endpointUrl += '?query=';
+  }
 }
 Datasource.extend(SparqlDatasource, ['triplePattern', 'quadPattern', 'limit', 'offset', 'totalCount']);
 

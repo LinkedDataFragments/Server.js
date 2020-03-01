@@ -4,10 +4,10 @@
 var HtmlView = require('../HtmlView');
 
 // Creates a new NotFoundHtmlView
-function NotFoundHtmlView(settings) {
-  if (!(this instanceof NotFoundHtmlView))
-    return new NotFoundHtmlView(settings);
-  HtmlView.call(this, 'NotFound', settings);
+class NotFoundHtmlView extends HtmlView {
+  constructor(settings) {
+    super('NotFound', settings);
+  }
 }
 HtmlView.extend(NotFoundHtmlView);
 

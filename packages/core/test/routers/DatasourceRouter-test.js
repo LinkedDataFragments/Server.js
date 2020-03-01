@@ -10,10 +10,6 @@ describe('DatasourceRouter', function () {
     it('should be a DatasourceRouter constructor', function () {
       new DatasourceRouter().should.be.an.instanceof(DatasourceRouter);
     });
-
-    it('should create new DatasourceRouter objects', function () {
-      DatasourceRouter().should.be.an.instanceof(DatasourceRouter);
-    });
   });
 
   describe('A DatasourceRouter instance', function () {

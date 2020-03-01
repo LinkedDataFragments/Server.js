@@ -7,11 +7,11 @@ var MemoryDatasource = require('@ldf/core').datasources.MemoryDatasource,
 var ACCEPT = 'application/trig;q=1.0,application/n-quads;q=0.9,text/turtle;q=0.8,application/n-triples;q=0.7,text/n3;q=0.4';
 
 // Creates a new N3Datasource
-function N3Datasource(options) {
-  if (!(this instanceof N3Datasource))
-    return new N3Datasource(options);
-  MemoryDatasource.call(this, options);
-  this._url = options && (options.url || options.file);
+class N3Datasource extends MemoryDatasource {
+  constructor(options) {
+    super(options);
+    this._url = options && (options.url || options.file);
+  }
 }
 MemoryDatasource.extend(N3Datasource);
 

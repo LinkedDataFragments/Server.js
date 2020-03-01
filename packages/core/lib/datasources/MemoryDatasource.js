@@ -5,10 +5,10 @@ var Datasource = require('./Datasource'),
     N3Store = require('n3').Store;
 
 // Creates a new MemoryDatasource
-function MemoryDatasource(options) {
-  if (!(this instanceof MemoryDatasource))
-    return new MemoryDatasource(options);
-  Datasource.call(this, options);
+class MemoryDatasource extends Datasource {
+  constructor(options) {
+    super(options);
+  }
 }
 Datasource.extend(MemoryDatasource, ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount']);
 

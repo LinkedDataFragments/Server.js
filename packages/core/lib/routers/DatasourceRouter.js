@@ -4,11 +4,11 @@
 var UrlData = require('../UrlData');
 
 // Creates a new DatasourceRouter
-function DatasourceRouter(options) {
-  if (!(this instanceof DatasourceRouter))
-    return new DatasourceRouter(options);
-  var urlData = options && options.urlData || new UrlData();
-  this._baseLength = urlData.baseURLPath.length - 1;
+class DatasourceRouter {
+  constructor(options) {
+    var urlData = options && options.urlData || new UrlData();
+    this._baseLength = urlData.baseURLPath.length - 1;
+  }
 }
 
 // Extracts the data source parameter from the request and adds it to the query

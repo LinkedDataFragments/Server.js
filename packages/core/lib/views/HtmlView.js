@@ -10,17 +10,17 @@ var View = require('./View'),
     UrlData = require('../UrlData');
 
 // Creates a new HTML view with the given name and settings
-function HtmlView(viewName, settings) {
-  if (!(this instanceof HtmlView))
-    return new HtmlView(viewName, settings);
-  settings = settings || {};
-  settings.urlData = settings.urlData || new UrlData();
-  var defaults = {
-    cache: true, N3Util: N3Util,
-    assetsPath: settings.urlData.assetsPath || '/', baseURL: settings.urlData.baseURL || '/',
-    title: '', header: settings && settings.title,
-  };
-  View.call(this, viewName, 'text/html', _.defaults({}, settings, defaults));
+class HtmlView extends View {
+  constructor(viewName, settings) {
+    settings = settings || {};
+    settings.urlData = settings.urlData || new UrlData();
+    var defaults = {
+      cache: true, N3Util: N3Util,
+      assetsPath: settings.urlData.assetsPath || '/', baseURL: settings.urlData.baseURL || '/',
+      title: '', header: settings && settings.title,
+    };
+    super(viewName, 'text/html', _.defaults({}, settings, defaults));
+  }
 }
 View.extend(HtmlView);
 

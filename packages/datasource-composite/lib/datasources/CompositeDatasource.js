@@ -5,28 +5,28 @@ var Datasource = require('@ldf/core').datasources.Datasource,
     LRU        = require('lru-cache');
 
 // Creates a new CompositeDatasource
-function CompositeDatasource(options) {
-  if (!(this instanceof CompositeDatasource))
-    return new CompositeDatasource(options);
-  Datasource.call(this, options);
+class CompositeDatasource extends Datasource {
+  constructor(options) {
+    super(options);
 
-  if (!options.references)
-    throw new Error("A CompositeDatasource requires a `references` array of datasource id's in its settings.");
+    if (!options.references)
+      throw new Error("A CompositeDatasource requires a `references` array of datasource id's in its settings.");
 
-  var allDatasources = options.datasources;
-  this._datasources = {};
-  this._datasourceNames = [];
-  for (var i = 0; i < options.references.length; i++) {
-    var datasourceName = options.references[i];
-    var datasource = allDatasources[datasourceName];
-    if (!datasource)
-      throw new Error('No datasource ' + datasourceName + ' could be found!');
-    if (datasource.enabled !== false) {
-      this._datasources[datasourceName] = datasource;
-      this._datasourceNames.push(datasourceName);
+    var allDatasources = options.datasources;
+    this._datasources = {};
+    this._datasourceNames = [];
+    for (var i = 0; i < options.references.length; i++) {
+      var datasourceName = options.references[i];
+      var datasource = allDatasources[datasourceName];
+      if (!datasource)
+        throw new Error('No datasource ' + datasourceName + ' could be found!');
+      if (datasource.enabled !== false) {
+        this._datasources[datasourceName] = datasource;
+        this._datasourceNames.push(datasourceName);
+      }
     }
+    this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
   }
-  this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
 }
 Datasource.extend(CompositeDatasource, ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount']);
 

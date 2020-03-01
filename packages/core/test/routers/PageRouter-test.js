@@ -10,10 +10,6 @@ describe('PageRouter', function () {
     it('should be a PageRouter constructor', function () {
       new PageRouter().should.be.an.instanceof(PageRouter);
     });
-
-    it('should create new PageRouter objects', function () {
-      PageRouter().should.be.an.instanceof(PageRouter);
-    });
   });
 
   describe('A PageRouter instance', function () {

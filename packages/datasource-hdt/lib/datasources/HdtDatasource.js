@@ -6,16 +6,16 @@ var Datasource = require('@ldf/core').datasources.Datasource,
     ExternalHdtDatasource = require('./ExternalHdtDatasource');
 
 // Creates a new HdtDatasource
-function HdtDatasource(options) {
-  if (!(this instanceof HdtDatasource))
-    return new HdtDatasource(options);
-  Datasource.call(this, options);
+class HdtDatasource extends Datasource {
+  constructor(options) {
+    super(options);
 
-  options = options || {};
-  // Switch to external HDT datasource if the `external` flag is set
-  if (options.external)
-    return new ExternalHdtDatasource(options);
-  this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
+    options = options || {};
+    // Switch to external HDT datasource if the `external` flag is set
+    if (options.external)
+      return new ExternalHdtDatasource(options);
+    this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
+  }
 }
 Datasource.extend(HdtDatasource, ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount']);
 

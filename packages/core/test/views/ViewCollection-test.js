@@ -12,10 +12,6 @@ describe('ViewCollection', function () {
     it('should be a ViewCollection constructor', function () {
       new ViewCollection().should.be.an.instanceof(ViewCollection);
     });
-
-    it('should create new ViewCollection objects', function () {
-      ViewCollection().should.be.an.instanceof(ViewCollection);
-    });
   });
 
   describe('A ViewCollection instance without views', function () {

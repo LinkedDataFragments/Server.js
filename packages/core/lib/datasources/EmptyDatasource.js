@@ -4,10 +4,10 @@
 var MemoryDatasource = require('./MemoryDatasource');
 
 // Creates a new EmptyDatasource
-function EmptyDatasource(options) {
-  if (!(this instanceof EmptyDatasource))
-    return new EmptyDatasource(options);
-  MemoryDatasource.call(this, options);
+class EmptyDatasource extends MemoryDatasource {
+  constructor(options) {
+    super(options);
+  }
 }
 MemoryDatasource.extend(EmptyDatasource);
 

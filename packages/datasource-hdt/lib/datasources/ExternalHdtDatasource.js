@@ -10,14 +10,14 @@ var Datasource = require('@ldf/core').datasources.Datasource,
 var hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
 
 // Creates a new ExternalHdtDatasource
-function ExternalHdtDatasource(options) {
-  if (!(this instanceof ExternalHdtDatasource))
-    return new ExternalHdtDatasource(options);
-  Datasource.call(this, options);
+class ExternalHdtDatasource extends Datasource {
+  constructor(options) {
+    super(options);
 
-  // Test whether the HDT file exists
-  this._options = options = options || {};
-  this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
+    // Test whether the HDT file exists
+    this._options = options = options || {};
+    this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
+  }
 }
 Datasource.extend(ExternalHdtDatasource, ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount']);
 

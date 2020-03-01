@@ -4,10 +4,10 @@
 var RdfView = require('../RdfView');
 
 // Creates a new NotFoundRdfView
-function NotFoundRdfView(settings) {
-  if (!(this instanceof NotFoundRdfView))
-    return new NotFoundRdfView(settings);
-  RdfView.call(this, 'NotFound', settings);
+class NotFoundRdfView extends RdfView {
+  constructor(settings) {
+    super('NotFound', settings);
+  }
 }
 RdfView.extend(NotFoundRdfView);
 

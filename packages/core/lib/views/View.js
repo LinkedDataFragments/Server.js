@@ -6,14 +6,14 @@ var _ = require('lodash'),
     ViewCollection = require('./ViewCollection');
 
 // Creates a view with the given name
-function View(viewName, contentTypes, defaults) {
-  if (!(this instanceof View))
-    return new View(viewName, contentTypes, defaults);
-  this.name = viewName || '';
-  this._parseContentTypes(contentTypes);
-  this._defaults = defaults || {};
-  if (this._defaults.views)
-    this._defaults.views = new ViewCollection(defaults.views);
+class View {
+  constructor(viewName, contentTypes, defaults) {
+    this.name = viewName || '';
+    this._parseContentTypes(contentTypes);
+    this._defaults = defaults || {};
+    if (this._defaults.views)
+      this._defaults.views = new ViewCollection(defaults.views);
+  }
 }
 
 // Makes View the prototype of the given class

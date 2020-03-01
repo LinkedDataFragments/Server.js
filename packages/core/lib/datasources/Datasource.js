@@ -8,39 +8,39 @@ var fs = require('fs'),
     EventEmitter = require('events');
 
 // Creates a new Datasource
-function Datasource(options) {
-  if (!(this instanceof Datasource))
-    return new Datasource();
-  EventEmitter.call(this);
+class Datasource extends EventEmitter {
+  constructor(options) {
+    super();
 
-  // Set the options
-  options = options || {};
-  var urlData = options.urlData || new UrlData();
-  var path = (options.path || '').replace(/^\//, '');
-  this._datasourcePath = urlData.baseURLPath + encodeURI(path);
-  this._blankNodePrefix = urlData.blankNodePath || 'genid:';
-  this._skolemizeBlacklist = options.skolemizeBlacklist || {};
-  this.title = options.title;
-  this.id = options.id;
-  this.hide = options.hide;
-  this.description = options.description;
-  this.path = this._datasourcePath;
-  this.url = urlData.baseURLRoot + this._datasourcePath + '#dataset';
-  this.license = options.license;
-  this.licenseUrl = options.licenseUrl;
-  this.copyright = options.copyright;
-  this.homepage = options.homepage;
-  this._request = options.request || require('request');
-  this._blankNodePrefix = options.blankNodePrefix || this._blankNodePrefix;
-  this._blankNodePrefixLength = this._blankNodePrefix.length;
-  if (options.graph) {
-    this._graph = options.graph;
-    this._queryGraphReplacements = Object.create(null);
-    this._queryGraphReplacements[''] = 'urn:ldf:emptyGraph';
-    this._queryGraphReplacements[options.graph] = '';
+    // Set the options
+    options = options || {};
+    var urlData = options.urlData || new UrlData();
+    var path = (options.path || '').replace(/^\//, '');
+    this._datasourcePath = urlData.baseURLPath + encodeURI(path);
+    this._blankNodePrefix = urlData.blankNodePath || 'genid:';
+    this._skolemizeBlacklist = options.skolemizeBlacklist || {};
+    this.title = options.title;
+    this.id = options.id;
+    this.hide = options.hide;
+    this.description = options.description;
+    this.path = this._datasourcePath;
+    this.url = urlData.baseURLRoot + this._datasourcePath + '#dataset';
+    this.license = options.license;
+    this.licenseUrl = options.licenseUrl;
+    this.copyright = options.copyright;
+    this.homepage = options.homepage;
+    this._request = options.request || require('request');
+    this._blankNodePrefix = options.blankNodePrefix || this._blankNodePrefix;
+    this._blankNodePrefixLength = this._blankNodePrefix.length;
+    if (options.graph) {
+      this._graph = options.graph;
+      this._queryGraphReplacements = Object.create(null);
+      this._queryGraphReplacements[''] = 'urn:ldf:emptyGraph';
+      this._queryGraphReplacements[options.graph] = '';
+    }
   }
 }
-Datasource.prototype = new EventEmitter();
+// Datasource.prototype = new EventEmitter();
 
 // Makes Datasource the prototype of the given class
 Datasource.extend = function extend(child, supportedFeatureList) {
