@@ -8,11 +8,11 @@ class ErrorHtmlView extends HtmlView {
   constructor(settings) {
     super('Error', settings);
   }
-}
 
-// Renders the view with the given settings to the response
-ErrorHtmlView.prototype._render = function (settings, request, response, done) {
-  this._renderTemplate('error/error', settings, request, response, done);
-};
+  // Renders the view with the given settings to the response
+  _render(settings, request, response, done) {
+    this._renderTemplate('error/error', settings, request, response, done);
+  }
+}
 
 module.exports = ErrorHtmlView;

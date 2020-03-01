@@ -10,23 +10,24 @@ class NotFoundController extends Controller {
     super(options);
     this._last = true;
   }
+
+  // Serves a 404 response
+  _handleRequest(request, response, next) {
+    // Cache 404 responses
+    response.setHeader('Cache-Control', 'public,max-age=3600');
+
+    // Render the 404 message using the appropriate view
+    var view = this._negotiateView('NotFound', request, response),
+        metadata = { url: request.url, prefixes: this._prefixes, datasources: this._datasources };
+    response.writeHead(404);
+    view.render(metadata, request, response);
+  }
+
+  // Writes the 404 in plaintext if no view was found
+  _handleNotAcceptable(request, response, next) {
+    response.writeHead(404, { 'Content-Type': Util.MIME_PLAINTEXT });
+    response.end(request.url + ' not found\n');
+  }
 }
-// Serves a 404 response
-NotFoundController.prototype._handleRequest = function (request, response, next) {
-  // Cache 404 responses
-  response.setHeader('Cache-Control', 'public,max-age=3600');
-
-  // Render the 404 message using the appropriate view
-  var view = this._negotiateView('NotFound', request, response),
-      metadata = { url: request.url, prefixes: this._prefixes, datasources: this._datasources };
-  response.writeHead(404);
-  view.render(metadata, request, response);
-};
-
-// Writes the 404 in plaintext if no view was found
-NotFoundController.prototype._handleNotAcceptable = function (request, response, next) {
-  response.writeHead(404, { 'Content-Type': Util.MIME_PLAINTEXT });
-  response.end(request.url + ' not found\n');
-};
 
 module.exports = NotFoundController;

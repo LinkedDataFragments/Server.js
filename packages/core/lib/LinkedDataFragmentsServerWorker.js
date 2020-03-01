@@ -51,42 +51,42 @@ class LinkedDataFragmentsServerWorker {
 
     this._config = config;
   }
-}
 
-// Start the worker
-LinkedDataFragmentsServerWorker.prototype.run = function (port) {
-  var config = this._config;
-  if (port)
-    config.port = port;
-  var server = new LinkedDataFragmentsServer(config);
+  // Start the worker
+  run(port) {
+    var config = this._config;
+    if (port)
+      config.port = port;
+    var server = new LinkedDataFragmentsServer(config);
 
-  // Start the server when all data sources are ready
-  var pending = _.size(config.datasources);
-  _.each(config.datasources, function (datasource) {
-    // Add datasource ready-listener
-    var ready = _.once(startWhenReady);
-    datasource.once('initialized', ready);
-    datasource.once('error', ready);
+    // Start the server when all data sources are ready
+    var pending = _.size(config.datasources);
+    _.each(config.datasources, function (datasource) {
+      // Add datasource ready-listener
+      var ready = _.once(startWhenReady);
+      datasource.once('initialized', ready);
+      datasource.once('error', ready);
 
-    // Init datasource asynchronously
-    datasource.initialize();
-  });
-  function startWhenReady() {
-    if (!--pending) {
-      server.listen(config.port);
-      // eslint-disable-next-line no-console
-      console.log('Worker %d running on %s://localhost:%d/ (URL: %s).',
-        process.pid, config.urlData.protocol, config.port, config.urlData.baseURL);
+      // Init datasource asynchronously
+      datasource.initialize();
+    });
+    function startWhenReady() {
+      if (!--pending) {
+        server.listen(config.port);
+        // eslint-disable-next-line no-console
+        console.log('Worker %d running on %s://localhost:%d/ (URL: %s).',
+          process.pid, config.urlData.protocol, config.port, config.urlData.baseURL);
+      }
     }
-  }
 
-  // Terminate gracefully if possible
-  process.once('SIGINT', function () {
-    // eslint-disable-next-line no-console
-    console.log('Stopping worker', process.pid);
-    server.stop();
-    process.on('SIGINT', function () { process.exit(1); });
-  });
-};
+    // Terminate gracefully if possible
+    process.once('SIGINT', function () {
+      // eslint-disable-next-line no-console
+      console.log('Stopping worker', process.pid);
+      server.stop();
+      process.on('SIGINT', function () { process.exit(1); });
+    });
+  }
+}
 
 module.exports = LinkedDataFragmentsServerWorker;

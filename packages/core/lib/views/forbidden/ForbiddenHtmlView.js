@@ -8,11 +8,11 @@ class ForbiddenHtmlView extends HtmlView {
   constructor(settings) {
     super('Forbidden', settings);
   }
-}
 
-// Renders the view with the given settings to the response
-ForbiddenHtmlView.prototype._render = function (settings, request, response, done) {
-  this._renderTemplate('forbidden/forbidden', settings, request, response, done);
-};
+  // Renders the view with the given settings to the response
+  _render(settings, request, response, done) {
+    this._renderTemplate('forbidden/forbidden', settings, request, response, done);
+  }
+}
 
 module.exports = ForbiddenHtmlView;

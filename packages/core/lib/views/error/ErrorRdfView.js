@@ -8,12 +8,13 @@ class ErrorRdfView extends RdfView {
   constructor(settings) {
     super('Error', settings);
   }
+
+  // Generates triples and quads by sending them to the data and/or metadata callbacks
+  _generateRdf(settings, data, metadata, done) {
+    this._addDatasources(settings, data, metadata);
+    done();
+  }
 }
 
-// Generates triples and quads by sending them to the data and/or metadata callbacks
-ErrorRdfView.prototype._generateRdf = function (settings, data, metadata, done) {
-  this._addDatasources(settings, data, metadata);
-  done();
-};
 
 module.exports = ErrorRdfView;

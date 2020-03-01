@@ -26,82 +26,81 @@ class Controller {
       return value && !/^(?:href|path|search|hash)$/.test(key) ? value : undefined;
     });
   }
-}
 
+  // Tries to process the HTTP request
+  handleRequest(request, response, next, settings) {
+    // Add a `parsedUrl` field to `request`,
+    // containing the parsed request URL, resolved against the base URL
+    if (!request.parsedUrl) {
+      // Keep the request's path and query, but take over all other defined baseURL properties
+      request.parsedUrl = _.defaults(_.pick(url.parse(request.url, true), 'path', 'pathname', 'query'),
+                                    this._getForwarded(request),
+                                    this._getXForwardHeaders(request),
+                                    this._baseUrl,
+                                    { protocol: 'http:', host: request.headers.host });
+    }
 
-// Tries to process the HTTP request
-Controller.prototype.handleRequest = function (request, response, next, settings) {
-  // Add a `parsedUrl` field to `request`,
-  // containing the parsed request URL, resolved against the base URL
-  if (!request.parsedUrl) {
-    // Keep the request's path and query, but take over all other defined baseURL properties
-    request.parsedUrl = _.defaults(_.pick(url.parse(request.url, true), 'path', 'pathname', 'query'),
-                                   this._getForwarded(request),
-                                   this._getXForwardHeaders(request),
-                                   this._baseUrl,
-                                   { protocol: 'http:', host: request.headers.host });
-  }
-
-  // Try to handle the request
-  var self = this;
-  try { this._handleRequest(request, response, done, settings); }
-  catch (error) { done(error); }
-  function done(error) {
-    if (self) {
-      // Send a 406 response if no suitable view was found
-      if (error instanceof ViewCollection.ViewCollectionError)
-        return self._handleNotAcceptable(request, response, next);
-      self = null;
-      next(error);
+    // Try to handle the request
+    var self = this;
+    try { this._handleRequest(request, response, done, settings); }
+    catch (error) { done(error); }
+    function done(error) {
+      if (self) {
+        // Send a 406 response if no suitable view was found
+        if (error instanceof ViewCollection.ViewCollectionError)
+          return self._handleNotAcceptable(request, response, next);
+        self = null;
+        next(error);
+      }
     }
   }
-};
 
-// Get host and protocol from HTTP's Forwarded header
-Controller.prototype._getForwarded = function (request) {
-  if (!request.headers.forwarded)
-    return {};
-  try {
-    var forwarded = _.defaults.apply(this, parseForwarded(request.headers.forwarded));
+  // Get host and protocol from HTTP's Forwarded header
+  _getForwarded(request) {
+    if (!request.headers.forwarded)
+      return {};
+    try {
+      var forwarded = _.defaults.apply(this, parseForwarded(request.headers.forwarded));
+      return {
+        protocol: forwarded.proto ? forwarded.proto + ':' : undefined,
+        host: forwarded.host,
+      };
+    }
+    catch (error) { return {}; }
+  }
+
+  // Get host and protocol from HTTP's X-Forwarded-* headers
+  _getXForwardHeaders(request) {
     return {
-      protocol: forwarded.proto ? forwarded.proto + ':' : undefined,
-      host: forwarded.host,
+      protocol: request.headers['x-forwarded-proto'] ? request.headers['x-forwarded-proto'] + ':' : undefined,
+      host: request.headers['x-forwarded-host'],
     };
   }
-  catch (error) { return {}; }
-};
 
-// Get host and protocol from HTTP's X-Forwarded-* headers
-Controller.prototype._getXForwardHeaders = function (request) {
-  return {
-    protocol: request.headers['x-forwarded-proto'] ? request.headers['x-forwarded-proto'] + ':' : undefined,
-    host: request.headers['x-forwarded-host'],
-  };
-};
+  // Tries to process the HTTP request in an implementation-specific way
+  _handleRequest(request, response, next, settings) {
+    next();
+  }
 
-// Tries to process the HTTP request in an implementation-specific way
-Controller.prototype._handleRequest = function (request, response, next, settings) {
-  next();
-};
+  // Serves an error indicating content negotiation failure
+  _handleNotAcceptable(request, response, next) {
+    response.writeHead(406, { 'Content-Type': Util.MIME_PLAINTEXT });
+    response.end('No suitable content type found.\n');
+  }
 
-// Serves an error indicating content negotiation failure
-Controller.prototype._handleNotAcceptable = function (request, response, next) {
-  response.writeHead(406, { 'Content-Type': Util.MIME_PLAINTEXT });
-  response.end('No suitable content type found.\n');
-};
+  // Finds an appropriate view using content negotiation
+  _negotiateView(viewName, request, response) {
+    // Indicate that the response is content-negotiated
+    var vary = response.getHeader('Vary');
+    response.setHeader('Vary', 'Accept' + (vary ? ', ' + vary : ''));
+    // Negotiate a view
+    var viewMatch = this._views.matchView(viewName, request);
+    response.setHeader('Content-Type', viewMatch.responseType || viewMatch.type);
+    return viewMatch.view;
+  }
 
-// Finds an appropriate view using content negotiation
-Controller.prototype._negotiateView = function (viewName, request, response) {
-  // Indicate that the response is content-negotiated
-  var vary = response.getHeader('Vary');
-  response.setHeader('Vary', 'Accept' + (vary ? ', ' + vary : ''));
-  // Negotiate a view
-  var viewMatch = this._views.matchView(viewName, request);
-  response.setHeader('Content-Type', viewMatch.responseType || viewMatch.type);
-  return viewMatch.view;
-};
-
-// Cleans resources used by the controller
-Controller.prototype.close = function () { };
+  // Cleans resources used by the controller
+  close() { }
+}
 
 module.exports = Controller;

@@ -12,15 +12,15 @@ class N3Datasource extends MemoryDatasource {
     super(options);
     this._url = options && (options.url || options.file);
   }
-}
 
-// Retrieves all quads from the document
-N3Datasource.prototype._getAllQuads = function (addQuad, done) {
-  var document = this._fetch({ url: this._url, headers: { accept: ACCEPT } }, done);
-  N3Parser._resetBlankNodeIds();
-  new N3Parser().parse(document, function (error, quad) {
-    quad ? addQuad(quad) : done(error);
-  });
-};
+  // Retrieves all quads from the document
+  _getAllQuads(addQuad, done) {
+    var document = this._fetch({ url: this._url, headers: { accept: ACCEPT } }, done);
+    N3Parser._resetBlankNodeIds();
+    new N3Parser().parse(document, function (error, quad) {
+      quad ? addQuad(quad) : done(error);
+    });
+  }
+}
 
 module.exports = N3Datasource;

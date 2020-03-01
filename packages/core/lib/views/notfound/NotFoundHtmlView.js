@@ -8,11 +8,11 @@ class NotFoundHtmlView extends HtmlView {
   constructor(settings) {
     super('NotFound', settings);
   }
-}
 
-// Renders the view with the given settings to the response
-NotFoundHtmlView.prototype._render = function (settings, request, response, done) {
-  this._renderTemplate('notfound/notfound', settings, request, response, done);
-};
+  // Renders the view with the given settings to the response
+  _render(settings, request, response, done) {
+    this._renderTemplate('notfound/notfound', settings, request, response, done);
+  }
+}
 
 module.exports = NotFoundHtmlView;

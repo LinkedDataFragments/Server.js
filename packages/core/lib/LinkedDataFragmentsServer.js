@@ -27,6 +27,7 @@ class LinkedDataFragmentsServer {
     default:
       throw new Error('The configured protocol ' + urlData.protocol + ' is invalid.');
     }
+
     // Copy over members
     for (var member in LinkedDataFragmentsServer.prototype)
       server[member] = LinkedDataFragmentsServer.prototype[member];

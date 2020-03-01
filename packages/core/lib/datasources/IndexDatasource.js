@@ -15,25 +15,25 @@ class IndexDatasource extends MemoryDatasource {
     this._datasources = options ? options.datasources : {};
     this.role = 'index';
   }
-}
 
-// Creates quads for each data source
-IndexDatasource.prototype._getAllQuads = function (addQuad, done) {
-  for (var name in this._datasources)  {
-    var datasource = this._datasources[name], datasourceUrl = datasource.url;
-    if (!datasource.hide) {
-      triple(datasourceUrl, rdf + 'type', voID + 'Dataset');
-      triple(datasourceUrl, rdfs + 'label', datasource.title, true);
-      triple(datasourceUrl, dc + 'title', datasource.title, true);
-      triple(datasourceUrl, dc + 'description', datasource.description, true);
+    // Creates quads for each data source
+  _getAllQuads(addQuad, done) {
+    for (var name in this._datasources)  {
+      var datasource = this._datasources[name], datasourceUrl = datasource.url;
+      if (!datasource.hide) {
+        triple(datasourceUrl, rdf + 'type', voID + 'Dataset');
+        triple(datasourceUrl, rdfs + 'label', datasource.title, true);
+        triple(datasourceUrl, dc + 'title', datasource.title, true);
+        triple(datasourceUrl, dc + 'description', datasource.description, true);
+      }
     }
+    function triple(subject, predicate, object, isLiteral) {
+      if (subject && predicate && object)
+        addQuad(subject, predicate, isLiteral ? '"' + object + '"' : object);
+    }
+    delete this._datasources;
+    done();
   }
-  function triple(subject, predicate, object, isLiteral) {
-    if (subject && predicate && object)
-      addQuad(subject, predicate, isLiteral ? '"' + object + '"' : object);
-  }
-  delete this._datasources;
-  done();
-};
+}
 
 module.exports = IndexDatasource;

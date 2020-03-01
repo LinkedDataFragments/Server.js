@@ -19,31 +19,31 @@ class ViewCollection {
     this._viewMatchers = {}; // Views matchers keyed by name; each one matches one content type
     views && this.addViews(views);
   }
+
+  // Adds the given view to the collection
+  addView(view) {
+    // Add the view to the list per type
+    (this._views[view.name] || (this._views[view.name] = [])).push(view);
+    // Add a match entry for each content type supported by the view
+    var matchers = this._viewMatchers[view.name] || (this._viewMatchers[view.name] = []);
+    view.supportedContentTypes.forEach(function (contentType) {
+      matchers.push(_.extend({ view: view }, contentType));
+    });
+  }
+
+  // Adds the given views to the collection
+  addViews(views) {
+    for (var i = 0; i < views.length; i++)
+      this.addView(views[i]);
+  }
+
+  // Gets all views with the given name
+  getViews(name) {
+    return this._views[name] || [];
+  }
 }
 
-var ViewCollectionError = ViewCollection.ViewCollectionError =
-                          Util.createErrorType('ViewCollectionError');
-// Adds the given view to the collection
-ViewCollection.prototype.addView = function (view) {
-  // Add the view to the list per type
-  (this._views[view.name] || (this._views[view.name] = [])).push(view);
-  // Add a match entry for each content type supported by the view
-  var matchers = this._viewMatchers[view.name] || (this._viewMatchers[view.name] = []);
-  view.supportedContentTypes.forEach(function (contentType) {
-    matchers.push(_.extend({ view: view }, contentType));
-  });
-};
-
-// Adds the given views to the collection
-ViewCollection.prototype.addViews = function (views) {
-  for (var i = 0; i < views.length; i++)
-    this.addView(views[i]);
-};
-
-// Gets all views with the given name
-ViewCollection.prototype.getViews = function (name) {
-  return this._views[name] || [];
-};
+var ViewCollectionError = ViewCollection.ViewCollectionError = Util.createErrorType('ViewCollectionError');
 
 // Gets the best match for views with the given name that accommodate the request
 ViewCollection.prototype.matchView = function (name, request) {

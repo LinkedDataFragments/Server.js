@@ -12,22 +12,23 @@ class JsonLdDatasource extends MemoryDatasource {
     super(options);
     this._url = options && (options.url || options.file);
   }
+
+  // Retrieves all quads from the document
+  _getAllQuads(addQuad, done) {
+    // Read the JSON-LD document
+    var json = '',
+        document = this._fetch({ url: this._url, headers: { accept: ACCEPT } });
+    document.on('data', function (data) { json += data; });
+    document.on('end', function () {
+      // Parse the JSON document
+      try { json = JSON.parse(json); }
+      catch (error) { return done(error); }
+      // Convert the JSON-LD to quads
+      extractQuads(json, addQuad, done);
+    });
+  }
 }
 
-// Retrieves all quads from the document
-JsonLdDatasource.prototype._getAllQuads = function (addQuad, done) {
-  // Read the JSON-LD document
-  var json = '',
-      document = this._fetch({ url: this._url, headers: { accept: ACCEPT } });
-  document.on('data', function (data) { json += data; });
-  document.on('end', function () {
-    // Parse the JSON document
-    try { json = JSON.parse(json); }
-    catch (error) { return done(error); }
-    // Convert the JSON-LD to quads
-    extractQuads(json, addQuad, done);
-  });
-};
 
 // Extracts quads from a JSON-LD document
 function extractQuads(json, addQuad, done) {

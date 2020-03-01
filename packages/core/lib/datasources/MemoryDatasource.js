@@ -10,30 +10,30 @@ class MemoryDatasource extends Datasource {
     let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
     super(options, supportedFeatureList);
   }
-}
 
-// Prepares the datasource for querying
-MemoryDatasource.prototype._initialize = function (done) {
-  var quadStore = this._quadStore = new N3Store();
-  this._getAllQuads(function (s, p, o, g) { quadStore.addTriple(s, p, o, g); }, done);
-};
+  // Prepares the datasource for querying
+  _initialize(done) {
+    var quadStore = this._quadStore = new N3Store();
+    this._getAllQuads(function (s, p, o, g) { quadStore.addTriple(s, p, o, g); }, done);
+  }
 
-// Retrieves all quads in the datasource
-MemoryDatasource.prototype._getAllQuads = function (addQuad, done) {
-  throw new Error('_getAllQuads is not implemented');
-};
+  // Retrieves all quads in the datasource
+  _getAllQuads(addQuad, done) {
+    throw new Error('_getAllQuads is not implemented');
+  }
 
-// Writes the results of the query to the given quad stream
-MemoryDatasource.prototype._executeQuery = function (query, destination) {
-  var offset = query.offset || 0, limit = query.limit || Infinity,
-      quads = this._quadStore.findByIRI(query.subject, query.predicate, query.object,
+  // Writes the results of the query to the given quad stream
+  _executeQuery(query, destination) {
+    var offset = query.offset || 0, limit = query.limit || Infinity,
+        quads = this._quadStore.findByIRI(query.subject, query.predicate, query.object,
                                         query.graph);
-  // Send the metadata
-  destination.setProperty('metadata', { totalCount: quads.length, hasExactCount: true });
-  // Send the requested subset of quads
-  for (var i = offset, l = Math.min(offset + limit, quads.length); i < l; i++)
-    destination._push(quads[i]);
-  destination.close();
-};
+    // Send the metadata
+    destination.setProperty('metadata', { totalCount: quads.length, hasExactCount: true });
+    // Send the requested subset of quads
+    for (var i = offset, l = Math.min(offset + limit, quads.length); i < l; i++)
+      destination._push(quads[i]);
+    destination.close();
+  }
+}
 
 module.exports = MemoryDatasource;

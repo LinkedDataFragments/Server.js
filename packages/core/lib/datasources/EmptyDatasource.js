@@ -8,9 +8,9 @@ class EmptyDatasource extends MemoryDatasource {
   constructor(options) {
     super(options);
   }
-}
 
-// Retrieves all quads in the datasource
-EmptyDatasource.prototype._getAllQuads = function (addQuad, done) { done(); };
+  // Retrieves all quads in the datasource
+  _getAllQuads(addQuad, done) { done(); }
+}
 
 module.exports = EmptyDatasource;
