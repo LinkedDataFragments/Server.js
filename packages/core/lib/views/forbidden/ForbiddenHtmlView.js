@@ -4,10 +4,10 @@
 var HtmlView = require('../HtmlView');
 
 // Creates a new ForbiddenHtmlView
-function ForbiddenHtmlView(settings) {
-  if (!(this instanceof ForbiddenHtmlView))
-    return new ForbiddenHtmlView(settings);
-  HtmlView.call(this, 'Forbidden', settings);
+class ForbiddenHtmlView extends HtmlView {
+  constructor(settings) {
+    super('Forbidden', settings);
+  }
 }
 HtmlView.extend(ForbiddenHtmlView);
 

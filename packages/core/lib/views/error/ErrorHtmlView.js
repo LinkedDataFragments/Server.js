@@ -4,10 +4,10 @@
 var HtmlView = require('../HtmlView');
 
 // Creates a new ErrorHtmlView
-function ErrorHtmlView(settings) {
-  if (!(this instanceof ErrorHtmlView))
-    return new ErrorHtmlView(settings);
-  HtmlView.call(this, 'Error', settings);
+class ErrorHtmlView extends HtmlView {
+  constructor(settings) {
+    super('Error', settings);
+  }
 }
 HtmlView.extend(ErrorHtmlView);
 

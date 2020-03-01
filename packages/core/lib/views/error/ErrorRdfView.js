@@ -4,10 +4,10 @@
 var RdfView = require('../RdfView');
 
 // Creates a new ErrorRdfView
-function ErrorRdfView(settings) {
-  if (!(this instanceof ErrorRdfView))
-    return new ErrorRdfView(settings);
-  RdfView.call(this, 'Error', settings);
+class ErrorRdfView extends RdfView {
+  constructor(settings) {
+    super('Error', settings);
+  }
 }
 RdfView.extend(ErrorRdfView);
 
