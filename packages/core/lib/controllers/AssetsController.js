@@ -9,21 +9,21 @@ var Controller = require('./Controller'),
     UrlData = require('../UrlData');
 
 // Creates a new AssetsController
-function AssetsController(options) {
-  if (!(this instanceof AssetsController))
-    return new AssetsController(options);
-  options = options || {};
-  Controller.call(this, options);
+class AssetsController extends Controller {
+  constructor(options) {
+    options = options || {};
+    super(options);
 
-  // Set up path matching
-  var assetsPath = (options.urlData || new UrlData()).assetsPath || '/assets/';
-  this._matcher = new RegExp('^' + Util.toRegExp(assetsPath) + '(.+)|^/(\\w*)\\.ico$');
+    // Set up path matching
+    var assetsPath = (options.urlData || new UrlData()).assetsPath || '/assets/';
+    this._matcher = new RegExp('^' + Util.toRegExp(assetsPath) + '(.+)|^/(\\w*)\\.ico$');
 
-  // Read all assets
-  var assetsFolders = options.assetsFolders || ['file:///' + path.join(__dirname, '../../assets/')];
-  this._assets = {};
-  for (var i = 0; i < assetsFolders.length; i++)
-    this._readAssetsFolder(assetsFolders[i], '');
+    // Read all assets
+    var assetsFolders = options.assetsFolders || ['file:///' + path.join(__dirname, '../../assets/')];
+    this._assets = {};
+    for (var i = 0; i < assetsFolders.length; i++)
+      this._readAssetsFolder(assetsFolders[i], '');
+  }
 }
 Controller.extend(AssetsController);
 

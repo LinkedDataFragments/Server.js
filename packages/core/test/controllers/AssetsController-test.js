@@ -15,10 +15,6 @@ describe('AssetsController', function () {
     it('should be an AssetsController constructor', function () {
       new AssetsController().should.be.an.instanceof(AssetsController);
     });
-
-    it('should create new AssetsController objects', function () {
-      AssetsController().should.be.an.instanceof(AssetsController);
-    });
   });
 
   describe('An AssetsController instance', function () {

@@ -19,7 +19,7 @@ describe('SummaryController', function () {
     });
 
     it('should create new SummaryController objects', function () {
-      SummaryController().should.be.an.instanceof(SummaryController);
+      new SummaryController().should.be.an.instanceof(SummaryController);
     });
   });
 

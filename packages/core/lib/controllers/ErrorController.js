@@ -5,10 +5,10 @@ var Controller = require('./Controller'),
     Util = require('../Util');
 
 // Creates a new ErrorController
-function ErrorController(options) {
-  if (!(this instanceof ErrorController))
-    return new ErrorController(options);
-  Controller.call(this, options);
+class ErrorController extends Controller {
+  constructor(options) {
+    super(options);
+  }
 }
 Controller.extend(ErrorController);
 

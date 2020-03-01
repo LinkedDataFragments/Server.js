@@ -5,11 +5,11 @@ var Controller = require('./Controller'),
     Util = require('../Util');
 
 // Creates a new NotFoundController
-function NotFoundController(options) {
-  if (!(this instanceof NotFoundController))
-    return new NotFoundController(options);
-  Controller.call(this, options);
-  this._last = true;
+class NotFoundController extends Controller {
+  constructor(options) {
+    super(options);
+    this._last = true;
+  }
 }
 Controller.extend(NotFoundController);
 

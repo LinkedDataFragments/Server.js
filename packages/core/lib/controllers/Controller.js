@@ -9,23 +9,23 @@ var url = require('url'),
     parseForwarded = require('forwarded-parse');
 
 // Creates a new Controller
-function Controller(options) {
-  if (!(this instanceof Controller))
-    return new Controller(options);
-  options = options || {};
-  this._prefixes = options.prefixes || {};
-  this._datasources = _.reduce(options.datasources || {}, function (datasources, value, key) {
-    // If the path does not start with a slash, add one.
-    datasources[key.replace(/^(?!\/)/, '/')] = value;
-    return datasources;
-  }, {});
-  this._views = options.views && options.views.matchView ?
-                options.views : new ViewCollection(options.views);
+class Controller {
+  constructor(options) {
+    options = options || {};
+    this._prefixes = options.prefixes || {};
+    this._datasources = _.reduce(options.datasources || {}, function (datasources, value, key) {
+      // If the path does not start with a slash, add one.
+      datasources[key.replace(/^(?!\/)/, '/')] = value;
+      return datasources;
+    }, {});
+    this._views = options.views && options.views.matchView ?
+                  options.views : new ViewCollection(options.views);
 
-  // Set up base URL (if we're behind a proxy, this allows reconstructing the actual request URL)
-  this._baseUrl = _.mapValues(url.parse((options.urlData || new UrlData()).baseURL), function (value, key) {
-    return value && !/^(?:href|path|search|hash)$/.test(key) ? value : undefined;
-  });
+    // Set up base URL (if we're behind a proxy, this allows reconstructing the actual request URL)
+    this._baseUrl = _.mapValues(url.parse((options.urlData || new UrlData()).baseURL), function (value, key) {
+      return value && !/^(?:href|path|search|hash)$/.test(key) ? value : undefined;
+    });
+  }
 }
 
 // Makes Controller the prototype of the given class

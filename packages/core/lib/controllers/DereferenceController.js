@@ -7,15 +7,14 @@ var Controller = require('./Controller'),
     Util = require('../Util');
 
 // Creates a new DeferenceController
-function DeferenceController(options) {
-  if (!(this instanceof DeferenceController))
-    return new DeferenceController(options);
-  options = options || {};
-  Controller.call(this, options);
-
-  var paths = this._paths = options.dereference || {};
-  if (!_.isEmpty(paths))
-    this._matcher = new RegExp('^(' + Object.keys(paths).map(Util.toRegExp).join('|') + ')');
+class DeferenceController extends Controller {
+  constructor(options) {
+    options = options || {};
+    super(options);
+    var paths = this._paths = options.dereference || {};
+    if (!_.isEmpty(paths))
+      this._matcher = new RegExp('^(' + Object.keys(paths).map(Util.toRegExp).join('|') + ')');
+  }
 }
 Controller.extend(DeferenceController);
 

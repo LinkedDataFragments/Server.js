@@ -15,10 +15,6 @@ describe('QuadPatternFragmentsRdfView', function () {
     it('should be a QuadPatternFragmentsRdfView constructor', function () {
       new QuadPatternFragmentsRdfView().should.be.an.instanceof(QuadPatternFragmentsRdfView);
     });
-
-    it('should create new QuadPatternFragmentsRdfView objects', function () {
-      QuadPatternFragmentsRdfView().should.be.an.instanceof(QuadPatternFragmentsRdfView);
-    });
   });
 
   describe('A QuadPatternFragmentsRdfView instance', function () {

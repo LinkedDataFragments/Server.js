@@ -18,10 +18,6 @@ describe('QuadPatternFragmentsController', function () {
     it('should be a QuadPatternFragmentsController constructor', function () {
       new QuadPatternFragmentsController().should.be.an.instanceof(QuadPatternFragmentsController);
     });
-
-    it('should create new QuadPatternFragmentsController objects', function () {
-      QuadPatternFragmentsController().should.be.an.instanceof(QuadPatternFragmentsController);
-    });
   });
 
   describe('A QuadPatternFragmentsController instance with 3 routers', function () {
