@@ -16,7 +16,6 @@ class DeferenceController extends Controller {
       this._matcher = new RegExp('^(' + Object.keys(paths).map(Util.toRegExp).join('|') + ')');
   }
 }
-Controller.extend(DeferenceController);
 
 // This default matcher never matches
 DeferenceController.prototype._matcher = /$0^/;

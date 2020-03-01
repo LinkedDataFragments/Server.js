@@ -13,7 +13,6 @@ class JsonLdDatasource extends MemoryDatasource {
     this._url = options && (options.url || options.file);
   }
 }
-MemoryDatasource.extend(JsonLdDatasource);
 
 // Retrieves all quads from the document
 JsonLdDatasource.prototype._getAllQuads = function (addQuad, done) {

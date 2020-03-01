@@ -9,7 +9,6 @@ class NotFoundRdfView extends RdfView {
     super('NotFound', settings);
   }
 }
-RdfView.extend(NotFoundRdfView);
 
 // Generates triples and quads by sending them to the data and/or metadata callbacks
 NotFoundRdfView.prototype._generateRdf = function (settings, data, metadata, done) {

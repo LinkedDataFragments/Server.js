@@ -9,7 +9,6 @@ class NotFoundHtmlView extends HtmlView {
     super('NotFound', settings);
   }
 }
-HtmlView.extend(NotFoundHtmlView);
 
 // Renders the view with the given settings to the response
 NotFoundHtmlView.prototype._render = function (settings, request, response, done) {

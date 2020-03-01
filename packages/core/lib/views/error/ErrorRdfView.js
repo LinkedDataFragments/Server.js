@@ -9,7 +9,6 @@ class ErrorRdfView extends RdfView {
     super('Error', settings);
   }
 }
-RdfView.extend(ErrorRdfView);
 
 // Generates triples and quads by sending them to the data and/or metadata callbacks
 ErrorRdfView.prototype._generateRdf = function (settings, data, metadata, done) {

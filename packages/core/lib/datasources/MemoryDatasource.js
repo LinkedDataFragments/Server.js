@@ -7,10 +7,10 @@ var Datasource = require('./Datasource'),
 // Creates a new MemoryDatasource
 class MemoryDatasource extends Datasource {
   constructor(options) {
-    super(options);
+    let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
+    super(options, supportedFeatureList);
   }
 }
-Datasource.extend(MemoryDatasource, ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount']);
 
 // Prepares the datasource for querying
 MemoryDatasource.prototype._initialize = function (done) {

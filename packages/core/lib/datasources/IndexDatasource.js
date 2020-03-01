@@ -16,7 +16,6 @@ class IndexDatasource extends MemoryDatasource {
     this.role = 'index';
   }
 }
-MemoryDatasource.extend(IndexDatasource);
 
 // Creates quads for each data source
 IndexDatasource.prototype._getAllQuads = function (addQuad, done) {

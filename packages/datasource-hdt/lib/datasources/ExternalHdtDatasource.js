@@ -12,14 +12,15 @@ var hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
 // Creates a new ExternalHdtDatasource
 class ExternalHdtDatasource extends Datasource {
   constructor(options) {
-    super(options);
+    let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
+    super(options, supportedFeatureList);
+
 
     // Test whether the HDT file exists
     this._options = options = options || {};
     this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
   }
 }
-Datasource.extend(ExternalHdtDatasource, ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount']);
 
 // Prepares the datasource for querying
 ExternalHdtDatasource.prototype._initialize = function (done) {

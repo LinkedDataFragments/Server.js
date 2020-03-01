@@ -11,8 +11,6 @@ class NotFoundController extends Controller {
     this._last = true;
   }
 }
-Controller.extend(NotFoundController);
-
 // Serves a 404 response
 NotFoundController.prototype._handleRequest = function (request, response, next) {
   // Cache 404 responses

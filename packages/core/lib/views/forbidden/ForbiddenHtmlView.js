@@ -9,7 +9,6 @@ class ForbiddenHtmlView extends HtmlView {
     super('Forbidden', settings);
   }
 }
-HtmlView.extend(ForbiddenHtmlView);
 
 // Renders the view with the given settings to the response
 ForbiddenHtmlView.prototype._render = function (settings, request, response, done) {

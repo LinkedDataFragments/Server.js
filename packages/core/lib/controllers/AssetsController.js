@@ -25,7 +25,6 @@ class AssetsController extends Controller {
       this._readAssetsFolder(assetsFolders[i], '');
   }
 }
-Controller.extend(AssetsController);
 
 // Recursively reads assets in the folder, assigning them to the URL path
 AssetsController.prototype._readAssetsFolder = function (assetsFolder, assetsPath) {

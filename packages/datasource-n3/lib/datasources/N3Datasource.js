@@ -13,7 +13,6 @@ class N3Datasource extends MemoryDatasource {
     this._url = options && (options.url || options.file);
   }
 }
-MemoryDatasource.extend(N3Datasource);
 
 // Retrieves all quads from the document
 N3Datasource.prototype._getAllQuads = function (addQuad, done) {

@@ -7,7 +7,8 @@ var Datasource = require('@ldf/core').datasources.Datasource,
 // Creates a new CompositeDatasource
 class CompositeDatasource extends Datasource {
   constructor(options) {
-    super(options);
+    let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
+    super(options, supportedFeatureList);
 
     if (!options.references)
       throw new Error("A CompositeDatasource requires a `references` array of datasource id's in its settings.");
@@ -28,7 +29,6 @@ class CompositeDatasource extends Datasource {
     this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
   }
 }
-Datasource.extend(CompositeDatasource, ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount']);
 
 // Checks whether the data source can evaluate the given query
 CompositeDatasource.prototype.supportsQuery = function (query) {

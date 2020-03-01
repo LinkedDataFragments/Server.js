@@ -9,7 +9,6 @@ class EmptyDatasource extends MemoryDatasource {
     super(options);
   }
 }
-MemoryDatasource.extend(EmptyDatasource);
 
 // Retrieves all quads in the datasource
 EmptyDatasource.prototype._getAllQuads = function (addQuad, done) { done(); };

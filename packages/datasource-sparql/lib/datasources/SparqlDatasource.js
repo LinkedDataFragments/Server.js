@@ -12,7 +12,9 @@ var INVALID_JSON_RESPONSE = 'The endpoint returned an invalid SPARQL results JSO
 // Creates a new SparqlDatasource
 class SparqlDatasource extends Datasource {
   constructor(options) {
-    super(options);
+    let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
+    super(options, supportedFeatureList);
+
     this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
     this._resolvingCountQueries = {};
 
@@ -22,7 +24,6 @@ class SparqlDatasource extends Datasource {
     this._endpointUrl += '?query=';
   }
 }
-Datasource.extend(SparqlDatasource, ['triplePattern', 'quadPattern', 'limit', 'offset', 'totalCount']);
 
 // Writes the results of the query to the given triple stream
 SparqlDatasource.prototype._executeQuery = function (query, destination) {

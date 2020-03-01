@@ -10,7 +10,6 @@ class ErrorController extends Controller {
     super(options);
   }
 }
-Controller.extend(ErrorController);
 
 // Serves an error response
 ErrorController.prototype._handleRequest = function (request, response, next) {

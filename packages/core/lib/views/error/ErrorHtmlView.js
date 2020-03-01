@@ -9,7 +9,6 @@ class ErrorHtmlView extends HtmlView {
     super('Error', settings);
   }
 }
-HtmlView.extend(ErrorHtmlView);
 
 // Renders the view with the given settings to the response
 ErrorHtmlView.prototype._render = function (settings, request, response, done) {

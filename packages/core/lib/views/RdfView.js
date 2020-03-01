@@ -23,7 +23,6 @@ class RdfView extends View {
     super(viewName, contentTypes, settings);
   }
 }
-View.extend(RdfView);
 
 // Renders the view with the given settings to the response
 RdfView.prototype._render = function (settings, request, response, done) {

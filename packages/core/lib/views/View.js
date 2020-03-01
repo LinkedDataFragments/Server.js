@@ -16,12 +16,6 @@ class View {
   }
 }
 
-// Makes View the prototype of the given class
-View.extend = function extend(child) {
-  child.prototype = Object.create(this.prototype);
-  child.prototype.constructor = child;
-  child.extend = extend;
-};
 
 // Parses a string of content types into an array of objects
 // i.e., 'a/b,q=0.7' => [{ type: 'a/b', responseType: 'a/b;charset=utf-8', quality: 0.7 }]

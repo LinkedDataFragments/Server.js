@@ -22,7 +22,6 @@ class HtmlView extends View {
     super(viewName, 'text/html', _.defaults({}, settings, defaults));
   }
 }
-View.extend(HtmlView);
 
 // Renders the template with the given name to the response
 HtmlView.prototype._renderTemplate = function (templateName, options, request, response, done) {

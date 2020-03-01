@@ -8,7 +8,9 @@ var Datasource = require('@ldf/core').datasources.Datasource,
 // Creates a new HdtDatasource
 class HdtDatasource extends Datasource {
   constructor(options) {
-    super(options);
+    let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
+    super(options, supportedFeatureList);
+
 
     options = options || {};
     // Switch to external HDT datasource if the `external` flag is set
@@ -17,7 +19,6 @@ class HdtDatasource extends Datasource {
     this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
   }
 }
-Datasource.extend(HdtDatasource, ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount']);
 
 // Loads the HDT datasource
 HdtDatasource.prototype._initialize = function (done) {

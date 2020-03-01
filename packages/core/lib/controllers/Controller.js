@@ -28,12 +28,6 @@ class Controller {
   }
 }
 
-// Makes Controller the prototype of the given class
-Controller.extend = function extend(child) {
-  child.prototype = Object.create(this.prototype);
-  child.prototype.constructor = child;
-  child.extend = extend;
-};
 
 // Tries to process the HTTP request
 Controller.prototype.handleRequest = function (request, response, next, settings) {

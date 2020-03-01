@@ -9,7 +9,7 @@ var fs = require('fs'),
 
 // Creates a new Datasource
 class Datasource extends EventEmitter {
-  constructor(options) {
+  constructor(options, supportedFeatureList) {
     super();
 
     // Set the options
@@ -38,27 +38,19 @@ class Datasource extends EventEmitter {
       this._queryGraphReplacements[''] = 'urn:ldf:emptyGraph';
       this._queryGraphReplacements[options.graph] = '';
     }
+
+    // Expose the supported query features
+    if (supportedFeatureList && supportedFeatureList.length) {
+      var objectSupportedFeatures = {};
+      for (var i = 0; i < supportedFeatureList.length; i++)
+        objectSupportedFeatures[supportedFeatureList[i]] = true;
+      this.supportedFeatures =  objectSupportedFeatures;
+    }
+    else
+      this.supportedFeatures = {};
+    Object.freeze(this.supportedFeatures);
   }
 }
-// Datasource.prototype = new EventEmitter();
-
-// Makes Datasource the prototype of the given class
-Datasource.extend = function extend(child, supportedFeatureList) {
-  child.prototype = Object.create(this.prototype);
-  child.prototype.constructor = child;
-  child.extend = extend;
-
-  // Expose the supported query features
-  if (supportedFeatureList && supportedFeatureList.length) {
-    var supportedFeatures = {};
-    for (var i = 0; i < supportedFeatureList.length; i++)
-      supportedFeatures[supportedFeatureList[i]] = true;
-    Object.defineProperty(child.prototype, 'supportedFeatures', {
-      enumerable: true,
-      value: Object.freeze(supportedFeatures),
-    });
-  }
-};
 
 // Whether the datasource can be queried
 Datasource.prototype.initialized = false;
@@ -84,11 +76,11 @@ Datasource.prototype._initialize = function (done) {
   done();
 };
 
-// The query features supported by this data source
-Object.defineProperty(Datasource.prototype, 'supportedFeatures', {
-  enumerable: true,
-  value: Object.freeze({}),
-});
+// // The query features supported by this data source
+// Object.defineProperty(Datasource.prototype, 'supportedFeatures', {
+//   enumerable: true,
+//   value: Object.freeze({}),
+// });
 
 // Checks whether the data source can evaluate the given query
 Datasource.prototype.supportsQuery = function (query) {
