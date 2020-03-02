@@ -13,12 +13,11 @@ class CompositeDatasource extends Datasource {
     if (!options.references)
       throw new Error("A CompositeDatasource requires a `references` array of datasource id's in its settings.");
 
-    var allDatasources = options.datasources;
     this._datasources = {};
     this._datasourceNames = [];
-    for (var i = 0; i < options.references.length; i++) {
-      var datasourceName = options.references[i];
-      var datasource = allDatasources[datasourceName];
+    for (var i = 0; i < Object.keys(options.references).length; i++) {
+      var datasourceName = Object.keys(options.references)[i];
+      var datasource = options.references[datasourceName];
       if (!datasource)
         throw new Error('No datasource ' + datasourceName + ' could be found!');
       if (datasource.enabled !== false) {
@@ -40,12 +39,12 @@ class CompositeDatasource extends Datasource {
 
   // Find a datasource by datasource name
   _getDatasourceByName(datasourceName) {
-    return this._datasources[datasourceName].datasource;
+    return this._datasources[datasourceName];
   }
 
   // Find a datasource by datasource id inside this composition
   _getDatasourceById(datasourceIndex) {
-    return this._datasources[this._datasourceNames[datasourceIndex]].datasource;
+    return this._datasources[this._datasourceNames[datasourceIndex]];
   }
 
   _hasDatasourceMatchingGraph(datasource, datasourceIndex, query) {

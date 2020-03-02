@@ -12,21 +12,22 @@ var exampleTurtleUrl = 'file://' + path.join(__dirname, '../../../../test/assets
 var exampleTrigUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.trig');
 
 describe('CompositeDatasource', function () {
-  var datasources = {
+  var references = {
     data0: { settings: { file: exampleHdtFile }, datasourceType: HdtDatasource, size: 132 },
     data1: { settings: { file: exampleHdtFileWithBlanks, graph: 'http://example.org/graph0' }, datasourceType: HdtDatasource, size: 6 },
     data2: { settings: { url: exampleTurtleUrl }, datasourceType: N3Datasource, size: 132 },
     data3: { settings: { url: exampleTrigUrl }, datasourceType: N3Datasource, size: 7 },
   };
-  Object.keys(datasources).forEach(function (datasourceId) {
-    var datasource = datasources[datasourceId];
+  Object.keys(references).forEach(function (datasourceId) {
+    var datasource = references[datasourceId];
     var DatasourceType = datasource.datasourceType;
-    datasource.datasource = new DatasourceType(datasource.settings);
-    datasource.datasource.initialize();
+    var size = references[datasourceId].size;
+    references[datasourceId] = new DatasourceType(datasource.settings);
+    references[datasourceId].size = size;
+    references[datasourceId].initialize();
   });
-  var references = Object.keys(datasources);
-  var totalSize = Object.keys(datasources).reduce(function (acc, key) {
-    return acc + datasources[key].size;
+  var totalSize = Object.keys(references).reduce(function (acc, key) {
+    return acc + references[key].size;
   }, 0);
 
   describe('The CompositeDatasource module', function () {
@@ -35,19 +36,19 @@ describe('CompositeDatasource', function () {
     });
 
     it('should be an CompositeDatasource constructor', function (done) {
-      var instance = new CompositeDatasource({ datasources: datasources, references: references });
+      var instance = new CompositeDatasource({ references: references });
       instance.should.be.an.instanceof(CompositeDatasource);
       instance.close(done);
     });
 
     it('should create CompositeDatasource objects', function (done) {
-      var instance = new CompositeDatasource({ datasources: datasources, references: references });
+      var instance = new CompositeDatasource({ references: references });
       instance.should.be.an.instanceof(CompositeDatasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', function (done) {
-      var instance = new CompositeDatasource({ datasources: datasources, references: references });
+      var instance = new CompositeDatasource({ references: references });
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
@@ -57,7 +58,7 @@ describe('CompositeDatasource', function () {
     var datasource;
     function getDatasource() { return datasource; }
     before(function (done) {
-      datasource = new CompositeDatasource({ datasources: datasources, references: references });
+      datasource = new CompositeDatasource({ references: references });
       datasource.initialize();
       datasource.on('initialized', done);
     });

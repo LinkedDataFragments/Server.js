@@ -1,0 +1,33 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+  "@type": "Server",
+  "import": "preset-qpf:config-defaults.json",
+
+  "datasources": [
+    {
+      "@id": "ex:myCompositeDatasource",
+      "@type": "CompositeDatasource",
+      "datasourceTitle": "Composite",
+      "description": "An example composite datasource",
+      "datasourcePath": "composite",
+      "compose": [ "ex:myHdtDatasource", "ex:mySparqlDatasource" ]
+    },
+    {
+      "@id": "ex:myHdtDatasource",
+      "@type": "HdtDatasource",
+      "datasourceTitle": "DBpedia 2014",
+      "description": "DBpedia 2014 with an HDT back-end",
+      "datasourcePath": "dbpedia",
+      "hdtFile": "data/dbpedia2014.hdt"
+    },
+    {
+      "@id": "ex:mySparqlDatasource",
+      "@type": "SparqlDatasource",
+      "datasourceTitle": "DBpedia (Virtuoso)",
+      "description": "DBpedia with a Virtuoso back-end",
+      "datasourcePath": "dbpedia-sparql",
+      "sparqlEndpoint": "https://dbpedia.org/sparql"
+    }
+  ]
+}

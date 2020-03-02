@@ -8,11 +8,11 @@
     {
       "@id": "ldfdn:Datasource/Trig",
       "@type": "Class",
-      "extends": "ldfc:Datasource",
+      "extends": "ldfc:Datasource/Memory",
       "requireElement": "datasources.TrigDatasource",
       "comment": "An TrigDatasource fetches data from Turtle/TriG/N-Triples/N-Quads/N3 documents",
       "constructorArguments": {
-        "extends": "ldfc:Datasource#constructorArgumentsObject"
+        "extends": "ldfc:Datasource/Memory#constructorArgumentsObject"
       }
     }
   ]

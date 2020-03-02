@@ -33,7 +33,7 @@
       "licenseUrl": "ldfc:Datasource#licenseUrl",
       "copyright": "ldfc:Datasource#copyright",
       "homepage": "ldfc:Datasource#homepage",
-      "datasourceFile": "ldfc:Datasource/Memory#file",
+      "file": "ldfc:Datasource/Memory#file",
       "datasourceUrl": "ldfc:Datasource/Memory#url",
 
       "DatasourceRouter": "ldfc:Router/Datasource",

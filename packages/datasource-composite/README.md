@@ -4,7 +4,67 @@
 This module contains a composite datasource for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 It delegates queries to an sequence of other datasources.
 
-TODO: add documentation
+## Usage in `@ldf/server-qpf`
+
+This package exposes the following config entries:
+* `CompositeDatasource`: A composite datasource that requires at least one `compose` field. _Should be used as `@type` value._
+* `compose`: Refers to an array of datasource id's that should be composed. _Should be used as key in a `CompositeDatasource`._
+
+Example:
+```json
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+  "@type": "Server",
+  "import": "preset-qpf:config-defaults.json",
+
+  "datasources": [
+    {
+      "@id": "ex:myCompositeDatasource",
+      "@type": "CompositeDatasource",
+      "datasourceTitle": "Composite",
+      "description": "An example composite datasource",
+      "datasourcePath": "composite",
+      "compose": [ "ex:myHdtDatasource", "ex:mySparqlDatasource" ]
+    },
+    {
+      "@id": "ex:myHdtDatasource",
+      "@type": "HdtDatasource",
+      "datasourceTitle": "DBpedia 2014",
+      "description": "DBpedia 2014 with an HDT back-end",
+      "datasourcePath": "dbpedia",
+      "hdtFile": "data/dbpedia2014.hdt"
+    },
+    {
+      "@id": "ex:mySparqlDatasource",
+      "@type": "SparqlDatasource",
+      "datasourceTitle": "DBpedia (Virtuoso)",
+      "description": "DBpedia with a Virtuoso back-end",
+      "datasourcePath": "dbpedia-sparql",
+      "sparqlEndpoint": "https://dbpedia.org/sparql"
+    }
+  ]
+}
+```
+
+## Usage in other packages
+
+When this module is used in a package other than `@ldf/server-qpf`,
+then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/datasource-composite.jsonld` must be imported.
+
+For example:
+```
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-hdt/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-sparql/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-composite/^3.0.0/components/context.jsonld",
+  ],
+  // Same as above...
+}
+```
 
 ## License
 The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/) and colleagues.

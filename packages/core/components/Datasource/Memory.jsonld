@@ -23,6 +23,7 @@
         }
       ],
       "constructorArguments": {
+        "@id": "ldfc:Datasource/Memory#constructorArgumentsObject",
         "extends": "ldfc:Datasource#constructorArgumentsObject",
         "fields": [
           {
