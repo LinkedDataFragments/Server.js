@@ -1,0 +1,33 @@
+{
+  "name": "@ldf/preset-qpf",
+  "description": "Linked Data Fragments Server - Preset Quad Pattern Fragments",
+  "version": "2.2.5",
+  "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf",
+  "lsd:contexts": {
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld": "components/context.jsonld"
+  },
+  "lsd:importPaths": {
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/": "components/",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/config/": "config/"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "components",
+    "config",
+    "lib/**/*.js",
+    "bin/**/*.js",
+    "index.js"
+  ],
+  "repository": "https://github.com/LinkedDataFragments/Server.js/tree/master/packages/preset-qpf",
+  "bugs": {
+    "url": "https://github.com/LinkedDataFragments/Server.js/issues"
+  },
+  "scripts": {
+    "test": "mocha",
+    "lint": "eslint bin/* lib test"
+  }
+}

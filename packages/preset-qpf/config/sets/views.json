@@ -1,5 +1,6 @@
 {
   "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld",
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-qpf/^3.0.0/components/context.jsonld"
   ],
@@ -7,31 +8,31 @@
 
   "views": [
     {
-      "@id": "config:sets/views.json#myErrorHtmlView",
+      "@id": "preset-qpf:sets/views.json#myErrorHtmlView",
       "@type": "ErrorHtmlView"
     },
     {
-      "@id": "config:sets/views.json#myErrorRdfView",
+      "@id": "preset-qpf:sets/views.json#myErrorRdfView",
       "@type": "ErrorRdfView"
     },
     {
-      "@id": "config:sets/views.json#myForbiddenHtmlView",
+      "@id": "preset-qpf:sets/views.json#myForbiddenHtmlView",
       "@type": "ForbiddenHtmlView"
     },
     {
-      "@id": "config:sets/views.json#myNotFoundHtmlView",
+      "@id": "preset-qpf:sets/views.json#myNotFoundHtmlView",
       "@type": "NotFoundHtmlView"
     },
     {
-      "@id": "config:sets/views.json#myNotFoundRdfView",
+      "@id": "preset-qpf:sets/views.json#myNotFoundRdfView",
       "@type": "NotFoundRdfView"
     },
     {
-      "@id": "config:sets/views.json#myQpfHtmlView",
+      "@id": "preset-qpf:sets/views.json#myQpfHtmlView",
       "@type": "QpfHtmlView"
     },
     {
-      "@id": "config:sets/views.json#myQpfRdfView",
+      "@id": "preset-qpf:sets/views.json#myQpfRdfView",
       "@type": "QpfRdfView"
     }
   ]

@@ -5,13 +5,13 @@ var cluster = require('cluster'),
     ComponentsLoader = require('componentsjs').Loader;
 
 // Run function for starting the server from the command line
-function runCli(moduleRootPath, defaultConfigPath) {
+function runCli(moduleRootPath) {
   var argv = process.argv.slice(2);
-  runCustom(defaultConfigPath, argv, process.stdin, process.stdout, process.stderr, null, { mainModulePath: moduleRootPath });
+  runCustom(argv, process.stdin, process.stdout, process.stderr, null, { mainModulePath: moduleRootPath });
 }
 
 // Generic run function for starting the server from a given config
-function runCustom(configResourceUrl, args, stdin, stdout, stderr, componentConfigUri, properties) {
+function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) {
   if (args.length < 1 || args.length > 4 || /^--?h(elp)?$/.test(args[0])) {
     stdout.write('usage: server config.json [port [workers [componentConfigUri]]]\n');
     return process.exit(1);

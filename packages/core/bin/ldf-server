@@ -1,2 +1,0 @@
-#!/usr/bin/env node
-require('../').runCli(__dirname + '/../', __dirname + '/../config/config-default.json'); // eslint-disable-line no-path-concat

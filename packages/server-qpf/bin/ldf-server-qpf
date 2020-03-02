@@ -1,0 +1,2 @@
+#!/usr/bin/env node
+require('@ldf/core').runCli(__dirname + '/../'); // eslint-disable-line no-path-concat

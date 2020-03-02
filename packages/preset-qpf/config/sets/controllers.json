@@ -1,5 +1,6 @@
 {
   "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld",
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-qpf/^3.0.0/components/context.jsonld"
   ],
@@ -7,19 +8,19 @@
 
   "controllers": [
     {
-      "@id": "config:sets/controllers.json#myQuadPatternFragmentsController",
+      "@id": "preset-qpf:sets/controllers.json#myQuadPatternFragmentsController",
       "@type": "QuadPatternFragmentsController"
     },
     {
-      "@id": "config:sets/controllers.json#myAssetsController",
+      "@id": "preset-qpf:sets/controllers.json#myAssetsController",
       "@type": "ldfc:Controller/Assets"
     },
     {
-      "@id": "config:sets/controllers.json#myDereferenceController",
+      "@id": "preset-qpf:sets/controllers.json#myDereferenceController",
       "@type": "ldfc:Controller/Dereference"
     },
     {
-      "@id": "config:sets/controllers.json#myNotFoundController",
+      "@id": "preset-qpf:sets/controllers.json#myNotFoundController",
       "@type": "ldfc:Controller/NotFound"
     }
   ]

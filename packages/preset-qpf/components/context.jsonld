@@ -1,0 +1,12 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    {
+      "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+      "ldfpq": "npmd:@ldf/preset-qpf/",
+      "files-ldfpq": "ldfpq:^3.0.0/",
+      "preset-qpf": "files-ldfpq:config/"
+    }
+  ]
+}
