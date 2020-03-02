@@ -20,7 +20,6 @@
   },
   "files": [
     "components",
-    "config",
     "lib/**/*.js",
     "bin/**/*.js",
     "index.js"

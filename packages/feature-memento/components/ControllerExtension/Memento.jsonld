@@ -19,22 +19,6 @@
           "@id": "ldffm:Controller/Timegate#memento"
         },
         {
-          "@id": "ldffm:ControllerExtension/Memento#router",
-          "inheritValues": {
-            "@type": "InheritanceValue",
-            "onParameter": "ldfc:Server#router",
-            "from": "ldfc:Server"
-          }
-        },
-        {
-          "@id": "ldffm:ControllerExtension/Memento#datasource",
-          "inheritValues": {
-            "@type": "InheritanceValue",
-            "onParameter": "ldfc:Server#datasource",
-            "from": "ldfc:Server"
-          }
-        },
-        {
           "@id": "ldffm:ControllerExtension/Memento#urlData",
           "inheritValues": {
             "@type": "InheritanceValue",
@@ -47,12 +31,6 @@
         "fields": [
           {
             "@id": "ldffm:Controller/Timegate#timeGatesField"
-          },
-          {
-            "@id": "ldfc:Server#routerField"
-          },
-          {
-            "@id": "ldfc:Server#datasourceField"
           },
           {
             "@id": "ldfc:Server#urlDataField"

@@ -9,13 +9,18 @@
       "TimegateController": "ldffm:Controller/Timegate",
       "MementoControllerExtension": "ldffm:ControllerExtension/Memento",
       "MementoQpfHtmlView": "ldffm:View/Html/Qpf/Memento",
-      "timegatePath": "ldfc:Controller/Timegate#timegatePath",
-      "memento": "ldfc:Controller/Timegate#memento",
-      "mementoVersions": "ldfc:Controller/Timegate#mementoVersions",
-      "mementoDatasource": "ldfc:Controller/Timegate#mementoDatasource",
-      "mementoVersionStart": "ldfc:Controller/Timegate#mementoVersionStart",
-      "mementoVersionEnd": "ldfc:Controller/Timegate#mementoVersionEnd",
-      "mementoOriginalBaseURL": "ldfc:Controller/Timegate#mementoOriginalBaseURL"
+      "timegateBaseUrl": "ldffm:Controller/Timegate#timegateBaseUrl",
+      "memento": "ldffm:Controller/Timegate#memento",
+      "mementos": "ldffm:Controller/Timegate#memento",
+      "timegatePath": "ldffm:Controller/Timegate#timegatePath",
+      "versions": "ldffm:Controller/Timegate#mementoVersion",
+      "mementoDatasource": {
+        "@id": "ldffm:Controller/Timegate#mementoDatasource",
+        "@type": "@id"
+      },
+      "versionStart": "ldffm:Controller/Timegate#mementoVersionStart",
+      "versionEnd": "ldffm:Controller/Timegate#mementoVersionEnd",
+      "mementoBaseURL": "ldffm:Controller/Timegate#mementoOriginalBaseURL"
     }
   ]
 }

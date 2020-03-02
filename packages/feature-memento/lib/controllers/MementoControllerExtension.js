@@ -9,9 +9,9 @@ var Controller = require('@ldf/core').controllers.Controller,
 // Creates a new MementoControllerExtension
 class MementoControllerExtension extends Controller {
   constructor(settings) {
+    super(settings);
     var timegates = settings.timegates || {};
-    this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos,
-      settings.datasources, settings.urlData);
+    this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos, settings.urlData);
     this._timegateBaseUrl = timegates.baseURL || '/timegate/';
   }
 

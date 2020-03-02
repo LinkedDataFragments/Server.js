@@ -10,8 +10,7 @@ class MementoHtmlViewExtension extends HtmlView {
   constructor(settings) {
     super('QuadPatternFragments:Before', settings);
     var timegates = settings.timegates || {};
-    this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos,
-      settings.datasources, settings.urlData);
+    this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos, settings.urlData);
   }
 
   // Renders the view with the given settings to the response

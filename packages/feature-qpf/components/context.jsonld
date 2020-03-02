@@ -8,6 +8,7 @@
 
       "QuadPatternFragmentsController": "ldffq:Controller/QuadPatternFragments",
       "qpfControllerExtension": "ldffq:Controller/QuadPatternFragments#controllerExtension",
+      "qpfControllerExtensions": "ldffq:Controller/QuadPatternFragments#controllerExtension",
 
       "QuadPatternRouter": "ldffq:Router/QuadPattern",
       "routerPrefix": "ldffq:QuadPattern/Page#routerPrefix",

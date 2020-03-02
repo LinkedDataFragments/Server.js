@@ -15,27 +15,60 @@
           "comment": "A TimegateController responds to timegate requests",
           "parameters": [
             {
-              "@id": "ldffm:Controller/Timegate#timegatePath",
-              "comment": "URL matching for the time gate",
+              "@id": "ldffm:Controller/Timegate#timegateBaseUrl",
+              "comment": "Base URL for the time gate",
               "range": "xsd:string",
               "unique": true,
               "inheritValues": {
                 "@type": "InheritanceValue",
-                "onParameter": "ldffm:Controller/Timegate#timegatePath",
+                "onParameter": "ldffm:Controller/Timegate#timegateBaseUrl",
                 "from": "ldfc:Server"
               }
             },
             {
               "@id": "ldffm:Controller/Timegate#memento",
-              "comment": "Path to a directory where summaries can be found",
+              "comment": "One or more Memento configurations",
               "range": {
                 "@id": "ldffm:Memento",
                 "rdfs:hasProperty": [
-                  { "@id": "ldfc:Controller/Timegate#mementoVersion" },
-                  { "@id": "ldfc:Controller/Timegate#mementoDatasource" },
-                  { "@id": "ldfc:Controller/Timegate#mementoVersionStart" },
-                  { "@id": "ldfc:Controller/Timegate#mementoVersionEnd" },
-                  { "@id": "ldfc:Controller/Timegate#mementoOriginalBaseURL" }
+                  {
+                    "@id": "ldffm:Controller/Timegate#timegatePath",
+                    "comment": "URL path for a Memento within a time gate",
+                    "range": "xsd:string",
+                    "unique": true
+                  },
+                  {
+                    "@id": "ldffm:Controller/Timegate#mementoVersion",
+                    "comment": "A version entry for a given Memento",
+                    "range": {
+                      "@id": "ldffm:MementoVersion",
+                      "rdfs:hasProperty": [
+                        {
+                          "@id": "ldffm:Controller/Timegate#mementoDatasource",
+                          "comment": "The datasource corresponding to a given version",
+                          "unique": true,
+                          "required": true
+                        },
+                        {
+                          "@id": "ldffm:Controller/Timegate#mementoVersionStart",
+                          "comment": "The start datetime of a given version",
+                          "unique": true,
+                          "default": 0
+                        },
+                        {
+                          "@id": "ldffm:Controller/Timegate#mementoVersionEnd",
+                          "comment": "The end datetime of a given version",
+                          "unique": true,
+                          "default": 0
+                        },
+                        {
+                          "@id": "ldffm:Controller/Timegate#mementoOriginalBaseURL",
+                          "comment": "An optional memento base URL to override",
+                          "unique": true
+                        }
+                      ]
+                    }
+                  }
                 ]
               },
               "inheritValues": {
@@ -55,7 +88,7 @@
                   "fields": [
                     {
                       "keyRaw": "baseUrl",
-                      "value": "ldffm:Controller/Timegate#timegatePath"
+                      "value": "ldffm:Controller/Timegate#timegateBaseUrl"
                     },
                     {
                       "keyRaw": "mementos",
@@ -66,7 +99,7 @@
                             "key": "ldffm:Controller/Timegate#timegatePath",
                             "value": {
                               "elements": {
-                                "collectEntries": "ldffm:Controller/Timegate#versions",
+                                "collectEntries": "ldffm:Controller/Timegate#mementoVersion",
                                 "value": {
                                   "fields": [
                                     {
@@ -95,12 +128,6 @@
                     }
                   ]
                 }
-              },
-              {
-                "@id": "ldfc:Server#routerField"
-              },
-              {
-                "@id": "ldfc:Server#datasourceField"
               }
             ]
           }

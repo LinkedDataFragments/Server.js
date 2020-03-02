@@ -1,0 +1,33 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-qpf/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-memento/^3.0.0/components/context.jsonld"
+  ],
+  "@id": "urn:ldf-server:my",
+
+  "controllers": [
+    {
+      "@id": "preset-qpf:sets/memento.json#myTimegateController",
+      "@type": "TimegateController"
+    },
+    {
+      "@id": "preset-qpf:sets/controllers.json#myQuadPatternFragmentsController",
+      "qpfControllerExtension": {
+        "@id": "preset-qpf:sets/memento.json#myMementoControllerExtension",
+        "@type": "MementoControllerExtension"
+      }
+    }
+  ],
+
+  "views": [
+    {
+      "@id": "preset-qpf:sets/views.json#myQpfHtmlView",
+      "viewExtension": {
+        "@id": "preset-qpf:sets/memento.json#myMementoQpfHtmlView",
+        "@type": "MementoQpfHtmlView"
+      }
+    }
+  ]
+}

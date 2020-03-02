@@ -9,7 +9,7 @@
       "@id": "ldffm:View/Html/Qpf/Memento",
       "@type": "Class",
       "extends": "ldfc:View/Html",
-      "requireElement": "views.memento.Memento",
+      "requireElement": "views.memento.QuadPatternFragmentsHtmlView-Memento",
       "comment": "A MementoHtmlViewExtension extends the Quad Pattern Fragments HTML view with Memento details",
       "parameters": [
         {
@@ -17,14 +17,6 @@
         },
         {
           "@id": "ldffm:Controller/Timegate#memento"
-        },
-        {
-          "@id": "ldffm:View/Html/Qpf/Memento#datasource",
-          "inheritValues": {
-            "@type": "InheritanceValue",
-            "onParameter": "ldfc:Server#datasource",
-            "from": "ldfc:Server"
-          }
         }
       ],
       "constructorArguments": [
@@ -36,9 +28,6 @@
             },
             {
               "@id": "ldfc:Server#routerField"
-            },
-            {
-              "@id": "ldfc:Server#datasourceField"
             }
           ]
         }

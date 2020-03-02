@@ -4,7 +4,7 @@
 var Controller = require('@ldf/core').controllers.Controller,
     _ = require('lodash'),
     url = require('url'),
-    Util = require('../Util');
+    Util = require('@ldf/core').Util;
 
 // Creates a new TimegateController
 class TimegateController extends Controller {
@@ -15,36 +15,28 @@ class TimegateController extends Controller {
 
     // Settings for timegate
     var timegates = options.timegates || {};
-    this._timemaps = TimegateController.parseTimegateMap(timegates.mementos, options.datasources);
-    this._routers = options.routers || [];
+    this._timemaps = TimegateController.parseTimegateMap(timegates.mementos);
 
     // Set up path matching
     this._timegatePath = timegates.baseUrl || '/timegate/',
     this._matcher = new RegExp('^' + Util.toRegExp(this._timegatePath) + '(.+?)\/?(?:\\?.*)?$');
   }
 
-  parseTimegateMap(mementos, datasources) {
+  static parseTimegateMap(mementos) {
     return _.mapValues(mementos, function (mementos) {
       return sortTimemap(mementos.map(function (memento) {
-        var datasource;
-        for (var datasourcePath in datasources) {
-          if (datasources[datasourcePath].id === memento.datasource)
-            datasource = datasourcePath;
-        }
-        if (!datasource)
-          throw new Error('Could not find a datasource with id ' + memento.datasource);
         return {
-          datasource: datasource,
-          datasourceId: datasources[datasource].id,
-          interval: [memento.initial || 0, memento.final || 0].map(toDate),
+          datasource: memento.datasource,
+          datasourceId: memento.datasource.id,
+          interval: [memento.initial, memento.final].map(toDate),
           original: memento.originalBaseURL,
         };
       }));
     });
   }
 
-  parseInvertedTimegateMap(mementos, datasources, urlData) {
-    var timemaps = TimegateController.parseTimegateMap(mementos, datasources);
+  static parseInvertedTimegateMap(mementos, urlData) {
+    var timemaps = TimegateController.parseTimegateMap(mementos);
     var invertedTimegateMap = {};
     _.forIn(timemaps, function (versions, timeGateId) {
       versions.forEach(function (version) {
@@ -76,7 +68,7 @@ class TimegateController extends Controller {
 
       if (memento) {
         // Determine the URL of the memento
-        var mementoUrl = _.assign(request.parsedUrl, { pathname: memento.datasource });
+        var mementoUrl = _.assign(request.parsedUrl, { pathname: memento.datasource.path });
         mementoUrl = url.format(mementoUrl);
 
         // Determine the URL of the original resource
