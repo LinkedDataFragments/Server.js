@@ -77,6 +77,10 @@ This package exposes the following config entries:
 * `versionEnd`: The end datetime of a given version. _Should be used as key in memento version value._
 * `mementoBaseURL`: An optional external memento base URL to override. _Should be used as key in memento version value._
 
+`@ldf/server-qpf` and `@ldf/preset-qpf` provide default instantiations of `TimegateController`, `MementoControllerExtension` and `MementoQpfHtmlView`,
+which means that you don't have to define them in your config file yourself.
+The only thing you still need to do is defining the time gate and its mementos, as shown in the example below.
+
 Example:
 ```json
 {
@@ -137,8 +141,37 @@ For example:
   "@context": [
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-qpf/^3.0.0/components/context.jsonld",
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-memento/^3.0.0/components/context.jsonld",
   ],
+  "@id": "urn:ldf-server:my",
+
+  "controllers": [
+    {
+      "@id": "ex:myTimegateController",
+      "@type": "TimegateController"
+    },
+    {
+      "@id": "ex:myQuadPatternFragmentsController", // This should refer to your existing QuadPatternFragmentsController
+      "@type": "QuadPatternFragmentsController",
+      "qpfControllerExtension": {
+        "@id": "ex:myMementoControllerExtension",
+        "@type": "MementoControllerExtension"
+      }
+    }
+  ],
+
+  "views": [
+    {
+      "@id": "ex:myQpfHtmlView", // This should refer to your existing QpfHtmlView
+      "@type": "QpfHtmlView",
+      "viewExtension": {
+        "@id": "ex:myMementoQpfHtmlView",
+        "@type": "MementoQpfHtmlView"
+      }
+    }
+  ]
+
   // Same as above...
 }
 ```

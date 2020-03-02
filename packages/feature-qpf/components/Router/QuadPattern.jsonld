@@ -13,7 +13,7 @@
       "comment": "A QuadPatternRouter routes basic quad patterns",
       "parameters": [
         {
-          "@id": "ldffq:QuadPattern/Page#routerPrefix",
+          "@id": "ldffq:QuadPattern/QuadPattern#routerPrefix",
           "inheritValues": {
             "@type": "InheritanceValue",
             "onParameter": "ldfc:Server#prefix",

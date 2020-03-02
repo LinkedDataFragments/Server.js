@@ -11,7 +11,6 @@
       "qpfControllerExtensions": "ldffq:Controller/QuadPatternFragments#controllerExtension",
 
       "QuadPatternRouter": "ldffq:Router/QuadPattern",
-      "routerPrefix": "ldffq:QuadPattern/Page#routerPrefix",
 
       "QpfHtmlView": "ldffq:View/Html/Qpf",
       "QpfRdfView": "ldffq:View/Rdf/Qpf"
