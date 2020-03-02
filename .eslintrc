@@ -136,7 +136,7 @@
     key-spacing: 0,
     lines-around-comment: 2,
     linebreak-style: 2,
-    max-nested-callbacks: [2, 2],
+    max-nested-callbacks: [2, 4],
     new-cap: 2,
     new-parens: 2,
     newline-after-var: 0,

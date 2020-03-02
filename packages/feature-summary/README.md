@@ -1,4 +1,4 @@
-# Linked Data Fragments Server - WebID
+# Linked Data Fragments Server - Summary
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
 This module adds a controller extension that only allows authenticated client with WebID's to perform requests.

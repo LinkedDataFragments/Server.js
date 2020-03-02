@@ -11,6 +11,9 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-summary/^3.0.0/components/": "components/"
   },
   "license": "MIT",
+  "bin": {
+    "generate-summary": "./bin/generate-summary"
+  },
   "main": "index.js",
   "publishConfig": {
     "access": "public"
