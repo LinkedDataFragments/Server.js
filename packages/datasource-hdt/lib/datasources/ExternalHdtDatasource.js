@@ -10,73 +10,74 @@ var Datasource = require('@ldf/core').datasources.Datasource,
 var hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
 
 // Creates a new ExternalHdtDatasource
-function ExternalHdtDatasource(options) {
-  if (!(this instanceof ExternalHdtDatasource))
-    return new ExternalHdtDatasource(options);
-  Datasource.call(this, options);
+class ExternalHdtDatasource extends Datasource {
+  constructor(options) {
+    let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
+    super(options, supportedFeatureList);
 
-  // Test whether the HDT file exists
-  this._options = options = options || {};
-  this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
-}
-Datasource.extend(ExternalHdtDatasource, ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount']);
 
-// Prepares the datasource for querying
-ExternalHdtDatasource.prototype._initialize = function (done) {
-  if (this._options.checkFile !== false) {
-    if (!fs.existsSync(this._hdtFile))
-      return done(new Error('Not an HDT file: ' + this._hdtFile));
-    if (!fs.existsSync(hdtUtility))
-      return done(new Error('hdt not found: ' + hdtUtility));
-  }
-  done();
-};
-
-// Writes the results of the query to the given quad stream
-ExternalHdtDatasource.prototype._executeQuery = function (query, destination) {
-  // Only the default graph has results
-  if (query.graph) {
-    destination.setProperty('metadata', { totalCount: 0, hasExactCount: true });
-    destination.close();
-    return;
+    // Test whether the HDT file exists
+    this._options = options = options || {};
+    this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
   }
 
-  // Execute the external HDT utility
-  var hdtFile = this._hdtFile, offset = query.offset || 0, limit = query.limit || Infinity,
-      hdt = spawn(hdtUtility, [
-        '--query', (query.subject   || '?s') + ' ' +
-        (query.predicate || '?p') + ' ' + (query.object || '?o'),
-        '--offset', offset, '--limit', limit, '--format', 'turtle',
-        '--', hdtFile,
-      ], { stdio: ['ignore', 'pipe', 'ignore'] });
-  // Parse the result triples
-  hdt.stdout.setEncoding('utf8');
-  var parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true;
-  parser.parse(hdt.stdout, function (error, triple) {
-    if (error)
-      destination.emit('error', new Error('Invalid query result: ' + error.message));
-    else if (triple)
-      tripleCount++, destination._push(triple);
-    else {
-      // Ensure the estimated total count is as least as large as the number of triples
-      if (tripleCount && estimatedTotalCount < offset + tripleCount)
-        estimatedTotalCount = offset + (tripleCount < query.limit ? tripleCount : 2 * tripleCount);
-      destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
-      destination.close();
+  // Prepares the datasource for querying
+  _initialize(done) {
+    if (this._options.checkFile !== false) {
+      if (!fs.existsSync(this._hdtFile))
+        return done(new Error('Not an HDT file: ' + this._hdtFile));
+      if (!fs.existsSync(hdtUtility))
+        return done(new Error('hdt not found: ' + hdtUtility));
     }
-  });
-  parser._prefixes._ = '_:'; // Ensure blank nodes are named consistently
+    done();
+  }
 
-  // Extract the estimated number of total matches from the first (comment) line
-  hdt.stdout.once('data', function (header) {
-    estimatedTotalCount = parseInt(header.match(/\d+/), 10) || 0;
-    hasExactCount = header.indexOf('estimated') < 0;
-  });
+  // Writes the results of the query to the given quad stream
+  _executeQuery(query, destination) {
+    // Only the default graph has results
+    if (query.graph) {
+      destination.setProperty('metadata', { totalCount: 0, hasExactCount: true });
+      destination.close();
+      return;
+    }
 
-  // Report query errors
-  hdt.on('exit', function (exitCode) {
-    exitCode && destination.emit('error', new Error('Could not query ' + hdtFile));
-  });
-};
+    // Execute the external HDT utility
+    var hdtFile = this._hdtFile, offset = query.offset || 0, limit = query.limit || Infinity,
+        hdt = spawn(hdtUtility, [
+          '--query', (query.subject   || '?s') + ' ' +
+          (query.predicate || '?p') + ' ' + (query.object || '?o'),
+          '--offset', offset, '--limit', limit, '--format', 'turtle',
+          '--', hdtFile,
+        ], { stdio: ['ignore', 'pipe', 'ignore'] });
+    // Parse the result triples
+    hdt.stdout.setEncoding('utf8');
+    var parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true;
+    parser.parse(hdt.stdout, function (error, triple) {
+      if (error)
+        destination.emit('error', new Error('Invalid query result: ' + error.message));
+      else if (triple)
+        tripleCount++, destination._push(triple);
+      else {
+        // Ensure the estimated total count is as least as large as the number of triples
+        if (tripleCount && estimatedTotalCount < offset + tripleCount)
+          estimatedTotalCount = offset + (tripleCount < query.limit ? tripleCount : 2 * tripleCount);
+        destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
+        destination.close();
+      }
+    });
+    parser._prefixes._ = '_:'; // Ensure blank nodes are named consistently
+
+    // Extract the estimated number of total matches from the first (comment) line
+    hdt.stdout.once('data', function (header) {
+      estimatedTotalCount = parseInt(header.match(/\d+/), 10) || 0;
+      hasExactCount = header.indexOf('estimated') < 0;
+    });
+
+    // Report query errors
+    hdt.on('exit', function (exitCode) {
+      exitCode && destination.emit('error', new Error('Could not query ' + hdtFile));
+    });
+  }
+}
 
 module.exports = ExternalHdtDatasource;

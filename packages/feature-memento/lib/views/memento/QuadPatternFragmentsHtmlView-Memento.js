@@ -6,26 +6,24 @@ var HtmlView = require('@ldf/core').views.HtmlView,
     path = require('path');
 
 // Creates a new MementoHtmlViewExtension
-function MementoHtmlViewExtension(settings) {
-  if (!(this instanceof MementoHtmlViewExtension))
-    return new MementoHtmlViewExtension(settings);
-  HtmlView.call(this, 'QuadPatternFragments:Before', settings);
+class MementoHtmlViewExtension extends HtmlView {
+  constructor(settings) {
+    super('QuadPatternFragments:Before', settings);
+    var timegates = settings.timegates || {};
+    this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos,
+      settings.datasources, settings.urlData);
+  }
 
-  var timegates = settings.timegates || {};
-  this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos,
-    settings.datasources, settings.urlData);
+  // Renders the view with the given settings to the response
+  _render(settings, request, response, done) {
+    var memento = this._invertedTimegateMap[settings.datasource.id];
+    if (!memento)
+      return done();
+    this._renderTemplate(path.join(__dirname, 'memento-details'), {
+      start: memento.interval[0],
+      end:   memento.interval[1],
+    }, request, response, done);
+  }
 }
-HtmlView.extend(MementoHtmlViewExtension);
-
-// Renders the view with the given settings to the response
-MementoHtmlViewExtension.prototype._render = function (settings, request, response, done) {
-  var memento = this._invertedTimegateMap[settings.datasource.id];
-  if (!memento)
-    return done();
-  this._renderTemplate(path.join(__dirname, 'memento-details'), {
-    start: memento.interval[0],
-    end:   memento.interval[1],
-  }, request, response, done);
-};
 
 module.exports = MementoHtmlViewExtension;

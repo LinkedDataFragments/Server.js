@@ -15,10 +15,6 @@ describe('Controller', function () {
     it('should be a Controller constructor', function () {
       new Controller().should.be.an.instanceof(Controller);
     });
-
-    it('should create new Controller objects', function () {
-      Controller().should.be.an.instanceof(Controller);
-    });
   });
 
   describe('A Controller instance without baseURL', function () {

@@ -20,13 +20,6 @@ describe('HdtDatasource', function () {
       instance.close(done);
     });
 
-    it('should create HdtDatasource objects', function (done) {
-      var instance = HdtDatasource({ file: exampleHdtFile });
-      instance.initialize();
-      instance.should.be.an.instanceof(HdtDatasource);
-      instance.close(done);
-    });
-
     it('should create Datasource objects', function (done) {
       var instance = new HdtDatasource({ file: exampleHdtFile });
       instance.initialize();

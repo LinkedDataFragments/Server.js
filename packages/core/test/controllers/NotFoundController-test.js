@@ -16,10 +16,6 @@ describe('NotFoundController', function () {
     it('should be a NotFoundController constructor', function () {
       new NotFoundController().should.be.an.instanceof(NotFoundController);
     });
-
-    it('should create new NotFoundController objects', function () {
-      NotFoundController().should.be.an.instanceof(NotFoundController);
-    });
   });
 
   describe('A NotFoundController instance without views', function () {

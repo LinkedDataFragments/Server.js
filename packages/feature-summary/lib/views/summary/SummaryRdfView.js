@@ -4,18 +4,17 @@
 var RdfView = require('@ldf/core').views.RdfView;
 
 // Creates a new SummaryRdfView
-function SummaryRdfView(settings) {
-  if (!(this instanceof SummaryRdfView))
-    return new SummaryRdfView(settings);
-  RdfView.call(this, 'Summary', settings);
-}
-RdfView.extend(SummaryRdfView);
+class SummaryRdfView extends RdfView {
+  constructor(settings) {
+    super('Summary', settings);
+  }
 
-// Generates triples and quads by sending them to the data and/or metadata callbacks
-SummaryRdfView.prototype._generateRdf = function (settings, data, metadata, done) {
-  // Add summary triples
-  settings.results.on('data', data);
-  settings.results.on('end',  done);
-};
+  // Generates triples and quads by sending them to the data and/or metadata callbacks
+  _generateRdf(settings, data, metadata, done) {
+    // Add summary triples
+    settings.results.on('data', data);
+    settings.results.on('end',  done);
+  }
+}
 
 module.exports = SummaryRdfView;

@@ -9,32 +9,31 @@ var rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     voID = 'http://rdfs.org/ns/void#';
 
 // Creates a new IndexDatasource
-function IndexDatasource(options) {
-  if (!(this instanceof IndexDatasource))
-    return new IndexDatasource(options);
-  MemoryDatasource.call(this, options);
-  this._datasources = options ? options.datasources : {};
-  this.role = 'index';
-}
-MemoryDatasource.extend(IndexDatasource);
+class IndexDatasource extends MemoryDatasource {
+  constructor(options) {
+    super(options);
+    this._datasources = options ? options.datasources : {};
+    this.role = 'index';
+  }
 
-// Creates quads for each data source
-IndexDatasource.prototype._getAllQuads = function (addQuad, done) {
-  for (var name in this._datasources)  {
-    var datasource = this._datasources[name], datasourceUrl = datasource.url;
-    if (!datasource.hide) {
-      triple(datasourceUrl, rdf + 'type', voID + 'Dataset');
-      triple(datasourceUrl, rdfs + 'label', datasource.title, true);
-      triple(datasourceUrl, dc + 'title', datasource.title, true);
-      triple(datasourceUrl, dc + 'description', datasource.description, true);
+    // Creates quads for each data source
+  _getAllQuads(addQuad, done) {
+    for (var name in this._datasources)  {
+      var datasource = this._datasources[name], datasourceUrl = datasource.url;
+      if (!datasource.hide) {
+        triple(datasourceUrl, rdf + 'type', voID + 'Dataset');
+        triple(datasourceUrl, rdfs + 'label', datasource.title, true);
+        triple(datasourceUrl, dc + 'title', datasource.title, true);
+        triple(datasourceUrl, dc + 'description', datasource.description, true);
+      }
     }
+    function triple(subject, predicate, object, isLiteral) {
+      if (subject && predicate && object)
+        addQuad(subject, predicate, isLiteral ? '"' + object + '"' : object);
+    }
+    delete this._datasources;
+    done();
   }
-  function triple(subject, predicate, object, isLiteral) {
-    if (subject && predicate && object)
-      addQuad(subject, predicate, isLiteral ? '"' + object + '"' : object);
-  }
-  delete this._datasources;
-  done();
-};
+}
 
 module.exports = IndexDatasource;

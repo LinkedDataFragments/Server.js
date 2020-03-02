@@ -4,16 +4,15 @@
 var HtmlView = require('../HtmlView');
 
 // Creates a new NotFoundHtmlView
-function NotFoundHtmlView(settings) {
-  if (!(this instanceof NotFoundHtmlView))
-    return new NotFoundHtmlView(settings);
-  HtmlView.call(this, 'NotFound', settings);
-}
-HtmlView.extend(NotFoundHtmlView);
+class NotFoundHtmlView extends HtmlView {
+  constructor(settings) {
+    super('NotFound', settings);
+  }
 
-// Renders the view with the given settings to the response
-NotFoundHtmlView.prototype._render = function (settings, request, response, done) {
-  this._renderTemplate('notfound/notfound', settings, request, response, done);
-};
+  // Renders the view with the given settings to the response
+  _render(settings, request, response, done) {
+    this._renderTemplate('notfound/notfound', settings, request, response, done);
+  }
+}
 
 module.exports = NotFoundHtmlView;

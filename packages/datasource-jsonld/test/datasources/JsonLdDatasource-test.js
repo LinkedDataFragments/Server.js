@@ -18,12 +18,6 @@ describe('JsonLdDatasource', function () {
       instance.close(done);
     });
 
-    it('should create JsonLdDatasource objects', function (done) {
-      var instance = JsonLdDatasource({ url: exampleJsonLdUrl });
-      instance.should.be.an.instanceof(JsonLdDatasource);
-      instance.close(done);
-    });
-
     it('should create Datasource objects', function (done) {
       var instance = new JsonLdDatasource({ url: exampleJsonLdUrl });
       instance.should.be.an.instanceof(Datasource);

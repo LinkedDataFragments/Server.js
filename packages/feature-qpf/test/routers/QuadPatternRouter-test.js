@@ -10,10 +10,6 @@ describe('QuadPatternRouter', function () {
     it('should be a QuadPatternRouter constructor', function () {
       new QuadPatternRouter().should.be.an.instanceof(QuadPatternRouter);
     });
-
-    it('should create new QuadPatternRouter objects', function () {
-      QuadPatternRouter().should.be.an.instanceof(QuadPatternRouter);
-    });
   });
 
   describe('A QuadPatternRouter instance', function () {

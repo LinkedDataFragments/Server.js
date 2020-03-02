@@ -17,16 +17,8 @@ describe('Datasource', function () {
       new Datasource().should.be.an.instanceof(Datasource);
     });
 
-    it('should create new Datasource objects', function () {
-      Datasource().should.be.an.instanceof(Datasource);
-    });
-
     it('should be an EventEmitter constructor', function () {
       new Datasource().should.be.an.instanceof(EventEmitter);
-    });
-
-    it('should create new EventEmitter objects', function () {
-      Datasource().should.be.an.instanceof(EventEmitter);
     });
   });
 

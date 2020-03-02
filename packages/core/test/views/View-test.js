@@ -11,10 +11,6 @@ describe('View', function () {
     it('should be a View constructor', function () {
       new View().should.be.an.instanceof(View);
     });
-
-    it('should create new View objects', function () {
-      View().should.be.an.instanceof(View);
-    });
   });
 
   describe('A View instance', function () {

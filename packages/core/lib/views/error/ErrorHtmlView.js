@@ -4,16 +4,15 @@
 var HtmlView = require('../HtmlView');
 
 // Creates a new ErrorHtmlView
-function ErrorHtmlView(settings) {
-  if (!(this instanceof ErrorHtmlView))
-    return new ErrorHtmlView(settings);
-  HtmlView.call(this, 'Error', settings);
-}
-HtmlView.extend(ErrorHtmlView);
+class ErrorHtmlView extends HtmlView {
+  constructor(settings) {
+    super('Error', settings);
+  }
 
-// Renders the view with the given settings to the response
-ErrorHtmlView.prototype._render = function (settings, request, response, done) {
-  this._renderTemplate('error/error', settings, request, response, done);
-};
+  // Renders the view with the given settings to the response
+  _render(settings, request, response, done) {
+    this._renderTemplate('error/error', settings, request, response, done);
+  }
+}
 
 module.exports = ErrorHtmlView;

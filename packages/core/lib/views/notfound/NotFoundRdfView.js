@@ -4,17 +4,17 @@
 var RdfView = require('../RdfView');
 
 // Creates a new NotFoundRdfView
-function NotFoundRdfView(settings) {
-  if (!(this instanceof NotFoundRdfView))
-    return new NotFoundRdfView(settings);
-  RdfView.call(this, 'NotFound', settings);
-}
-RdfView.extend(NotFoundRdfView);
+class NotFoundRdfView extends RdfView {
+  constructor(settings) {
+    super('NotFound', settings);
+  }
 
-// Generates triples and quads by sending them to the data and/or metadata callbacks
-NotFoundRdfView.prototype._generateRdf = function (settings, data, metadata, done) {
-  this._addDatasources(settings, data, metadata);
-  done();
-};
+  // Generates triples and quads by sending them to the data and/or metadata callbacks
+  _generateRdf(settings, data, metadata, done) {
+    this._addDatasources(settings, data, metadata);
+    done();
+  }
+}
+
 
 module.exports = NotFoundRdfView;

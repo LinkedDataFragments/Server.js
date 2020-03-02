@@ -7,137 +7,135 @@ var Controller = require('@ldf/core').controllers.Controller,
     N3Util = require('n3').Util;
 
 // Creates a new QuadPatternFragmentsController
-function QuadPatternFragmentsController(options) {
-  if (!(this instanceof QuadPatternFragmentsController))
-    return new QuadPatternFragmentsController(options);
-  options = options || {};
-  Controller.call(this, options);
-  this._routers = options.routers || [];
-  this._extensions = options.extensions || [];
-}
-Controller.extend(QuadPatternFragmentsController);
+class QuadPatternFragmentsController extends Controller {
 
-// The base name of the view to be used for this controller
-QuadPatternFragmentsController.prototype.viewName = 'QuadPatternFragments';
+  constructor(options) {
+    options = options || {};
+    super(options);
+    this._routers = options.routers || [];
+    this._extensions = options.extensions || [];
 
-// The required features the given datasource must have
-QuadPatternFragmentsController.prototype.supportsDatasource = function (datasource) {
-  return datasource.supportedFeatures.triplePattern ||
-         datasource.supportedFeatures.quadPattern;
-};
+    this.viewName = 'QuadPatternFragments';
+  }
 
-// Try to serve the requested fragment
-QuadPatternFragmentsController.prototype._handleRequest = function (request, response, next) {
-  // Create the query from the request by calling the fragment routers
-  var requestParams = { url: request.parsedUrl, headers: request.headers },
-      query = this._routers.reduce(function (query, router) {
-        try { router.extractQueryParams(requestParams, query); }
-        catch (e) { /* ignore routing errors */ }
-        return query;
-      }, { features: [] });
+  // The required features the given datasource must have
+  supportsDatasource(datasource) {
+    return datasource.supportedFeatures.triplePattern ||
+          datasource.supportedFeatures.quadPattern;
+  }
 
-  // Execute the query on the data source
-  var datasource = query.features.datasource && this._datasources[query.datasource];
-  delete query.features.datasource;
-  if (!datasource || !datasource.supportsQuery(query) ||
-    !this.supportsDatasource(datasource))
-    return next();
+  // Try to serve the requested fragment
+  _handleRequest(request, response, next) {
+    // Create the query from the request by calling the fragment routers
+    var requestParams = { url: request.parsedUrl, headers: request.headers },
+        query = this._routers.reduce(function (query, router) {
+          try { router.extractQueryParams(requestParams, query); }
+          catch (e) { /* ignore routing errors */ }
+          return query;
+        }, { features: [] });
 
-  // Generate the query result
-  var view = this._negotiateView(this.viewName, request, response),
-      settings = this._createFragmentMetadata(request, query, datasource);
-  settings.results = datasource.select(query,
-                     function (error) { error && next(error); });
+    // Execute the query on the data source
+    var datasource = query.features.datasource && this._datasources[query.datasource];
+    delete query.features.datasource;
+    if (!datasource || !datasource.supportsQuery(query) ||
+      !this.supportsDatasource(datasource))
+      return next();
 
-  // Execute the extensions and render the query result
-  var extensions = this._extensions, extensionId = 0;
-  (function nextExtension(error) {
-    // Log a possible error with the previous extension
-    if (error)
-      process.stderr.write(error.stack + '\n');
-    // Execute the next extension
-    if (extensionId < extensions.length)
-      extensions[extensionId++].handleRequest(request, response, nextExtension, settings);
-    // Render the query result
+    // Generate the query result
+    var view = this._negotiateView(this.viewName, request, response),
+        settings = this._createFragmentMetadata(request, query, datasource);
+    settings.results = datasource.select(query,
+                      function (error) { error && next(error); });
+
+    // Execute the extensions and render the query result
+    var extensions = this._extensions, extensionId = 0;
+    (function nextExtension(error) {
+      // Log a possible error with the previous extension
+      if (error)
+        process.stderr.write(error.stack + '\n');
+      // Execute the next extension
+      if (extensionId < extensions.length)
+        extensions[extensionId++].handleRequest(request, response, nextExtension, settings);
+      // Render the query result
+      else
+        view.render(settings, request, response);
+    })();
+  }
+
+  // Create the template URL for requesting quad patterns
+  _createTemplateUrl(datasourceUrl, supportsQuads) {
+    return datasourceUrl + (!supportsQuads ? '{?subject,predicate,object}' :
+                                            '{?subject,predicate,object,graph}');
+  }
+
+  // Create parameterized pattern string for quad patterns
+  _createPatternString(query, supportsQuads) {
+    var subject = query.subject, predicate = query.predicate,
+        object = query.object, graph = '';
+    // Serialize subject and predicate IRIs or variables
+    subject   = subject   ? '<' + query.subject   + '> ' : '?s ';
+    predicate = predicate ? '<' + query.predicate + '> ' : '?p ';
+    // Serialize object IRI, literal, or variable
+    if (N3Util.isIRI(query.object))
+      object = '<' + query.object + '> ';
     else
-      view.render(settings, request, response);
-  })();
-};
-
-// Create the template URL for requesting quad patterns
-QuadPatternFragmentsController.prototype._createTemplateUrl = function (datasourceUrl, supportsQuads) {
-  return datasourceUrl + (!supportsQuads ? '{?subject,predicate,object}' :
-                                           '{?subject,predicate,object,graph}');
-};
-
-// Create parameterized pattern string for quad patterns
-QuadPatternFragmentsController.prototype._createPatternString = function (query, supportsQuads) {
-  var subject = query.subject, predicate = query.predicate,
-      object = query.object, graph = '';
-  // Serialize subject and predicate IRIs or variables
-  subject   = subject   ? '<' + query.subject   + '> ' : '?s ';
-  predicate = predicate ? '<' + query.predicate + '> ' : '?p ';
-  // Serialize object IRI, literal, or variable
-  if (N3Util.isIRI(query.object))
-    object = '<' + query.object + '> ';
-  else
-    object = query.object ? query.object : '?o';
-  // Serialize graph IRI default graph, or variable
-  if (supportsQuads) {
-    graph = query.graph;
-    if (graph === '') graph = ' @default';
-    else if (graph)   graph = ' <' + graph + '>';
-    else              graph = ' ?g';
+      object = query.object ? query.object : '?o';
+    // Serialize graph IRI default graph, or variable
+    if (supportsQuads) {
+      graph = query.graph;
+      if (graph === '') graph = ' @default';
+      else if (graph)   graph = ' <' + graph + '>';
+      else              graph = ' ?g';
+    }
+    // Join them in a pattern
+    return '{ ' + subject + predicate + object + graph + '. }';
   }
-  // Join them in a pattern
-  return '{ ' + subject + predicate + object + graph + '. }';
-};
 
-// Creates metadata about the requested fragment
-QuadPatternFragmentsController.prototype._createFragmentMetadata =
-function (request, query, datasourceSettings) {
-  // TODO: these URLs should be generated by the routers
-  var requestUrl = request.parsedUrl,
-      // maintain the originally requested query string to avoid encoding differences
-      origQuery = request.url.replace(/[^?]+/, ''),
-      pageUrl = url.format(requestUrl).replace(/\?.*/, origQuery),
-      paramsNoPage = _.omit(requestUrl.query, 'page'),
-      currentPage = parseInt(requestUrl.query.page, 10) || 1,
-      datasourceUrl = url.format(_.omit(requestUrl, 'query')),
-      fragmentUrl = url.format(_.defaults({ query: paramsNoPage }, requestUrl)),
-      fragmentPageUrlBase = fragmentUrl + (/\?/.test(fragmentUrl) ? '&' : '?') + 'page=',
-      indexUrl = url.format(_.omit(requestUrl, 'search', 'query', 'pathname')) + '/';
+  // Creates metadata about the requested fragment
+  _createFragmentMetadata(request, query, datasourceSettings) {
+    // TODO: these URLs should be generated by the routers
+    var requestUrl = request.parsedUrl,
+        // maintain the originally requested query string to avoid encoding differences
+        origQuery = request.url.replace(/[^?]+/, ''),
+        pageUrl = url.format(requestUrl).replace(/\?.*/, origQuery),
+        paramsNoPage = _.omit(requestUrl.query, 'page'),
+        currentPage = parseInt(requestUrl.query.page, 10) || 1,
+        datasourceUrl = url.format(_.omit(requestUrl, 'query')),
+        fragmentUrl = url.format(_.defaults({ query: paramsNoPage }, requestUrl)),
+        fragmentPageUrlBase = fragmentUrl + (/\?/.test(fragmentUrl) ? '&' : '?') + 'page=',
+        indexUrl = url.format(_.omit(requestUrl, 'search', 'query', 'pathname')) + '/';
 
-  // Generate a textual representation of the pattern
-  var supportsQuads = datasourceSettings.supportedFeatures.quadPattern || false;
-  query.patternString = this._createPatternString(query, supportsQuads);
+    // Generate a textual representation of the pattern
+    var supportsQuads = datasourceSettings.supportedFeatures.quadPattern || false;
+    query.patternString = this._createPatternString(query, supportsQuads);
 
-  return {
-    datasource: _.assign(datasourceSettings, {
-      index: indexUrl + '#dataset',
-      url: datasourceUrl + '#dataset',
-      templateUrl: this._createTemplateUrl(datasourceUrl, supportsQuads),
-      supportsQuads: supportsQuads,
-    }),
-    fragment: {
-      url: fragmentUrl,
-      pageUrl: pageUrl,
-      firstPageUrl: fragmentPageUrlBase + '1',
-      nextPageUrl: fragmentPageUrlBase + (currentPage + 1),
-      previousPageUrl: currentPage > 1 ? fragmentPageUrlBase + (currentPage - 1) : null,
-    },
-    query: query,
-    prefixes: this._prefixes,
-    datasources: this._datasources,
-  };
-};
-
-// Close all data sources
-QuadPatternFragmentsController.prototype.close = function () {
-  for (var datasourceName in this._datasources) {
-    try { this._datasources[datasourceName].close(); }
-    catch (error) { /* ignore closing errors */ }
+    return {
+      datasource: _.assign(datasourceSettings, {
+        index: indexUrl + '#dataset',
+        url: datasourceUrl + '#dataset',
+        templateUrl: this._createTemplateUrl(datasourceUrl, supportsQuads),
+        supportsQuads: supportsQuads,
+      }),
+      fragment: {
+        url: fragmentUrl,
+        pageUrl: pageUrl,
+        firstPageUrl: fragmentPageUrlBase + '1',
+        nextPageUrl: fragmentPageUrlBase + (currentPage + 1),
+        previousPageUrl: currentPage > 1 ? fragmentPageUrlBase + (currentPage - 1) : null,
+      },
+      query: query,
+      prefixes: this._prefixes,
+      datasources: this._datasources,
+    };
   }
-};
+
+  // Close all data sources
+  close() {
+    for (var datasourceName in this._datasources) {
+      try { this._datasources[datasourceName].close(); }
+      catch (error) { /* ignore closing errors */ }
+    }
+  }
+}
 
 module.exports = QuadPatternFragmentsController;

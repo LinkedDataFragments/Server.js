@@ -7,28 +7,28 @@ var MemoryDatasource = require('@ldf/core').datasources.MemoryDatasource,
 var ACCEPT = 'application/ld+json;q=1.0,application/json;q=0.7';
 
 // Creates a new JsonLdDatasource
-function JsonLdDatasource(options) {
-  if (!(this instanceof JsonLdDatasource))
-    return new JsonLdDatasource(options);
-  MemoryDatasource.call(this, options);
-  this._url = options && (options.url || options.file);
-}
-MemoryDatasource.extend(JsonLdDatasource);
+class JsonLdDatasource extends MemoryDatasource {
+  constructor(options) {
+    super(options);
+    this._url = options && (options.url || options.file);
+  }
 
-// Retrieves all quads from the document
-JsonLdDatasource.prototype._getAllQuads = function (addQuad, done) {
-  // Read the JSON-LD document
-  var json = '',
-      document = this._fetch({ url: this._url, headers: { accept: ACCEPT } });
-  document.on('data', function (data) { json += data; });
-  document.on('end', function () {
-    // Parse the JSON document
-    try { json = JSON.parse(json); }
-    catch (error) { return done(error); }
-    // Convert the JSON-LD to quads
-    extractQuads(json, addQuad, done);
-  });
-};
+  // Retrieves all quads from the document
+  _getAllQuads(addQuad, done) {
+    // Read the JSON-LD document
+    var json = '',
+        document = this._fetch({ url: this._url, headers: { accept: ACCEPT } });
+    document.on('data', function (data) { json += data; });
+    document.on('end', function () {
+      // Parse the JSON document
+      try { json = JSON.parse(json); }
+      catch (error) { return done(error); }
+      // Convert the JSON-LD to quads
+      extractQuads(json, addQuad, done);
+    });
+  }
+}
+
 
 // Extracts quads from a JSON-LD document
 function extractQuads(json, addQuad, done) {

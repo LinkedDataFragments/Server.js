@@ -13,10 +13,6 @@ describe('DereferenceController', function () {
     it('should be a DereferenceController constructor', function () {
       new DereferenceController().should.be.an.instanceof(DereferenceController);
     });
-
-    it('should create new DereferenceController objects', function () {
-      DereferenceController().should.be.an.instanceof(DereferenceController);
-    });
   });
 
   describe('A DereferenceController instance', function () {
