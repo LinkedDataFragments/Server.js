@@ -3,7 +3,6 @@
   "@graph": [
     {
       "@id": "urn:ldf-server:my",
-      "@type": "Server",
       "import": "preset-qpf:config-defaults.json",
 
       "title": "My Linked Data Fragments server",

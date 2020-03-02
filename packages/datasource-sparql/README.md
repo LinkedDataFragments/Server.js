@@ -15,7 +15,6 @@ Example:
 {
   "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
   "@id": "urn:ldf-server:my",
-  "@type": "Server",
   "import": "preset-qpf:config-defaults.json",
 
   "datasources": [
