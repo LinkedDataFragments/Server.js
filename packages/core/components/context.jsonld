@@ -5,7 +5,6 @@
       "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
       "ldfc": "npmd:@ldf/core/",
       "files-ldfc": "ldfc:^3.0.0/",
-      "config": "files-ldfc:config/",
 
       "rdfa": "http://www.w3.org/ns/rdfa#",
 

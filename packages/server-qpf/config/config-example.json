@@ -1,14 +1,10 @@
 {
-  "@context": [
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-hdt/^3.0.0/components/context.jsonld",
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-sparql/^3.0.0/components/context.jsonld"
-  ],
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
   "@graph": [
     {
       "@id": "urn:ldf-server:my",
       "@type": "Server",
-      "import": "config:config-defaults.json",
+      "import": "preset-qpf:config-defaults.json",
 
       "title": "My Linked Data Fragments server",
 

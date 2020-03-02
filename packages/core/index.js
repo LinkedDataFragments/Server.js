@@ -36,6 +36,8 @@ module.exports = {
     View: require('./lib/views/View'),
     ViewCollection: require('./lib/views/ViewCollection'),
   },
+  runCli: require('./lib/CliRunner').runCli,
+  runCustom: require('./lib/CliRunner').runCustom,
   LinkedDataFragmentsServer: require('./lib/LinkedDataFragmentsServer'),
   LinkedDataFragmentsServerWorker: require('./lib/LinkedDataFragmentsServerWorker'),
   UrlData: require('./lib/UrlData'),

@@ -8,13 +8,9 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld": "components/context.jsonld"
   },
   "lsd:importPaths": {
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/": "components/",
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/config/": "config/"
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/": "components/"
   },
   "license": "MIT",
-  "bin": {
-    "ldf-server": "./bin/ldf-server"
-  },
   "main": "index.js",
   "publishConfig": {
     "access": "public"

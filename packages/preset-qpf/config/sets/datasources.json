@@ -1,0 +1,17 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld"
+  ],
+  "@id": "urn:ldf-server:my",
+
+  "datasources": [
+    {
+      "@id": "preset-qpf:sets/datasources.json#myIndexDatasource",
+      "@type": "IndexDatasource",
+      "datasourceTitle": "dataset index",
+      "datasourcePath": "/",
+      "hide": true
+    }
+  ]
+}
