@@ -40,8 +40,7 @@
     "negotiate": "^1.0.1",
     "q": "^1.4.1",
     "qejs": "^3.0.5",
-    "request": "^2.88.0",
-    "uritemplate": "^0.3.4"
+    "request": "^2.88.0"
   },
   "optionalDependencies": {
     "access-log": "^0.3.9"
