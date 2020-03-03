@@ -1,52 +1,39 @@
 {
   "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
-  "@graph": [
+  "@id": "urn:ldf-server:my",
+  "import": "preset-qpf:config-defaults.json",
+
+  "title": "My Linked Data Fragments server",
+
+  "datasources": [
     {
-      "@id": "urn:ldf-server:my",
-      "import": "preset-qpf:config-defaults.json",
-
-      "title": "My Linked Data Fragments server",
-
-      "datasources": [
-        {
-          "@id": "ex:myHdtDatasource",
-          "@type": "HdtDatasource",
-          "datasourceTitle": "DBpedia 2014",
-          "description": "DBpedia 2014 with an HDT back-end",
-          "datasourcePath": "dbpedia",
-          "hdtFile": "data/dbpedia2014.hdt"
-        },
-        {
-          "@id": "ex:mySparqlDatasource",
-          "@type": "SparqlDatasource",
-          "datasourceTitle": "DBpedia (Virtuoso)",
-          "description": "DBpedia with a Virtuoso back-end",
-          "datasourcePath": "dbpedia-sparql",
-          "sparqlEndpoint": "https://dbpedia.org/sparql"
-        }
-      ],
-
-      "prefixes": [
-        { "prefix": "rdf",         "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
-        { "prefix": "rdfs",        "uri": "http://www.w3.org/2000/01/rdf-schema#" },
-        { "prefix": "xsd",         "uri": "http://www.w3.org/2001/XMLSchema#" },
-        { "prefix": "dc",          "uri": "http://purl.org/dc/terms/" },
-        { "prefix": "foaf",        "uri": "http://xmlns.com/foaf/0.1/" },
-        { "prefix": "dbpedia",     "uri": "http://dbpedia.org/resource/" },
-        { "prefix": "dbpedia-owl", "uri": "http://dbpedia.org/ontology/" },
-        { "prefix": "dbpprop",     "uri": "http://dbpedia.org/property/" },
-        { "prefix": "hydra",       "uri": "http://www.w3.org/ns/hydra/core#" },
-        { "prefix": "void",        "uri": "http://rdfs.org/ns/void#" }
-      ]
+      "@id": "ex:myHdtDatasource",
+      "@type": "HdtDatasource",
+      "datasourceTitle": "DBpedia 2014",
+      "description": "DBpedia 2014 with an HDT back-end",
+      "datasourcePath": "dbpedia",
+      "hdtFile": "data/dbpedia2014.hdt"
     },
     {
-      "@id": "ldfc:Server#defaultDereferenceController",
-      "ldfs:dereference": [
-        {
-          "dereferencePath": "/resource/",
-          "dereferenceDatasource": "ex:myHdtDatasource"
-        }
-      ]
+      "@id": "ex:mySparqlDatasource",
+      "@type": "SparqlDatasource",
+      "datasourceTitle": "DBpedia (Virtuoso)",
+      "description": "DBpedia with a Virtuoso back-end",
+      "datasourcePath": "dbpedia-sparql",
+      "sparqlEndpoint": "https://dbpedia.org/sparql"
     }
+  ],
+
+  "prefixes": [
+    { "prefix": "rdf",         "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+    { "prefix": "rdfs",        "uri": "http://www.w3.org/2000/01/rdf-schema#" },
+    { "prefix": "xsd",         "uri": "http://www.w3.org/2001/XMLSchema#" },
+    { "prefix": "dc",          "uri": "http://purl.org/dc/terms/" },
+    { "prefix": "foaf",        "uri": "http://xmlns.com/foaf/0.1/" },
+    { "prefix": "dbpedia",     "uri": "http://dbpedia.org/resource/" },
+    { "prefix": "dbpedia-owl", "uri": "http://dbpedia.org/ontology/" },
+    { "prefix": "dbpprop",     "uri": "http://dbpedia.org/property/" },
+    { "prefix": "hydra",       "uri": "http://www.w3.org/ns/hydra/core#" },
+    { "prefix": "void",        "uri": "http://rdfs.org/ns/void#" }
   ]
 }
