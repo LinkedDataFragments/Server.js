@@ -14,6 +14,7 @@ class SummaryController extends Controller {
     super(options);
     // Settings for data summaries
     var summaries = options.summaries || {};
+    this._enabled = summaries.dir || summaries.path;
     this._summariesFolder = summaries.dir || path.join(__dirname, '../../summaries');
     // Set up path matching
     this._summariesPath = summaries.path  || '/summaries/',
@@ -21,6 +22,9 @@ class SummaryController extends Controller {
   }
 
   _handleRequest(request, response, next) {
+    if (!this._enabled)
+      return next();
+
     var summaryMatch = this._matcher && this._matcher.exec(request.url), datasource;
     if (datasource = summaryMatch && summaryMatch[1]) {
       var summaryFile = path.join(this._summariesFolder, datasource + '.ttl');
