@@ -68,6 +68,7 @@
       "urlData": "ldfc:Server#urlData",
       "port": "ldfc:Server#port",
       "workers": "ldfc:Server#workers",
+      "protocol": "ldfc:Server#protocol",
       "datasource": "ldfc:Server#datasource",
       "datasources": "ldfc:Server#datasource",
       "prefixes": "ldfc:Server#prefixes",

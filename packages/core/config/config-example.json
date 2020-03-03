@@ -1,0 +1,81 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+  "import": "preset-qpf:config-defaults.json",
+
+  "title": "My Linked Data Fragments server",
+  "baseURL": "https://example.org/",
+  "port": 3000,
+  "workers": 2,
+  "protocol": "http",
+
+  "datasources": [
+    {
+      "@id": "ex:myDatasourceVersion1",
+      "@type": "SparqlDatasource",
+      "datasourceTitle": "My SPARQL source",
+      "description": "My datasource with a SPARQL-endpoint back-end",
+      "datasourcePath": "mysparql",
+      "sparqlEndpoint": "https://dbpedia.org/sparql",
+      "enabled": true,
+      "hide": false,
+      "license": "MIT",
+      "licenseUrl": "http://example.org/my-license",
+      "copyright": "This datasource is owned by Alice",
+      "homepage": "http://example.org/alice"
+    },
+    {
+      "@id": "ex:myDatasourceVersion2",
+      "@type": "TurtleDatasource",
+      "datasourceTitle": "My Turtle file",
+      "description": "My dataset with a Turtle back-end",
+      "datasourcePath": "myttl",
+      "file": "path/to/file.ttl",
+      "graph": "http://example.org/default-graph"
+    }
+  ],
+
+  "prefixes": [
+    { "prefix": "rdf",         "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+    { "prefix": "rdfs",        "uri": "http://www.w3.org/2000/01/rdf-schema#" },
+    { "prefix": "owl",         "uri": "http://www.w3.org/2002/07/owl#" },
+    { "prefix": "xsd",         "uri": "http://www.w3.org/2001/XMLSchema#" },
+    { "prefix": "hydra",       "uri": "http://www.w3.org/ns/hydra/core#" },
+    { "prefix": "void",        "uri": "http://rdfs.org/ns/void#" },
+    { "prefix": "skos",        "uri": "http://www.w3.org/2004/02/skos/core#" },
+    { "prefix": "dcterms",     "uri": "http://purl.org/dc/terms/" },
+    { "prefix": "dc11",        "uri": "http://purl.org/dc/elements/1.1/" },
+    { "prefix": "foaf",        "uri": "http://xmlns.com/foaf/0.1/" },
+    { "prefix": "geo",         "uri": "http://www.w3.org/2003/01/geo/wgs84_pos#" },
+    { "prefix": "dbpedia",     "uri": "http://dbpedia.org/resource/" },
+    { "prefix": "dbpedia-owl", "uri": "http://dbpedia.org/ontology/" },
+    { "prefix": "dbpprop",     "uri": "http://dbpedia.org/property/" }
+  ],
+
+  "logging": true,
+  "loggingFile": "access.log",
+
+  "dereference": [
+    {
+      "dereferenceDatasource": "ex:myDatasourceVersion2",
+      "dereferencePath": "/resource/"
+    }
+  ],
+
+  "responseHeaders": [
+    { "headerName": "Access-Control-Allow-Origin",   "headerValue": "*" },
+    { "headerName": "Access-Control-Allow-Headers",  "headerValue": "Accept-Datetime" },
+    { "headerName": "Access-Control-Expose-Headers", "headerValue": "Content-Location,Link,Memento-Datetime" }
+  ],
+
+  "sslKey": "../core/config/certs/localhost-server.key",
+  "sslCert": "../core/config/certs/localhost-server.crt",
+  "sslCa": "../core/config/certs/localhost-ca.crt",
+
+  "router": [
+    {
+      "@id": "preset-qpf:sets/routers.json#myPageRouter",
+      "pageSize": 50
+    }
+  ]
+}

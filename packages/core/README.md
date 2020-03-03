@@ -1,203 +1,268 @@
-# Linked Data Fragments Server
+# Linked Data Fragments Server - Core
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
-[![Build Status](https://travis-ci.org/LinkedDataFragments/Server.js.svg?branch=master)](https://travis-ci.org/LinkedDataFragments/Server.js)
-[![npm version](https://badge.fury.io/js/ldf-server.svg)](https://www.npmjs.com/package/ldf-server)
-[![Docker Automated Build](https://img.shields.io/docker/automated/linkeddatafragments/server.js.svg)](https://hub.docker.com/r/linkeddatafragments/server.js/)
-[![DOI](https://zenodo.org/badge/16891600.svg)](https://zenodo.org/badge/latestdoi/16891600)
+This package provides core classes for Linked Data Fragments servers.
 
-On today's Web, Linked Data is published in different ways,
-which include [data dumps](http://downloads.dbpedia.org/3.9/en/),
-[subject pages](http://dbpedia.org/page/Linked_data),
-and [results of SPARQL queries](http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query=CONSTRUCT+%7B+%3Fp+a+dbpedia-owl%3AArtist+%7D%0D%0AWHERE+%7B+%3Fp+a+dbpedia-owl%3AArtist+%7D&format=text%2Fturtle).
-We call each such part a [**Linked Data Fragment**](http://linkeddatafragments.org/).
+This package should be used if you want to create your own LDF server configuration or LDF server module.
+If you just want to run a QPF server, you can make use of [`@ldf/server-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server-qpf) instead.
 
-The issue with the current Linked Data Fragments
-is that they are either so powerful that their servers suffer from low availability rates
-([as is the case with SPARQL](http://sw.deri.org/~aidanh/docs/epmonitorISWC.pdf)),
-or either don't allow efficient querying.
+## Usage in `@ldf/server-qpf`
 
-Instead, this server offers **[Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)**.
-Each Triple Pattern Fragment offers:
+This package exposes the the following context entries:
 
-- **data** that corresponds to a _triple pattern_
-  _([example](http://data.linkeddatafragments.org/dbpedia?subject=&predicate=rdf%3Atype&object=dbpedia-owl%3ARestaurant))_.
-- **metadata** that consists of the (approximate) total triple count
-  _([example](http://data.linkeddatafragments.org/dbpedia?subject=&predicate=rdf%3Atype&object=))_.
-- **controls** that lead to all other fragments of the same dataset
-  _([example](http://data.linkeddatafragments.org/dbpedia?subject=&predicate=&object=%22John%22%40en))_.
+**Controllers:**
+* `AssetsController`: Responds to requests for assets. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` controller value._
+* `DereferenceController`: Responds to dereferencing requests. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` controller value._
+* `NotFoundController`: Responds to requests that cannot be resolved. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` controller value._
+* `Controller`: An abstract controller. _Should be used as `extends` value when creating new controllers._
+* `ControllerExtension`: An abstract controller extension. _Should be used as `extends` value when creating new controller extensions._
+* `assetsDir`: Path to a directory where assets can be found. _Should be used as key in a `Server` config._
+* `assetsPath`: URL matching for assets. _Should be used as key in a `Server` config._
+* `dereference`: A dereferencing entry for a datasource to a path. _Should be used as key in a `Server` config._
+* `dereferenceDatasource`: The datasource of a dereferencing entry. _Should be used as key in a dereferencing entry._
+* `dereferencePath`: The path of a dereferencing entry. _Should be used as key in a dereferencing entry._
 
-An example server is available at [data.linkeddatafragments.org](http://data.linkeddatafragments.org/).
+**Datasources:**
+* `EmptyDatasource`: An empty data source doesn't contain any quads. _Should be used as `@type` datasource value._
+* `IndexDatasource`: A datasource that lists other data sources. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` datasource value._
+* `MemoryDatasource`: An abstract in-memory datasource. _Should be used as `extends` value when creating new in-memory datasources._
+* `Datasource`: An abstract datasource. _Should be used as `extends` value when creating new datasources._
+* `datasourceTitle`: The title of a datasource. _Should be used as key in a datasource._
+* `description`: The description of a datasource. _Should be used as key in a datasource._
+* `datasourcePath`: The relative path to the datasource from the baseURL. _Should be used as key in a datasource._
+* `enabled`: If the datasource is enabled, by default true. _Should be used as key in a datasource._
+* `hide`: If the datasource must be hide from the index, by default false. _Should be used as key in a datasource._
+* `graph`: The default graph of the datasource. _Should be used as key in a datasource._
+* `license`: The license of the datasource. _Should be used as key in a datasource._
+* `licenseUrl`: A link to the license of the datasource. _Should be used as key in a datasource._
+* `copyright`: The copyright statement of the datasource. _Should be used as key in a datasource._
+* `homepage`: The homepage url of the datasource. _Should be used as key in a datasource._
+* `file`: The dataset file path. _Should be used as key in a memory datasource._
+* `datasourceUrl`: The dataset file URL from the baseURL. _Should be used as key in a memory datasource._
 
+**Routers:**
+* `DatasourceRouter`: Routes URLs to data sources. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` router value._
+* `PageRouter`: Routes page numbers to offsets. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` router value._
+* `Router`: An abstract router. _Should be used as `extends` value when creating new routers._
+* `pageSize`: The triple page size, which defaults to 100. _Should be used as key in a page router._
 
-## Install the server
+**Views:**
+* `ErrorHtmlView`: Represents a 500 response in HTML. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
+* `ForbiddenHtmlView`: Represents a 401 response in HTML. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
+* `NotFoundHtmlView`: Represents a 404 response in HTML. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
+* `ErrorRdfView`: Represents a 500 response in RDF. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
+* `NotFoundRdfView`: Represents a 404 response in RDF. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
+* `ViewCollection`: Provides access to content-negotiated views by name. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
+* `HtmlView`: An abstract HTML view. _Should be used as `extends` value when creating new HTML views._
+* `RdfView`: An abstract RDF view. _Should be used as `extends` value when creating new RDF views._
+* `View`: An abstract view. _Should be used as `extends` value when creating new views._
+* `viewExtensions`: A view extension. _Should be used as key in a view._
+* `viewCache`: If views should be cached. _Should be used as key in an HTML view._
+* `n3Util`: The N3Util class. _Should be used as key in an HTML view._
+* `viewHeader`: The view header title. _Should be used as key in an HTML view._
 
-This server requires [Node.js](http://nodejs.org/) 4.0 or higher
-and is tested on OSX and Linux.
-To install, execute:
-```bash
-$ [sudo] npm install -g ldf-server
-```
+**Other:**
+* `Server`: An HTTP server that provides access to Linked Data Fragments. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
+* `title`: The server name. _Should be used as key in a `Server` config._
+* `baseURL`: The base URL path for the server. _Should be used as key in a `Server` config._
+* `port`: The port the server will bind with. _Should be used as key in a `Server` config._
+* `workers`: The number of server instances that will be started. _Should be used as key in a `Server` config._
+* `protocol`: Explicitly set the protocol, default will be the protocol derived from the baseURL. _Should be used as key in a `Server` config._
+* `datasource` or `datasources`: One or more datasources for the server. _Should be used as key in a `Server` config._
+* `prefixes`: A collection of default URI prefixes. _Should be used as key in a `Server` config._
+* `prefix`: The prefix label of a prefix entry. _Should be used as key in a prefix entry._
+* `uri`: The prefix URI of a prefix entry. _Should be used as key in a prefix entry._
+* `responseHeaders`: Default headers that should be set in responses. _Should be used as key in a prefix entry._
+* `headerName`: The header name in a response header entry. _Should be used as key in a response header entry._
+* `headerValue`: The header value in a response header entry. _Should be used as key in a response header entry._
+* `sslKey`: Path to an SSL key. _Should be used as key in a `Server` config._
+* `sslCert`: Path to an SSL certificate. _Should be used as key in a `Server` config._
+* `sslCa`: Path to an SSL certificate authority. _Should be used as key in a `Server` config._
+* `logging`: If the server should perform logging, defaults to `false`. _Should be used as key in a `Server` config._
+* `loggingFile`: Path to a log file. _Should be used as key in a `Server` config._
+* `routers`: Routers for the server. This is configured by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
+* `controllers`: Controllers for the server. This is configured by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
+* `viewCollection`: Override the default view collection. This is configured by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
+* `views`: Views for the server. This is configured by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
+* `UrlData`: A data object class for preset URL information. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
+* `urlData`: The UrlData helper object. This is enabled by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
 
+`@ldf/server-qpf` and `@ldf/preset-qpf` provide default instantiations of all core classes,
+which means that you don't have to define them in your config file yourself.
+The only thing you still need to do is defining different optional parameters, as shown below.
 
-## Use the server
-
-### Configure the data sources
-
-First, create a configuration file `config.json` similar to `config/config-example.json`,
-in which you detail your data sources.
-For example, this configuration uses an [HDT file](http://www.rdfhdt.org/)
-and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
+Example:
 ```json
 {
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+  "import": "preset-qpf:config-defaults.json",
+
   "title": "My Linked Data Fragments server",
-  "datasources": {
-    "dbpedia": {
-      "title": "DBpedia 2014",
-      "type": "HdtDatasource",
-      "description": "DBpedia 2014 with an HDT back-end",
-      "settings": { "file": "data/dbpedia2014.hdt" }
+  "baseURL": "https://example.org/",
+  "port": 3000,
+  "workers": 2,
+  "protocol": "http",
+
+  "datasources": [
+    {
+      "@id": "ex:myDatasourceVersion1",
+      "@type": "SparqlDatasource",
+      "datasourceTitle": "My SPARQL source",
+      "description": "My datasource with a SPARQL-endpoint back-end",
+      "datasourcePath": "mysparql",
+      "sparqlEndpoint": "https://dbpedia.org/sparql",
+      "enabled": true,
+      "hide": false,
+      "license": "MIT",
+      "licenseUrl": "http://example.org/my-license",
+      "copyright": "This datasource is owned by Alice",
+      "homepage": "http://example.org/alice"
     },
-    "dbpedia-sparql": {
-      "title": "DBpedia 3.9 (Virtuoso)",
-      "type": "SparqlDatasource",
-      "description": "DBpedia 3.9 with a Virtuoso back-end",
-      "settings": { "endpoint": "https://dbpedia.org/sparql", "defaultGraph": "http://dbpedia.org" }
+    {
+      "@id": "ex:myDatasourceVersion2",
+      "@type": "TurtleDatasource",
+      "datasourceTitle": "My Turtle file",
+      "description": "My dataset with a Turtle back-end",
+      "datasourcePath": "myttl",
+      "file": "path/to/file.ttl",
+      "graph": "http://example.org/default-graph"
     }
-  }
+  ],
+
+  "prefixes": [
+    { "prefix": "rdf",         "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+    { "prefix": "rdfs",        "uri": "http://www.w3.org/2000/01/rdf-schema#" },
+    { "prefix": "owl",         "uri": "http://www.w3.org/2002/07/owl#" },
+    { "prefix": "xsd",         "uri": "http://www.w3.org/2001/XMLSchema#" },
+    { "prefix": "hydra",       "uri": "http://www.w3.org/ns/hydra/core#" },
+    { "prefix": "void",        "uri": "http://rdfs.org/ns/void#" },
+    { "prefix": "skos",        "uri": "http://www.w3.org/2004/02/skos/core#" },
+    { "prefix": "dcterms",     "uri": "http://purl.org/dc/terms/" },
+    { "prefix": "dc11",        "uri": "http://purl.org/dc/elements/1.1/" },
+    { "prefix": "foaf",        "uri": "http://xmlns.com/foaf/0.1/" },
+    { "prefix": "geo",         "uri": "http://www.w3.org/2003/01/geo/wgs84_pos#" },
+    { "prefix": "dbpedia",     "uri": "http://dbpedia.org/resource/" },
+    { "prefix": "dbpedia-owl", "uri": "http://dbpedia.org/ontology/" },
+    { "prefix": "dbpprop",     "uri": "http://dbpedia.org/property/" }
+  ],
+
+  "logging": true,
+  "loggingFile": "access.log",
+
+  "dereference": [
+    {
+      "dereferenceDatasource": "ex:myDatasourceVersion2",
+      "dereferencePath": "/resource/"
+    }
+  ],
+
+  "responseHeaders": [
+    { "headerName": "Access-Control-Allow-Origin",   "headerValue": "*" },
+    { "headerName": "Access-Control-Allow-Headers",  "headerValue": "Accept-Datetime" },
+    { "headerName": "Access-Control-Expose-Headers", "headerValue": "Content-Location,Link,Memento-Datetime" }
+  ],
+
+  "sslKey": "../core/config/certs/localhost-server.key",
+  "sslCert": "../core/config/certs/localhost-server.crt",
+  "sslCa": "../core/config/certs/localhost-ca.crt",
+
+  "router": [
+    {
+      "@id": "preset-qpf:sets/routers.json#myPageRouter",
+      "pageSize": 50
+    }
+  ]
 }
+
 ```
 
-The following sources are supported out of the box:
-- HDT files ([`HdtDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/HdtDatasource.js) with `file` setting)
-- N-Triples documents ([`NTriplesDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/NTriplesDatasource.js) with `url` setting)
-- Turtle documents ([`TurtleDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/TurtleDatasource.js) with `url` setting)
-- N-Quads documents ([`NQuadsDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/NQuadsDatasource.js) with `url` setting)
-- TriG documents ([`TrigDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/TrigDatasource.js) with `url` setting)
-- JSON-LD documents ([`JsonLdDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/JsonLdDatasource.js) with `url` setting)
-- SPARQL endpoints ([`SparqlDatasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/SparqlDatasource.js) with `endpoint` and optionally `defaultGraph` settings)
+## Usage in other packages
 
-Support for new sources is possible by implementing the [`Datasource`](https://github.com/LinkedDataFragments/Server.js/blob/master/lib/datasources/Datasource.js) interface.
+When this module is used in a package other than `@ldf/server-qpf`,
+then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/core.jsonld` must be imported.
 
-### Start the server
-
-After creating a configuration file, execute
-```bash
-$ ldf-server config.json 5000 4
+For example:
 ```
-Here, `5000` is the HTTP port on which the server will listen,
-and `4` the number of worker processes.
-
-Now visit `http://localhost:5000/` in your browser.
-
-### Reload running server
-
-You can reload the server without any downtime
-in order to load a new configuration or version.
-<br>
-In order to do this, you need the process ID of the server master process.
-<br>
-One possibility to obtain this are the server logs:
-```bash
-$ bin/ldf-server config.json
-Master 28106 running.
-Worker 28107 running on http://localhost:3000/.
-```
-
-If you send the server a `SIGHUP` signal:
-```bash
-$ kill -s SIGHUP 28106
-```
-it will reload by replacing its workers.
-
-Note that crashed or killed workers are always replaced automatically.
-
-### _(Optional)_ Set up a reverse proxy
-
-A typical Linked Data Fragments server will be exposed
-on a public domain or subdomain along with other applications.
-Therefore, you need to configure the server to run behind an HTTP reverse proxy.
-<br>
-To set this up, configure the server's public URL in your server's `config.json`:
-```json
 {
-  "title": "My Linked Data Fragments server",
-  "baseURL": "http://data.example.org/",
-  "datasources": { … }
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld"
+  ],
+  "@id": "urn:ldf-server:my",
+
+  "controllers": [
+    {
+      "@id": "ex:myAssetsController",
+      "@type": "AssetsController"
+    },
+    {
+      "@id": "ex:myDereferenceController",
+      "@type": "DereferenceController"
+    },
+    {
+      "@id": "ex:myNotFoundController",
+      "@type": "NotFoundController"
+    }
+  ],
+
+  "datasources": [
+    {
+      "@id": "ex:myIndexDatasource",
+      "@type": "IndexDatasource",
+      "datasourceTitle": "dataset index",
+      "datasourcePath": "/",
+      "hide": true
+    }
+  ],
+
+  "prefixes": [
+    { "prefix": "rdf",         "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+    { "prefix": "rdfs",        "uri": "http://www.w3.org/2000/01/rdf-schema#" },
+    { "prefix": "owl",         "uri": "http://www.w3.org/2002/07/owl#" },
+    { "prefix": "xsd",         "uri": "http://www.w3.org/2001/XMLSchema#" },
+    { "prefix": "hydra",       "uri": "http://www.w3.org/ns/hydra/core#" },
+    { "prefix": "void",        "uri": "http://rdfs.org/ns/void#" }
+  ],
+
+  "routers": [
+    {
+      "@id": "ex:myDatasourceRouter",
+      "@type": "DatasourceRouter"
+    },
+    {
+      "@id": "ex:myPageRouter",
+      "@type": "PageRouter"
+    }
+  ],
+
+  "views": [
+    {
+      "@id": "ex:myErrorHtmlView",
+      "@type": "ErrorHtmlView"
+    },
+    {
+      "@id": "ex:myErrorRdfView",
+      "@type": "ErrorRdfView"
+    },
+    {
+      "@id": "ex:myForbiddenHtmlView",
+      "@type": "ForbiddenHtmlView"
+    },
+    {
+      "@id": "ex:myNotFoundHtmlView",
+      "@type": "NotFoundHtmlView"
+    },
+    {
+      "@id": "ex:myNotFoundRdfView",
+      "@type": "NotFoundRdfView"
+    }
+  ]
+
+  // Same as above...
 }
 ```
-Then configure your reverse proxy to pass requests to your server.
-Here's an example for [nginx](http://nginx.org/):
-```nginx
-server {
-  server_name data.example.org;
-
-  location / {
-    proxy_pass http://127.0.0.1:3000$request_uri;
-    proxy_set_header Host $http_host;
-    proxy_pass_header Server;
-  }
-}
-```
-Change the value `3000` into the port on which your Linked Data Fragments server runs.
-
-If you would like to proxy the data in a subfolder such as `http://example.org/my/data`,
-modify the `baseURL` in your `config.json` to `"http://example.org/my/data"`
-and change `location` from `/` to `/my/data` (excluding a trailing slash).
-
-### _(Optional)_ Running under HTTPS
-
-HTTPS can be enabled in two ways: natively by the server, or through a proxy (explained above).
-
-With native HTTPS, the server will establish the SSL layer. Set the following values in your config file to enable this:
-
-     {
-       "protocol": "https",
-       "ssl": {
-         "keys" : {
-           "key": "./private-key-server.key.pem",
-           "ca": ["./root-ca.crt.pem"],
-           "cert": "./server-certificate.crt.pem"
-        }
-      }
-    }  
-  
-  If `protocol`is not specified, it will derive the protocol from the `baseURL`. Hence, HTTPS can also be enabled as such:
-
-     {
-       "baseURL": "https://data.example.org/",
-       "ssl": {
-         "keys" : {
-           "key": "./private-key-server.key.pem",
-           "ca": ["./root-ca.crt.pem"],
-           "cert": "./server-certificate.crt.pem"
-        }
-      }
-    }  
-
-If you decide to let a proxy handle HTTPS, use this configuration to run the server as `http`, but construct links as `https` (so clients don't break):
-
-     {
-       "protocol": "http",
-       "baseURL": "https://data.example.org/",
-     }  
-
-
-### _(Optional)_ Running in a Docker container
-
-If you want to rapidly deploy the server as a microservice, you can build a [Docker](https://www.docker.com/) container as follows:
-
-```bash
-$ docker build -t ldf-server .
-```
-After that, you can run your newly created container:
-```bash
-$ docker run -p 3000:3000 -t -i --rm -v $(pwd)/config.json:/tmp/config.json ldf-server /tmp/config.json
-```
-
-### _(Optional)_ Host historical version of datasets
-
-You can [enable the Memento protocol](https://github.com/LinkedDataFragments/Server.js/wiki/Configuring-Memento) to offer different versions of an evolving dataset.
 
 ## License
 The Linked Data Fragments server is written by [Ruben Verborgh](http://ruben.verborgh.org/) and colleagues.
