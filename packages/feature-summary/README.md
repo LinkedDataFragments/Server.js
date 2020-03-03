@@ -15,7 +15,7 @@ This package exposes the following config entries:
 
 `@ldf/server-qpf` and `@ldf/preset-qpf` provide default instantiations of `SummaryController`, `SummaryQpfHtmlView`, `SummaryQpfRdfView` and `SummaryRdfView`,
 which means that you don't have to define them in your config file yourself.
-The only thing you still need to do is defining the time gate and its mementos, as shown in the example below.
+The only thing you still need to do is defining the summary directory and the URL on which they should be exposed, as shown in the example below.
 
 Example:
 ```json
@@ -33,7 +33,7 @@ Example:
 ## Usage in other packages
 
 When this module is used in a package other than `@ldf/server-qpf`,
-then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/feature-memento.jsonld` must be imported.
+then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/feature-summary.jsonld` must be imported.
 
 For example:
 ```

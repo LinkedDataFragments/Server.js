@@ -42,7 +42,6 @@
     "@ldf/feature-memento": "2.2.5",
     "@ldf/feature-qpf": "2.2.5",
     "@ldf/feature-summary": "2.2.5",
-    "@ldf/feature-webid": "2.2.5",
     "@ldf/preset-qpf": "2.2.5"
   }
 }
