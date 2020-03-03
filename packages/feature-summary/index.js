@@ -7,8 +7,8 @@ module.exports = {
   },
   views: {
     summary: {
-      'QuadPatternFragmentsHtmlView-Memento': require('./lib/views/summary/QuadPatternFragmentsHtmlView-Summary'),
-      'QuadPatternFragmentsRdfView-Memento': require('./lib/views/summary/QuadPatternFragmentsRdfView-Summary'),
+      'QuadPatternFragmentsHtmlView-Summary': require('./lib/views/summary/QuadPatternFragmentsHtmlView-Summary'),
+      'QuadPatternFragmentsRdfView-Summary': require('./lib/views/summary/QuadPatternFragmentsRdfView-Summary'),
       'SummaryRdfView': require('./lib/views/summary/SummaryRdfView'),
     },
   },

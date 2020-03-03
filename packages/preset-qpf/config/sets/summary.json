@@ -1,0 +1,37 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-qpf/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-summary/^3.0.0/components/context.jsonld"
+  ],
+  "@id": "urn:ldf-server:my",
+
+  "controllers": [
+    {
+      "@id": "preset-qpf:sets/summary.json#mySummaryController",
+      "@type": "SummaryController"
+    }
+  ],
+
+  "views": [
+    {
+      "@id": "preset-qpf:sets/views.json#myQpfHtmlView",
+      "viewExtension": {
+        "@id": "preset-qpf:sets/summary.json#mySummaryQpfHtmlView",
+        "@type": "SummaryQpfHtmlView"
+      }
+    },
+    {
+      "@id": "preset-qpf:sets/views.json#myQpfRdfView",
+      "viewExtension": {
+        "@id": "preset-qpf:sets/summary.json#mySummaryQpfRdfView",
+        "@type": "SummaryQpfRdfView"
+      }
+    },
+    {
+      "@id": "preset-qpf:sets/summary.json#mySummaryRdfView",
+      "@type": "SummaryRdfView"
+    }
+  ]
+}

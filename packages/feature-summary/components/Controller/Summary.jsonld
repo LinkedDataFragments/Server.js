@@ -16,13 +16,23 @@
           "@id": "ldffs:Controller/Summary#directory",
           "comment": "Path to a directory where summaries can be found",
           "range": "xsd:string",
-          "unique": true
+          "unique": true,
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldffs:Controller/Summary#directory",
+            "from": "ldfc:Server"
+          }
         },
         {
           "@id": "ldffs:Controller/Summary#path",
           "comment": "URL matching for summaries",
           "range": "xsd:string",
-          "unique": true
+          "unique": true,
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldffs:Controller/Summary#path",
+            "from": "ldfc:Server"
+          }
         }
       ],
       "constructorArguments": {

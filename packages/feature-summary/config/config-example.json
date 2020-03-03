@@ -1,0 +1,19 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+  "import": "preset-qpf:config-defaults.json",
+
+  "datasources": [
+    {
+      "@id": "ex:myDatasourceVersion1",
+      "@type": "SparqlDatasource",
+      "datasourceTitle": "My SPARQL source",
+      "description": "My datasource with a SPARQL-endpoint back-end",
+      "datasourcePath": "mysparql",
+      "sparqlEndpoint": "https://dbpedia.org/sparql"
+    }
+  ],
+
+  "summaryDir": "../../summaries",
+  "summaryPath": "/summaries/"
+}

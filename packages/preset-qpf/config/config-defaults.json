@@ -11,6 +11,7 @@
     "preset-qpf:sets/memento.json",
     "preset-qpf:sets/prefixes.json",
     "preset-qpf:sets/routers.json",
+    "preset-qpf:sets/summary.json",
     "preset-qpf:sets/views.json"
   ]
 }
