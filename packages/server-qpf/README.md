@@ -3,6 +3,8 @@
 
 A Linked Data Fragments server with Quad Pattern Fragments support.
 
+_This package has been renamed from `ldf-server` to `@ldf/server-qpf`._
+
 ## Motivation
 
 On today's Web, Linked Data is published in different ways,
