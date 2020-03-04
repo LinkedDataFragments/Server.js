@@ -1,6 +1,8 @@
 # Linked Data Fragments Server - SPARQL Datasource
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
+[![npm version](https://badge.fury.io/js/%40ldf%2Fdatasource-sparql.svg)](https://www.npmjs.com/package/@ldf/datasource-sparql)
+
 This module contains a SPARQL datasource for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 It allows SPARQL endpoints to be used as a data proxy.
 

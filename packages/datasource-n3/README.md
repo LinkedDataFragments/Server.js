@@ -1,6 +1,8 @@
 # Linked Data Fragments Server - N3 Datasources
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
+[![npm version](https://badge.fury.io/js/%40ldf%2Fdatasource-n3.svg)](https://www.npmjs.com/package/@ldf/datasource-n3)
+
 This module contains a N3 datasources for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 It allows [N-Quads](https://www.w3.org/TR/n-quads/), [N-Triples](https://www.w3.org/TR/n-triples/), [Trig](https://www.w3.org/TR/trig/) and [Turtle](https://www.w3.org/TR/turtle/) files to be loaded.
 

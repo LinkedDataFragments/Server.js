@@ -1,6 +1,8 @@
 # Linked Data Fragments Server - HDT Datasource
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
+[![npm version](https://badge.fury.io/js/%40ldf%2Fdatasource-hdt.svg)](https://www.npmjs.com/package/@ldf/datasource-hdt)
+
 This module contains a HDT datasource for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 It allows HDT files to be loaded.
 

@@ -1,6 +1,8 @@
 # Linked Data Fragments Server - Summary
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
+[![npm version](https://badge.fury.io/js/%40ldf%2Ffeature-summary.svg)](https://www.npmjs.com/package/@ldf/feature-summary)
+
 This module adds summaries to datasources based on turtle files corresponding to the datasource name.
 
 _This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._

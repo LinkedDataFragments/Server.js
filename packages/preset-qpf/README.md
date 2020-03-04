@@ -1,6 +1,8 @@
 # Linked Data Fragments Server - Preset Quad Pattern Fragments
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
+[![npm version](https://badge.fury.io/js/%40ldf%2Fpreset-qpf.svg)](https://www.npmjs.com/package/@ldf/preset-qpf)
+
 This package provides configuration presets for Quad Pattern Fragments servers.
 
 This package should be used if you want to create your own LDF server configuration,

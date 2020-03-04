@@ -1,6 +1,7 @@
 # Linked Data Fragments Server - Quad Pattern Fragments
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
+[![npm version](https://badge.fury.io/js/%40ldf%2Fserver.svg)](https://www.npmjs.com/package/@ldf/server)
 [![Docker Pulls](https://img.shields.io/docker/pulls/linkeddatafragments/server.svg)](https://hub.docker.com/r/linkeddatafragments/server/)
 
 A Linked Data Fragments server with Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)) support.

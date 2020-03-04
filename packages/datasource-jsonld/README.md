@@ -1,6 +1,8 @@
 # Linked Data Fragments Server - JSON-LD Datasource
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
+[![npm version](https://badge.fury.io/js/%40ldf%2Fdatasource-jsonld.svg)](https://www.npmjs.com/package/@ldf/datasource-jsonld)
+
 This module contains a JSON-LD datasource for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 It allows JSON-LD files to be loaded.
 

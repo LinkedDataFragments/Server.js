@@ -1,6 +1,8 @@
 # Linked Data Fragments Server - Core
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
+[![npm version](https://badge.fury.io/js/%40ldf%2Fcore.svg)](https://www.npmjs.com/package/@ldf/core)
+
 This package provides core classes with shared functionality for Linked Data Fragments servers.
 
 This package should be used if you want to create your own LDF server configuration or LDF server module.

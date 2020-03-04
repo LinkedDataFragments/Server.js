@@ -1,6 +1,8 @@
 # Linked Data Fragments Server - Composite Datasource
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
+[![npm version](https://badge.fury.io/js/%40ldf%2Fdatasource-composite.svg)](https://www.npmjs.com/package/@ldf/datasource-composite)
+
 This module contains a composite datasource for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 It delegates queries to an sequence of other datasources.
 
