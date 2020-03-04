@@ -4,18 +4,18 @@
 This package provides core classes for Linked Data Fragments servers.
 
 This package should be used if you want to create your own LDF server configuration or LDF server module.
-If you just want to run a QPF server, you can make use of [`@ldf/server-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server-qpf) instead.
+If you just want to run a QPF server, you can make use of [`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server) instead.
 
 _This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
 
-## Usage in `@ldf/server-qpf`
+## Usage in `@ldf/server`
 
 This package exposes the the following context entries:
 
 **Controllers:**
-* `AssetsController`: Responds to requests for assets. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` controller value._
-* `DereferenceController`: Responds to dereferencing requests. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` controller value._
-* `NotFoundController`: Responds to requests that cannot be resolved. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` controller value._
+* `AssetsController`: Responds to requests for assets. This is enabled by default in `@ldf/server`. _Should be used as `@type` controller value._
+* `DereferenceController`: Responds to dereferencing requests. This is enabled by default in `@ldf/server`. _Should be used as `@type` controller value._
+* `NotFoundController`: Responds to requests that cannot be resolved. This is enabled by default in `@ldf/server`. _Should be used as `@type` controller value._
 * `Controller`: An abstract controller. _Should be used as `extends` value when creating new controllers._
 * `ControllerExtension`: An abstract controller extension. _Should be used as `extends` value when creating new controller extensions._
 * `assetsDir`: Path to a directory where assets can be found. _Should be used as key in a `Server` config._
@@ -26,7 +26,7 @@ This package exposes the the following context entries:
 
 **Datasources:**
 * `EmptyDatasource`: An empty data source doesn't contain any quads. _Should be used as `@type` datasource value._
-* `IndexDatasource`: A datasource that lists other data sources. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` datasource value._
+* `IndexDatasource`: A datasource that lists other data sources. This is enabled by default in `@ldf/server`. _Should be used as `@type` datasource value._
 * `MemoryDatasource`: An abstract in-memory datasource. _Should be used as `extends` value when creating new in-memory datasources._
 * `Datasource`: An abstract datasource. _Should be used as `extends` value when creating new datasources._
 * `datasourceTitle`: The title of a datasource. _Should be used as key in a datasource._
@@ -43,18 +43,18 @@ This package exposes the the following context entries:
 * `datasourceUrl`: The dataset file URL from the baseURL. _Should be used as key in a memory datasource._
 
 **Routers:**
-* `DatasourceRouter`: Routes URLs to data sources. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` router value._
-* `PageRouter`: Routes page numbers to offsets. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` router value._
+* `DatasourceRouter`: Routes URLs to data sources. This is enabled by default in `@ldf/server`. _Should be used as `@type` router value._
+* `PageRouter`: Routes page numbers to offsets. This is enabled by default in `@ldf/server`. _Should be used as `@type` router value._
 * `Router`: An abstract router. _Should be used as `extends` value when creating new routers._
 * `pageSize`: The triple page size, which defaults to 100. _Should be used as key in a page router._
 
 **Views:**
-* `ErrorHtmlView`: Represents a 500 response in HTML. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
-* `ForbiddenHtmlView`: Represents a 401 response in HTML. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
-* `NotFoundHtmlView`: Represents a 404 response in HTML. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
-* `ErrorRdfView`: Represents a 500 response in RDF. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
-* `NotFoundRdfView`: Represents a 404 response in RDF. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
-* `ViewCollection`: Provides access to content-negotiated views by name. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` view value._
+* `ErrorHtmlView`: Represents a 500 response in HTML. This is enabled by default in `@ldf/server`. _Should be used as `@type` view value._
+* `ForbiddenHtmlView`: Represents a 401 response in HTML. This is enabled by default in `@ldf/server`. _Should be used as `@type` view value._
+* `NotFoundHtmlView`: Represents a 404 response in HTML. This is enabled by default in `@ldf/server`. _Should be used as `@type` view value._
+* `ErrorRdfView`: Represents a 500 response in RDF. This is enabled by default in `@ldf/server`. _Should be used as `@type` view value._
+* `NotFoundRdfView`: Represents a 404 response in RDF. This is enabled by default in `@ldf/server`. _Should be used as `@type` view value._
+* `ViewCollection`: Provides access to content-negotiated views by name. This is enabled by default in `@ldf/server`. _Should be used as `@type` view value._
 * `HtmlView`: An abstract HTML view. _Should be used as `extends` value when creating new HTML views._
 * `RdfView`: An abstract RDF view. _Should be used as `extends` value when creating new RDF views._
 * `View`: An abstract view. _Should be used as `extends` value when creating new views._
@@ -64,7 +64,7 @@ This package exposes the the following context entries:
 * `viewHeader`: The view header title. _Should be used as key in an HTML view._
 
 **Other:**
-* `Server`: An HTTP server that provides access to Linked Data Fragments. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
+* `Server`: An HTTP server that provides access to Linked Data Fragments. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
 * `title`: The server name. _Should be used as key in a `Server` config._
 * `baseURL`: The base URL path for the server. _Should be used as key in a `Server` config._
 * `port`: The port the server will bind with. _Should be used as key in a `Server` config._
@@ -82,21 +82,21 @@ This package exposes the the following context entries:
 * `sslCa`: Path to an SSL certificate authority. _Should be used as key in a `Server` config._
 * `logging`: If the server should perform logging, defaults to `false`. _Should be used as key in a `Server` config._
 * `loggingFile`: Path to a log file. _Should be used as key in a `Server` config._
-* `routers`: Routers for the server. This is configured by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
-* `controllers`: Controllers for the server. This is configured by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
-* `viewCollection`: Override the default view collection. This is configured by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
-* `views`: Views for the server. This is configured by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
-* `UrlData`: A data object class for preset URL information. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
-* `urlData`: The UrlData helper object. This is enabled by default in `@ldf/server-qpf`. _Should be used as key in a `Server` config._
+* `routers`: Routers for the server. This is configured by default in `@ldf/server`. _Should be used as key in a `Server` config._
+* `controllers`: Controllers for the server. This is configured by default in `@ldf/server`. _Should be used as key in a `Server` config._
+* `viewCollection`: Override the default view collection. This is configured by default in `@ldf/server`. _Should be used as key in a `Server` config._
+* `views`: Views for the server. This is configured by default in `@ldf/server`. _Should be used as key in a `Server` config._
+* `UrlData`: A data object class for preset URL information. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
+* `urlData`: The UrlData helper object. This is enabled by default in `@ldf/server`. _Should be used as key in a `Server` config._
 
-`@ldf/server-qpf` and `@ldf/preset-qpf` provide default instantiations of all core classes,
+`@ldf/server` and `@ldf/preset-qpf` provide default instantiations of all core classes,
 which means that you don't have to define them in your config file yourself.
 The only thing you still need to do is defining different optional parameters, as shown below.
 
 Example:
 ```json
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server/^3.0.0/components/context.jsonld",
   "@id": "urn:ldf-server:my",
   "import": "preset-qpf:config-defaults.json",
 
@@ -181,7 +181,7 @@ Example:
 
 ## Usage in other packages
 
-When this module is used in a package other than `@ldf/server-qpf`,
+When this module is used in a package other than `@ldf/server`,
 then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/core.jsonld` must be imported.
 
 For example:

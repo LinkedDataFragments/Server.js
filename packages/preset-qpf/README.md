@@ -5,7 +5,7 @@ This package provides configuration presets for Quad Pattern Fragments servers.
 
 This package should be used if you want to create your own LDF server configuration,
 and include the default QPF configurations.
-If you just want to run a QPF server, you can make use of [`@ldf/server-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server-qpf) instead.
+If you just want to run a QPF server, you can make use of [`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server) instead.
 
 Concretely, it configures the following packages:
 
@@ -23,7 +23,7 @@ _This package is a [Linked Data Fragments Server module](https://github.com/Link
 
 ## Usage
 
-When this module is used in a package other than `@ldf/server-qpf`,
+When this module is used in a package other than `@ldf/server`,
 then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/preset-qpf.jsonld` must be imported.
 
 The following configs will become available for import:

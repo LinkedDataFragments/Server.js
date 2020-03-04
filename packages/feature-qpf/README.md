@@ -5,21 +5,21 @@ This module adds Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http:
 
 _This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
 
-## Usage in `@ldf/server-qpf`
+## Usage in `@ldf/server`
 
 This package exposes the following config entries:
 * `QuadPatternFragmentsController`: A QuadPatternFragmentsController responds to requests for TPFs and QPFs. _Should be used as controller `@type` value._
 * `QuadPatternRouter`: A QuadPatternRouter routes basic quad patterns. _Should be used as router `@type` value._
 * `QpfHtmlView`: A QuadPatternFragmentsRdfView represents a TPF or QPF in HTML. _Should be used as view `@type` value._
 * `QpfRdfView`: A QuadPatternFragmentsRdfView represents a TPF or QPF in RDF. _Should be used as view `@type` value._
-* `qpfControllerExtension` or `qpfControllerExtensions`: One or more optional controller extensions for a QPF controller. See [`MementoControllerExtension`](https://github.com/LinkedDataFragments/Server.js/tree/release/3/packages/feature-memento#usage-in-ldfserver-qpf) as an example. _Should be used as a field on a `QuadPatternFragmentsController`._
+* `qpfControllerExtension` or `qpfControllerExtensions`: One or more optional controller extensions for a QPF controller. See [`MementoControllerExtension`](https://github.com/LinkedDataFragments/Server.js/tree/release/3/packages/feature-memento#usage-in-ldfserver) as an example. _Should be used as a field on a `QuadPatternFragmentsController`._
 
-`@ldf/server-qpf` and `@ldf/preset-qpf` provide default instantiations of `QuadPatternFragmentsController`, `QuadPatternRouter`, `QpfHtmlView` and `QpfRdfView`,
+`@ldf/server` and `@ldf/preset-qpf` provide default instantiations of `QuadPatternFragmentsController`, `QuadPatternRouter`, `QpfHtmlView` and `QpfRdfView`,
 which means that no configuration is required here.
 
 ## Usage in other packages
 
-When this module is used in a package other than `@ldf/server-qpf`,
+When this module is used in a package other than `@ldf/server`,
 then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/datasource-sparql.jsonld` must be imported.
 
 For example:

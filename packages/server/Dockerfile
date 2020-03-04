@@ -12,7 +12,7 @@ RUN apt-get update && \
     cd ${dir} && npm install && \
     apt-get remove -y g++ make python && apt-get autoremove -y && \
     rm -rf /var/cache/apt/archives
-
+w
 # Expose the default port
 EXPOSE 3000
 

@@ -64,12 +64,12 @@ Link: <http://dbpedia.org/page/English>; rel="original", <http://dbpedia.memento
 Memento-Datetime: Wed, 15 Apr 2015 00:00:00 GMT
 ```
 
-## Usage in `@ldf/server-qpf`
+## Usage in `@ldf/server`
 
 This package exposes the following config entries:
-* `TimegateController`: A TimegateController responds to time gate requests. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
-* `MementoControllerExtension`: A MementoControllerExtension extends Quad Pattern Fragments responses with Memento headers. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
-* `MementoQpfHtmlView`: A MementoHtmlViewExtension extends the Quad Pattern Fragments HTML view with Memento details. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
+* `TimegateController`: A TimegateController responds to time gate requests. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
+* `MementoControllerExtension`: A MementoControllerExtension extends Quad Pattern Fragments responses with Memento headers. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
+* `MementoQpfHtmlView`: A MementoHtmlViewExtension extends the Quad Pattern Fragments HTML view with Memento details. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
 * `timegateBaseUrl`: The base URL for all Memento time gates. _Should be used as key in a `Server` config._
 * `mementos`: One or more Memento configurations. _Should be used as key in a `Server` config._
 * `timegatePath`: URL path for a Memento within a time gate. _Should be used as key in memento value._
@@ -79,14 +79,14 @@ This package exposes the following config entries:
 * `versionEnd`: The end datetime of a given version. _Should be used as key in memento version value._
 * `mementoBaseURL`: An optional external memento base URL to override. _Should be used as key in memento version value._
 
-`@ldf/server-qpf` and `@ldf/preset-qpf` provide default instantiations of `TimegateController`, `MementoControllerExtension` and `MementoQpfHtmlView`,
+`@ldf/server` and `@ldf/preset-qpf` provide default instantiations of `TimegateController`, `MementoControllerExtension` and `MementoQpfHtmlView`,
 which means that you don't have to define them in your config file yourself.
 The only thing you still need to do is defining the time gate and its mementos, as shown in the example below.
 
 Example:
 ```json
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server/^3.0.0/components/context.jsonld",
   "@id": "urn:ldf-server:my",
   "import": "preset-qpf:config-defaults.json",
 
@@ -134,7 +134,7 @@ Example:
 
 ## Usage in other packages
 
-When this module is used in a package other than `@ldf/server-qpf`,
+When this module is used in a package other than `@ldf/server`,
 then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/feature-memento.jsonld` must be imported.
 
 For example:

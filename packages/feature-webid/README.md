@@ -4,7 +4,7 @@
 This module adds a controller extension that only allows authenticated client with WebID's to perform requests.
 This extension will only be active when the server is running in [https-mode](https://github.com/LinkedDataFragments/Server.js/wiki/WebID-authentication).
 
-This package is **not** included by default in `@ldf/server-qpf` and `@ldf/preset-qpf`.
+This package is **not** included by default in `@ldf/server` and `@ldf/preset-qpf`.
 
 _This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
 

@@ -6,7 +6,7 @@ It delegates queries to an sequence of other datasources.
 
 _This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
 
-## Usage in `@ldf/server-qpf`
+## Usage in `@ldf/server`
 
 This package exposes the following config entries:
 * `CompositeDatasource`: A composite datasource that requires at least one `compose` field. _Should be used as `@type` value._
@@ -15,7 +15,7 @@ This package exposes the following config entries:
 Example:
 ```json
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server/^3.0.0/components/context.jsonld",
   "@id": "urn:ldf-server:my",
   "import": "preset-qpf:config-defaults.json",
 
@@ -50,7 +50,7 @@ Example:
 
 ## Usage in other packages
 
-When this module is used in a package other than `@ldf/server-qpf`,
+When this module is used in a package other than `@ldf/server`,
 then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/datasource-composite.jsonld` must be imported.
 
 For example:

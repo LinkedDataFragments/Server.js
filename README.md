@@ -37,7 +37,7 @@ An example server is available at [data.linkeddatafragments.org](http://data.lin
 ## Quick Start
 
 The easiest way to start using this server is via
-[`@ldf/server-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server-qpf),
+[`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server),
 the default configuration of an LDF server with Quad/Triple Pattern Fragments support. _(previously known as `ldf-server`)_
 
 ### Install the server
@@ -46,7 +46,7 @@ This server requires [Node.js](http://nodejs.org/) 10.0 or higher
 and is tested on OSX and Linux.
 To install, execute:
 ```bash
-$ [sudo] npm install -g @ldf/server-qpf
+$ [sudo] npm install -g @ldf/server
 ```
 
 ### Configure the data sources
@@ -57,7 +57,7 @@ For example, this configuration uses an [HDT file](http://www.rdfhdt.org/)
 and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
 ```json
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server/^3.0.0/components/context.jsonld",
   "@id": "urn:ldf-server:my",
   "import": "preset-qpf:config-defaults.json",
 
@@ -84,13 +84,13 @@ and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
 }
 ```
 
-_More details on how to configure this server can be found in the README of [`@ldf/server-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server-qpf)._
+_More details on how to configure this server can be found in the README of [`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server)._
 
 ### Start the server
 
 After creating a configuration file, execute
 ```bash
-$ ldf-server-qpf config.json 5000 4
+$ ldf-server config.json 5000 4
 ```
 Here, `5000` is the HTTP port on which the server will listen,
 and `4` the number of worker processes.
@@ -104,7 +104,7 @@ We manage this repository as a [monorepo](https://github.com/babel/babel/blob/ma
 using [Lerna](https://lernajs.io/).
 
 The following modules are available:
-* [`@ldf/server-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server-qpf): An LDF server with Quad/Triple Pattern Fragments support.
+* [`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server): An LDF server with Quad/Triple Pattern Fragments support.
 * [`@ldf/preset-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/preset-qpf): Configuration presets for Quad/Triple Pattern Fragments servers.
 * [`@ldf/core`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/core): Core package of LDF servers.
 * [`@ldf/feature-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-qpf): Feature that enables Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)).
@@ -119,7 +119,7 @@ The following modules are available:
 
 These modules can be used to configure your own LDF server with the features you want.
 As an example on how to make such a server,
-you can have a look at [`@ldf/server-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server-qpf),
+you can have a look at [`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server),
 which is a default server configuration that has all possible features enabled.
 
 ## Development Setup

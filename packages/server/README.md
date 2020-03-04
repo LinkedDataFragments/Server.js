@@ -1,9 +1,9 @@
 # Linked Data Fragments Server - Quad Pattern Fragments
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
-A Linked Data Fragments server with Quad Pattern Fragments support.
+A Linked Data Fragments server with Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)) support.
 
-_This package has been renamed from `ldf-server` to `@ldf/server-qpf`._
+_This package has been renamed from `ldf-server` to `@ldf/server`._
 
 _This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
 
@@ -38,7 +38,7 @@ This server requires [Node.js](http://nodejs.org/) 10.0 or higher
 and is tested on OSX and Linux.
 To install, execute:
 ```bash
-$ [sudo] npm install -g @ldf/server-qpf
+$ [sudo] npm install -g @ldf/server
 ```
 
 ## Use the server
@@ -51,7 +51,7 @@ For example, this configuration uses an [HDT file](http://www.rdfhdt.org/)
 and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
 ```json
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server/^3.0.0/components/context.jsonld",
   "@id": "urn:ldf-server:my",
   "import": "preset-qpf:config-defaults.json",
 
@@ -93,7 +93,7 @@ Support for new sources is possible by creating a new module implementing the [`
 
 After creating a configuration file, execute
 ```bash
-$ ldf-server-qpf config.json 5000 4
+$ ldf-server config.json 5000 4
 ```
 Here, `5000` is the HTTP port on which the server will listen,
 and `4` the number of worker processes.
@@ -109,7 +109,7 @@ In order to do this, you need the process ID of the server master process.
 <br>
 One possibility to obtain this are the server logs:
 ```bash
-$ bin/ldf-server-qpf config.json
+$ bin/ldf-server config.json
 Master 28106 running.
 Worker 28107 running on http://localhost:3000/.
 ```

@@ -5,24 +5,24 @@ This module adds summaries to datasources based on turtle files corresponding to
 
 _This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
 
-## Usage in `@ldf/server-qpf`
+## Usage in `@ldf/server`
 
 This package exposes the following config entries:
-* `SummaryController`: Responds to requests for summaries. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
-* `SummaryQpfHtmlView`: Extends the Quad Pattern Fragments HTML view with a summary link. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
-* `SummaryQpfRdfView`: Extends the Quad Pattern Fragments RDF view with a summary link. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
-* `SummaryRdfView`: Represents a data summary in RDF. This is enabled by default in `@ldf/server-qpf`. _Should be used as `@type` value._
+* `SummaryController`: Responds to requests for summaries. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
+* `SummaryQpfHtmlView`: Extends the Quad Pattern Fragments HTML view with a summary link. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
+* `SummaryQpfRdfView`: Extends the Quad Pattern Fragments RDF view with a summary link. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
+* `SummaryRdfView`: Represents a data summary in RDF. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
 * `summaryDir`: Path to a directory where summaries can be found. _Should be used as key in a `Server` config or `SummaryController`._
 * `summaryPath`: URL path for summaries. _Should be used as key in a `Server` config or `SummaryController`._
 
-`@ldf/server-qpf` and `@ldf/preset-qpf` provide default instantiations of `SummaryController`, `SummaryQpfHtmlView`, `SummaryQpfRdfView` and `SummaryRdfView`,
+`@ldf/server` and `@ldf/preset-qpf` provide default instantiations of `SummaryController`, `SummaryQpfHtmlView`, `SummaryQpfRdfView` and `SummaryRdfView`,
 which means that you don't have to define them in your config file yourself.
 The only thing you still need to do is defining the summary directory and the URL on which they should be exposed, as shown in the example below.
 
 Example:
 ```json
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server-qpf/^3.0.0/components/context.jsonld",
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server/^3.0.0/components/context.jsonld",
   "@id": "urn:ldf-server:my",
   "import": "preset-qpf:config-defaults.json",
 
@@ -34,7 +34,7 @@ Example:
 
 ## Usage in other packages
 
-When this module is used in a package other than `@ldf/server-qpf`,
+When this module is used in a package other than `@ldf/server`,
 then the JSON-LD context `https://linkedsoftwaredependencies.org/contexts/@ldf/feature-summary.jsonld` must be imported.
 
 For example:
