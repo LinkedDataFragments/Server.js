@@ -41,6 +41,7 @@ This package exposes the the following context entries:
 * `licenseUrl`: A link to the license of the datasource. _Should be used as key in a datasource._
 * `copyright`: The copyright statement of the datasource. _Should be used as key in a datasource._
 * `homepage`: The homepage url of the datasource. _Should be used as key in a datasource._
+* `quads`: If quad patterns are supported, otherwise only triple patterns are supported. Defaults to `true`. _Should be used as key in a datasource._
 * `file`: The dataset file path. _Should be used as key in a memory datasource._
 * `datasourceUrl`: The dataset file URL from the baseURL. _Should be used as key in a memory datasource._
 

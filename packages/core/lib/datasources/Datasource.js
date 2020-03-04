@@ -38,6 +38,7 @@ class Datasource extends EventEmitter {
       this._queryGraphReplacements[''] = 'urn:ldf:emptyGraph';
       this._queryGraphReplacements[options.graph] = '';
     }
+    this._supportsQuads = 'quads' in options ? options.quads : true;
 
     // Whether the datasource can be queried
     this.initialized = false;
@@ -51,6 +52,8 @@ class Datasource extends EventEmitter {
     }
     else
       this.supportedFeatures = {};
+    if (!this._supportsQuads)
+      delete this.supportedFeatures.quadPattern;
     Object.freeze(this.supportedFeatures);
   }
 

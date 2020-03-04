@@ -79,6 +79,13 @@
           "comment": "The homepage url of the datasource",
           "range": "xsd:string",
           "unique": true
+        },
+        {
+          "@id": "ldfc:Datasource#quads",
+          "comment": "If quad patterns are supported, otherwise only triple patterns are supported",
+          "range": "xsd:boolean",
+          "unique": true,
+          "default": true
         }
       ],
       "constructorArguments": {
@@ -131,6 +138,10 @@
           {
             "keyRaw": "homepage",
             "value": "ldfc:Datasource#homepage"
+          },
+          {
+            "keyRaw": "quads",
+            "value": "ldfc:Datasource#quads"
           }
         ]
       }
