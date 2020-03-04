@@ -193,6 +193,11 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
+"@hutson/parse-repository-url@^3.0.0":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
+  integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.0.0.tgz#10602de5570baea82f8afbfa2630b24e7a8cfe5b"
@@ -1264,6 +1269,11 @@ array-unique@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/array-unique/-/array-unique-0.3.2.tgz#a894b75d4bc4f6cd679ef3244a9fd8f46ae2d428"
   integrity sha1-qJS3XUvE9s1nnvMkSp/Y9Gri1Cg=
+
+arrayify-stream@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/arrayify-stream/-/arrayify-stream-1.0.0.tgz#9e8e113d43325c3a44e965c59b5b89d962b9a37f"
+  integrity sha512-RP80ep76Lbew2wWN5ogrl2NluTnBVYYh2K3NNCcWfcmmUB7nBcNBctiJeEZAixp3I1vQ9H88iHZ9MbHSdkuupQ==
 
 arrify@^1.0.1:
   version "1.0.1"
@@ -2857,6 +2867,16 @@ get-pkg-repo@^1.0.0:
     parse-github-repo-url "^1.3.0"
     through2 "^2.0.0"
 
+get-pkg-repo@^4.0.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/get-pkg-repo/-/get-pkg-repo-4.1.0.tgz#bd2b109e297af8ec541ba271607aab439f9a8610"
+  integrity sha512-BHJovsEz9igoxU9Idfa9XjKr0OuAfg6/wInYegP0/M3efsdVtKo1DipPebwnTZXtL9gzaPLvJv74J/U68yiiMg==
+  dependencies:
+    "@hutson/parse-repository-url" "^3.0.0"
+    hosted-git-info "^2.1.4"
+    meow "^5.0.0"
+    through2 "^2.0.0"
+
 get-port@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/get-port/-/get-port-4.2.0.tgz#e37368b1e863b7629c43c5a323625f95cf24b119"
@@ -2897,6 +2917,17 @@ git-raw-commits@2.0.0:
     split2 "^2.0.0"
     through2 "^2.0.0"
 
+git-raw-commits@^2.0.0:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/git-raw-commits/-/git-raw-commits-2.0.3.tgz#f040e67b8445962d4d168903a9e84c4240c17655"
+  integrity sha512-SoSsFL5lnixVzctGEi2uykjA7B5I0AhO9x6kdzvGRHbxsa6JSEgrgy1esRKsfOKE1cgyOJ/KDR2Trxu157sb8w==
+  dependencies:
+    dargs "^4.0.1"
+    lodash.template "^4.0.2"
+    meow "^5.0.0"
+    split2 "^2.0.0"
+    through2 "^3.0.0"
+
 git-remote-origin-url@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/git-remote-origin-url/-/git-remote-origin-url-2.0.0.tgz#5282659dae2107145a11126112ad3216ec5fa65f"
@@ -2905,7 +2936,7 @@ git-remote-origin-url@^2.0.0:
     gitconfiglocal "^1.0.0"
     pify "^2.3.0"
 
-git-semver-tags@^2.0.3:
+git-semver-tags@^2.0.0, git-semver-tags@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/git-semver-tags/-/git-semver-tags-2.0.3.tgz#48988a718acf593800f99622a952a77c405bfa34"
   integrity sha512-tj4FD4ww2RX2ae//jSrXZzrocla9db5h0V7ikPl1P/WwoZar9epdUhwR7XHXSgc+ZkNq72BEEerqQuicoEQfzA==
@@ -4068,6 +4099,17 @@ make-fetch-happen@^5.0.0:
     promise-retry "^1.1.1"
     socks-proxy-agent "^4.0.0"
     ssri "^6.0.0"
+
+manual-git-changelog@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/manual-git-changelog/-/manual-git-changelog-1.0.1.tgz#63ce94f6d3ca4611b954bbc7a6921e4f7baad837"
+  integrity sha512-sORVeVpUtnEuE59icgPqs0AzwgWJjTjSUy1RZ4VrAMOmHQaRh2L9nFCA/NRkvI4b7WbXMGt98NuI8dgOIFNSyA==
+  dependencies:
+    arrayify-stream "^1.0.0"
+    get-pkg-repo "^4.0.0"
+    git-raw-commits "^2.0.0"
+    git-semver-tags "^2.0.0"
+    minimist "^1.2.0"
 
 map-cache@^0.2.2:
   version "0.2.2"

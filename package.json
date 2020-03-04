@@ -12,6 +12,7 @@
     "coveralls": "^3.0.9",
     "eslint": "^3.4.0",
     "lerna": "^3.4.0",
+    "manual-git-changelog": "^1.0.1",
     "mocha": "^5.2.0",
     "nyc": "^15.0.0",
     "pre-commit": "^1.1.3",
@@ -33,6 +34,7 @@
     "clean": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules",
     "publish": "lerna publish",
     "publish-bare": "lerna exec -- npm publish --silent",
-    "postinstall": "lerna run prepare"
+    "postinstall": "lerna run prepare",
+    "version": "manual-git-changelog onversion"
   }
 }
