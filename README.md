@@ -7,7 +7,7 @@
 [![Docker Automated Build](https://img.shields.io/docker/automated/linkeddatafragments/server.js.svg)](https://hub.docker.com/r/linkeddatafragments/server.js/)
 [![DOI](https://zenodo.org/badge/16891600.svg)](https://zenodo.org/badge/latestdoi/16891600)
 
-This repository contains modules for [Linked Data Fragments (LDF)](https://linkeddatafragments.org/) Servers.
+This repository contains modules for [Linked Data Fragments (LDF)](https://linkeddatafragments.org/) servers.
 
 ## Motivation
 
@@ -37,8 +37,7 @@ An example server is available at [data.linkeddatafragments.org](http://data.lin
 ## Quick Start
 
 The easiest way to start using this server is via
-[`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server),
-the default configuration of an LDF server with Quad/Triple Pattern Fragments support. _(previously known as `ldf-server`)_
+[`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server). _(previously known as `ldf-server`)_
 
 ### Install the server
 
@@ -104,9 +103,9 @@ We manage this repository as a [monorepo](https://github.com/babel/babel/blob/ma
 using [Lerna](https://lernajs.io/).
 
 The following modules are available:
+* [`@ldf/core`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/core): Shared functionality for LDF servers.
 * [`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server): An LDF server with Quad/Triple Pattern Fragments support.
 * [`@ldf/preset-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/preset-qpf): Configuration presets for Quad/Triple Pattern Fragments servers.
-* [`@ldf/core`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/core): Core package of LDF servers.
 * [`@ldf/feature-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-qpf): Feature that enables Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)).
 * [`@ldf/feature-summary`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-summary): Feature that adds summaries to datasources.
 * [`@ldf/feature-memento`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-memento): Feature that enables datetime negotiation using the [Memento Protocol](http://mementoweb.org/about/).
