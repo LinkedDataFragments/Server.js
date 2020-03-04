@@ -4,6 +4,8 @@
 This module contains a N3 datasources for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 It allows [N-Quads](https://www.w3.org/TR/n-quads/), [N-Triples](https://www.w3.org/TR/n-triples/), [Trig](https://www.w3.org/TR/trig/) and [Turtle](https://www.w3.org/TR/turtle/) files to be loaded.
 
+_This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
+
 ## Usage in `@ldf/server-qpf`
 
 This package exposes the following config entries:

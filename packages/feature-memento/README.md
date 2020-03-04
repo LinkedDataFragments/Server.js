@@ -5,6 +5,8 @@ This module adds support for the [Memento Protocol](http://mementoweb.org/about/
 If your Linked Data source evolve over time and has multiple versions, it makes access and query across the various versions straightforward.
 To enable the [Memento Protocol](http://mementoweb.org/about/), follow the guide below.
 
+_This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
+
 ## Memento basics
 
 Any data source can be configured as a Memento resource, meaning it represents a prior version of an existing data source.

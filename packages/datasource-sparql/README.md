@@ -4,6 +4,8 @@
 This module contains a SPARQL datasource for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 It allows SPARQL endpoints to be used as a data proxy.
 
+_This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
+
 ## Usage in `@ldf/server-qpf`
 
 This package exposes the following config entries:

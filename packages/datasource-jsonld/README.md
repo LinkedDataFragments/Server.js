@@ -4,6 +4,8 @@
 This module contains a JSON-LD datasource for the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 It allows JSON-LD files to be loaded.
 
+_This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
+
 ## Usage in `@ldf/server-qpf`
 
 This package exposes the following config entries:

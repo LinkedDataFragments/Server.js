@@ -19,6 +19,8 @@ Concretely, it configures the following packages:
 * [`@ldf/datasource-sparql`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-sparql): Datasource that allows SPARQL endpoints to be used as a data proxy.
 * [`@ldf/datasource-composite`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-composite): Datasource that delegates queries to an sequence of other datasources.
 
+_This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
+
 ## Usage
 
 When this module is used in a package other than `@ldf/server-qpf`,

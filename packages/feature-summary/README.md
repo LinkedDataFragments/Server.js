@@ -3,6 +3,8 @@
 
 This module adds summaries to datasources based on turtle files corresponding to the datasource name.
 
+_This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
+
 ## Usage in `@ldf/server-qpf`
 
 This package exposes the following config entries:

@@ -6,6 +6,8 @@ This extension will only be active when the server is running in [https-mode](ht
 
 This package is **not** included by default in `@ldf/server-qpf` and `@ldf/preset-qpf`.
 
+_This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
+
 ## Usage in other packages
 
 When this module is used in a package`,

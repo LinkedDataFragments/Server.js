@@ -5,6 +5,8 @@ A Linked Data Fragments server with Quad Pattern Fragments support.
 
 _This package has been renamed from `ldf-server` to `@ldf/server-qpf`._
 
+_This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
+
 ## Motivation
 
 On today's Web, Linked Data is published in different ways,
@@ -72,7 +74,7 @@ and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
       "datasourcePath": "dbpedia-sparql",
       "sparqlEndpoint": "https://dbpedia.org/sparql"
     }
-  ],
+  ]
 }
 ```
 

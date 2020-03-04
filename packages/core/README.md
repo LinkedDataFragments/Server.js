@@ -6,6 +6,8 @@ This package provides core classes for Linked Data Fragments servers.
 This package should be used if you want to create your own LDF server configuration or LDF server module.
 If you just want to run a QPF server, you can make use of [`@ldf/server-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server-qpf) instead.
 
+_This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
+
 ## Usage in `@ldf/server-qpf`
 
 This package exposes the the following context entries:
