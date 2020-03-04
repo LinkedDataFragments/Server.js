@@ -1,11 +1,18 @@
+sudo: required
+services:
+  - docker
 language: node_js
-node_js:
- - "10"
- - "12"
+matrix:
+  include:
+    - node_js: '10'
+    - node_js: '12'
+    - node_js: 'node'
+      env: DOCUMENTATION_BUILD=true DOCKER_BUILD=true
 install: yarn install --pure-lockfile
 script:
   - yarn run lint
   - yarn test
+  - if [ "$DOCKER_BUILD" = "true" ]; then ( sh -c "`curl -fsSl https://raw.githubusercontent.com/rubensworks/lerna-docker/master/install.sh`" && ~/.lerna-docker/bin/lerna-docker linkeddatafragments build ) fi
 after_success:
   - yarn run coveralls
 env:
@@ -20,3 +27,20 @@ cache:
   yarn: true
   directories:
     - node_modules
+deploy:
+  - provider: script
+    skip-cleanup: true
+    script: ~/.lerna-docker/bin/lerna-docker linkeddatafragments push
+    on:
+      tags: false
+      branch: master
+      node_js: "node"
+      os: "linux"
+  - provider: script
+    skip-cleanup: true
+    script: ~/.lerna-docker/bin/lerna-docker linkeddatafragments push
+    on:
+      tags: true
+      all_branches: true
+      node_js: "node"
+      os: "linux"

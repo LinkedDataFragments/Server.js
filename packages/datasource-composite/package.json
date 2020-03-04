@@ -18,7 +18,6 @@
   "files": [
     "components",
     "lib/**/*.js",
-    "bin/**/*.js",
     "index.js"
   ],
   "repository": "https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-composite",

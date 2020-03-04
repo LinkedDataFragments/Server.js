@@ -21,7 +21,7 @@
     "components",
     "config",
     "lib/**/*.js",
-    "bin/**/*.js",
+    "bin/**/*",
     "index.js"
   ],
   "repository": "https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server",

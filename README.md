@@ -4,7 +4,6 @@
 [![Build Status](https://travis-ci.org/LinkedDataFragments/Server.js.svg?branch=master)](https://travis-ci.org/LinkedDataFragments/Server.js)
 [![Coverage Status](https://coveralls.io/repos/github/LinkedDataFragments/Server.js/badge.svg?branch=master)](https://coveralls.io/github/LinkedDataFragments/Server.js?branch=master)
 [![npm version](https://badge.fury.io/js/ldf-server.svg)](https://www.npmjs.com/package/ldf-server)
-[![Docker Automated Build](https://img.shields.io/docker/automated/linkeddatafragments/server.js.svg)](https://hub.docker.com/r/linkeddatafragments/server.js/)
 [![DOI](https://zenodo.org/badge/16891600.svg)](https://zenodo.org/badge/latestdoi/16891600)
 
 This repository contains modules for [Linked Data Fragments (LDF)](https://linkeddatafragments.org/) servers.

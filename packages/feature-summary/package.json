@@ -21,7 +21,8 @@
   "files": [
     "components",
     "lib/**/*.js",
-    "bin/**/*.js",
+    "lib/**/*.html",
+    "bin/**/*",
     "index.js"
   ],
   "repository": "https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-summary",

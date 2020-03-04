@@ -1,18 +1,25 @@
-FROM node:8-slim
+FROM node:10-slim
 
 # Install location
-ENV dir /var/www/ldf-server
+ENV dir /var/www/@ldf/server
 
 # Copy the server files
-ADD . ${dir}
+COPY components ${dir}/components/
+COPY config ${dir}/config/
+COPY bin ${dir}/bin/
+COPY package.json ${dir}
+
+# Set the npm registry
+ARG NPM_REGISTRY=https://registry.npmjs.org/
+RUN npm config set @ldf:registry $NPM_REGISTRY
 
 # Install the node module
 RUN apt-get update && \
     apt-get install -y g++ make python && \
-    cd ${dir} && npm install && \
+    cd ${dir} && npm install --only=production && \
     apt-get remove -y g++ make python && apt-get autoremove -y && \
     rm -rf /var/cache/apt/archives
-w
+
 # Expose the default port
 EXPOSE 3000
 
@@ -22,4 +29,3 @@ ENTRYPOINT ["node", "bin/ldf-server"]
 
 # Default command
 CMD ["--help"]
-
