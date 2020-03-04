@@ -36,5 +36,16 @@
     "publish-bare": "lerna exec -- npm publish --silent",
     "postinstall": "lerna run prepare",
     "version": "manual-git-changelog onversion"
+  },
+  "greenkeeper": {
+    "commitMessages": {
+      "initialBadge": "Add Greenkeeper badge",
+      "initialDependencies": "Update dependencies",
+      "initialBranches": "Whitelist greenkeeper branches",
+      "dependencyUpdate": "Update ${dependency} to version ${version}",
+      "devDependencyUpdate": "Update dev ${dependency} to version ${version}",
+      "dependencyPin": "Pin ${dependency} to ${oldVersion}",
+      "devDependencyPin": "Pin ${dependency} to ${oldVersion}"
+    }
   }
 }

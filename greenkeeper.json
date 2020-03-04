@@ -1,0 +1,25 @@
+{
+  "groups": {
+    "root": {
+      "packages": [
+        "package.json"
+      ]
+    },
+    "allPackages": {
+      "packages": [
+        "packages/datasource-hdt/package.json",
+        "packages/core/package.json",
+        "packages/feature-memento/package.json",
+        "packages/datasource-sparql/package.json",
+        "packages/server/package.json",
+        "packages/feature-webid/package.json",
+        "packages/datasource-n3/package.json",
+        "packages/datasource-composite/package.json",
+        "packages/preset-qpf/package.json",
+        "packages/datasource-jsonld/package.json",
+        "packages/feature-qpf/package.json",
+        "packages/feature-summary/package.json"
+      ]
+    }
+  }
+}

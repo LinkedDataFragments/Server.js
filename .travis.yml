@@ -10,6 +10,7 @@ matrix:
       env: DOCUMENTATION_BUILD=true DOCKER_BUILD=true
 install: yarn install --pure-lockfile
 script:
+  - .travis/validate_greenkeeper.sh
   - yarn run lint
   - yarn test
   - if [ "$DOCKER_BUILD" = "true" ]; then ( sh -c "`curl -fsSl https://raw.githubusercontent.com/rubensworks/lerna-docker/master/install.sh`" && ~/.lerna-docker/bin/lerna-docker linkeddatafragments build ) fi
