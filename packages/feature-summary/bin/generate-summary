@@ -16,7 +16,7 @@ var DS_NS  = 'http://semweb.mmlab.be/ns/datasummaries#',
 var args = process.argv.slice(2);
 if (args.length < 1 || args.length > 2) {
   console.error('usage: generate-summary config.json [datasourceName]');
-  return process.exit(1);
+  process.exit(1);
 }
 
 // Init variables

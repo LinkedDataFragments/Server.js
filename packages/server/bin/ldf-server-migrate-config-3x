@@ -1,0 +1,160 @@
+#!/usr/bin/env node
+/* Migrates an LDF server config file to the new 3.x.x format. */
+const fs = require('fs');
+const path = require('path');
+
+var args = process.argv.slice(2);
+if (!(args.length === 1 || (args.length === 2 && args[1] === '--apply'))) {
+  process.stdout.write('usage: ldf-server-migrate-config-3x config.json [--apply]\n');
+  process.stdout.write('         Migrates an LDF server config file to the new 3.x.x format.\n');
+  process.exit(1);
+}
+
+migrateConfig(args[0], args[1] === '--apply');
+
+function migrateConfig(configFile, updateFile) {
+  const configDefaults = {
+    '@context': 'https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server/^3.0.0/components/context.jsonld',
+    '@id': 'urn:ldf-server:my',
+    'import': 'preset-qpf:config-defaults.json',
+  };
+
+  const configOld = JSON.parse(fs.readFileSync(path.join(__dirname, configFile)));
+  let config = configOld;
+
+  if ('@context' in configOld) {
+    process.stderr.write('The config file already appears to be updated to 3.x.x, aborting.\n');
+    process.exit(1);
+  }
+
+  // Add pre-amble
+  config = { ...configDefaults, ...config };
+
+  // Convert Memento
+  if ('timegates' in config) {
+    const timegatesOld = config.timegates;
+    if ('baseURL' in timegatesOld)
+      config.timegateBaseUrl = timegatesOld.baseURL;
+    delete config.timegates;
+    const mementos = [];
+    for (const timegatePath in timegatesOld.mementos) {
+      const memento = timegatesOld.mementos[timegatePath];
+      const versions = [];
+      for (const datasourceId of memento.versions) {
+        const mementoInterval = config.datasources[datasourceId].memento.interval;
+        versions.push({
+          mementoDatasource: datasourcePathToId(datasourceId),
+          versionStart: mementoInterval[0],
+          versionEnd: mementoInterval[1],
+          ... memento.originalBaseURL ? { mementoBaseURL: memento.originalBaseURL } : {},
+        });
+      }
+      mementos.push({ timegatePath, versions });
+    }
+    config.mementos = mementos;
+  }
+
+  // Convert datasources
+  if ('datasources' in config) {
+    const datasourcesOld = config.datasources;
+    const datasourcesNew = [];
+    for (const datasourcePath in datasourcesOld) {
+      const datasourceOld = datasourcesOld[datasourcePath];
+
+      const settingsOld = datasourceOld.settings;
+      const settings = {};
+      if (settingsOld) {
+        if ('endpoint' in settingsOld) settings.sparqlEndpoint = settingsOld.endpoint;
+        if ('file' in settingsOld && datasourceOld.type !== 'HdtDatasource') settings.file = settingsOld.file;
+        if ('file' in settingsOld && datasourceOld.type === 'HdtDatasource') settings.hdtFile = settingsOld.hdtFile;
+        if ('references' in settingsOld) settings.compose = settingsOld.references.map(datasourcePathToId);
+      }
+
+      datasourcesNew.push({
+        '@id': datasourcePathToId(datasourcePath),
+        '@type': datasourceOld.type,
+        'datasourcePath': datasourcePath,
+        'datasourceTitle': datasourceOld.title,
+        ... datasourceOld.description ? { datasourceDescription: datasourceOld.description } : {},
+        ... datasourceOld.license ? { license: datasourceOld.license } : {},
+        ... datasourceOld.licenseUrl ? { licenseUrl: datasourceOld.licenseUrl } : {},
+        ... datasourceOld.copyright ? { licenseUrl: datasourceOld.copyright } : {},
+        ... datasourceOld.homepage ? { licenseUrl: datasourceOld.homepage } : {},
+        ... datasourceOld.hide ? { licenseUrl: datasourceOld.hide } : {},
+        ... datasourceOld.enabled ? { licenseUrl: datasourceOld.enabled } : {},
+        ... settings,
+      });
+    }
+    config.datasources = datasourcesNew;
+  }
+
+  // Convert prefixes
+  if ('prefixes' in config) {
+    const prefixesOld = config.prefixes;
+    const prefixesNew = [];
+    for (const prefix in prefixesOld)
+      prefixesNew.push({ prefix, uri: prefixesOld[prefix] });
+    config.prefixes = prefixesNew;
+  }
+
+  // Convert dereference
+  if ('dereference' in config) {
+    const dereferenceOld = config.dereference;
+    const dereferenceNew = [];
+    for (const dereferencePath in dereferenceOld)
+      dereferenceNew.push({ dereferenceDatasource: datasourcePathToId(dereferenceOld[dereferencePath]), dereferencePath });
+    config.dereference = dereferenceNew;
+  }
+
+  // Convert logging
+  if ('logging' in config) {
+    const loggingOld = config.logging;
+    config.logging = 'enabled' in loggingOld ? loggingOld.enabled : true;
+    config.loggingFile = loggingOld.file;
+  }
+
+  // Convert SSL
+  if ('ssl' in config) {
+    const keys = config.ssl.keys;
+    config.sslKey = keys.key;
+    config.sslCert = keys.cert;
+    config.sslCa = keys.ca;
+    delete config.ssl;
+  }
+
+  // Convert response headers
+  if ('response' in config) {
+    const headersOld = config.response.headers;
+    delete config.response;
+    const headersNew = [];
+    for (const headerName in headersOld)
+      headersNew.push({ headerName, headerValue: headersOld[headerName] });
+    config.responseHeaders = headersNew;
+  }
+
+  // Convert Routers, Controllers and Views
+  if ('routers' in config || 'controllers' in config || 'views' in config) {
+    process.stderr.write('Custom routers, controllers and views are not supported by this tool, they have been omitted from the config.\n');
+    process.stderr.write('Please refer to the documentation: https://github.com/LinkedDataFragments/Server.js/tree/master/packages/core/README.md\n');
+    delete config.routers;
+    delete config.controllers;
+    delete config.views;
+  }
+
+  if (updateFile) {
+    const configFileBack = configFile + '.back';
+    if (fs.existsSync(configFileBack)) {
+      process.stderr.write(`The backup file ${configFileBack} already exists, aborting.\n`);
+      process.exit(1);
+    }
+    fs.writeFileSync(configFileBack, JSON.stringify(configOld, null, '  '));
+    fs.writeFileSync(configFile, JSON.stringify(config, null, '  '));
+    process.stderr.write(`Config file has been successfully updated at ${configFile}\n`);
+  }
+  else
+    process.stdout.write(JSON.stringify(config, null, '  ') + '\n');
+}
+
+function datasourcePathToId(datasourcePath) {
+  return 'ex:myDatasource' + datasourcePath;
+}

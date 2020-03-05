@@ -12,7 +12,8 @@
   },
   "license": "MIT",
   "bin": {
-    "ldf-server": "./bin/ldf-server"
+    "ldf-server": "./bin/ldf-server",
+    "ldf-server-migrate-config-3x": "./bin/ldf-server-migrate-config-3x"
   },
   "publishConfig": {
     "access": "public"
