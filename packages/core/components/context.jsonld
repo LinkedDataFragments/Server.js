@@ -52,7 +52,6 @@
       "viewExtension": "ldfc:View#extension",
       "viewExtensions": "ldfc:View#extension",
       "viewCache": "ldfc:View/Html#cache",
-      "n3Util": "ldfc:View/Html#n3Util",
       "viewTitle": "ldfc:View/Html#title",
       "viewHeader": "ldfc:View/Html#header",
 

@@ -2,14 +2,13 @@
 /* A SparqlDatasource provides queryable access to a SPARQL endpoint. */
 
 var Datasource = require('@ldf/core').datasources.Datasource,
-    N3 = require('n3'),
     SparqlJsonParser = require('sparqljson-parse').SparqlJsonParser,
-    termToString = require('rdf-string').termToString,
     LRU = require('lru-cache');
 
 var DEFAULT_COUNT_ESTIMATE = { totalCount: 1e9, hasExactCount: false };
 var ENDPOINT_ERROR = 'Error accessing SPARQL endpoint';
 var INVALID_JSON_RESPONSE = 'The endpoint returned an invalid SPARQL results JSON response.';
+const xsd  = 'http://www.w3.org/2001/XMLSchema#';
 
 // Creates a new SparqlDatasource
 class SparqlDatasource extends Datasource {
@@ -51,10 +50,10 @@ class SparqlDatasource extends Datasource {
         response.results.bindings.forEach(function (binding) {
           binding = self._sparqlJsonParser.parseJsonBindings(binding);
           var triple = {
-            subject:   binding.s ? termToString(binding.s) : query.subject,
-            predicate: binding.p ? termToString(binding.p) : query.predicate,
-            object:    binding.o ? termToString(binding.o) : query.object,
-            graph:     binding.g ? termToString(binding.g) : query.graph,
+            subject:   binding.s || query.subject,
+            predicate: binding.p || query.predicate,
+            object:    binding.o || query.object,
+            graph:     binding.g || query.graph,
           };
           destination._push(triple);
         });
@@ -141,43 +140,55 @@ class SparqlDatasource extends Datasource {
 
   // Creates a SPARQL pattern for the given triple pattern
   _createQuadPattern(quad) {
-    var query = ['{'], literalMatch;
+    var query = ['{'];
 
     // Encapsulate in graph if we are not querying the default graph
-    if (quad.graph !== '') {
+    if (!quad.graph || quad.graph.termType !== 'DefaultGraph') {
       query.push('GRAPH ');
-      quad.graph ? query.push('<', quad.graph, '>') : query.push('?g');
+      quad.graph ? query.push(this._encodeObject(quad.graph)) : query.push('?g');
       query.push('{');
     }
 
     // Add a possible subject IRI
-    quad.subject ? query.push('<', quad.subject, '> ') : query.push('?s ');
+    quad.subject ? query.push(this._encodeObject(quad.subject) + ' ') : query.push('?s ');
 
     // Add a possible predicate IRI
-    quad.predicate ? query.push('<', quad.predicate, '> ') : query.push('?p ');
+    quad.predicate ? query.push(this._encodeObject(quad.predicate) + ' ') : query.push('?p ');
 
-    // Add a possible object IRI or literal
-    if (N3.Util.isIRI(quad.object))
-      query.push('<', quad.object, '>');
-    else if (!(literalMatch = /^"([^]*)"(?:(@[^"]+)|\^\^([^"]+))?$/.exec(quad.object)))
-      query.push('?o');
-    else {
-      if (!/["\\]/.test(literalMatch[1]))
-        query.push('"', literalMatch[1], '"');
-      else
-        query.push('"""', literalMatch[1].replace(/(["\\])/g, '\\$1'), '"""');
-      if (literalMatch[2])
-        query.push(literalMatch[2]);
-      else if (this._forceTypedLiterals)
-        query.push('^^<', literalMatch[3] || 'http://www.w3.org/2001/XMLSchema#string', '>');
-      else
-        literalMatch[3] && query.push('^^<', literalMatch[3], '>');
-    }
+    // Add a possible object IRI
+    quad.object ? query.push(this._encodeObject(quad.object)) : query.push('?o');
 
-    if (quad.graph !== '')
-      query.push('}');
+    if (!quad.graph || quad.graph.termType !== 'DefaultGraph')
+      query.push('}'); // close the GRAPH brackets
 
     return query.push('}'), query.join('');
+  }
+
+  _encodeObject(term) {
+    switch (term.termType) {
+    case 'NamedNode':
+      return '<' + term.value + '>';
+    case 'BlankNode':
+      return '_:' + term.value;
+    case 'Variable':
+      return '?' + term.value;
+    case 'DefaultGraph':
+      return '';
+    case 'Literal':
+      return this._convertLiteral(term);
+    default:
+      return null;
+    }
+  }
+
+  _convertLiteral(term) {
+    if (!term)
+      return '?o';
+    else {
+      return ((!/["\\]/.test(term.value)) ?  '"' + term.value + '"' : '"""' + term.value.replace(/(["\\])/g, '\\$1') + '"""') +
+        (term.language ? '@' + term.language :
+        (term.datatype && term.datatype.value !== xsd + 'string' ? '^^' + this._encodeObject(term.datatype) : this._forceTypedLiterals ? '^^<http://www.w3.org/2001/XMLSchema#string>' : ''));
+    }
   }
 }
 

@@ -14,7 +14,7 @@ class MemoryDatasource extends Datasource {
   // Prepares the datasource for querying
   _initialize(done) {
     var quadStore = this._quadStore = new N3Store();
-    this._getAllQuads(function (s, p, o, g) { quadStore.addTriple(s, p, o, g); }, done);
+    this._getAllQuads(function (quad) { quadStore.addQuad(quad); }, done);
   }
 
   // Retrieves all quads in the datasource
@@ -25,8 +25,7 @@ class MemoryDatasource extends Datasource {
   // Writes the results of the query to the given quad stream
   _executeQuery(query, destination) {
     var offset = query.offset || 0, limit = query.limit || Infinity,
-        quads = this._quadStore.findByIRI(query.subject, query.predicate, query.object,
-                                        query.graph);
+        quads = this._quadStore.getQuads(query.subject, query.predicate, query.object, query.graph);
     // Send the metadata
     destination.setProperty('metadata', { totalCount: quads.length, hasExactCount: true });
     // Send the requested subset of quads

@@ -6,7 +6,6 @@ var http = require('http'),
     parseCacheControl = require('parse-cache-control'),
     N3 = require('n3'),
     n3parser = N3.Parser,
-    N3Util = N3.Util,
     Util = require('@ldf/core').Util,
     Controller = require('@ldf/core').controllers.Controller;
 
@@ -62,13 +61,13 @@ class WebIDControllerExtension extends Controller {
         switch (triple.predicate) {
         case CERT_NS + 'modulus':
           // Add modulus
-          var literalValue = N3Util.getLiteralValue(triple.object);
+          var literalValue = triple.object.value;
           // Apply parsing method by nodejs
           id.modulus = literalValue.slice(literalValue.indexOf('00:') === 0 ? 3 : 0).replace(/:/g, '').toUpperCase();
           break;
         case CERT_NS + 'exponent':
           // Add exponent
-          id.exponent = parseInt(N3Util.getLiteralValue(triple.object), 10);
+          id.exponent = parseInt(triple.object.value, 10);
           break;
         }
       }

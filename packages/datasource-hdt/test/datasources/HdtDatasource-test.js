@@ -2,7 +2,9 @@
 var HdtDatasource = require('../../').datasources.HdtDatasource;
 
 var Datasource = require('@ldf/core').datasources.Datasource,
-    path = require('path');
+    path = require('path'),
+    dataFactory = require('n3').DataFactory,
+    RdfString = require('rdf-string');
 
 var exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 var exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
@@ -57,37 +59,37 @@ describe('HdtDatasource', function () {
 
     itShouldExecute(getDatasource,
       'a query for an existing subject',
-      { subject: 'http://example.org/s1',   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: dataFactory.namedNode('http://example.org/s1'),   limit: 10, features: { triplePattern: true, limit: true } },
       10, 100);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing subject',
-      { subject: 'http://example.org/p1',   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: dataFactory.namedNode('http://example.org/p1'),   limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing predicate',
-      { predicate: 'http://example.org/p1', limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: dataFactory.namedNode('http://example.org/p1'), limit: 10, features: { triplePattern: true, limit: true } },
       10, 110);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing predicate',
-      { predicate: 'http://example.org/s1', limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: dataFactory.namedNode('http://example.org/s1'), limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing object',
-      { object: 'http://example.org/o001',  limit: 10, features: { triplePattern: true, limit: true } },
+      { object: dataFactory.namedNode('http://example.org/o001'),  limit: 10, features: { triplePattern: true, limit: true } },
       3, 3);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing object',
-      { object: 'http://example.org/s1',    limit: 10, features: { triplePattern: true, limit: true } },
+      { object: dataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for a non-default graph',
-      { object: 'http://example.org/s1', graph: 'g', features: { quadPattern: true } },
+      { object: dataFactory.namedNode('http://example.org/s1'), graph: dataFactory.namedNode('g'), features: { quadPattern: true } },
       0, 0);
   });
 
@@ -118,12 +120,12 @@ describe('HdtDatasource', function () {
 
     itShouldExecute(getDatasource,
       'a query for a blank subject',
-      { suject: '_:a', features: { triplePattern: true } },
-      6, 6);
+      { subject: dataFactory.blankNode('a'), features: { triplePattern: true } },
+      3, 3);
 
     itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as subject',
-      { subject: 'genid:a', features: { triplePattern: true } },
+      { subject: dataFactory.namedNode('genid:a'), features: { triplePattern: true } },
       3, 3,
       [
         { subject: 'genid:a', predicate: 'b', object: 'c1' },
@@ -133,7 +135,7 @@ describe('HdtDatasource', function () {
 
     itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as object',
-      { object: 'genid:c1', features: { triplePattern: true } },
+      { object: dataFactory.namedNode('genid:c1'), features: { triplePattern: true } },
       1, 1,
       [
         { subject: 'a', predicate: 'b', object: 'genid:c1' },
@@ -170,12 +172,12 @@ describe('HdtDatasource', function () {
 
     itShouldExecute(getDatasource,
       'a query for a blank subject',
-      { suject: '_:a', features: { triplePattern: true } },
-      6, 6);
+      { subject: dataFactory.blankNode('a'), features: { triplePattern: true } },
+      3, 3);
 
     itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as subject',
-      { subject: 'http://example.org/.well-known/genid/a', features: { triplePattern: true } },
+      { subject: dataFactory.namedNode('http://example.org/.well-known/genid/a'), features: { triplePattern: true } },
       3, 3,
       [
         { subject: 'http://example.org/.well-known/genid/a', predicate: 'b', object: 'c1' },
@@ -185,7 +187,7 @@ describe('HdtDatasource', function () {
 
     itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as object',
-      { object: 'http://example.org/.well-known/genid/c1', features: { triplePattern: true } },
+      { object: dataFactory.namedNode('http://example.org/.well-known/genid/c1'), features: { triplePattern: true } },
       1, 1,
       [
         { subject: 'a', predicate: 'b', object: 'http://example.org/.well-known/genid/c1' },
@@ -216,7 +218,7 @@ function itShouldExecute(getDatasource, name, query,
       it('should emit the expected triples', function () {
         expect(triples.length).to.equal(expectedTriples.length);
         for (var i = 0; i < expectedTriples.length; i++)
-          triples[i].should.deep.equal(expectedTriples[i]);
+          triples[i].should.deep.equal(RdfString.stringQuadToQuad(expectedTriples[i], dataFactory));
       });
     }
   });

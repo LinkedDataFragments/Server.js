@@ -3,7 +3,7 @@
 
 var View = require('./View'),
     N3 = require('n3'),
-    jsonld = require('jsonld'),
+    JsonLdSerializer = require('jsonld-streaming-serializer').JsonLdSerializer,
     _ = require('lodash');
 
 var dcTerms = 'http://purl.org/dc/terms/',
@@ -21,6 +21,7 @@ var contentTypes = 'application/trig;q=0.9,application/n-quads;q=0.7,' +
 class RdfView extends View {
   constructor(viewName, settings) {
     super(viewName, contentTypes, settings);
+    this.dataFactory = N3.DataFactory;
   }
 
   // Renders the view with the given settings to the response
@@ -58,9 +59,12 @@ class RdfView extends View {
     var datasources = settings.datasources;
     for (var datasourceName in datasources) {
       var datasource = datasources[datasourceName];
-      metadata(datasource.url, rdf + 'type', voID  + 'Dataset');
-      metadata(datasource.url, rdf + 'type', hydra + 'Collection');
-      metadata(datasource.url, dcTerms + 'title', '"' + datasource.title + '"');
+      if (datasource.url) {
+        const quad = this.dataFactory.quad, namedNode = this.dataFactory.namedNode, literal = this.dataFactory.literal;
+        metadata(quad(namedNode(datasource.url), namedNode(rdf + 'type'), namedNode(voID  + 'Dataset')));
+        metadata(quad(namedNode(datasource.url), namedNode(rdf + 'type'), namedNode(hydra + 'Collection')));
+        metadata(quad(namedNode(datasource.url), namedNode(dcTerms + 'title'), literal('"' + datasource.title + '"', 'en')));
+      }
     }
   }
 
@@ -68,24 +72,23 @@ class RdfView extends View {
   _createN3Writer(settings, response, done) {
     var writer = new N3.Writer({ format: settings.contentType, prefixes: settings.prefixes }),
         supportsGraphs = /trig|quad/.test(settings.contentType), metadataGraph;
+
+    const dataFactory = this.dataFactory;
     return {
       // Adds the data quad to the output
       // NOTE: The first parameter can also be a quad object
-      data: function (s, p, o, g) {
-        // If graphs are unsupported, only write triples in the default graph
-        if (supportsGraphs || (p ? !g : !s.graph))
-          writer.addTriple(s, p, o, g);
+      data: function (quad) {
+        writer.addQuad(quad);
       },
       // Adds the metadata triple to the output
-      meta: function (s, p, o) {
-        // Relate the metadata graph to the data
+      meta: function (quad) {
+        // Relate the metadata graph to the data.
         if (supportsGraphs && !metadataGraph) {
           metadataGraph = settings.metadataGraph;
-          writer.addTriple(metadataGraph, primaryTopic, settings.fragmentUrl, metadataGraph);
+          writer.addQuad(dataFactory.namedNode(metadataGraph), dataFactory.namedNode(primaryTopic), dataFactory.namedNode(settings.fragmentUrl), dataFactory.namedNode(metadataGraph));
         }
-        // Write the metadata triple
-        if (s && p && o && !N3.Util.isLiteral(s))
-          writer.addTriple(s, p, o, metadataGraph);
+        quad.graph = quad.graph.termType === 'DefaultGraph' ? (metadataGraph ? dataFactory.namedNode(metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
+        writer.addQuad(quad);
       },
       // Ends the output and flushes the stream
       end: function () {
@@ -99,50 +102,32 @@ class RdfView extends View {
 
   // Creates a writer for JSON-LD
   _createJsonLdWriter(settings, response, done) {
-    // Initialize triples, prefixes, and document base
-    var quads = { '@default': [] }, metadata = quads[settings.metadataGraph] = [],
-        prefixes = settings.prefixes || {}, context = _.omit(prefixes, ''), base = prefixes[''];
+    var prefixes = settings.prefixes || {}, context = _.omit(prefixes, ''), base = prefixes[''];
     base && (context['@base'] = base);
+    const mySerializer = new JsonLdSerializer({ space: '  ', context: context, baseIRI: prefixes[''], useNativeTypes: true })
+      .on('error', done);
+    mySerializer.pipe(response);
+    mySerializer.on('error', (e => done(e)));
+    mySerializer.on('end', (e => done(null)));
+
+    const dataFactory = this.dataFactory;
     return {
       // Adds the data triple to the output
-      data: function (s, p, o, g) {
-        if (!p) g = s.graph, o = s.object, p = s.predicate, s = s.subject;
-        if (!g) g = '@default';
-        var graph = quads[g] || (quads[g] = []);
-        graph.push(toJsonLdTriple(s, p, o));
+      data: function (quad) {
+        mySerializer.write(quad);
       },
       // Adds the metadata triple to the output
-      meta: function (s, p, o) {
-        if (s && p && o && !N3.Util.isLiteral(s))
-          metadata.push(toJsonLdTriple(s, p, o));
+      meta: function (quad) {
+        quad.graph = quad.graph.termType === 'DefaultGraph' ? (settings.metadataGraph  ? dataFactory.namedNode(settings.metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
+        mySerializer.write(quad);
       },
       // Ends the output and flushes the stream
       end: function () {
-        jsonld.fromRDF(quads, { format: false, useNativeTypes: true },
-        function (error, json) {
-          jsonld.compact(error ? {} : json, context, function (error, compacted) {
-            response.write(JSON.stringify(compacted, null, '  ') + '\n');
-            done(error);
-          });
-        });
+        // We need to wait for the serializer stream to end before calling done()
+        mySerializer.end();
       },
     };
   }
-}
-
-// Converts a triple to the JSON-LD library representation
-function toJsonLdTriple(subject, predicate, object) {
-  return {
-    subject:   { value: subject,   type: subject[0]   !== '_' ? 'IRI' : 'blank node' },
-    predicate: { value: predicate, type: predicate[0] !== '_' ? 'IRI' : 'blank node' },
-    object: !N3.Util.isLiteral(object) ?
-    { value: object,    type: object[0]    !== '_' ? 'IRI' : 'blank node' } :
-    {
-      value:    N3.Util.getLiteralValue(object),
-      datatype: N3.Util.getLiteralType(object),
-      language: N3.Util.getLiteralLanguage(object),
-    },
-  };
 }
 
 module.exports = RdfView;

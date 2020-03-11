@@ -5,6 +5,7 @@ var Datasource = require('@ldf/core').datasources.Datasource,
     fs = require('fs'),
     path = require('path'),
     N3Parser = require('n3').Parser,
+    RdfString = require('rdf-string'),
     spawn = require('child_process').spawn;
 
 var hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
@@ -35,7 +36,7 @@ class ExternalHdtDatasource extends Datasource {
   // Writes the results of the query to the given quad stream
   _executeQuery(query, destination) {
     // Only the default graph has results
-    if (query.graph) {
+    if (query.graph && query.graph.termType !== 'DefaultGraph') {
       destination.setProperty('metadata', { totalCount: 0, hasExactCount: true });
       destination.close();
       return;
@@ -51,12 +52,12 @@ class ExternalHdtDatasource extends Datasource {
         ], { stdio: ['ignore', 'pipe', 'ignore'] });
     // Parse the result triples
     hdt.stdout.setEncoding('utf8');
-    var parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true;
+    var parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true, dataFactory = this.dataFactory;
     parser.parse(hdt.stdout, function (error, triple) {
       if (error)
         destination.emit('error', new Error('Invalid query result: ' + error.message));
       else if (triple)
-        tripleCount++, destination._push(triple);
+        tripleCount++, destination._push(RdfString.stringQuadToQuad(triple, dataFactory));
       else {
         // Ensure the estimated total count is as least as large as the number of triples
         if (tripleCount && estimatedTotalCount < offset + tripleCount)

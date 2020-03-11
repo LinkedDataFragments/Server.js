@@ -11,6 +11,7 @@ var _ = require('lodash'),
     negotiate = require('negotiate'),
     Util = require('../Util');
 
+var ViewCollectionError = Util.createErrorType('ViewCollectionError');
 
 // Creates a new ViewCollection
 class ViewCollection {
@@ -41,21 +42,20 @@ class ViewCollection {
   getViews(name) {
     return this._views[name] || [];
   }
-}
-
-var ViewCollectionError = ViewCollection.ViewCollectionError = Util.createErrorType('ViewCollectionError');
 
 // Gets the best match for views with the given name that accommodate the request
-ViewCollection.prototype.matchView = function (name, request) {
-  // Retrieve the views with the given name
-  var viewList = this._viewMatchers[name];
-  if (!viewList || !viewList.length)
-    throw new ViewCollectionError('No view named ' + name + ' found.');
-  // Negotiate the view best matching the request's requirements
-  var viewDetails = negotiate.choose(viewList, request)[0];
-  if (!viewDetails)
-    throw new ViewCollectionError('No matching view named ' + name + ' found.');
-  return viewDetails;
-};
+  matchView(name, request) {
+    // Retrieve the views with the given name
+    var viewList = this._viewMatchers[name];
+    if (!viewList || !viewList.length)
+      throw new ViewCollectionError('No view named ' + name + ' found.');
+    // Negotiate the view best matching the request's requirements
+    var viewDetails = negotiate.choose(viewList, request)[0];
+    if (!viewDetails)
+      throw new ViewCollectionError('No matching view named ' + name + ' found.');
+    return viewDetails;
+  }
+}
+ViewCollection.ViewCollectionError = ViewCollectionError;
 
 module.exports = ViewCollection;

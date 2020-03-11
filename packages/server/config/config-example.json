@@ -5,6 +5,13 @@
 
   "title": "My Linked Data Fragments server",
 
+  "dataFactory": {
+    "@id": "ldfc:DataFactory#dataFactory",
+    "requireName": "n3",
+    "requireElement": "DataFactory",
+    "comment": "Used to create rdfjs terms from strings"
+  },
+
   "datasources": [
     {
       "@id": "ex:myHdtDatasource",

@@ -23,7 +23,7 @@
                about="#<%= component %>" property="hydra:variable" lang=""><%= component %></label>
        <input class="uri" id="<%= component %>" name="<%= component %>"
               about="#<%= component %>" property="hydra:property" resource="<%= i === 3 ? sd : 'rdf:' %><%= component %>" <%
-           %> value="<%= query[component] ||
+           %> value="<%= query[component] && RdfString.termToString(query[component]) ||
                          // The empty string as graph means the default graph
                          (i === 3 && query.graph === '' ? 'urn:ldf:defaultGraph' : '') %>" />
       </li>
@@ -71,7 +71,7 @@
 </div>
 <ul class="quads">
 <% quads.forEach(function (quad) {
-    var subject = quad.subject, predicate = quad.predicate, object = quad.object, graph = quad.graph, urlAppendix = quad.urlAppendix ? quad.urlAppendix : '';
+    var subject = quad.subject.value, predicate = quad.predicate.value, object = quad.object.value, graph = quad.graph.value, urlAppendix = quad.urlAppendix ? quad.urlAppendix : '';
 -%>
   <li>
     <%- extensions.QuadBefore({ quad: quad }) %>
@@ -81,20 +81,20 @@
     <a href="?predicate=<%= encodeURIComponent(predicate) + urlAppendix %>"><%
       %><abbr title="<%= predicate %>"><%= shorten(predicate) %></abbr><%
       %></a>
-    <% if (!N3Util.isLiteral(object)) { -%>
+    <% if (quad.object.termType !== 'Literal') { -%>
     <a href="?object=<%= encodeURIComponent(object) + urlAppendix %>" resource="<%= subject %>"><%
       %><abbr title="<%= object %>" property="<%= predicate %>" resource="<%= object %>"><%=
         shorten(object)
         %></abbr></a><%
     } else {
-    var type = N3Util.getLiteralType(object),
-        language = N3Util.getLiteralLanguage(object);
+    var type = quad.object.datatype,
+        language = quad.object.language
     -%>
-    <a href="?object=<%= encodeURIComponent(object) + urlAppendix %>" resource="<%= subject %>"><%
+    <a href="?object=<%= encodeURIComponent(RdfString.termToString(quad.object)) + urlAppendix %>" resource="<%= subject %>"><%
       %>"<span property="<%= predicate %>" <%
-      if (!language) { %>datatype="<%= type %>"<% }
+      if (!language) { %>datatype="<%= type.value %>"<% }
       else { %>lang="<%= language %>" xml:lang="<%= language %>"<% } %>><%=
-      N3Util.getLiteralValue(object)
+      object
       %></span>"</a><%
     }
     if (datasource.supportsQuads) { -%>

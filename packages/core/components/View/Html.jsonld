@@ -17,11 +17,6 @@
           "unique": true
         },
         {
-          "@id": "ldfc:View/Html#n3Util",
-          "comment": "The N3Util class",
-          "unique": true
-        },
-        {
           "@id": "ldfc:View/Html#urlData",
           "inheritValues": {
             "@type": "InheritanceValue",
@@ -53,10 +48,6 @@
             {
               "keyRaw": "cache",
               "value": "ldfc:View/Html#cache"
-            },
-            {
-              "keyRaw": "N3Util",
-              "value": "ldfc:View/Html#n3Util"
             },
             {
               "@id": "ldfc:Server#urlDataField"

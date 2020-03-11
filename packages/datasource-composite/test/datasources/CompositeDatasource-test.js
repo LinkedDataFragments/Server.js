@@ -4,7 +4,8 @@ var CompositeDatasource = require('../../').datasources.CompositeDatasource;
 var Datasource = require('@ldf/core').datasources.Datasource,
     HdtDatasource = require('@ldf/datasource-hdt').datasources.HdtDatasource,
     N3Datasource = require('@ldf/datasource-n3').datasources.N3Datasource,
-    path = require('path');
+    path = require('path'),
+    dataFactory = require('n3').DataFactory;
 
 var exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 var exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
@@ -15,7 +16,7 @@ describe('CompositeDatasource', function () {
   var references = {
     data0: { settings: { file: exampleHdtFile }, datasourceType: HdtDatasource, size: 132 },
     data1: { settings: { file: exampleHdtFileWithBlanks, graph: 'http://example.org/graph0' }, datasourceType: HdtDatasource, size: 6 },
-    data2: { settings: { url: exampleTurtleUrl }, datasourceType: N3Datasource, size: 132 },
+    data2: { settings: { url: exampleTurtleUrl }, datasourceType: N3Datasource, size: 129 },
     data3: { settings: { url: exampleTrigUrl }, datasourceType: N3Datasource, size: 7 },
   };
   Object.keys(references).forEach(function (datasourceId) {
@@ -98,57 +99,57 @@ describe('CompositeDatasource', function () {
 
     itShouldExecute(getDatasource,
       'a query for an existing subject',
-      { subject: 'http://example.org/s1',   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: dataFactory.namedNode('http://example.org/s1'),   limit: 10, features: { triplePattern: true, limit: true } },
       10, 200);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing subject',
-      { subject: 'http://example.org/p1',   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: dataFactory.namedNode('http://example.org/p1'),   limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing predicate',
-      { predicate: 'http://example.org/p1', limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: dataFactory.namedNode('http://example.org/p1'), limit: 10, features: { triplePattern: true, limit: true } },
       10, 220);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing predicate',
-      { predicate: 'http://example.org/s1', limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: dataFactory.namedNode('http://example.org/s1'), limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing object',
-      { object: 'http://example.org/o001',  limit: 10, features: { triplePattern: true, limit: true } },
+      { object: dataFactory.namedNode('http://example.org/o001'),  limit: 10, features: { triplePattern: true, limit: true } },
       6, 6);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing object',
-      { object: 'http://example.org/s1',    limit: 10, features: { triplePattern: true, limit: true } },
+      { object: dataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing graph',
-      { graph: 'http://example.org/bob',    limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.namedNode('http://example.org/bob'),    limit: 10, features: { quadPattern: true, limit: true } },
       3, 3);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing graph',
-      { graph: 'http://example.org/notbob', limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.namedNode('http://example.org/notbob'), limit: 10, features: { quadPattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for the default graph',
-      { graph: '',                          limit: 10, features: { quadPattern: true, limit: true } },
-      10, 266);
+      { graph: dataFactory.defaultGraph(),                          limit: 10, features: { quadPattern: true, limit: true } },
+      10, 263);
 
     itShouldExecute(getDatasource,
       'a query for the default graph without a limit',
-      { graph: '',                          features: { quadPattern: true, limit: true } },
-      266, 266);
+      { graph: dataFactory.defaultGraph(),                          features: { quadPattern: true, limit: true } },
+      263, 263);
 
     itShouldExecute(getDatasource,
       'a query for graph0',
-      { graph: 'http://example.org/graph0', limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.namedNode('http://example.org/graph0'), limit: 10, features: { quadPattern: true, limit: true } },
       6, 6);
   });
 });
