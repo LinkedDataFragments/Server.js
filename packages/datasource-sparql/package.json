@@ -29,8 +29,10 @@
     "lint": "eslint bin/* lib test"
   },
   "dependencies": {
+    "sparqljson-parse": "^1.5.1",
     "lru-cache": "^4.0.1",
-    "n3": "^0.9.0"
+    "n3": "^0.9.0",
+    "rdf-string": "^1.3.1"
   },
   "peerDependencies": {
     "@ldf/core": "2.2.5"

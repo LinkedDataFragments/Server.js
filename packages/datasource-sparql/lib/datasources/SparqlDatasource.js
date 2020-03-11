@@ -3,6 +3,8 @@
 
 var Datasource = require('@ldf/core').datasources.Datasource,
     N3 = require('n3'),
+    SparqlJsonParser = require('sparqljson-parse').SparqlJsonParser,
+    termToString = require('rdf-string').termToString,
     LRU = require('lru-cache');
 
 var DEFAULT_COUNT_ESTIMATE = { totalCount: 1e9, hasExactCount: false };
@@ -17,6 +19,7 @@ class SparqlDatasource extends Datasource {
 
     this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
     this._resolvingCountQueries = {};
+    this._sparqlJsonParser = new SparqlJsonParser();
 
     // Set endpoint URL and default graph
     options = options || {};
@@ -44,11 +47,12 @@ class SparqlDatasource extends Datasource {
         catch (e) { return emitError({ message: INVALID_JSON_RESPONSE }); }
 
         response.results.bindings.forEach(function (binding) {
+          binding = self._sparqlJsonParser.parseJsonBindings(binding);
           var triple = {
-            subject:   binding.s ? self._parseJsonEntity(binding.s) : query.subject,
-            predicate: binding.p ? self._parseJsonEntity(binding.p) : query.predicate,
-            object:    binding.o ? self._parseJsonEntity(binding.o) : query.object,
-            graph:     binding.g ? self._parseJsonEntity(binding.g) : query.graph,
+            subject:   binding.s ? termToString(binding.s) : query.subject,
+            predicate: binding.p ? termToString(binding.p) : query.predicate,
+            object:    binding.o ? termToString(binding.o) : query.object,
+            graph:     binding.g ? termToString(binding.g) : query.graph,
           };
           destination._push(triple);
         });
@@ -168,19 +172,6 @@ class SparqlDatasource extends Datasource {
       query.push('}');
 
     return query.push('}'), query.join('');
-  }
-
-  // Parses an entity from a JSON SPARQL response
-  _parseJsonEntity(entity) {
-    if (entity.type === 'literal') {
-      var suffixes = '';
-      if (entity.datatype)
-        suffixes += '^^<' + entity.datatype + '>';
-      if (entity['xml:lang'])
-        suffixes += '@' + entity['xml:lang'];
-      return '"' + entity.value + '"' + suffixes;
-    }
-    return entity.value;
   }
 }
 
