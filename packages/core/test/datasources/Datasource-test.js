@@ -1,11 +1,13 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
-var Datasource = require('../../lib/datasources/Datasource');
+const Datasource = require('../../lib/datasources/Datasource');
 
-var EventEmitter = require('events'),
+const EventEmitter = require('events'),
     fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    N3 = require('n3');
 
-var exampleFile = path.join(__dirname, '../../../../test/assets/test.ttl');
+const exampleFile = path.join(__dirname, '../../../../test/assets/test.ttl');
+const dataFactory = N3.DataFactory;
 
 describe('Datasource', function () {
   describe('The Datasource module', function () {
@@ -294,9 +296,9 @@ describe('Datasource', function () {
     });
     datasource.initialize();
     datasource._executeQuery = sinon.spy(function (query, destination) {
-      destination._push({ subject: 's', predicate: 'p', object: 'o1' });
-      destination._push({ subject: 's', predicate: 'p', object: 'o2', graph: '' });
-      destination._push({ subject: 's', predicate: 'p', object: 'o3', graph: 'g' });
+      destination._push({ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o1') });
+      destination._push({ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o2'), graph: dataFactory.defaultGraph() });
+      destination._push({ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o3'), graph: dataFactory.namedNode('g') });
       destination.close();
     });
 
@@ -308,35 +310,32 @@ describe('Datasource', function () {
       var result = datasource.select({ features: { custom: true } }, done), quads = [];
       result.on('data', function (q) { quads.push(q); });
       result.on('end', function () {
-        quads.should.deep.equal([
-          { subject: 's', predicate: 'p', object: 'o1', graph: 'http://example.org/#mygraph' },
-          { subject: 's', predicate: 'p', object: 'o2', graph: 'http://example.org/#mygraph' },
-          { subject: 's', predicate: 'p', object: 'o3', graph: 'g' },
-        ]);
+        let matchingquads = [{ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o1'), graph: dataFactory.namedNode('http://example.org/#mygraph') },
+                             { subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o2'), graph: dataFactory.namedNode('http://example.org/#mygraph') },
+                             { subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o3'), graph: dataFactory.namedNode('g') }];
+        matchingquads.length.should.be.equal(quads.length);
+        for (let i = 0; i < quads.length; i++)
+          matchingquads[i].should.deep.equal(quads[i]);
         done();
       });
     });
 
     it('should query the given graph as the default graph', function () {
       datasource.select({
-        graph: 'http://example.org/#mygraph',
+        graph: dataFactory.namedNode('http://example.org/#mygraph'),
         features: { custom: true },
       });
-      datasource._executeQuery.args[0][0].should.deep.equal({
-        graph: '',
-        features: { custom: true },
-      });
+      datasource._executeQuery.args[0][0].features.should.deep.equal({ custom: true }),
+      datasource._executeQuery.args[0][0].graph.equals(dataFactory.defaultGraph());
     });
 
     it('should query the default graph as the empty graph', function () {
       datasource.select({
-        graph: '',
+        graph: dataFactory.defaultGraph(),
         features: { custom: true },
       });
-      datasource._executeQuery.args[0][0].should.deep.equal({
-        graph: 'urn:ldf:emptyGraph',
-        features: { custom: true },
-      });
+      datasource._executeQuery.args[0][0].features.should.deep.equal({ custom: true }),
+      datasource._executeQuery.args[0][0].graph.equals(dataFactory.namedNode('urn:ldf:emptyGraph'));
     });
   });
 });

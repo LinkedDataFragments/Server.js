@@ -1,6 +1,9 @@
 /*! @license MIT ©2014–17 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /** A QuadPatternRouter routes basic quad patterns */
 
+const stringToTerm = require('rdf-string').stringToTerm;
+const DataFactory = require('n3').DataFactory;
+
 var iriMatcher = /^(<?)([^_?$"<>][^"<>]*)>?$/;
 var literalMatcher = /^("[^]*")(?:|\^\^<?([^"<>]+)>?|@[a-z0-9\-]+)$/i;
 var prefixedNameMatcher = /^([a-z0-9\-]*):([^\/#:]*)$/i;
@@ -23,20 +26,20 @@ class QuadPatternRouter {
 
     // Try to extract a subject IRI
     if (queryString.subject && (match = iriMatcher.exec(queryString.subject)))
-      hasTriplePattern = query.subject = match[1] ? match[2] : this._expandIRI(match[2]);
+      hasTriplePattern = query.subject = stringToTerm(match[1] ? match[2] : this._expandIRI(match[2]), DataFactory);
 
     // Try to extract a predicate IRI
     if (queryString.predicate && (match = iriMatcher.exec(queryString.predicate)))
-      hasTriplePattern = query.predicate = match[1] ? match[2] : this._expandIRI(match[2]);
+      hasTriplePattern = query.predicate = stringToTerm(match[1] ? match[2] : this._expandIRI(match[2]), DataFactory);
 
     // Try to extract an object
     if (queryString.object) {
       // The object can be an IRI…
       if (match = iriMatcher.exec(queryString.object))
-        hasTriplePattern = query.object = match[1] ? match[2] : this._expandIRI(match[2]);
+        hasTriplePattern = query.object = stringToTerm(match[1] ? match[2] : this._expandIRI(match[2]), DataFactory);
       // or the object can be a literal (with a type or language)
       else if (match = literalMatcher.exec(queryString.object))
-        hasTriplePattern = query.object = match[2] ? match[1] + '^^' + this._expandIRI(match[2]) : match[0];
+        hasTriplePattern = query.object = stringToTerm(match[2] ? match[1] + '^^' + this._expandIRI(match[2]) : match[0], DataFactory);
     }
 
     // Try to extract a graph IRI
@@ -46,9 +49,9 @@ class QuadPatternRouter {
       // When a client specifies DEFAULT_GRAPH as graph,
       // we search the actual default graph rather than the graph with that name.
       if (hasQuadPattern === DEFAULT_GRAPH || hasQuadPattern === DEFAULT_GRAPH_ALT)
-        query.graph = '';
+        query.graph = stringToTerm('', DataFactory);
       else
-        query.graph = hasQuadPattern;
+        query.graph = stringToTerm(hasQuadPattern, DataFactory);
     }
 
     // Indicate in the query whether the triple/quad pattern feature was used

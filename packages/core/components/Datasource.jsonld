@@ -86,7 +86,12 @@
           "range": "xsd:boolean",
           "unique": true,
           "default": true
-        }
+        },
+        {
+          "@id": "ldfc:Datasource#dataFactory",
+          "comment": "Used to create rdfjs terms",
+          "unique": true
+        }        
       ],
       "constructorArguments": {
         "@id": "ldfc:Datasource#constructorArgumentsObject",

@@ -30,7 +30,7 @@ class SummaryController extends Controller {
       var summaryFile = path.join(this._summariesFolder, datasource + '.ttl');
 
       // Read summary triples from file
-      var streamParser = new StreamParser({ blankNodePrefix: '' }),
+      var streamParser = new StreamParser({ blankNodePrefix: '', baseIRI: this._baseUrl.pathname }),
           inputStream = fs.createReadStream(summaryFile);
 
       // If the summary cannot be read, invoke the next controller without error

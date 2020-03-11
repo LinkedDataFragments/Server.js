@@ -63,11 +63,11 @@ This package exposes the the following context entries:
 * `View`: An abstract view. _Should be used as `extends` value when creating new views._
 * `viewExtensions`: A view extension. _Should be used as key in a view._
 * `viewCache`: If views should be cached. _Should be used as key in an HTML view._
-* `n3Util`: The N3Util class. _Should be used as key in an HTML view._
 * `viewHeader`: The view header title. _Should be used as key in an HTML view._
 
 **Other:**
 * `Server`: An HTTP server that provides access to Linked Data Fragments. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
+* `dataFactory`: A factory object used to construct rdfjs terms._
 * `title`: The server name. _Should be used as key in a `Server` config._
 * `baseURL`: The base URL path for the server. _Should be used as key in a `Server` config._
 * `port`: The port the server will bind with. _Should be used as key in a `Server` config._

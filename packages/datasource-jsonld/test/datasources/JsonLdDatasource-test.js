@@ -2,7 +2,8 @@
 var JsonLdDatasource = require('../../').datasources.JsonLdDatasource;
 
 var Datasource = require('@ldf/core').datasources.Datasource,
-    path = require('path');
+    path = require('path'),
+    dataFactory = require('n3').DataFactory;
 
 var exampleJsonLdUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.jsonld');
 
@@ -47,42 +48,42 @@ describe('JsonLdDatasource', function () {
 
     itShouldExecute(datasource,
       'a query for an existing subject',
-      { subject: 'http://example.org/s1',   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: dataFactory.namedNode('http://example.org/s1'),   limit: 10, features: { triplePattern: true, limit: true } },
       10, 100);
 
     itShouldExecute(datasource,
       'a query for a non-existing subject',
-      { subject: 'http://example.org/p1',   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: dataFactory.namedNode('http://example.org/p1'),   limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(datasource,
       'a query for an existing predicate',
-      { predicate: 'http://example.org/p1', limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: dataFactory.namedNode('http://example.org/p1'), limit: 10, features: { triplePattern: true, limit: true } },
       10, 110);
 
     itShouldExecute(datasource,
       'a query for a non-existing predicate',
-      { predicate: 'http://example.org/s1', limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: dataFactory.namedNode('http://example.org/s1'), limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(datasource,
       'a query for an existing object',
-      { object: 'http://example.org/o001',  limit: 10, features: { triplePattern: true, limit: true } },
+      { object: dataFactory.namedNode('http://example.org/o001'),  limit: 10, features: { triplePattern: true, limit: true } },
       3, 3);
 
     itShouldExecute(datasource,
       'a query for a non-existing object',
-      { object: 'http://example.org/s1',    limit: 10, features: { triplePattern: true, limit: true } },
+      { object: dataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(datasource,
       'a query for an existing graph',
-      { graph: 'http://example.org/g',      limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.namedNode('http://example.org/g'),      limit: 10, features: { quadPattern: true, limit: true } },
       10, 10);
 
     itShouldExecute(datasource,
       'a query for a non-existing graph',
-      { graph: 'http://example.org/s1',     limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.namedNode('http://example.org/s1'),     limit: 10, features: { quadPattern: true, limit: true } },
       0, 0);
   });
 });

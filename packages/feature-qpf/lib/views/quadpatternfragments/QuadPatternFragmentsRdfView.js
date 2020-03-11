@@ -1,7 +1,8 @@
 /*! @license MIT ©2015-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* A QuadPatternFragmentsRdfView represents a Quad Pattern Fragment in RDF. */
 
-var RdfView = require('@ldf/core').views.RdfView;
+var RdfView = require('@ldf/core').views.RdfView,
+    stringQuadToQuad = require('rdf-string').stringQuadToQuad;
 
 var dcTerms = 'http://purl.org/dc/terms/',
     rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -43,63 +44,70 @@ class QuadPatternFragmentsRdfView extends RdfView {
 
   // Generate the datasource metadata
   _generateMetadata(metadata, fragment, query, datasource) {
-    metadata(datasource.index, hydra + 'member', datasource.url);
-    metadata(datasource.url, rdf + 'type', voID  + 'Dataset');
-    metadata(datasource.url, rdf + 'type', hydra + 'Collection');
-    metadata(datasource.url, voID + 'subset', fragment.pageUrl);
-    if (fragment.url !== fragment.pageUrl)
-      metadata(datasource.url, voID + 'subset', fragment.url);
+    if (!datasource.url) return;
+    datasource.index && metadata(this.quad({ subject: datasource.index, predicate: hydra + 'member', object: datasource.url }));
+    metadata(this.quad({ subject: datasource.url, predicate: rdf + 'type', object: voID  + 'Dataset' }));
+    metadata(this.quad({ subject: datasource.url, predicate: rdf + 'type', object: hydra + 'Collection' }));
+    fragment.pageUrl && metadata(this.quad({ subject: datasource.url, predicate: voID + 'subset', object: fragment.pageUrl }));
+    if (fragment.url && fragment.pageUrl && fragment.url !== fragment.pageUrl)
+      metadata(this.quad({ subject: datasource.url, predicate: voID + 'subset', object: fragment.url }));
   }
 
   // Generate the datasource controls
   _generateControls(metadata, fragment, query, datasource) {
+    if (datasource.url && datasource.supportsQuads)
+      metadata(this.quad({ subject: datasource.url, predicate: sd + 'defaultGraph', object: 'urn:ldf:defaultGraph' }));
+    datasource.url && metadata(this.quad({ subject: datasource.url, predicate: hydra + 'search', object: '_:pattern' }));
+    datasource.templateUrl && metadata(this.quad({ subject: '_:pattern', predicate: hydra + 'template', object: '"' + datasource.templateUrl + '"' }));
+    metadata(this.quad({ subject: '_:pattern', predicate: hydra + 'variableRepresentation', object: hydra + 'ExplicitRepresentation' }));
+    metadata(this.quad({ subject: '_:pattern', predicate: hydra + 'mapping', object: '_:subject' }));
+    metadata(this.quad({ subject: '_:pattern', predicate: hydra + 'mapping', object: '_:predicate' }));
+    metadata(this.quad({ subject: '_:pattern', predicate: hydra + 'mapping', object: '_:object' }));
     if (datasource.supportsQuads)
-      metadata(datasource.url, sd + 'defaultGraph', 'urn:ldf:defaultGraph');
-    metadata(datasource.url, hydra + 'search', '_:pattern');
-    metadata('_:pattern', hydra + 'template', '"' + datasource.templateUrl + '"');
-    metadata('_:pattern', hydra + 'variableRepresentation', hydra + 'ExplicitRepresentation');
-    metadata('_:pattern', hydra + 'mapping', '_:subject');
-    metadata('_:pattern', hydra + 'mapping', '_:predicate');
-    metadata('_:pattern', hydra + 'mapping', '_:object');
-    if (datasource.supportsQuads)
-      metadata('_:pattern', hydra + 'mapping', '_:graph');
-    metadata('_:subject',   hydra + 'variable',      '"subject"');
-    metadata('_:subject',   hydra + 'property', rdf + 'subject');
-    metadata('_:predicate', hydra + 'variable',      '"predicate"');
-    metadata('_:predicate', hydra + 'property', rdf + 'predicate');
-    metadata('_:object',    hydra + 'variable',      '"object"');
-    metadata('_:object',    hydra + 'property', rdf + 'object');
+      metadata(this.quad({ subject: '_:pattern', predicate: hydra + 'mapping', object: '_:graph' }));
+    metadata(this.quad({ subject: '_:subject', predicate: hydra + 'variable', object: '"subject"' }));
+    metadata(this.quad({ subject: '_:subject', predicate: hydra + 'property', object: rdf + 'subject' }));
+    metadata(this.quad({ subject: '_:predicate', predicate: hydra + 'variable', object: '"predicate"' }));
+    metadata(this.quad({ subject: '_:predicate', predicate: hydra + 'property', object: rdf + 'predicate' }));
+    metadata(this.quad({ subject: '_:object', predicate: hydra + 'variable', object: '"object"' }));
+    metadata(this.quad({ subject: '_:object', predicate: hydra + 'property', object: rdf + 'object' }));
     if (datasource.supportsQuads) {
-      metadata('_:graph',   hydra + 'variable',      '"graph"');
-      metadata('_:graph',   hydra + 'property', sd  + 'graph');
+      metadata(this.quad({ subject: '_:graph', predicate: hydra + 'variable', object: '"graph"' }));
+      metadata(this.quad({ subject: '_:graph', predicate: hydra + 'property', object: sd  + 'graph' }));
     }
   }
 
   // Generate the fragment metadata
   sendFragmentMetadata(metadata, fragment, query, datasource, meta) {
+    if (!fragment.pageUrl) return;
     // General fragment metadata
-    metadata(fragment.url, voID + 'subset', fragment.pageUrl);
-    metadata(fragment.pageUrl, rdf + 'type', hydra + 'PartialCollectionView');
-    metadata(fragment.pageUrl, dcTerms + 'title',
-      '"Linked Data Fragment of ' + (datasource.title || '') + '"@en');
-    metadata(fragment.pageUrl, dcTerms + 'description',
-      '"Triple/Quad Pattern Fragment of the \'' + (datasource.title || '') + '\' dataset ' +
-      'containing triples matching the pattern ' + query.patternString + '."@en');
-    metadata(fragment.pageUrl, dcTerms + 'source',   datasource.url);
+    fragment.url && metadata(this.quad({ subject: fragment.url, predicate: voID + 'subset', object: fragment.pageUrl }));
+    metadata(this.quad({ subject: fragment.pageUrl, predicate: rdf + 'type', object: hydra + 'PartialCollectionView' }));
+    metadata(this.quad({ subject: fragment.pageUrl, predicate: dcTerms + 'title',
+      object: '"Linked Data Fragment of ' + (datasource.title || '') + '"@en' }));
+    metadata(this.quad({ subject: fragment.pageUrl, predicate: dcTerms + 'description',
+      object: '"Triple/Quad Pattern Fragment of the \'' + (datasource.title || '') + '\' dataset ' +
+      'containing triples matching the pattern ' + query.patternString + '."@en' }));
+    datasource.url && metadata(this.quad({ subject: fragment.pageUrl, predicate: dcTerms + 'source', object: datasource.url }));
 
     // Total pattern matches count
     var totalCount = meta.totalCount;
-    metadata(fragment.pageUrl, hydra + 'totalItems', '"' + totalCount + '"^^' + xsd + 'integer');
-    metadata(fragment.pageUrl, voID  + 'triples',    '"' + totalCount + '"^^' + xsd + 'integer');
+    metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'totalItems', object: '"' + totalCount + '"^^' + xsd + 'integer' }));
+    metadata(this.quad({ subject: fragment.pageUrl, predicate: voID  + 'triples', object: '"' + totalCount + '"^^' + xsd + 'integer' }));
 
     // Page metadata
-    metadata(fragment.pageUrl, hydra + 'itemsPerPage', '"' + query.limit + '"^^' + xsd + 'integer');
-    metadata(fragment.pageUrl, hydra + 'first', fragment.firstPageUrl);
+    metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'itemsPerPage', object: '"' + query.limit + '"^^' + xsd + 'integer' }));
+    fragment.firstPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'first', object: fragment.firstPageUrl }));
     if (query.offset)
-      metadata(fragment.pageUrl, hydra + 'previous', fragment.previousPageUrl);
+      fragment.previousPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'previous', object: fragment.previousPageUrl }));
     if (totalCount >= query.limit + (query.offset || 0))
-      metadata(fragment.pageUrl, hydra + 'next', fragment.nextPageUrl);
+      fragment.nextPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'next', object: fragment.nextPageUrl }));
   }
+
+  quad(quadObject) {
+    return stringQuadToQuad(quadObject, this.dataFactory);
+  }
+
 }
 
 module.exports = QuadPatternFragmentsRdfView;

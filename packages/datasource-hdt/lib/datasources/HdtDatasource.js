@@ -3,14 +3,14 @@
 
 var Datasource = require('@ldf/core').datasources.Datasource,
     hdt = require('hdt'),
-    ExternalHdtDatasource = require('./ExternalHdtDatasource');
+    ExternalHdtDatasource = require('./ExternalHdtDatasource'),
+    RdfString = require('rdf-string');
 
 // Creates a new HdtDatasource
 class HdtDatasource extends Datasource {
   constructor(options) {
     let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
     super(options, supportedFeatureList);
-
 
     options = options || {};
     // Switch to external HDT datasource if the `external` flag is set
@@ -30,13 +30,15 @@ class HdtDatasource extends Datasource {
   // Writes the results of the query to the given quad stream
   _executeQuery(query, destination) {
     // Only the default graph has results
-    if (query.graph) {
+    if (query.graph && query.graph.termType !== 'DefaultGraph') {
       destination.setProperty('metadata', { totalCount: 0, hasExactCount: true });
       destination.close();
       return;
     }
-
-    this._hdtDocument.searchTriples(query.subject, query.predicate, query.object,
+    let dataFactory = this.dataFactory;
+    this._hdtDocument.searchTriples(query.subject ? RdfString.termToString(query.subject) : null,
+                                    query.predicate ? RdfString.termToString(query.predicate) : null,
+                                    query.object ? RdfString.termToString(query.object) : null,
                                     { limit: query.limit, offset: query.offset })
       .then(function (result) {
         var triples = result.triples,
@@ -49,7 +51,7 @@ class HdtDatasource extends Datasource {
         destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
         // Add the triples to the output
         for (var i = 0; i < tripleCount; i++)
-          destination._push(triples[i]);
+          destination._push(RdfString.stringQuadToQuad(triples[i], dataFactory));
         destination.close();
       },
       function (error) { destination.emit('error', error); });

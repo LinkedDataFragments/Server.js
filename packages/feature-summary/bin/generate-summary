@@ -52,7 +52,7 @@ function generate(datasourceName) {
     var writer = new N3.Writer({ prefixes: { ds: DS_NS, rdf: RDF_NS } });
 
     fromDataSource(url, datasource, function (triple) {
-      writer.addTriple(triple);
+      writer.addQuad(triple);
     }, function () {
       writer.end(function (error, result) {
         fs.appendFileSync(datasourceName + '.ttl', result);

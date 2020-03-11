@@ -6,7 +6,7 @@ var View = require('./View'),
     q = require('q'),
     path = require('path'),
     _ = require('lodash'),
-    N3Util = require('n3').Util,
+    RdfString = require('rdf-string'),
     UrlData = require('../UrlData');
 
 // Creates a new HTML view with the given name and settings
@@ -15,7 +15,7 @@ class HtmlView extends View {
     settings = settings || {};
     settings.urlData = settings.urlData || new UrlData();
     var defaults = {
-      cache: true, N3Util: N3Util,
+      cache: true, RdfString: RdfString,
       assetsPath: settings.urlData.assetsPath || '/', baseURL: settings.urlData.baseURL || '/',
       title: '', header: settings && settings.title,
     };

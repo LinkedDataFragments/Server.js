@@ -3,8 +3,7 @@
 
 var Controller = require('@ldf/core').controllers.Controller,
     url = require('url'),
-    _ = require('lodash'),
-    N3Util = require('n3').Util;
+    _ = require('lodash');
 
 // Creates a new QuadPatternFragmentsController
 class QuadPatternFragmentsController extends Controller {
@@ -76,7 +75,7 @@ class QuadPatternFragmentsController extends Controller {
     subject   = subject   ? '<' + query.subject   + '> ' : '?s ';
     predicate = predicate ? '<' + query.predicate + '> ' : '?p ';
     // Serialize object IRI, literal, or variable
-    if (N3Util.isIRI(query.object))
+    if (query.object && query.object.termType === 'NamedNode')
       object = '<' + query.object + '> ';
     else
       object = query.object ? query.object : '?o';

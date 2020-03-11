@@ -5,7 +5,9 @@ var fs = require('fs'),
     _ = require('lodash'),
     UrlData = require('../UrlData'),
     BufferedIterator = require('asynciterator').BufferedIterator,
-    EventEmitter = require('events');
+    EventEmitter = require('events'),
+    stringToTerm = require('rdf-string').stringToTerm,
+    N3 = require('n3');
 
 // Creates a new Datasource
 class Datasource extends EventEmitter {
@@ -32,8 +34,9 @@ class Datasource extends EventEmitter {
     this._request = options.request || require('request');
     this._blankNodePrefix = options.blankNodePrefix || this._blankNodePrefix;
     this._blankNodePrefixLength = this._blankNodePrefix.length;
+    this.dataFactory = options.dataFactory || N3.DataFactory;
     if (options.graph) {
-      this._graph = options.graph;
+      this._graph = this.dataFactory.namedNode(options.graph);
       this._queryGraphReplacements = Object.create(null);
       this._queryGraphReplacements[''] = 'urn:ldf:emptyGraph';
       this._queryGraphReplacements[options.graph] = '';
@@ -114,32 +117,31 @@ class Datasource extends EventEmitter {
 
     // Translate blank nodes IRIs in the query to blank nodes
     var blankNodePrefix = this._blankNodePrefix, blankNodePrefixLength = this._blankNodePrefixLength;
-    if (query.subject && query.subject.indexOf(blankNodePrefix) === 0)
-      query.subject = '_:' + query.subject.substr(blankNodePrefixLength);
-    if (query.object  && query.object.indexOf(blankNodePrefix) === 0)
-      query.object  = '_:' + query.object.substr(blankNodePrefixLength);
-    if (query.graph   && query.graph.indexOf(blankNodePrefix) === 0)
-      query.graph   = '_:' + query.graph.substr(blankNodePrefixLength);
+    if (query.subject && query.subject.value.indexOf(blankNodePrefix) === 0)
+      query.subject = this.dataFactory.blankNode(query.subject.value.substr(blankNodePrefixLength));
+    if (query.object  && query.object.value.indexOf(blankNodePrefix) === 0)
+      query.object  = this.dataFactory.blankNode(query.object.value.substr(blankNodePrefixLength));
+    if (query.graph   && query.graph.value.indexOf(blankNodePrefix) === 0)
+      query.graph   = this.dataFactory.blankNode(query.graph.value.substr(blankNodePrefixLength));
 
     // If a custom default graph was set, query it as the default graph
-    if (this._graph && (query.graph in this._queryGraphReplacements))
-      query.graph = this._queryGraphReplacements[query.graph];
+    if (this._graph && query.graph && query.graph.value in this._queryGraphReplacements)
+      query.graph = stringToTerm(this._queryGraphReplacements[query.graph.value], this.dataFactory);
 
     // Transform the received quads
     var destination = new BufferedIterator(), outputQuads, graph = this._graph, self = this;
     outputQuads = destination.map(function (quad) {
-      // Translate blank nodes in the result to blank node IRIs
-      if (quad.subject[0] === '_' && !self._skolemizeBlacklist[quad.subject])
-        quad.subject = blankNodePrefix + quad.subject.substr(2);
-      if (quad.object[0]  === '_' && !self._skolemizeBlacklist[quad.object])
-        quad.object  = blankNodePrefix + quad.object.substr(2);
-      if (quad.graph) {
-        if (quad.graph[0] === '_' && !self._skolemizeBlacklist[quad.graph])
-          quad.graph = blankNodePrefix + quad.graph.substr(2);
+      // Translate blank nodes in the result to blank node IRIs.
+      if (quad.subject && quad.subject.termType === 'BlankNode' && !self._skolemizeBlacklist[quad.subject.value])
+        quad.subject = self.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
+      if (quad.object  && quad.object.termType  === 'BlankNode' && !self._skolemizeBlacklist[quad.object.value])
+        quad.object  = self.dataFactory.namedNode(blankNodePrefix + quad.object.value);
+      if (quad.graph   && quad.graph.termType !== 'DefaultGraph') {
+        if (quad.graph.termType === 'BlankNode' && !self._skolemizeBlacklist[quad.graph.value])
+          quad.graph = self.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
       }
-      // If a custom default graph was set, move default graph triples there
-      else if (graph)
-        quad.graph = graph;
+      // If a custom default graph was set, move default graph triples there.
+      quad.graph = quad.graph && quad.graph.termType !== 'DefaultGraph' ? quad.graph : (graph || quad.graph);
       return quad;
     });
     outputQuads.copyProperties(destination, ['metadata']);

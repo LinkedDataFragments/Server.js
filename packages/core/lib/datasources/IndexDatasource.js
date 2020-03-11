@@ -18,18 +18,15 @@ class IndexDatasource extends MemoryDatasource {
 
     // Creates quads for each data source
   _getAllQuads(addQuad, done) {
+    const quad = this.dataFactory.quad, namedNode = this.dataFactory.namedNode, literal = this.dataFactory.literal;
     for (var name in this._datasources)  {
       var datasource = this._datasources[name], datasourceUrl = datasource.url;
-      if (!datasource.hide) {
-        triple(datasourceUrl, rdf + 'type', voID + 'Dataset');
-        triple(datasourceUrl, rdfs + 'label', datasource.title, true);
-        triple(datasourceUrl, dc + 'title', datasource.title, true);
-        triple(datasourceUrl, dc + 'description', datasource.description, true);
+      if (!datasource.hide && datasourceUrl) {
+        addQuad(quad(namedNode(datasourceUrl), namedNode(rdf + 'type'), namedNode(voID + 'Dataset')));
+        datasource.title && addQuad(quad(namedNode(datasourceUrl), namedNode(rdfs + 'label'), literal(datasource.title)));
+        datasource.title && addQuad(quad(namedNode(datasourceUrl), namedNode(dc + 'title'), literal(datasource.title)));
+        datasource.description && addQuad(quad(namedNode(datasourceUrl), namedNode(dc + 'description'), literal(datasource.description)));
       }
-    }
-    function triple(subject, predicate, object, isLiteral) {
-      if (subject && predicate && object)
-        addQuad(subject, predicate, isLiteral ? '"' + object + '"' : object);
     }
     delete this._datasources;
     done();

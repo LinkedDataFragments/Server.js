@@ -30,8 +30,8 @@
   },
   "dependencies": {
     "sparqljson-parse": "^1.5.1",
-    "lru-cache": "^4.0.1",
-    "n3": "^0.9.0",
+    "lru-cache": "^5.1.1",
+    "n3": "^1.3.5",
     "rdf-string": "^1.3.1"
   },
   "peerDependencies": {

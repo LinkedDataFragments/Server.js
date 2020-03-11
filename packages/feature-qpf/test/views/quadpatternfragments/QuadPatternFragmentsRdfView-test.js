@@ -4,7 +4,10 @@ var QuadPatternFragmentsRdfView = require('../../../').views.quadpatternfragment
 var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
-    AsyncIterator = require('asynciterator');
+    AsyncIterator = require('asynciterator'),
+    N3 = require('n3');
+
+const dataFactory = N3.DataFactory;
 
 describe('QuadPatternFragmentsRdfView', function () {
   describe('The QuadPatternFragmentsRdfView module', function () {
@@ -79,9 +82,9 @@ describe('QuadPatternFragmentsRdfView', function () {
 
         describe('with a non-empty triple stream that writes metadata first', function () {
           var results = AsyncIterator.fromArray([
-            { subject: 'a', predicate: 'b', object: 'c' },
-            { subject: 'a', predicate: 'd', object: 'e' },
-            { subject: 'f', predicate: 'g', object: 'h' },
+            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           var response = test.createStreamCapture();
           before(function (done) {
@@ -99,9 +102,9 @@ describe('QuadPatternFragmentsRdfView', function () {
 
         describe('with a non-empty triple stream that writes metadata afterwards', function () {
           var results = AsyncIterator.fromArray([
-            { subject: 'a', predicate: 'b', object: 'c' },
-            { subject: 'a', predicate: 'd', object: 'e' },
-            { subject: 'f', predicate: 'g', object: 'h' },
+            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           var response = test.createStreamCapture();
           before(function (done) {
