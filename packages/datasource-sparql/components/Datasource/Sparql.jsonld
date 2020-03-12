@@ -17,6 +17,13 @@
           "comment": "The SPARQL endpoint URL",
           "range": "xsd:string",
           "unique": true
+        },
+        {
+          "@id": "ldfds:Datasource/Sparql#forceTypedLiterals",
+          "comment": "If simple literals should be converted into explicitly typed literals with xsd:string when sending a query to the endpoint.",
+          "range": "xsd:boolean",
+          "unique": true,
+          "default": false
         }
       ],
       "constructorArguments": {
@@ -25,6 +32,10 @@
           {
             "keyRaw": "endpoint",
             "value": "ldfds:Datasource/Sparql#endpoint"
+          },
+          {
+            "keyRaw": "forceTypedLiterals",
+            "value": "ldfds:Datasource/Sparql#forceTypedLiterals"
           }
         ]
       }

@@ -254,6 +254,42 @@ describe('SparqlDatasource', function () {
       });
     });
   });
+
+  describe('A SparqlDatasource instance with forceTypedLiterals true', function () {
+    var request = sinon.stub();
+    var datasource = new SparqlDatasource({ endpoint: 'http://ex.org/sparql', request: request, forceTypedLiterals: true });
+    datasource.initialize();
+
+    itShouldExecute(datasource, request,
+      'a query for an object IRI',
+      { object: 'http://example.org/bar#foo', features: { quadPattern: true } },
+      'SELECT * WHERE {GRAPH ?g{?s ?p <http://example.org/bar#foo>}}',
+      'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p <http://example.org/bar#foo>}}');
+
+    itShouldExecute(datasource, request,
+      'a query for an object literal',
+      { object: '"a literal"', features: { quadPattern: true } },
+      'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"^^<http://www.w3.org/2001/XMLSchema#string>}}',
+      'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"^^<http://www.w3.org/2001/XMLSchema#string>}}');
+
+    itShouldExecute(datasource, request,
+      'a query for an object literal with newlines and quotes',
+      { object: '"a\rb\nc"\r\n\\""', features: { quadPattern: true } },
+      'SELECT * WHERE {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""^^<http://www.w3.org/2001/XMLSchema#string>}}',
+      'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""^^<http://www.w3.org/2001/XMLSchema#string>}}');
+
+    itShouldExecute(datasource, request,
+      'a query for an object literal with a language',
+      { object: '"a literal"@nl-be', features: { quadPattern: true } },
+      'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"@nl-be}}',
+      'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"@nl-be}}');
+
+    itShouldExecute(datasource, request,
+      'a query for an object literal with a type',
+      { object: '"a literal"^^http://ex.org/foo#literal', features: { quadPattern: true } },
+      'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}',
+      'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}');
+  });
 });
 
 function itShouldExecute(datasource, request, name, query, constructQuery, countQuery) {

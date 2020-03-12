@@ -7,7 +7,8 @@
       "files-ldfds": "ldfds:^3.0.0/",
 
       "SparqlDatasource": "ldfds:Datasource/Sparql",
-      "sparqlEndpoint": "ldfds:Datasource/Sparql#endpoint"
+      "sparqlEndpoint": "ldfds:Datasource/Sparql#endpoint",
+      "sparqlForceTypedLiterals": "ldfds:Datasource/Sparql#forceTypedLiterals"
     }
   ]
 }

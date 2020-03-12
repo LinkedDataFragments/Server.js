@@ -25,6 +25,8 @@ class SparqlDatasource extends Datasource {
     options = options || {};
     this._endpoint = this._endpointUrl = (options.endpoint || '').replace(/[\?#][^]*$/, '');
     this._endpointUrl += '?query=';
+
+    this._forceTypedLiterals = options.forceTypedLiterals;
   }
 
   // Writes the results of the query to the given triple stream
@@ -164,8 +166,12 @@ class SparqlDatasource extends Datasource {
         query.push('"', literalMatch[1], '"');
       else
         query.push('"""', literalMatch[1].replace(/(["\\])/g, '\\$1'), '"""');
-      literalMatch[2] ? query.push(literalMatch[2])
-                      : literalMatch[3] && query.push('^^<', literalMatch[3], '>');
+      if (literalMatch[2])
+        query.push(literalMatch[2]);
+      else if (this._forceTypedLiterals)
+        query.push('^^<', literalMatch[3] || 'http://www.w3.org/2001/XMLSchema#string', '>');
+      else
+        literalMatch[3] && query.push('^^<', literalMatch[3], '>');
     }
 
     if (quad.graph !== '')
