@@ -14,20 +14,20 @@ describe('N3Datasource', function () {
     });
 
     it('should be a N3Datasource constructor', function (done) {
-      var instance = new N3Datasource({ url: exampleTurtleUrl });
+      var instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       instance.should.be.an.instanceof(N3Datasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', function (done) {
-      var instance = new N3Datasource({ url: exampleTurtleUrl });
+      var instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
   });
 
   describe('A N3Datasource instance for an example Turtle file', function () {
-    var datasource = new N3Datasource({ url: exampleTurtleUrl });
+    var datasource = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
     datasource.initialize();
     after(function (done) { datasource.close(done); });
 

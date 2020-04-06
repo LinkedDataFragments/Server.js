@@ -2,7 +2,8 @@
 var NotFoundController = require('../../lib/controllers/NotFoundController');
 
 var request = require('supertest'),
-    DummyServer = require('../../../../test/DummyServer');
+    DummyServer = require('../../../../test/DummyServer'),
+    dataFactory = require('n3').DataFactory;
 
 var NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView.js'),
     NotFoundRdfView = require('../../lib/views/notfound/NotFoundRdfView.js');
@@ -57,8 +58,8 @@ describe('NotFoundController', function () {
   describe('A NotFoundController instance with HTML and RDF views', function () {
     var controller, htmlView, rdfView, datasources, client;
     before(function () {
-      htmlView = new NotFoundHtmlView();
-      rdfView  = new NotFoundRdfView();
+      htmlView = new NotFoundHtmlView({ dataFactory });
+      rdfView  = new NotFoundRdfView({ dataFactory });
       sinon.spy(htmlView, 'render');
       sinon.spy(rdfView,  'render');
       datasources = { a: { title: 'foo', url: 'http://example.org/foo#dataset' } };

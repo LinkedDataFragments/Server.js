@@ -16,16 +16,16 @@ describe('Datasource', function () {
     });
 
     it('should be a Datasource constructor', function () {
-      new Datasource().should.be.an.instanceof(Datasource);
+      new Datasource({ dataFactory }).should.be.an.instanceof(Datasource);
     });
 
     it('should be an EventEmitter constructor', function () {
-      new Datasource().should.be.an.instanceof(EventEmitter);
+      new Datasource({ dataFactory }).should.be.an.instanceof(EventEmitter);
     });
   });
 
   describe('A Datasource instance', function () {
-    var datasource = new Datasource();
+    var datasource = new Datasource({ dataFactory });
     datasource.initialize();
 
     it('should not indicate support for any features', function () {
@@ -119,7 +119,7 @@ describe('Datasource', function () {
   describe('A Datasource instance with an initializer', function () {
     var datasource, initializedListener, errorListener;
     before(function () {
-      datasource = new Datasource();
+      datasource = new Datasource({ dataFactory });
       datasource._initialize = sinon.stub();
       Object.defineProperty(datasource, 'supportedFeatures', {
         value: { all: true },
@@ -183,7 +183,7 @@ describe('Datasource', function () {
   describe('A Datasource instance with an initializer that errors synchronously', function () {
     var datasource, initializedListener, errorListener, error;
     before(function () {
-      datasource = new Datasource();
+      datasource = new Datasource({ dataFactory });
       error = new Error('initializer error');
       datasource._initialize = sinon.stub().throws(error);
       datasource.on('initialized', initializedListener = sinon.stub());
@@ -214,7 +214,7 @@ describe('Datasource', function () {
   describe('A Datasource instance with an initializer that errors asynchronously', function () {
     var datasource, initializedListener, errorListener, error;
     before(function () {
-      datasource = new Datasource();
+      datasource = new Datasource({ dataFactory });
       error = new Error('initializer error');
       datasource._initialize = sinon.stub().callsArgWith(0, error);
       datasource.on('initialized', initializedListener = sinon.stub());
@@ -243,7 +243,7 @@ describe('Datasource', function () {
   });
 
   describe('A derived Datasource instance', function () {
-    var datasource = new Datasource();
+    var datasource = new Datasource({ dataFactory });
     Object.defineProperty(datasource, 'supportedFeatures', {
       enumerable: true,
       value: { a: true, b: true, c: false },
@@ -288,6 +288,7 @@ describe('Datasource', function () {
 
   describe('A Datasource instance with a graph property', function () {
     var datasource = new Datasource({
+      dataFactory,
       graph: 'http://example.org/#mygraph',
     });
     Object.defineProperty(datasource, 'supportedFeatures', {

@@ -89,9 +89,12 @@
         },
         {
           "@id": "ldfc:Datasource#dataFactory",
-          "comment": "Used to create rdfjs terms",
-          "unique": true
-        }        
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#dataFactory",
+            "from": "ldfc:Server"
+          }
+        }
       ],
       "constructorArguments": {
         "@id": "ldfc:Datasource#constructorArgumentsObject",
@@ -147,6 +150,9 @@
           {
             "keyRaw": "quads",
             "value": "ldfc:Datasource#quads"
+          },
+          {
+            "@id": "ldfc:Server#dataFactoryField"
           }
         ]
       }

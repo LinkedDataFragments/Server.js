@@ -169,6 +169,16 @@
               { "@id": "ldfc:Server#dereferencePath" }
             ]
           }
+        },
+        {
+          "@id": "ldfc:Server#dataFactory",
+          "comment": "A factory object to construct RDFJS terms",
+          "unique": true,
+          "default": {
+            "requireName": "n3",
+            "requireElement": "DataFactory",
+            "requireNoConstructor": true
+          }
         }
       ],
       "constructorArguments": {
@@ -243,6 +253,11 @@
             "@id": "ldfc:Server#viewsRawField",
             "keyRaw": "viewsRaw",
             "value": "ldfc:Server#view"
+          },
+          {
+            "@id": "ldfc:Server#dataFactoryField",
+            "keyRaw": "dataFactory",
+            "value": "ldfc:Server#dataFactory"
           },
           {
             "keyRaw": "response",

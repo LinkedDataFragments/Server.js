@@ -14,20 +14,20 @@ describe('JsonLdDatasource', function () {
     });
 
     it('should be a JsonLdDatasource constructor', function (done) {
-      var instance = new JsonLdDatasource({ url: exampleJsonLdUrl });
+      var instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       instance.should.be.an.instanceof(JsonLdDatasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', function (done) {
-      var instance = new JsonLdDatasource({ url: exampleJsonLdUrl });
+      var instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
   });
 
   describe('A JsonLdDatasource instance for an example JsonLd file', function () {
-    var datasource = new JsonLdDatasource({ url: exampleJsonLdUrl });
+    var datasource = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
     datasource.initialize();
     after(function (done) { datasource.close(done); });
 

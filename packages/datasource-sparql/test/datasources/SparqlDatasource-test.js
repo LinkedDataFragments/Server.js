@@ -17,17 +17,17 @@ describe('SparqlDatasource', function () {
     });
 
     it('should be a SparqlDatasource constructor', function () {
-      new SparqlDatasource().should.be.an.instanceof(SparqlDatasource);
+      new SparqlDatasource({ dataFactory }).should.be.an.instanceof(SparqlDatasource);
     });
 
     it('should create Datasource objects', function () {
-      new SparqlDatasource().should.be.an.instanceof(Datasource);
+      new SparqlDatasource({ dataFactory }).should.be.an.instanceof(Datasource);
     });
   });
 
   describe('A SparqlDatasource instance', function () {
     var request = sinon.stub();
-    var datasource = new SparqlDatasource({ endpoint: 'http://ex.org/sparql', request: request });
+    var datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql', request: request });
     datasource.initialize();
 
     it('should indicate support for its features', function () {
@@ -244,7 +244,7 @@ describe('SparqlDatasource', function () {
       var result, totalCount;
       before(function () {
         request.reset();
-        let query = { subject: dataFactory.namedNode('abcdef'), features: { quadPattern: true } }
+        let query = { subject: dataFactory.namedNode('abcdef'), features: { quadPattern: true } };
         result = datasource.select(query);
         request.returnValues[1].emit('error', new Error());
         result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
@@ -258,7 +258,7 @@ describe('SparqlDatasource', function () {
 
   describe('A SparqlDatasource instance with forceTypedLiterals true', function () {
     var request = sinon.stub();
-    var datasource = new SparqlDatasource({ endpoint: 'http://ex.org/sparql', request: request, forceTypedLiterals: true });
+    var datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql', request: request, forceTypedLiterals: true });
     datasource.initialize();
 
     itShouldExecute(datasource, request,

@@ -19,6 +19,7 @@
         "@type": "@id"
       },
       "dereferencePath": "ldfc:Server#dereferencePath",
+      "dataFactory": "ldfc:Server#dataFactory",
 
       "EmptyDatasource": "ldfc:Datasource/Empty",
       "IndexDatasource": "ldfc:Datasource/Index",

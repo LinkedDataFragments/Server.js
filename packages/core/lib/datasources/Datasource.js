@@ -6,8 +6,7 @@ var fs = require('fs'),
     UrlData = require('../UrlData'),
     BufferedIterator = require('asynciterator').BufferedIterator,
     EventEmitter = require('events'),
-    stringToTerm = require('rdf-string').stringToTerm,
-    N3 = require('n3');
+    stringToTerm = require('rdf-string').stringToTerm;
 
 // Creates a new Datasource
 class Datasource extends EventEmitter {
@@ -34,7 +33,7 @@ class Datasource extends EventEmitter {
     this._request = options.request || require('request');
     this._blankNodePrefix = options.blankNodePrefix || this._blankNodePrefix;
     this._blankNodePrefixLength = this._blankNodePrefix.length;
-    this.dataFactory = options.dataFactory || N3.DataFactory;
+    this.dataFactory = options.dataFactory;
     if (options.graph) {
       this._graph = this.dataFactory.namedNode(options.graph);
       this._queryGraphReplacements = Object.create(null);

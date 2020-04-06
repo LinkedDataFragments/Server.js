@@ -20,6 +20,14 @@
             "onParameter": "ldfc:Server#urlData",
             "from": "ldfc:Server"
           }
+        },
+        {
+          "@id": "ldfc:View#dataFactory",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#dataFactory",
+            "from": "ldfc:Server"
+          }
         }
       ],
       "constructorArguments": {
@@ -32,6 +40,9 @@
           {
             "keyRaw": "urlData",
             "value": "ldfc:Server#urlData"
+          },
+          {
+            "@id": "ldfc:Server#dataFactoryField"
           }
         ]
       }

@@ -16,10 +16,10 @@ class JsonLdDatasource extends MemoryDatasource {
   // Retrieves all quads from the document
   _getAllQuads(addQuad, done) {
     var document = this._fetch({ url: this._url, headers: { accept: ACCEPT } });
-    new JsonLdParser({ baseIRI: this._url })
+    new JsonLdParser({ baseIRI: this._url, dataFactory: this.dataFactory })
       .import(document)
       .on('error', done)
-      .on('data', function (quad) { addQuad(quad); })
+      .on('data', addQuad)
       .on('end', done);
   }
 }

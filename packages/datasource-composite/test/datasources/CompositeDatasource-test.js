@@ -14,10 +14,10 @@ var exampleTrigUrl = 'file://' + path.join(__dirname, '../../../../test/assets/t
 
 describe('CompositeDatasource', function () {
   var references = {
-    data0: { settings: { file: exampleHdtFile }, datasourceType: HdtDatasource, size: 132 },
-    data1: { settings: { file: exampleHdtFileWithBlanks, graph: 'http://example.org/graph0' }, datasourceType: HdtDatasource, size: 6 },
-    data2: { settings: { url: exampleTurtleUrl }, datasourceType: N3Datasource, size: 129 },
-    data3: { settings: { url: exampleTrigUrl }, datasourceType: N3Datasource, size: 7 },
+    data0: { dataFactory, settings: { dataFactory, file: exampleHdtFile }, datasourceType: HdtDatasource, size: 132 },
+    data1: { dataFactory, settings: { dataFactory, file: exampleHdtFileWithBlanks, graph: 'http://example.org/graph0' }, datasourceType: HdtDatasource, size: 6 },
+    data2: { dataFactory, settings: { dataFactory, url: exampleTurtleUrl }, datasourceType: N3Datasource, size: 129 },
+    data3: { dataFactory, settings: { dataFactory, url: exampleTrigUrl }, datasourceType: N3Datasource, size: 7 },
   };
   Object.keys(references).forEach(function (datasourceId) {
     var datasource = references[datasourceId];
