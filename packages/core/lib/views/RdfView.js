@@ -21,7 +21,6 @@ var contentTypes = 'application/trig;q=0.9,application/n-quads;q=0.7,' +
 class RdfView extends View {
   constructor(viewName, settings) {
     super(viewName, contentTypes, settings);
-    this.dataFactory = N3.DataFactory;
   }
 
   // Renders the view with the given settings to the response

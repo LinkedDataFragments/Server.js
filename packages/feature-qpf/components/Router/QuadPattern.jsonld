@@ -20,12 +20,24 @@
             "from": "ldfc:Server"
           },
           "unique": true
+        },
+        {
+          "@id": "ldffq:QuadPattern/QuadPattern#dataFactory",
+          "inheritValues": {
+            "@type": "InheritanceValue",
+            "onParameter": "ldfc:Server#dataFactory",
+            "from": "ldfc:Server"
+          },
+          "unique": true
         }
       ],
       "constructorArguments": {
         "fields": [
           {
             "@id": "ldfc:Server#prefixField"
+          },
+          {
+            "@id": "ldfc:Server#dataFactoryField"
           }
         ]
       }

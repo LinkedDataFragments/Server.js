@@ -16,14 +16,14 @@ describe('HdtDatasource', function () {
     });
 
     it('should be an HdtDatasource constructor', function (done) {
-      var instance = new HdtDatasource({ file: exampleHdtFile });
+      var instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       instance.should.be.an.instanceof(HdtDatasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', function (done) {
-      var instance = new HdtDatasource({ file: exampleHdtFile });
+      var instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
@@ -34,7 +34,7 @@ describe('HdtDatasource', function () {
     var datasource;
     function getDatasource() { return datasource; }
     before(function (done) {
-      datasource = new HdtDatasource({ file: exampleHdtFile });
+      datasource = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       datasource.initialize();
       datasource.on('initialized', done);
     });
@@ -97,7 +97,7 @@ describe('HdtDatasource', function () {
     var datasource;
     function getDatasource() { return datasource; }
     before(function (done) {
-      datasource = new HdtDatasource({ file: exampleHdtFileWithBlanks });
+      datasource = new HdtDatasource({ dataFactory, file: exampleHdtFileWithBlanks });
       datasource.initialize();
       datasource.on('initialized', done);
     });
@@ -147,6 +147,7 @@ describe('HdtDatasource', function () {
     function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new HdtDatasource({
+        dataFactory,
         file: exampleHdtFileWithBlanks,
         blankNodePrefix: 'http://example.org/.well-known/genid/',
       });

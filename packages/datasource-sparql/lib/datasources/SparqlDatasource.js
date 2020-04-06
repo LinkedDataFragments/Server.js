@@ -18,7 +18,7 @@ class SparqlDatasource extends Datasource {
 
     this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
     this._resolvingCountQueries = {};
-    this._sparqlJsonParser = new SparqlJsonParser();
+    this._sparqlJsonParser = new SparqlJsonParser({ dataFactory: this.dataFactory });
 
     // Set endpoint URL and default graph
     options = options || {};

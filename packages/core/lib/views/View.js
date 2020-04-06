@@ -11,6 +11,7 @@ class View {
     this.name = viewName || '';
     this._parseContentTypes(contentTypes);
     this._defaults = defaults || {};
+    this.dataFactory = this._defaults.dataFactory;
     if (this._defaults.views)
       this._defaults.views = new ViewCollection(defaults.views);
   }

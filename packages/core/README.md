@@ -67,7 +67,6 @@ This package exposes the the following context entries:
 
 **Other:**
 * `Server`: An HTTP server that provides access to Linked Data Fragments. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
-* `dataFactory`: A factory object used to construct rdfjs terms._
 * `title`: The server name. _Should be used as key in a `Server` config._
 * `baseURL`: The base URL path for the server. _Should be used as key in a `Server` config._
 * `port`: The port the server will bind with. _Should be used as key in a `Server` config._
@@ -91,6 +90,7 @@ This package exposes the the following context entries:
 * `views`: Views for the server. This is configured by default in `@ldf/server`. _Should be used as key in a `Server` config._
 * `UrlData`: A data object class for preset URL information. This is enabled by default in `@ldf/server`. _Should be used as `@type` value._
 * `urlData`: The UrlData helper object. This is enabled by default in `@ldf/server`. _Should be used as key in a `Server` config._
+* `dataFactory`: A [factory object to construct RDFJS terms](http://rdf.js.org/data-model-spec/#datafactory-interface). `@ldf/server` uses the [N3](https://github.com/rdfjs/N3.js) `DataFactory` by default. _Should be used as key in a `Server` config._
 
 `@ldf/server` and `@ldf/preset-qpf` provide default instantiations of all core classes,
 which means that you don't have to define them in your config file yourself.

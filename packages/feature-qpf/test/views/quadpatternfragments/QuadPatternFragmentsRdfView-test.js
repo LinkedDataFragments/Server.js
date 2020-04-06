@@ -16,12 +16,12 @@ describe('QuadPatternFragmentsRdfView', function () {
     });
 
     it('should be a QuadPatternFragmentsRdfView constructor', function () {
-      new QuadPatternFragmentsRdfView().should.be.an.instanceof(QuadPatternFragmentsRdfView);
+      new QuadPatternFragmentsRdfView({ dataFactory }).should.be.an.instanceof(QuadPatternFragmentsRdfView);
     });
   });
 
   describe('A QuadPatternFragmentsRdfView instance', function () {
-    var view = new QuadPatternFragmentsRdfView();
+    var view = new QuadPatternFragmentsRdfView({ dataFactory });
     var settings = {
       datasource: {
         title: 'My data',
