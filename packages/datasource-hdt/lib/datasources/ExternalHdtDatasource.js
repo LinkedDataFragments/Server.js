@@ -23,14 +23,13 @@ class ExternalHdtDatasource extends Datasource {
   }
 
   // Prepares the datasource for querying
-  _initialize(done) {
+  async _initialize() {
     if (this._options.checkFile !== false) {
       if (!fs.existsSync(this._hdtFile))
-        return done(new Error('Not an HDT file: ' + this._hdtFile));
+        throw new Error('Not an HDT file: ' + this._hdtFile);
       if (!fs.existsSync(hdtUtility))
-        return done(new Error('hdt not found: ' + hdtUtility));
+        throw new Error('hdt not found: ' + hdtUtility);
     }
-    done();
   }
 
   // Writes the results of the query to the given quad stream

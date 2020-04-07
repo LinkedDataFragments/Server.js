@@ -117,10 +117,11 @@ describe('Datasource', () => {
   });
 
   describe('A Datasource instance with an initializer', () => {
-    let datasource, initializedListener, errorListener;
+    let datasource, initializedListener, errorListener, initResolver, initSpy;
     before(() => {
       datasource = new Datasource({ dataFactory });
-      datasource._initialize = sinon.stub();
+      datasource._initialize = () => new Promise((resolve) => initResolver = resolve);
+      initSpy = sinon.spy(datasource, '_initialize');
       Object.defineProperty(datasource, 'supportedFeatures', {
         value: { all: true },
       });
@@ -131,7 +132,7 @@ describe('Datasource', () => {
 
     describe('after construction', () => {
       it('should have called the initializer', () => {
-        datasource._initialize.should.have.been.calledOnce;
+        initSpy.should.have.been.calledOnce;
       });
 
       it('should not be initialized', () => {
@@ -152,7 +153,7 @@ describe('Datasource', () => {
 
     describe('after the initializer calls the callback', () => {
       before(() => {
-        datasource._initialize.getCall(0).args[0]();
+        initResolver();
       });
 
       it('should be initialized', () => {
@@ -185,7 +186,8 @@ describe('Datasource', () => {
     before(() => {
       datasource = new Datasource({ dataFactory });
       error = new Error('initializer error');
-      datasource._initialize = sinon.stub().throws(error);
+      datasource._initialize = () => { throw error; };
+      sinon.spy(datasource, '_initialize');
       datasource.on('initialized', initializedListener = sinon.stub());
       datasource.on('error', errorListener = sinon.stub());
       datasource.initialize();
@@ -216,7 +218,8 @@ describe('Datasource', () => {
     before(() => {
       datasource = new Datasource({ dataFactory });
       error = new Error('initializer error');
-      datasource._initialize = sinon.stub().callsArgWith(0, error);
+      datasource._initialize = () => Promise.reject(error);
+      sinon.spy(datasource, '_initialize');
       datasource.on('initialized', initializedListener = sinon.stub());
       datasource.on('error', errorListener = sinon.stub());
       datasource.initialize();

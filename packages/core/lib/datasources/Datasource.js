@@ -62,23 +62,22 @@ class Datasource extends EventEmitter {
 
   // Initialize the datasource asynchronously
   initialize() {
-    setImmediate(() => {
-      let done = _.once((error) => {
-        if (error)
-          this.emit('error', error);
-        else {
+    try {
+      this._initialize()
+        .then(() => {
           this.initialized = true;
           this.emit('initialized');
-        }
-      });
-      try { this._initialize(done); }
-      catch (error) { done(error); }
-    });
+        })
+        .catch((error) => this.emit('error', error));
+    }
+    catch (error) {
+      this.emit('error', error);
+    }
   }
 
   // Prepares the datasource for querying
-  _initialize(done) {
-    done();
+  async _initialize() {
+
   }
 
   // Checks whether the data source can evaluate the given query

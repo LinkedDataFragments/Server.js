@@ -20,11 +20,8 @@ class HdtDatasource extends Datasource {
   }
 
   // Loads the HDT datasource
-  _initialize(done) {
-    let datasource = this;
-    hdt.fromFile(this._hdtFile).then((hdtDocument) => {
-      datasource._hdtDocument = hdtDocument;
-    }).then(done, done);
+  async _initialize() {
+    this._hdtDocument = await hdt.fromFile(this._hdtFile);
   }
 
   // Writes the results of the query to the given quad stream
