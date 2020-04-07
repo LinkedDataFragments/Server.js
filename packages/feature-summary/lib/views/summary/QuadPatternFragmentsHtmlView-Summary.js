@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A SummaryHtmlViewExtension extends the Quad Pattern Fragments RDF view with a summary link. */
 
-var HtmlView = require('@ldf/core').views.HtmlView,
+let HtmlView = require('@ldf/core').views.HtmlView,
     path = require('path');
 
 // Creates a new SummaryHtmlViewExtension

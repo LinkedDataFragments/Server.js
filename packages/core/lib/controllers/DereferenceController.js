@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A DeferenceController responds to dereferencing requests */
 
-var Controller = require('./Controller'),
+let Controller = require('./Controller'),
     url = require('url'),
     _ = require('lodash'),
     Util = require('../Util');
@@ -11,7 +11,7 @@ class DeferenceController extends Controller {
   constructor(options) {
     options = options || {};
     super(options);
-    var paths = this._paths = options.dereference || {};
+    let paths = this._paths = options.dereference || {};
     this._matcher = /$0^/;
     if (!_.isEmpty(paths))
       this._matcher = new RegExp('^(' + Object.keys(paths).map(Util.toRegExp).join('|') + ')');
@@ -19,9 +19,9 @@ class DeferenceController extends Controller {
 
   // Dereferences a URL by redirecting to its subject fragment of a certain data source
   _handleRequest(request, response, next) {
-    var match = this._matcher.exec(request.url), datasource;
+    let match = this._matcher.exec(request.url), datasource;
     if (datasource = match && this._paths[match[1]]) {
-      var entity = url.format(_.defaults({
+      let entity = url.format(_.defaults({
         pathname: datasource.path,
         query: { subject: url.format(request.parsedUrl) },
       }, request.parsedUrl));

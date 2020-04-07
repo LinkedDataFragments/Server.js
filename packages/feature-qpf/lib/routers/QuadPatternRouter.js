@@ -3,14 +3,14 @@
 
 const stringToTerm = require('rdf-string').stringToTerm;
 
-var iriMatcher = /^(<?)([^_?$"<>][^"<>]*)>?$/;
-var literalMatcher = /^("[^]*")(?:|\^\^<?([^"<>]+)>?|@[a-z0-9\-]+)$/i;
-var prefixedNameMatcher = /^([a-z0-9\-]*):([^\/#:]*)$/i;
+let iriMatcher = /^(<?)([^_?$"<>][^"<>]*)>?$/;
+let literalMatcher = /^("[^]*")(?:|\^\^<?([^"<>]+)>?|@[a-z0-9\-]+)$/i;
+let prefixedNameMatcher = /^([a-z0-9\-]*):([^\/#:]*)$/i;
 
 // Clients use `DEFAULT_GRAPH` as value for `graph` to indicate the default graph
-var DEFAULT_GRAPH = 'urn:ldf:defaultGraph';
+let DEFAULT_GRAPH = 'urn:ldf:defaultGraph';
 // However, users might find "@default" easier to type (not spec-compatible)
-var DEFAULT_GRAPH_ALT = '@default';
+let DEFAULT_GRAPH_ALT = '@default';
 
 // Creates a new QuadPatternRouter
 class QuadPatternRouter {
@@ -21,7 +21,7 @@ class QuadPatternRouter {
 
   // Extracts triple or quad pattern parameters from the request and add them to the query
   extractQueryParams(request, query) {
-    var queryString = request.url && request.url.query, match,
+    let queryString = request.url && request.url.query, match,
         hasTriplePattern = false, hasQuadPattern = false;
 
     // Try to extract a subject IRI
@@ -63,7 +63,7 @@ class QuadPatternRouter {
 
   // Expands a prefixed named into a full IRI
   _expandIRI(name) {
-    var match = prefixedNameMatcher.exec(name), prefix;
+    let match = prefixedNameMatcher.exec(name), prefix;
     return match && (prefix = this._prefixes[match[1]]) ? prefix + match[2] : name;
   }
 }

@@ -1,10 +1,10 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
-var http = require('http');
+const http = require('http');
 
 /* Dummy server that emulates LinkedDataFragmentsServer */
 function DummyServer(controller) {
-  var server = http.createServer();
+  const server = http.createServer();
   server.on('request', function (request, response) {
     // End the response if the controller did not handle the request
     controller.next = sinon.spy(function (error) {

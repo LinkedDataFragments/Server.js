@@ -1,11 +1,11 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
-var N3Datasource = require('../../').datasources.N3Datasource;
+let N3Datasource = require('../../').datasources.N3Datasource;
 
-var Datasource = require('@ldf/core').datasources.Datasource,
+let Datasource = require('@ldf/core').datasources.Datasource,
     path = require('path'),
     dataFactory = require('n3').DataFactory;
 
-var exampleTurtleUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.ttl');
+let exampleTurtleUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.ttl');
 
 describe('N3Datasource', function () {
   describe('The N3Datasource module', function () {
@@ -14,20 +14,20 @@ describe('N3Datasource', function () {
     });
 
     it('should be a N3Datasource constructor', function (done) {
-      var instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
+      let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       instance.should.be.an.instanceof(N3Datasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', function (done) {
-      var instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
+      let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
   });
 
   describe('A N3Datasource instance for an example Turtle file', function () {
-    var datasource = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
+    let datasource = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
     datasource.initialize();
     after(function (done) { datasource.close(done); });
 
@@ -80,9 +80,9 @@ describe('N3Datasource', function () {
 
 function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
   describe('executing ' + name, function () {
-    var resultsCount = 0, totalCount;
+    let resultsCount = 0, totalCount;
     before(function (done) {
-      var result = datasource.select(query);
+      let result = datasource.select(query);
       result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
       result.on('data', function (triple) { resultsCount++; });
       result.on('end', done);

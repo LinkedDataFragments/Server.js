@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* A ForbiddenHtmlView represents a 401 response in HTML. */
 
-var HtmlView = require('../HtmlView');
+let HtmlView = require('../HtmlView');
 
 // Creates a new ForbiddenHtmlView
 class ForbiddenHtmlView extends HtmlView {

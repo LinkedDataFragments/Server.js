@@ -1,11 +1,11 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var NotFoundController = require('../../lib/controllers/NotFoundController');
+let NotFoundController = require('../../lib/controllers/NotFoundController');
 
-var request = require('supertest'),
+let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
     dataFactory = require('n3').DataFactory;
 
-var NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView.js'),
+let NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView.js'),
     NotFoundRdfView = require('../../lib/views/notfound/NotFoundRdfView.js');
 
 describe('NotFoundController', function () {
@@ -20,14 +20,14 @@ describe('NotFoundController', function () {
   });
 
   describe('A NotFoundController instance without views', function () {
-    var controller, client;
+    let controller, client;
     before(function () {
       controller = new NotFoundController();
       client = request.agent(new DummyServer(controller));
     });
 
     describe('receiving a request', function () {
-      var response;
+      let response;
       before(function (done) {
         client.get('/notfound')
               .end(function (error, res) { response = res; done(error); });
@@ -56,7 +56,7 @@ describe('NotFoundController', function () {
   });
 
   describe('A NotFoundController instance with HTML and RDF views', function () {
-    var controller, htmlView, rdfView, datasources, client;
+    let controller, htmlView, rdfView, datasources, client;
     before(function () {
       htmlView = new NotFoundHtmlView({ dataFactory });
       rdfView  = new NotFoundRdfView({ dataFactory });
@@ -72,7 +72,7 @@ describe('NotFoundController', function () {
     }
 
     describe('receiving a request without Accept header', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/notfound')
@@ -109,7 +109,7 @@ describe('NotFoundController', function () {
     });
 
     describe('receiving a request with an Accept header of */*', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/notfound').set('Accept', '*/*')
@@ -146,7 +146,7 @@ describe('NotFoundController', function () {
     });
 
     describe('receiving a request with an Accept header of text/html', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/notfound').set('Accept', 'text/html')
@@ -183,7 +183,7 @@ describe('NotFoundController', function () {
     });
 
     describe('receiving a request with an Accept header of text/turtle', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/notfound').set('Accept', 'text/turtle')
@@ -221,7 +221,7 @@ describe('NotFoundController', function () {
     });
 
     describe('receiving a request with an Accept header of application/trig', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/notfound').set('Accept', 'application/trig')

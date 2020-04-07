@@ -1,13 +1,13 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
-var HdtDatasource = require('../../').datasources.HdtDatasource;
+let HdtDatasource = require('../../').datasources.HdtDatasource;
 
-var Datasource = require('@ldf/core').datasources.Datasource,
+let Datasource = require('@ldf/core').datasources.Datasource,
     path = require('path'),
     dataFactory = require('n3').DataFactory,
     RdfString = require('rdf-string');
 
-var exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
-var exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
+let exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
+let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
 
 describe('HdtDatasource', function () {
   describe('The HdtDatasource module', function () {
@@ -16,14 +16,14 @@ describe('HdtDatasource', function () {
     });
 
     it('should be an HdtDatasource constructor', function (done) {
-      var instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
+      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       instance.should.be.an.instanceof(HdtDatasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', function (done) {
-      var instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
+      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
@@ -31,7 +31,7 @@ describe('HdtDatasource', function () {
   });
 
   describe('A HdtDatasource instance for an example HDT file', function () {
-    var datasource;
+    let datasource;
     function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new HdtDatasource({ dataFactory, file: exampleHdtFile });
@@ -94,7 +94,7 @@ describe('HdtDatasource', function () {
   });
 
   describe('A HdtDatasource instance with blank nodes', function () {
-    var datasource;
+    let datasource;
     function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new HdtDatasource({ dataFactory, file: exampleHdtFileWithBlanks });
@@ -143,7 +143,7 @@ describe('HdtDatasource', function () {
   });
 
   describe('A HdtDatasource instance with blank nodes and a blank node prefix', function () {
-    var datasource;
+    let datasource;
     function getDatasource() { return datasource; }
     before(function (done) {
       datasource = new HdtDatasource({
@@ -199,9 +199,9 @@ describe('HdtDatasource', function () {
 function itShouldExecute(getDatasource, name, query,
                          expectedResultsCount, expectedTotalCount, expectedTriples) {
   describe('executing ' + name, function () {
-    var resultsCount = 0, totalCount, triples = [];
+    let resultsCount = 0, totalCount, triples = [];
     before(function (done) {
-      var result = getDatasource().select(query);
+      let result = getDatasource().select(query);
       result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
       result.on('data', function (triple) { resultsCount++; expectedTriples && triples.push(triple); });
       result.on('end', done);
@@ -218,7 +218,7 @@ function itShouldExecute(getDatasource, name, query,
     if (expectedTriples) {
       it('should emit the expected triples', function () {
         expect(triples.length).to.equal(expectedTriples.length);
-        for (var i = 0; i < expectedTriples.length; i++)
+        for (let i = 0; i < expectedTriples.length; i++)
           triples[i].should.deep.equal(RdfString.stringQuadToQuad(expectedTriples[i], dataFactory));
       });
     }

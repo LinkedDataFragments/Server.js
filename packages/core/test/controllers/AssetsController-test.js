@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var AssetsController = require('../../lib/controllers/AssetsController');
+let AssetsController = require('../../lib/controllers/AssetsController');
 
-var request = require('supertest'),
+let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
     fs = require('fs'),
     path = require('path');
@@ -18,7 +18,7 @@ describe('AssetsController', function () {
   });
 
   describe('An AssetsController instance', function () {
-    var controller, client;
+    let controller, client;
     before(function () {
       controller = new AssetsController();
       client = request.agent(new DummyServer(controller));
@@ -26,7 +26,7 @@ describe('AssetsController', function () {
 
     it('should correctly serve SVG assets', function (done) {
       client.get('/assets/images/logo').expect(function (response) {
-        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/images/logo.svg'), 'utf8');
+        let asset = fs.readFileSync(path.join(__dirname, '/../../assets/images/logo.svg'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/svg+xml');
@@ -37,7 +37,7 @@ describe('AssetsController', function () {
 
     it('should correctly serve CSS assets', function (done) {
       client.get('/assets/styles/ldf-server').expect(function (response) {
-        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/styles/ldf-server.css'), 'utf8');
+        let asset = fs.readFileSync(path.join(__dirname, '/../../assets/styles/ldf-server.css'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/css;charset=utf-8');
@@ -48,7 +48,7 @@ describe('AssetsController', function () {
 
     it('should correctly serve ICO assets', function (done) {
       client.get('/favicon.ico').expect(function (response) {
-        var asset = fs.readFileSync(path.join(__dirname, '/../../assets/favicon.ico'), 'utf8');
+        let asset = fs.readFileSync(path.join(__dirname, '/../../assets/favicon.ico'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'image/x-icon');

@@ -1,10 +1,10 @@
 /*! @license MIT ©2015-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* A QuadPatternFragmentsRdfView represents a Quad Pattern Fragment in RDF. */
 
-var RdfView = require('@ldf/core').views.RdfView,
+let RdfView = require('@ldf/core').views.RdfView,
     stringQuadToQuad = require('rdf-string').stringQuadToQuad;
 
-var dcTerms = 'http://purl.org/dc/terms/',
+let dcTerms = 'http://purl.org/dc/terms/',
     rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     xsd = 'http://www.w3.org/2001/XMLSchema#',
     sd = 'http://www.w3.org/ns/sparql-service-description#',
@@ -19,7 +19,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
 
   // Generates quads by sending them to the data and/or metadata callbacks
   _generateRdf(settings, data, metadata, done) {
-    var datasource = settings.datasource, fragment = settings.fragment, query = settings.query,
+    let datasource = settings.datasource, fragment = settings.fragment, query = settings.query,
         results = settings.results, self = this, metadataDone = false;
 
     // Add data source metadata
@@ -91,7 +91,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
     datasource.url && metadata(this.quad({ subject: fragment.pageUrl, predicate: dcTerms + 'source', object: datasource.url }));
 
     // Total pattern matches count
-    var totalCount = meta.totalCount;
+    let totalCount = meta.totalCount;
     metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'totalItems', object: '"' + totalCount + '"^^' + xsd + 'integer' }));
     metadata(this.quad({ subject: fragment.pageUrl, predicate: voID  + 'triples', object: '"' + totalCount + '"^^' + xsd + 'integer' }));
 

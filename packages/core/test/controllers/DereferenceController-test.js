@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var DereferenceController = require('../../lib/controllers/DereferenceController');
+let DereferenceController = require('../../lib/controllers/DereferenceController');
 
-var request = require('supertest'),
+let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer');
 
 describe('DereferenceController', function () {
@@ -16,14 +16,14 @@ describe('DereferenceController', function () {
   });
 
   describe('A DereferenceController instance', function () {
-    var controller, client;
+    let controller, client;
     before(function () {
       controller = new DereferenceController({ dereference: { '/resource/': { path: 'dbpedia/2014' } } });
       client = request.agent(new DummyServer(controller));
     });
 
     describe('receiving a request for a dereferenced URL', function () {
-      var response;
+      let response;
       before(function (done) {
         client.get('/resource/Mickey_Mouse')
               .end(function (error, res) { response = res; done(error); });
@@ -42,7 +42,7 @@ describe('DereferenceController', function () {
       });
 
       it('should set the Location header correctly', function () {
-        var hostname = response.req.getHeader('Host'),
+        let hostname = response.req.getHeader('Host'),
             entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
             expectedLocation = 'http://' + hostname + '/dbpedia/2014?subject=' + entityUrl;
 
@@ -50,7 +50,7 @@ describe('DereferenceController', function () {
       });
 
       it('should mention the desired location in the body', function () {
-        var hostname = response.req.getHeader('Host'),
+        let hostname = response.req.getHeader('Host'),
             entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
             expectedLocation = 'http://' + hostname + '/dbpedia/2014?subject=' + entityUrl;
 

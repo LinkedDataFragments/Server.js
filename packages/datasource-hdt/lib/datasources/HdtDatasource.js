@@ -1,7 +1,7 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* An HdtDatasource loads and queries an HDT document in-process. */
 
-var Datasource = require('@ldf/core').datasources.Datasource,
+let Datasource = require('@ldf/core').datasources.Datasource,
     hdt = require('hdt'),
     ExternalHdtDatasource = require('./ExternalHdtDatasource'),
     RdfString = require('rdf-string');
@@ -21,7 +21,7 @@ class HdtDatasource extends Datasource {
 
   // Loads the HDT datasource
   _initialize(done) {
-    var datasource = this;
+    let datasource = this;
     hdt.fromFile(this._hdtFile).then(function (hdtDocument) {
       datasource._hdtDocument = hdtDocument;
     }).then(done, done);
@@ -41,16 +41,16 @@ class HdtDatasource extends Datasource {
                                     query.object ? RdfString.termToString(query.object) : null,
                                     { limit: query.limit, offset: query.offset })
       .then(function (result) {
-        var triples = result.triples,
+        let triples = result.triples,
             estimatedTotalCount = result.totalCount,
             hasExactCount = result.hasExactCount;
         // Ensure the estimated total count is as least as large as the number of triples
-        var tripleCount = triples.length, offset = query.offset || 0;
+        let tripleCount = triples.length, offset = query.offset || 0;
         if (tripleCount && estimatedTotalCount < offset + tripleCount)
           estimatedTotalCount = offset + (tripleCount < query.limit ? tripleCount : 2 * tripleCount);
         destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
         // Add the triples to the output
-        for (var i = 0; i < tripleCount; i++)
+        for (let i = 0; i < tripleCount; i++)
           destination._push(RdfString.stringQuadToQuad(triples[i], dataFactory));
         destination.close();
       },

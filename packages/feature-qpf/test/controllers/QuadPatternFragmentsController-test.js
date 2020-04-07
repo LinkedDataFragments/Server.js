@@ -1,11 +1,11 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var QuadPatternFragmentsController = require('../../').controllers.QuadPatternFragmentsController;
+let QuadPatternFragmentsController = require('../../').controllers.QuadPatternFragmentsController;
 
-var request = require('supertest'),
+let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
     http = require('http');
 
-var QuadPatternFragmentsHtmlView = require('../../').views.quadpatternfragments.QuadPatternFragmentsHtmlView,
+let QuadPatternFragmentsHtmlView = require('../../').views.quadpatternfragments.QuadPatternFragmentsHtmlView,
     QuadPatternFragmentsRdfView  = require('../../').views.quadpatternfragments.QuadPatternFragmentsRdfView,
     UrlData                      = require('@ldf/core').UrlData;
 
@@ -21,7 +21,7 @@ describe('QuadPatternFragmentsController', function () {
   });
 
   describe('A QuadPatternFragmentsController instance with 3 routers', function () {
-    var controller, client, routerA, routerB, routerC, datasource, datasources, view, prefixes;
+    let controller, client, routerA, routerB, routerC, datasource, datasources, view, prefixes;
     before(function () {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
@@ -69,7 +69,7 @@ describe('QuadPatternFragmentsController', function () {
       it('should call the first router with the request and an empty query', function () {
         routerA.extractQueryParams.should.have.been.calledOnce;
 
-        var args = routerA.extractQueryParams.firstCall.args;
+        let args = routerA.extractQueryParams.firstCall.args;
         expect(args[0]).to.have.property('url');
         expect(args[0].url).to.have.property('path', '/my-datasource?a=b&c=d');
         expect(args[0].url).to.have.property('pathname', '/my-datasource');
@@ -100,20 +100,20 @@ describe('QuadPatternFragmentsController', function () {
       });
 
       it('should verify whether the data source supports the query', function () {
-        var query = routerC.extractQueryParams.firstCall.args[1];
+        let query = routerC.extractQueryParams.firstCall.args[1];
         datasource.supportsQuery.should.have.been.calledOnce;
         datasource.supportsQuery.should.have.been.calledWith(query);
       });
 
       it('should send the query to the right data source', function () {
-        var query = routerC.extractQueryParams.firstCall.args[1];
+        let query = routerC.extractQueryParams.firstCall.args[1];
         datasource.select.should.have.been.calledOnce;
         datasource.select.should.have.been.calledWith(query);
       });
 
       it('should pass the query result to the output view', function () {
         view.render.should.have.been.calledOnce;
-        var args = view.render.firstCall.args;
+        let args = view.render.firstCall.args;
 
         args[0].should.be.an('object'); // settings
         args[1].should.be.an.instanceof(http.IncomingMessage);
@@ -122,8 +122,8 @@ describe('QuadPatternFragmentsController', function () {
 
       it('should pass the correct settings to the view', function () {
         view.render.should.have.been.calledOnce;
-        var query = routerC.extractQueryParams.firstCall.args[1];
-        var settings = view.render.firstCall.args[0];
+        let query = routerC.extractQueryParams.firstCall.args[1];
+        let settings = view.render.firstCall.args[0];
 
         settings.datasource.should.have.property('title', 'My data');
         settings.datasource.should.have.property('index', 'https://example.org/#dataset');
@@ -155,7 +155,7 @@ describe('QuadPatternFragmentsController', function () {
       });
 
       it('should verify whether the data source supports the query', function () {
-        var query = routerC.extractQueryParams.firstCall.args[1];
+        let query = routerC.extractQueryParams.firstCall.args[1];
         datasource.supportsQuery.should.have.been.calledOnce;
         datasource.supportsQuery.should.have.been.calledWith(query);
       });
@@ -167,9 +167,9 @@ describe('QuadPatternFragmentsController', function () {
   });
 
   describe('A QuadPatternFragmentsController instance with 2 views', function () {
-    var controller, client, htmlView, rdfView;
+    let controller, client, htmlView, rdfView;
     before(function () {
-      var datasource = {
+      let datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().returns({
           on: function (event, callback) {
@@ -179,7 +179,7 @@ describe('QuadPatternFragmentsController', function () {
         }),
         supportedFeatures: { triplePattern: true },
       };
-      var router = {
+      let router = {
         extractQueryParams: function (request, query) {
           query.features.datasource = true;
           query.datasource = '/my-datasource';
@@ -202,7 +202,7 @@ describe('QuadPatternFragmentsController', function () {
     }
 
     describe('receiving a request without Accept header', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/my-datasource')
@@ -223,7 +223,7 @@ describe('QuadPatternFragmentsController', function () {
     });
 
     describe('receiving a request with an Accept header of */*', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/my-datasource').set('Accept', '*/*')
@@ -244,7 +244,7 @@ describe('QuadPatternFragmentsController', function () {
     });
 
     describe('receiving a request with an Accept header of text/html', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/my-datasource').set('Accept', 'text/html')
@@ -265,7 +265,7 @@ describe('QuadPatternFragmentsController', function () {
     });
 
     describe('receiving a request with an Accept header of text/turtle', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/my-datasource').set('Accept', 'text/turtle')
@@ -286,7 +286,7 @@ describe('QuadPatternFragmentsController', function () {
     });
 
     describe('receiving a request with an Accept header of text/n3', function () {
-      var response;
+      let response;
       before(function (done) {
         resetAll();
         client.get('/my-datasource').set('Accept', 'text/n3')
@@ -308,14 +308,14 @@ describe('QuadPatternFragmentsController', function () {
   });
 
   describe('A QuadPatternFragmentsController instance without matching view', function () {
-    var controller, client;
+    let controller, client;
     before(function () {
-      var datasource = {
+      let datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub(),
         supportedFeatures: { triplePattern: true },
       };
-      var router = {
+      let router = {
         extractQueryParams: function (request, query) {
           query.features.datasource = true;
           query.datasource = '/my-datasource';
@@ -329,7 +329,7 @@ describe('QuadPatternFragmentsController', function () {
     });
 
     describe('receiving a request without Accept header', function () {
-      var response;
+      let response;
       before(function (done) {
         client.get('/my-datasource')
               .end(function (error, res) { response = res; done(error); });
@@ -349,7 +349,7 @@ describe('QuadPatternFragmentsController', function () {
     });
 
     describe('receiving a request with an Accept header of text/html', function () {
-      var response;
+      let response;
       before(function (done) {
         client.get('/my-datasource').set('Accept', 'text/html')
               .end(function (error, res) { response = res; done(error); });
@@ -370,7 +370,7 @@ describe('QuadPatternFragmentsController', function () {
   });
 
   describe('A QuadPatternFragmentsController instance with a datasource that synchronously errors', function () {
-    var controller, client, router, datasource, error, view;
+    let controller, client, router, datasource, error, view;
     before(function () {
       router = {
         extractQueryParams: sinon.spy(function (request, query) {
@@ -409,7 +409,7 @@ describe('QuadPatternFragmentsController', function () {
   });
 
   describe('A QuadPatternFragmentsController instance with a datasource that asynchronously errors', function () {
-    var controller, client, router, datasource, error, view;
+    let controller, client, router, datasource, error, view;
     before(function () {
       router = {
         extractQueryParams: sinon.spy(function (request, query) {

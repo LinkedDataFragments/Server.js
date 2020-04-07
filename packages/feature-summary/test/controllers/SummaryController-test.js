@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var SummaryController = require('../../lib/controllers/SummaryController');
+let SummaryController = require('../../lib/controllers/SummaryController');
 
-var request = require('supertest'),
+let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
     fs = require('fs'),
     path = require('path');
 
-var SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js');
+let SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js');
 
 describe('SummaryController', function () {
   describe('The SummaryController module', function () {
@@ -24,7 +24,7 @@ describe('SummaryController', function () {
   });
 
   describe('An SummaryController instance', function () {
-    var controller, client;
+    let controller, client;
     before(function () {
       controller = new SummaryController({
         views: [new SummaryRdfView()],
@@ -39,7 +39,7 @@ describe('SummaryController', function () {
 
     it('should correctly serve summary in Turtle', function (done) {
       client.get('/summaries/summary').set('Accept', 'text/turtle').expect(function (response) {
-        var summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
+        let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
@@ -50,7 +50,7 @@ describe('SummaryController', function () {
 
     it('should correctly serve summary in Trig', function (done) {
       client.get('/summaries/summary').expect(function (response) {
-        var summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
+        let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'application/trig;charset=utf-8');
@@ -61,7 +61,7 @@ describe('SummaryController', function () {
 
     it('should correctly serve summary in ntriples', function (done) {
       client.get('/summaries/summary').set('Accept', 'application/n-triples').expect(function (response) {
-        var summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
+        let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
         response.headers.should.have.property('content-type', 'application/n-triples;charset=utf-8');

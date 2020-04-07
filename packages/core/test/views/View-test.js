@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var View = require('../../lib/views/View'),
+let View = require('../../lib/views/View'),
     resolve = require('path').resolve;
 
 describe('View', function () {
@@ -66,7 +66,7 @@ describe('View', function () {
 
     describe('without _render method', function () {
       it('should throw an error on calling render', function () {
-        var response = { getHeader: sinon.stub() };
+        let response = { getHeader: sinon.stub() };
         (function () { new View().render(null, null, response); })
         .should.throw('The _render method is not yet implemented.');
       });
@@ -74,7 +74,7 @@ describe('View', function () {
 
     describe('created without defaults', function () {
       it('should call _render with the given options', function () {
-        var view = new View(),
+        let view = new View(),
             request = {}, response = { getHeader: sinon.stub().returns('text/html') },
             options = { a: 'b' };
         view._render = sinon.spy();
@@ -96,7 +96,7 @@ describe('View', function () {
 
     describe('created with defaults', function () {
       it('should call _render with the combined defaults and options', function () {
-        var view = new View(null, null, { c: 'd' }),
+        let view = new View(null, null, { c: 'd' }),
             request = {}, response = { getHeader: sinon.stub().returns('text/html') },
             options = { a: 'b' };
         view._render = sinon.spy();

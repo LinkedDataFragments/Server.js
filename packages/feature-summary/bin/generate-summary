@@ -2,31 +2,31 @@
 /*! @license MIT ©2014-2016 Miel Vander Sande, Ghent University - imec */
 /* This script generates data summaries for a certain server dataset  */
 
-var N3 = require('n3'),
+let N3 = require('n3'),
     fs = require('fs'),
     path = require('path'),
     _ = require('lodash');
 
-var regex = /^(http[s]?:\/?\/?[^:\/\s]+\/).*/;
+let regex = /^(http[s]?:\/?\/?[^:\/\s]+\/).*/;
 
-var DS_NS  = 'http://semweb.mmlab.be/ns/datasummaries#',
+let DS_NS  = 'http://semweb.mmlab.be/ns/datasummaries#',
     RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
 // Parse arguments
-var args = process.argv.slice(2);
+let args = process.argv.slice(2);
 if (args.length < 1 || args.length > 2) {
   console.error('usage: generate-summary config.json [datasourceName]');
   process.exit(1);
 }
 
 // Init variables
-var configFile = args[0],
+let configFile = args[0],
     config = JSON.parse(fs.readFileSync(configFile)),
     datasources = config.datasources || {},
     datasourceNames = args[1] ? [args[1]] : (datasources && _.keys(datasources));
 
 // Configure preset URLs
-var baseURL = config.baseURL ? config.baseURL.replace(/\/?$/, '/') : '/',
+let baseURL = config.baseURL ? config.baseURL.replace(/\/?$/, '/') : '/',
     baseURLRoot = baseURL.match(/^(?:https?:\/\/[^\/]+)?/)[0],
     baseURLPath = baseURL.substr(baseURLRoot.length),
     datasourceBase = baseURLPath.substr(1);
@@ -35,21 +35,21 @@ generate(datasourceNames.pop());
 
 function generate(datasourceName) {
   // Create data source
-  var datasourceConfig = datasources[datasourceName];
+  let datasourceConfig = datasources[datasourceName];
 
   try {
     // Avoid illegal URI characters in data source path
-    var datasourcePath = datasourceBase + encodeURI(datasourceName);
+    let datasourcePath = datasourceBase + encodeURI(datasourceName);
 
     // Retrieve the data source class and settings
-    var Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
+    let Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
         settings = _.defaults(datasourceConfig.settings || {}, config);
 
     // Create the data source
-    var datasource = new Datasource(settings),
+    let datasource = new Datasource(settings),
         url = baseURLRoot + '/' + datasourcePath;
 
-    var writer = new N3.Writer({ prefixes: { ds: DS_NS, rdf: RDF_NS } });
+    let writer = new N3.Writer({ prefixes: { ds: DS_NS, rdf: RDF_NS } });
 
     fromDataSource(url, datasource, function (triple) {
       writer.addQuad(triple);
@@ -67,7 +67,7 @@ function generate(datasourceName) {
 }
 
 function fromDataSource(uri, datasource, callback, end, chunksize) {
-  var capabilities = Object.create(null);
+  let capabilities = Object.create(null);
 
   // Process dataset in batches when possible
   if (datasource.supportsQuery({ features: { limit: true, offset: true } }))
@@ -82,11 +82,11 @@ function fromDataSource(uri, datasource, callback, end, chunksize) {
   // Processes DataSource in chunks
   function processSet(limit, offset) {
     offset = offset || 0;
-    var count = 0;
+    let count = 0;
 
-    var stream = datasource.select({ limit: limit, offset: offset }, console.error)
+    const stream = datasource.select({ limit: limit, offset: offset }, console.error)
         .getProperty('metadata', function (metadata) {
-          var progress = Math.round((offset / metadata.totalCount) * 100);
+          let progress = Math.round((offset / metadata.totalCount) * 100);
           console.log(progress);
 
           stream.on('data', function (triple) {
@@ -112,7 +112,7 @@ function fromDataSource(uri, datasource, callback, end, chunksize) {
     if (!capabilities[triple.predicate])
       capabilities[triple.predicate] = { subjectAuth: {}, objectAuth: {} };
 
-    var subjectAuth = regex.exec(triple.subject),
+    let subjectAuth = regex.exec(triple.subject),
         objectAuth = regex.exec(triple.object);
 
     if (subjectAuth !== null) {
@@ -127,17 +127,17 @@ function fromDataSource(uri, datasource, callback, end, chunksize) {
   }
 
   function endSummary() {
-    var cnt = 0;
+    let cnt = 0;
 
-    for (var predicate in capabilities) {
-      var bnode = '_:cap' + cnt++;
+    for (let predicate in capabilities) {
+      let bnode = '_:cap' + cnt++;
       callback({ subject: baseURL, predicate: DS_NS + 'capability', object: bnode });
       callback({ subject: bnode, predicate: DS_NS + 'predicate', object: predicate });
 
-      var capability = capabilities[predicate];
-      for (var subjectAuth in capability.subjectAuth)
+      let capability = capabilities[predicate];
+      for (let subjectAuth in capability.subjectAuth)
         callback({ subject: bnode, predicate: DS_NS + 'sbjAuthority', object: subjectAuth });
-      for (var objectAuth in capability.objectAuth)
+      for (let objectAuth in capability.objectAuth)
         callback({ subject: bnode, predicate: DS_NS + 'objAuthority', object: objectAuth });
     }
     end();

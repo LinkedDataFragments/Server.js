@@ -1,7 +1,7 @@
 /*! @license MIT ©2016 Miel Vander Sande, Ghent University - imec */
 /* A MementoControllerExtension extends Triple Pattern Fragments responses with Memento headers. */
 
-var Controller = require('@ldf/core').controllers.Controller,
+let Controller = require('@ldf/core').controllers.Controller,
     TimegateController = require('./TimegateController'),
     url = require('url'),
     _ = require('lodash');
@@ -10,20 +10,20 @@ var Controller = require('@ldf/core').controllers.Controller,
 class MementoControllerExtension extends Controller {
   constructor(settings) {
     super(settings);
-    var timegates = settings.timegates || {};
+    let timegates = settings.timegates || {};
     this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos, settings.urlData);
     this._timegateBaseUrl = timegates.baseURL || '/timegate/';
   }
 
   // Add Memento Link headers
   _handleRequest(request, response, next, settings) {
-    var datasource = settings.query.datasource,
+    let datasource = settings.query.datasource,
         memento = this._invertedTimegateMap[settings.datasource.id],
         requestQuery = request.url.match(/\?.*|$/)[0];
 
     // Add link to original if it is a memento
     if (memento && memento.interval && memento.interval.length === 2) {
-      var timegatePath = this._timegateBaseUrl + memento.memento,
+      let timegatePath = this._timegateBaseUrl + memento.memento,
           timegateUrl = url.format(_.defaults({ pathname: timegatePath }, request.parsedUrl)),
           originalUrl = memento.original + requestQuery,
           datetime = new Date(memento.interval[0]).toUTCString();
@@ -33,7 +33,7 @@ class MementoControllerExtension extends Controller {
     }
     // Add timegate link if resource is not a memento
     else {
-      var timegateSettings = settings.datasource.timegate, timegate;
+      let timegateSettings = settings.datasource.timegate, timegate;
       // If a timegate URL is given, use it
       if (typeof timegateSettings === 'string')
         timegate = timegateSettings + requestQuery;

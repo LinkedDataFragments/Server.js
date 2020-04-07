@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An AssetsController responds to requests for assets */
 
-var Controller = require('./Controller'),
+let Controller = require('./Controller'),
     fs = require('fs'),
     path = require('path'),
     mime = require('mime'),
@@ -15,13 +15,13 @@ class AssetsController extends Controller {
     super(options);
 
     // Set up path matching
-    var assetsPath = (options.urlData || new UrlData()).assetsPath || '/assets/';
+    let assetsPath = (options.urlData || new UrlData()).assetsPath || '/assets/';
     this._matcher = new RegExp('^' + Util.toRegExp(assetsPath) + '(.+)|^/(\\w*)\\.ico$');
 
     // Read all assets
-    var assetsFolders = options.assetsFolders || ['file:///' + path.join(__dirname, '../../assets/')];
+    let assetsFolders = options.assetsFolders || ['file:///' + path.join(__dirname, '../../assets/')];
     this._assets = {};
-    for (var i = 0; i < assetsFolders.length; i++)
+    for (let i = 0; i < assetsFolders.length; i++)
       this._readAssetsFolder(assetsFolders[i], '');
   }
 
@@ -30,10 +30,10 @@ class AssetsController extends Controller {
     if (assetsFolder.indexOf('file:///') === 0)
       assetsFolder = assetsFolder.replace('file:///', '');
     fs.readdirSync(assetsFolder).forEach(function (name) {
-      var filename = path.join(assetsFolder, name), stats = fs.statSync(filename);
+      let filename = path.join(assetsFolder, name), stats = fs.statSync(filename);
     // Read an asset file into memory
       if (stats.isFile()) {
-        var assetType = mime.lookup(filename);
+        let assetType = mime.lookup(filename);
         this._assets[assetsPath + name.replace(/[.][^.]+$/, '')] = {
           type: assetType.indexOf('text/') ? assetType : assetType + ';charset=utf-8',
           contents: fs.readFileSync(filename),
@@ -47,7 +47,7 @@ class AssetsController extends Controller {
 
   // Try to serve the requested asset
   _handleRequest(request, response, next) {
-    var assetMatch = request.url.match(this._matcher), asset;
+    let assetMatch = request.url.match(this._matcher), asset;
     if (asset = assetMatch && this._assets[assetMatch[1] || assetMatch[2]]) {
       response.writeHead(200, {
         'Content-Type': asset.type,

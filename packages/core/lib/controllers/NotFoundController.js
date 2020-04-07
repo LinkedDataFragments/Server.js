@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A NotFoundController responds to requests that cannot be resolved */
 
-var Controller = require('./Controller'),
+let Controller = require('./Controller'),
     Util = require('../Util');
 
 // Creates a new NotFoundController
@@ -17,7 +17,7 @@ class NotFoundController extends Controller {
     response.setHeader('Cache-Control', 'public,max-age=3600');
 
     // Render the 404 message using the appropriate view
-    var view = this._negotiateView('NotFound', request, response),
+    let view = this._negotiateView('NotFound', request, response),
         metadata = { url: request.url, prefixes: this._prefixes, datasources: this._datasources };
     response.writeHead(404);
     view.render(metadata, request, response);

@@ -1,7 +1,7 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* A Datasource provides base functionality for queryable access to a source of quads. */
 
-var fs = require('fs'),
+let fs = require('fs'),
     _ = require('lodash'),
     UrlData = require('../UrlData'),
     BufferedIterator = require('asynciterator').BufferedIterator,
@@ -15,8 +15,8 @@ class Datasource extends EventEmitter {
 
     // Set the options
     options = options || {};
-    var urlData = options.urlData || new UrlData();
-    var path = (options.path || '').replace(/^\//, '');
+    let urlData = options.urlData || new UrlData();
+    let path = (options.path || '').replace(/^\//, '');
     this._datasourcePath = urlData.baseURLPath + encodeURI(path);
     this._blankNodePrefix = urlData.blankNodePath || 'genid:';
     this._skolemizeBlacklist = options.skolemizeBlacklist || {};
@@ -47,8 +47,8 @@ class Datasource extends EventEmitter {
 
     // Expose the supported query features
     if (supportedFeatureList && supportedFeatureList.length) {
-      var objectSupportedFeatures = {};
-      for (var i = 0; i < supportedFeatureList.length; i++)
+      let objectSupportedFeatures = {};
+      for (let i = 0; i < supportedFeatureList.length; i++)
         objectSupportedFeatures[supportedFeatureList[i]] = true;
       this.supportedFeatures =  objectSupportedFeatures;
     }
@@ -63,7 +63,7 @@ class Datasource extends EventEmitter {
   // Initialize the datasource asynchronously
   initialize() {
     setImmediate(function (self) {
-      var done = _.once(function (error) {
+      let done = _.once(function (error) {
         if (error)
           self.emit('error', error);
         else {
@@ -88,7 +88,7 @@ class Datasource extends EventEmitter {
       return false;
 
     // A query is supported if the data source supports all of its features
-    var features = query.features, supportedFeatures = this.supportedFeatures, feature;
+    let features = query.features, supportedFeatures = this.supportedFeatures, feature;
     if (features) {
       for (feature in features) {
         if (features[feature] && !supportedFeatures[feature])
@@ -115,7 +115,7 @@ class Datasource extends EventEmitter {
     query = _.clone(query);
 
     // Translate blank nodes IRIs in the query to blank nodes
-    var blankNodePrefix = this._blankNodePrefix, blankNodePrefixLength = this._blankNodePrefixLength;
+    let blankNodePrefix = this._blankNodePrefix, blankNodePrefixLength = this._blankNodePrefixLength;
     if (query.subject && query.subject.value.indexOf(blankNodePrefix) === 0)
       query.subject = this.dataFactory.blankNode(query.subject.value.substr(blankNodePrefixLength));
     if (query.object  && query.object.value.indexOf(blankNodePrefix) === 0)
@@ -128,7 +128,7 @@ class Datasource extends EventEmitter {
       query.graph = stringToTerm(this._queryGraphReplacements[query.graph.value], this.dataFactory);
 
     // Transform the received quads
-    var destination = new BufferedIterator(), outputQuads, graph = this._graph, self = this;
+    let destination = new BufferedIterator(), outputQuads, graph = this._graph, self = this;
     outputQuads = destination.map(function (quad) {
       // Translate blank nodes in the result to blank node IRIs.
       if (quad.subject && quad.subject.termType === 'BlankNode' && !self._skolemizeBlacklist[quad.subject.value])
@@ -159,7 +159,7 @@ class Datasource extends EventEmitter {
 
   // Retrieves a stream through HTTP or the local file system
   _fetch(options) {
-    var self = this, stream,
+    let self = this, stream,
         url = options.url, protocolMatch = /^(?:([a-z]+):)?/.exec(url);
     switch (protocolMatch[1] || 'file') {
     // Fetch a representation through HTTP(S)

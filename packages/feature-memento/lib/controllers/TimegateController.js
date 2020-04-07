@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* An TimegateController responds to timegate requests */
 
-var Controller = require('@ldf/core').controllers.Controller,
+let Controller = require('@ldf/core').controllers.Controller,
     _ = require('lodash'),
     url = require('url'),
     Util = require('@ldf/core').Util;
@@ -14,7 +14,7 @@ class TimegateController extends Controller {
     this._first = true;
 
     // Settings for timegate
-    var timegates = options.timegates || {};
+    let timegates = options.timegates || {};
     this._timemaps = TimegateController.parseTimegateMap(timegates.mementos);
 
     // Set up path matching
@@ -36,8 +36,8 @@ class TimegateController extends Controller {
   }
 
   static parseInvertedTimegateMap(mementos, urlData) {
-    var timemaps = TimegateController.parseTimegateMap(mementos);
-    var invertedTimegateMap = {};
+    let timemaps = TimegateController.parseTimegateMap(mementos);
+    let invertedTimegateMap = {};
     _.forIn(timemaps, function (versions, timeGateId) {
       versions.forEach(function (version) {
         invertedTimegateMap[version.datasourceId] = {
@@ -52,7 +52,7 @@ class TimegateController extends Controller {
 
   // Perform time negotiation if applicable
   _handleRequest(request, response, next) {
-    var timegateMatch = this._matcher.exec(request.url),
+    let timegateMatch = this._matcher.exec(request.url),
         datasource = timegateMatch && timegateMatch[1],
         timemapDetails = datasource && this._timemaps[datasource];
 
@@ -63,16 +63,16 @@ class TimegateController extends Controller {
         return response.end();
 
       // Try to find the memento closest to the requested date
-      var acceptDatetime = toDate(request.headers['accept-datetime']),
+      let acceptDatetime = toDate(request.headers['accept-datetime']),
           memento = this._getClosestMemento(timemapDetails, acceptDatetime);
 
       if (memento) {
         // Determine the URL of the memento
-        var mementoUrl = _.assign(request.parsedUrl, { pathname: memento.datasource.path });
+        let mementoUrl = _.assign(request.parsedUrl, { pathname: memento.datasource.path });
         mementoUrl = url.format(mementoUrl);
 
         // Determine the URL of the original resource
-        var originalBaseURL = timemapDetails.original, originalUrl;
+        let originalBaseURL = timemapDetails.original, originalUrl;
         if (!originalBaseURL)
           originalUrl = _.defaults({ pathname: datasource }, request.parsedUrl);
         else
@@ -100,7 +100,7 @@ class TimegateController extends Controller {
     * @param sorted: bool. If not sorted, the timemap will be sorted using the start time in the interval.
 
     * eg:
-      var timemap = [
+      const timemap = [
         {"datasource": "dbpedia_2012", "interval": ["2011-10-20T12:22:24Z", new Date("2012-10-19T12:22:24Z")]},
         {"datasource": "dbpedia_2015", "interval": ["2014-10-20T12:22:24Z", ""]},
         {"datasource": "dbpedia_2013", "interval": [new Date("2012-10-20T12:22:24Z"), new Date("2013-10-19T12:22:24Z")]},
@@ -123,18 +123,18 @@ class TimegateController extends Controller {
     if (unsorted) sortTimemap(timemap);
 
     // if the accept_datetime is less than the first memento, return first memento
-    var firstMemento = timemap[0],
+    let firstMemento = timemap[0],
         firstMementoDatetime = toDate(firstMemento.interval[0]).getTime();
     if (acceptDatetime <= firstMementoDatetime) return firstMemento;
 
     // return the latest memento if the accept datetime is after it
-    var lastMemento = timemap[timemap.length - 1],
+    let lastMemento = timemap[timemap.length - 1],
         lastMementoDatetime = toDate(lastMemento.interval[1]).getTime();
     if (acceptDatetime >= lastMementoDatetime) return lastMemento;
 
     // check if the accept datetime falls within any intervals defined in the data sources.
-    for (var i = 0, memento; memento = timemap[i]; i++) {
-      var startTime = memento.interval[0].getTime(),
+    for (let i = 0, memento; memento = timemap[i]; i++) {
+      let startTime = memento.interval[0].getTime(),
           endTime   = memento.interval[1].getTime();
       if (isFinite(startTime) && isFinite(endTime)) {
         if (startTime > acceptDatetime) return timemap[i - 1];

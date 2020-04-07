@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A NotFoundRdfView represents a 404 response in RDF. */
 
-var RdfView = require('../RdfView');
+let RdfView = require('../RdfView');
 
 // Creates a new NotFoundRdfView
 class NotFoundRdfView extends RdfView {

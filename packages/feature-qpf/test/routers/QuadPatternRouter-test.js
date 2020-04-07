@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var QuadPatternRouter = require('../../').routers.QuadPatternRouter;
+let QuadPatternRouter = require('../../').routers.QuadPatternRouter;
 const dataFactory = require('n3').DataFactory;
 
 describe('QuadPatternRouter', function () {
@@ -14,7 +14,7 @@ describe('QuadPatternRouter', function () {
   });
 
   describe('A QuadPatternRouter instance', function () {
-    var router = new QuadPatternRouter({ dataFactory });
+    let router = new QuadPatternRouter({ dataFactory });
 
     describe('extractUrlParams', function () {
       describe('with an existing query', function () {
@@ -229,7 +229,7 @@ describe('QuadPatternRouter', function () {
   });
 
   describe('A QuadPatternRouter instance with prefixes', function () {
-    var router = new QuadPatternRouter({
+    let router = new QuadPatternRouter({
       prefixes: {
         foo:  'http://example.org/foo#',
         http: 'http://www.w3.org/2011/http#',

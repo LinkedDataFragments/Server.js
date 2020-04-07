@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* View is a base class for objects that generate server responses. */
 
-var _ = require('lodash'),
+let _ = require('lodash'),
     join = require('path').join,
     ViewCollection = require('./ViewCollection');
 
@@ -21,10 +21,10 @@ class View {
   // The "type" represents the MIME type,
   // whereas "responseType" contains the value of the Content-Type header with encoding.
   _parseContentTypes(contentTypes) {
-    var matcher = this._supportedContentTypeMatcher = Object.create(null);
+    let matcher = this._supportedContentTypeMatcher = Object.create(null);
     if (typeof contentTypes === 'string') {
       contentTypes = contentTypes.split(',').map(function (typeString) {
-        var contentType = typeString.match(/[^;,]*/)[0],
+        let contentType = typeString.match(/[^;,]*/)[0],
             responseType = contentType + ';charset=utf-8',
             quality = typeString.match(/;q=([0-9.]+)/);
         matcher[contentType] = matcher[responseType] = true;
@@ -46,7 +46,7 @@ class View {
   // Renders the view with the given options to the response
   render(options, request, response, done) {
     // Initialize view-specific settings
-    var settings = _.defaults({}, options, this._defaults);
+    let settings = _.defaults({}, options, this._defaults);
     if (!settings.contentType)
       settings.contentType = response.getHeader('Content-Type');
 
@@ -64,7 +64,7 @@ class View {
 
   // Gets extensions with the given name for this view
   _getViewExtensions(name, contentType) {
-    var extensions = this._defaults.views ? this._defaults.views.getViews(this.name + ':' + name) : [];
+    let extensions = this._defaults.views ? this._defaults.views.getViews(this.name + ':' + name) : [];
     if (extensions.length) {
       extensions = extensions.filter(function (extension) {
         return extension.supportsContentType(contentType);
@@ -75,7 +75,7 @@ class View {
 
   // Renders the extensions with the given name for this view
   _renderViewExtensions(name, options, request, response, done) {
-    var self = this, extensions = this._getViewExtensions(name, options.contentType), i = 0;
+    let self = this, extensions = this._getViewExtensions(name, options.contentType), i = 0;
     (function next() {
       if (i < extensions.length)
         self._renderViewExtension(extensions[i++], options, request, response, next);

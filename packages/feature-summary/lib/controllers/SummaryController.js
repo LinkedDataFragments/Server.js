@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* An SummaryController responds to requests for summaries */
 
-var Controller = require('@ldf/core').controllers.Controller,
+let Controller = require('@ldf/core').controllers.Controller,
     fs = require('fs'),
     path = require('path'),
     StreamParser = require('n3').StreamParser,
@@ -13,7 +13,7 @@ class SummaryController extends Controller {
     options = options || {};
     super(options);
     // Settings for data summaries
-    var summaries = options.summaries || {};
+    let summaries = options.summaries || {};
     this._enabled = summaries.dir || summaries.path;
     this._summariesFolder = summaries.dir || path.join(__dirname, '../../summaries');
     // Set up path matching
@@ -25,12 +25,12 @@ class SummaryController extends Controller {
     if (!this._enabled)
       return next();
 
-    var summaryMatch = this._matcher && this._matcher.exec(request.url), datasource;
+    let summaryMatch = this._matcher && this._matcher.exec(request.url), datasource;
     if (datasource = summaryMatch && summaryMatch[1]) {
-      var summaryFile = path.join(this._summariesFolder, datasource + '.ttl');
+      let summaryFile = path.join(this._summariesFolder, datasource + '.ttl');
 
       // Read summary triples from file
-      var streamParser = new StreamParser({ blankNodePrefix: '', baseIRI: this._baseUrl.pathname }),
+      let streamParser = new StreamParser({ blankNodePrefix: '', baseIRI: this._baseUrl.pathname }),
           inputStream = fs.createReadStream(summaryFile);
 
       // If the summary cannot be read, invoke the next controller without error
@@ -41,7 +41,7 @@ class SummaryController extends Controller {
       response.setHeader('Cache-Control', 'public,max-age=604800'); // 14 days
 
       // Render the summary
-      var view = this._negotiateView('Summary', request, response);
+      let view = this._negotiateView('Summary', request, response);
       view.render({ prefixes: this._prefixes, results: streamParser }, request, response);
     }
     else

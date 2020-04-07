@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var DatasourceRouter = require('../../lib/routers/DatasourceRouter');
+let DatasourceRouter = require('../../lib/routers/DatasourceRouter');
 
 describe('DatasourceRouter', function () {
   describe('The DatasourceRouter module', function () {
@@ -13,7 +13,7 @@ describe('DatasourceRouter', function () {
   });
 
   describe('A DatasourceRouter instance', function () {
-    var router = new DatasourceRouter();
+    let router = new DatasourceRouter();
 
     describe('extractUrlParams', function () {
       describe('with an existing query', function () {
@@ -74,7 +74,7 @@ describe('DatasourceRouter', function () {
   });
 
   describe('A DatasourceRouter instance with a base URL', function () {
-    var router = new DatasourceRouter({
+    let router = new DatasourceRouter({
       urlData: { baseURLPath: '/my/base/' },
     });
 

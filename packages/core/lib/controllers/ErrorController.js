@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An ErrorController responds to requests that caused an error */
 
-var Controller = require('./Controller'),
+let Controller = require('./Controller'),
     Util = require('../Util');
 
 // Creates a new ErrorController
@@ -13,7 +13,7 @@ class ErrorController extends Controller {
   // Serves an error response
   _handleRequest(request, response, next) {
     // Try to write an error response through an appropriate view
-    var error = response.error || (response.error = new Error('Unknown error')),
+    let error = response.error || (response.error = new Error('Unknown error')),
         view = this._negotiateView('Error', request, response),
         metadata = { prefixes: this._prefixes, datasources: this._datasources, error: error };
     response.writeHead(500);

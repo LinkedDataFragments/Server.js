@@ -1,7 +1,7 @@
 /*! @license MIT ©2016 Ruben Verborgh, Ghent University - imec */
 /* A MementoHtmlViewExtension extends the Quad Pattern Fragments HTML view with Memento details. */
 
-var HtmlView = require('@ldf/core').views.HtmlView,
+let HtmlView = require('@ldf/core').views.HtmlView,
     TimegateController = require('../../controllers/TimegateController'),
     path = require('path');
 
@@ -9,13 +9,13 @@ var HtmlView = require('@ldf/core').views.HtmlView,
 class MementoHtmlViewExtension extends HtmlView {
   constructor(settings) {
     super('QuadPatternFragments:Before', settings);
-    var timegates = settings.timegates || {};
+    let timegates = settings.timegates || {};
     this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos, settings.urlData);
   }
 
   // Renders the view with the given settings to the response
   _render(settings, request, response, done) {
-    var memento = this._invertedTimegateMap[settings.datasource.id];
+    let memento = this._invertedTimegateMap[settings.datasource.id];
     if (!memento)
       return done();
     this._renderTemplate(path.join(__dirname, 'memento-details'), {

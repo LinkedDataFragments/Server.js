@@ -97,6 +97,7 @@
     vars-on-top: 0,
     wrap-iife: [2, "inside"],
     yoda: 2,
+    no-var: "error",
 
     // Strict Mode
     strict: [2, "never"],

@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-var args = process.argv.slice(2);
+let args = process.argv.slice(2);
 if (!(args.length === 1 || (args.length === 2 && args[1] === '--apply'))) {
   process.stdout.write('usage: ldf-server-migrate-config-3x config.json [--apply]\n');
   process.stdout.write('         Migrates an LDF server config file to the new 3.x.x format.\n');

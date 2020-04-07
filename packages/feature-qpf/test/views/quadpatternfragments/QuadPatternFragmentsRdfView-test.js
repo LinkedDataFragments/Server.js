@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var QuadPatternFragmentsRdfView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsRdfView;
+let QuadPatternFragmentsRdfView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsRdfView;
 
-var _ = require('lodash'),
+let _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
     AsyncIterator = require('asynciterator'),
@@ -21,8 +21,8 @@ describe('QuadPatternFragmentsRdfView', function () {
   });
 
   describe('A QuadPatternFragmentsRdfView instance', function () {
-    var view = new QuadPatternFragmentsRdfView({ dataFactory });
-    var settings = {
+    let view = new QuadPatternFragmentsRdfView({ dataFactory });
+    let settings = {
       datasource: {
         title: 'My data',
         index: 'http://ex.org/#dataset',
@@ -61,13 +61,13 @@ describe('QuadPatternFragmentsRdfView', function () {
     function (extension, format) {
       describe('when render is called for ' + format, function () {
         function readAsset(name) {
-          var file = path.join(__dirname, '../../../../../test/assets/', name + '.' + extension);
+          let file = path.join(__dirname, '../../../../../test/assets/', name + '.' + extension);
           return fs.readFileSync(file, 'utf8');
         }
 
         describe('with an empty triple stream', function () {
-          var results = AsyncIterator.empty();
-          var response = test.createStreamCapture();
+          let results = AsyncIterator.empty();
+          let response = test.createStreamCapture();
           before(function (done) {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);
@@ -81,12 +81,12 @@ describe('QuadPatternFragmentsRdfView', function () {
         });
 
         describe('with a non-empty triple stream that writes metadata first', function () {
-          var results = AsyncIterator.fromArray([
+          let results = AsyncIterator.fromArray([
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
-          var response = test.createStreamCapture();
+          let response = test.createStreamCapture();
           before(function (done) {
             settings.results = new AsyncIterator.TransformIterator();
             response.getHeader = sinon.stub().returns(format);
@@ -101,12 +101,12 @@ describe('QuadPatternFragmentsRdfView', function () {
         });
 
         describe('with a non-empty triple stream that writes metadata afterwards', function () {
-          var results = AsyncIterator.fromArray([
+          let results = AsyncIterator.fromArray([
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
-          var response = test.createStreamCapture();
+          let response = test.createStreamCapture();
           before(function (done) {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);
@@ -122,8 +122,8 @@ describe('QuadPatternFragmentsRdfView', function () {
         });
 
         describe('with a query with a limit but no offset', function () {
-          var results = AsyncIterator.empty();
-          var settings = {
+          let results = AsyncIterator.empty();
+          let settings = {
             datasource: { },
             fragment: {
               pageUrl:         'mypage',
@@ -133,7 +133,7 @@ describe('QuadPatternFragmentsRdfView', function () {
             },
             query: { limit: 100 },
           };
-          var response = test.createStreamCapture();
+          let response = test.createStreamCapture();
           before(function (done) {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);
@@ -155,8 +155,8 @@ describe('QuadPatternFragmentsRdfView', function () {
         });
 
         describe('with a query with a limit and offset before the end', function () {
-          var results = AsyncIterator.empty();
-          var settings = {
+          let results = AsyncIterator.empty();
+          let settings = {
             datasource: { },
             fragment: {
               pageUrl:         'mypage',
@@ -166,7 +166,7 @@ describe('QuadPatternFragmentsRdfView', function () {
             },
             query: { limit: 100, offset: 1133 },
           };
-          var response = test.createStreamCapture();
+          let response = test.createStreamCapture();
           before(function (done) {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);
@@ -188,8 +188,8 @@ describe('QuadPatternFragmentsRdfView', function () {
         });
 
         describe('with a query with a limit and offset past the end', function () {
-          var results = AsyncIterator.empty();
-          var settings = {
+          let results = AsyncIterator.empty();
+          let settings = {
             datasource: { },
             fragment: {
               pageUrl:         'mypage',
@@ -199,7 +199,7 @@ describe('QuadPatternFragmentsRdfView', function () {
             },
             query: { limit: 100, offset: 1135 },
           };
-          var response = test.createStreamCapture();
+          let response = test.createStreamCapture();
           before(function (done) {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);

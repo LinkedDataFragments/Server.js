@@ -1,7 +1,7 @@
 /*! @license MIT ©2016 Ruben Taelman, Ghent University - imec */
 /* A CompositeDatasource delegates queries to an consecutive list of datasources. */
 
-var Datasource = require('@ldf/core').datasources.Datasource,
+let Datasource = require('@ldf/core').datasources.Datasource,
     LRU        = require('lru-cache');
 
 // Creates a new CompositeDatasource
@@ -15,9 +15,9 @@ class CompositeDatasource extends Datasource {
 
     this._datasources = {};
     this._datasourceNames = [];
-    for (var i = 0; i < Object.keys(options.references).length; i++) {
-      var datasourceName = Object.keys(options.references)[i];
-      var datasource = options.references[datasourceName];
+    for (let i = 0; i < Object.keys(options.references).length; i++) {
+      let datasourceName = Object.keys(options.references)[i];
+      let datasource = options.references[datasourceName];
       if (!datasource)
         throw new Error('No datasource ' + datasourceName + ' could be found!');
       if (datasource.enabled !== false) {
@@ -30,7 +30,7 @@ class CompositeDatasource extends Datasource {
 
   // Checks whether the data source can evaluate the given query
   supportsQuery(query) {
-    for (var datasourceName in this._datasources) {
+    for (let datasourceName in this._datasources) {
       if (this._getDatasourceByName(datasourceName).supportsQuery(query))
         return true;
     }
@@ -54,14 +54,14 @@ class CompositeDatasource extends Datasource {
   // Count the quads in the query result to get an exact count.
   _getExactCount(datasource, query, callback) {
     // Try to find a cache match
-    var cacheKey = query.subject + '|' + query.predicate + '|' + query.object + '|' + query.graph;
-    var cache = this._countCache, count = cache.get(cacheKey);
+    let cacheKey = query.subject + '|' + query.predicate + '|' + query.object + '|' + query.graph;
+    let cache = this._countCache, count = cache.get(cacheKey);
     if (count) return setImmediate(callback, count);
 
     // Otherwise, count all quads manually
-    var emptyQuery = { offset: 0, subject: query.subject, predicate: query.predicate, object: query.object, graph: query.graph };
-    var exactCount = 0;
-    var outputQuads = datasource.select(emptyQuery);
+    let emptyQuery = { offset: 0, subject: query.subject, predicate: query.predicate, object: query.object, graph: query.graph };
+    let exactCount = 0;
+    let outputQuads = datasource.select(emptyQuery);
     outputQuads.on('data', function () {
       exactCount++;
     });
@@ -78,7 +78,7 @@ class CompositeDatasource extends Datasource {
   //   The offset to use to start querying from the given datasource id
   //   The total count for all datasources
   _getDatasourceInfo(query, absoluteOffset, callback) {
-    var self = this;
+    let self = this;
     return findRecursive(0, absoluteOffset, -1, -1, 0, callback, true);
 
     function findRecursive(datasourceIndex, offset, chosenDatasource, chosenOffset, totalCount, hasExactCount) {
@@ -86,8 +86,8 @@ class CompositeDatasource extends Datasource {
         // We checked all datasources, return our accumulated information
         callback(chosenDatasource, chosenOffset, totalCount, hasExactCount);
       else {
-        var datasource = self._getDatasourceById(datasourceIndex);
-        var emptyQuery = {
+        let datasource = self._getDatasourceById(datasourceIndex);
+        let emptyQuery = {
           offset: 0, limit: 1,
           subject: query.subject, predicate: query.predicate, object: query.object, graph: query.graph,
         };
@@ -96,10 +96,10 @@ class CompositeDatasource extends Datasource {
         if (!self._hasDatasourceMatchingGraph(datasource, datasourceIndex, emptyQuery))
           return findRecursive(datasourceIndex + 1, offset, chosenDatasource, chosenOffset, totalCount, hasExactCount);
 
-        var outputQuads = datasource.select(emptyQuery);
+        let outputQuads = datasource.select(emptyQuery);
         outputQuads.getProperty('metadata', function (metadata) {
           // If we are still looking for an appropriate datasource, we need exact counts
-          var count = metadata.totalCount, exact = metadata.hasExactCount;
+          let count = metadata.totalCount, exact = metadata.hasExactCount;
           if (offset > 0 && !exact) {
             self._getExactCount(datasource, query, function (exactCount) {
               count = exactCount;
@@ -133,8 +133,8 @@ class CompositeDatasource extends Datasource {
 
   // Writes the results of the query to the given quad stream
   _executeQuery(query, destination) {
-    var offset =  query.offset || 0, limit = query.limit || Infinity;
-    var self = this;
+    let offset =  query.offset || 0, limit = query.limit || Infinity;
+    let self = this;
     this._getDatasourceInfo(query, offset, function (datasourceIndex, relativeOffset, totalCount, hasExactCount) {
       if (datasourceIndex < 0) {
         // No valid datasource has been found
@@ -147,7 +147,7 @@ class CompositeDatasource extends Datasource {
 
         // Modify our quad stream so that if all results from one datasource have arrived,
         // check if we haven't reached the limit and if so, trigger a new query for the next datasource.
-        var emitted = 0;
+        let emitted = 0;
         countItems(destination, function (localEmittedCount) {
           // This is called after the last element has been pushed
 
@@ -155,14 +155,14 @@ class CompositeDatasource extends Datasource {
           emitted = localEmittedCount;
           datasourceIndex++;
           if (emitted < limit && datasourceIndex < self._datasourceNames.length) {
-            var localLimit = limit - emitted;
-            var subQuery = { offset: 0, limit: localLimit,
+            let localLimit = limit - emitted;
+            let subQuery = { offset: 0, limit: localLimit,
               subject: query.subject, predicate: query.predicate, object: query.object, graph: query.graph };
-            var datasource = self._getDatasourceById(datasourceIndex);
+            let datasource = self._getDatasourceById(datasourceIndex);
             // If we are have a graph in our query, and this is a triple datasource, make sure it is in the requested graph,
             // otherwise we skip this datasource
             if (self._hasDatasourceMatchingGraph(datasource, datasourceIndex, subQuery)) {
-              var outputQuads = datasource.select(subQuery);
+              let outputQuads = datasource.select(subQuery);
               outputQuads.on('data', pushToDestination);
               outputQuads.on('end', closeDestination);
             }
@@ -175,9 +175,9 @@ class CompositeDatasource extends Datasource {
         });
 
         // Initiate query to the first datasource.
-        var subQuery = { offset: relativeOffset, limit: limit,
+        let subQuery = { offset: relativeOffset, limit: limit,
           subject: query.subject, predicate: query.predicate, object: query.object, graph: query.graph };
-        var outputQuads = self._getDatasourceById(datasourceIndex).select(subQuery);
+        let outputQuads = self._getDatasourceById(datasourceIndex).select(subQuery);
         outputQuads.on('data', pushToDestination);
         outputQuads.on('end', closeDestination);
       }
@@ -186,7 +186,7 @@ class CompositeDatasource extends Datasource {
     // Counts the number of quads and sends them through the callback,
     // only closing the iterator when the callback returns true.
     function countItems(destination, closeCallback) {
-      var count = 0, originalPush = destination._push, originalClose = destination.close;
+      let count = 0, originalPush = destination._push, originalClose = destination.close;
       destination._push = function (element) {
         if (element) count++;
         originalPush.call(destination, element);

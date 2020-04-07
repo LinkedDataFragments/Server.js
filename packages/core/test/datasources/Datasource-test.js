@@ -25,7 +25,7 @@ describe('Datasource', function () {
   });
 
   describe('A Datasource instance', function () {
-    var datasource = new Datasource({ dataFactory });
+    let datasource = new Datasource({ dataFactory });
     datasource.initialize();
 
     it('should not indicate support for any features', function () {
@@ -55,7 +55,7 @@ describe('Datasource', function () {
 
     describe('fetching a resource', function () {
       it('fetches an existing resource', function (done) {
-        var result = datasource._fetch({ url: 'file://' + exampleFile }), buffer = '';
+        let result = datasource._fetch({ url: 'file://' + exampleFile }), buffer = '';
         result.on('data', function (d) { buffer += d; });
         result.on('end', function () {
           buffer.should.equal(fs.readFileSync(exampleFile, 'utf8'));
@@ -65,7 +65,7 @@ describe('Datasource', function () {
       });
 
       it('assumes file:// as the default protocol', function (done) {
-        var result = datasource._fetch({ url: exampleFile }), buffer = '';
+        let result = datasource._fetch({ url: exampleFile }), buffer = '';
         result.on('data', function (d) { buffer += d; });
         result.on('end', function () {
           buffer.should.equal(fs.readFileSync(exampleFile, 'utf8'));
@@ -75,7 +75,7 @@ describe('Datasource', function () {
       });
 
       it('emits an error when the protocol is unknown', function (done) {
-        var result = datasource._fetch({ url: 'myprotocol:abc' });
+        let result = datasource._fetch({ url: 'myprotocol:abc' });
         result.on('error', function (error) {
           error.message.should.contain('Unknown protocol: myprotocol');
           done();
@@ -83,7 +83,7 @@ describe('Datasource', function () {
       });
 
       it('emits an error on the datasource when no error listener is attached to the result', function (done) {
-        var result = datasource._fetch({ url: exampleFile + 'notfound' });
+        let result = datasource._fetch({ url: exampleFile + 'notfound' });
         result.on('data', done);
         datasource.on('error', function (error) {
           error.message.should.contain('ENOENT: no such file or directory');
@@ -92,7 +92,7 @@ describe('Datasource', function () {
       });
 
       it('does not emit an error on the datasource when an error listener is attached to the result', function (done) {
-        var result = datasource._fetch({ url: exampleFile + 'notfound' });
+        let result = datasource._fetch({ url: exampleFile + 'notfound' });
         result.on('error', function (error) {
           error.message.should.contain('ENOENT: no such file or directory');
           done();
@@ -117,7 +117,7 @@ describe('Datasource', function () {
   });
 
   describe('A Datasource instance with an initializer', function () {
-    var datasource, initializedListener, errorListener;
+    let datasource, initializedListener, errorListener;
     before(function () {
       datasource = new Datasource({ dataFactory });
       datasource._initialize = sinon.stub();
@@ -181,7 +181,7 @@ describe('Datasource', function () {
   });
 
   describe('A Datasource instance with an initializer that errors synchronously', function () {
-    var datasource, initializedListener, errorListener, error;
+    let datasource, initializedListener, errorListener, error;
     before(function () {
       datasource = new Datasource({ dataFactory });
       error = new Error('initializer error');
@@ -212,7 +212,7 @@ describe('Datasource', function () {
   });
 
   describe('A Datasource instance with an initializer that errors asynchronously', function () {
-    var datasource, initializedListener, errorListener, error;
+    let datasource, initializedListener, errorListener, error;
     before(function () {
       datasource = new Datasource({ dataFactory });
       error = new Error('initializer error');
@@ -243,7 +243,7 @@ describe('Datasource', function () {
   });
 
   describe('A derived Datasource instance', function () {
-    var datasource = new Datasource({ dataFactory });
+    let datasource = new Datasource({ dataFactory });
     Object.defineProperty(datasource, 'supportedFeatures', {
       enumerable: true,
       value: { a: true, b: true, c: false },
@@ -273,13 +273,13 @@ describe('Datasource', function () {
     });
 
     it('should not attach an error listener on select if none was passed', function () {
-      var result = datasource.select({ features: {} });
+      let result = datasource.select({ features: {} });
       (function () { result.emit('error', new Error()); }).should.throw();
     });
 
     it('should attach an error listener on select if one was passed', function () {
-      var onError = sinon.stub(), error = new Error();
-      var result = datasource.select({ features: {} }, onError);
+      let onError = sinon.stub(), error = new Error();
+      let result = datasource.select({ features: {} }, onError);
       result.emit('error', error);
       onError.should.have.been.calledOnce;
       onError.should.have.been.calledWith(error);
@@ -287,7 +287,7 @@ describe('Datasource', function () {
   });
 
   describe('A Datasource instance with a graph property', function () {
-    var datasource = new Datasource({
+    let datasource = new Datasource({
       dataFactory,
       graph: 'http://example.org/#mygraph',
     });
@@ -308,7 +308,7 @@ describe('Datasource', function () {
     });
 
     it('should move triples in the default graph to the given graph', function (done) {
-      var result = datasource.select({ features: { custom: true } }, done), quads = [];
+      let result = datasource.select({ features: { custom: true } }, done), quads = [];
       result.on('data', function (q) { quads.push(q); });
       result.on('end', function () {
         let matchingquads = [{ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o1'), graph: dataFactory.namedNode('http://example.org/#mygraph') },

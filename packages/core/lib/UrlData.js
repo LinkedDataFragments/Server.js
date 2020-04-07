@@ -14,7 +14,7 @@ class UrlData {
     this.assetsPath = this.baseURLPath + 'assets/' || options.assetsPath;
     this.protocol = options.protocol;
     if (!this.protocol) {
-      var protocolMatch = (this.baseURL || '').match(/^(\w+):/);
+      let protocolMatch = (this.baseURL || '').match(/^(\w+):/);
       this.protocol = protocolMatch ? protocolMatch[1] : 'http';
     }
   }

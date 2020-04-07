@@ -7,11 +7,11 @@
  `getViews` returns all views with a given name.
 */
 
-var _ = require('lodash'),
+let _ = require('lodash'),
     negotiate = require('negotiate'),
     Util = require('../Util');
 
-var ViewCollectionError = Util.createErrorType('ViewCollectionError');
+let ViewCollectionError = Util.createErrorType('ViewCollectionError');
 
 // Creates a new ViewCollection
 class ViewCollection {
@@ -26,7 +26,7 @@ class ViewCollection {
     // Add the view to the list per type
     (this._views[view.name] || (this._views[view.name] = [])).push(view);
     // Add a match entry for each content type supported by the view
-    var matchers = this._viewMatchers[view.name] || (this._viewMatchers[view.name] = []);
+    let matchers = this._viewMatchers[view.name] || (this._viewMatchers[view.name] = []);
     view.supportedContentTypes.forEach(function (contentType) {
       matchers.push(_.extend({ view: view }, contentType));
     });
@@ -34,7 +34,7 @@ class ViewCollection {
 
   // Adds the given views to the collection
   addViews(views) {
-    for (var i = 0; i < views.length; i++)
+    for (let i = 0; i < views.length; i++)
       this.addView(views[i]);
   }
 
@@ -46,11 +46,11 @@ class ViewCollection {
 // Gets the best match for views with the given name that accommodate the request
   matchView(name, request) {
     // Retrieve the views with the given name
-    var viewList = this._viewMatchers[name];
+    let viewList = this._viewMatchers[name];
     if (!viewList || !viewList.length)
       throw new ViewCollectionError('No view named ' + name + ' found.');
     // Negotiate the view best matching the request's requirements
-    var viewDetails = negotiate.choose(viewList, request)[0];
+    let viewDetails = negotiate.choose(viewList, request)[0];
     if (!viewDetails)
       throw new ViewCollectionError('No matching view named ' + name + ' found.');
     return viewDetails;

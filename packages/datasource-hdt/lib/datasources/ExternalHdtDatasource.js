@@ -1,14 +1,14 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* An ExternalHdtDatasource uses an external process to query an HDT document. */
 
-var Datasource = require('@ldf/core').datasources.Datasource,
+let Datasource = require('@ldf/core').datasources.Datasource,
     fs = require('fs'),
     path = require('path'),
     N3Parser = require('n3').Parser,
     RdfString = require('rdf-string'),
     spawn = require('child_process').spawn;
 
-var hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
+let hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
 
 // Creates a new ExternalHdtDatasource
 class ExternalHdtDatasource extends Datasource {
@@ -43,7 +43,7 @@ class ExternalHdtDatasource extends Datasource {
     }
 
     // Execute the external HDT utility
-    var hdtFile = this._hdtFile, offset = query.offset || 0, limit = query.limit || Infinity,
+    let hdtFile = this._hdtFile, offset = query.offset || 0, limit = query.limit || Infinity,
         hdt = spawn(hdtUtility, [
           '--query', (query.subject   || '?s') + ' ' +
           (query.predicate || '?p') + ' ' + (query.object || '?o'),
@@ -52,7 +52,7 @@ class ExternalHdtDatasource extends Datasource {
         ], { stdio: ['ignore', 'pipe', 'ignore'] });
     // Parse the result triples
     hdt.stdout.setEncoding('utf8');
-    var parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true, dataFactory = this.dataFactory;
+    let parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true, dataFactory = this.dataFactory;
     parser.parse(hdt.stdout, function (error, triple) {
       if (error)
         destination.emit('error', new Error('Invalid query result: ' + error.message));

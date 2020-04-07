@@ -7,7 +7,7 @@
   <p>Browse the following datasets as <a href="http://linkeddatafragments.org/in-depth/#tpf">Triple/Quad Pattern Fragments</a>:</p>
   <dl class="datasets">
     <% Object.keys(datasources).forEach(function (datasourceName) {
-         var datasource = datasources[datasourceName];
+         const datasource = datasources[datasourceName];
          if (datasource.hide) return; %>
         <dt><a href="<%= datasource.url.replace(/#.*/, '') %>"><%= datasource.title %></a></dt>
         <dd><%= datasource.description || ' ' %></dd>

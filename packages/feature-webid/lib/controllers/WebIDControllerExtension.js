@@ -1,7 +1,7 @@
 /*! @license MIT ©2016 Miel Vander Sande, Ghent University - imec */
 /* A WebIDControllerExtension extends Triple Pattern Fragments responses with WebID authentication. */
 
-var http = require('http'),
+let http = require('http'),
     lru = require('lru-cache'),
     parseCacheControl = require('parse-cache-control'),
     N3 = require('n3'),
@@ -9,7 +9,7 @@ var http = require('http'),
     Util = require('@ldf/core').Util,
     Controller = require('@ldf/core').controllers.Controller;
 
-var CERT_NS = 'http://www.w3.org/ns/auth/cert#';
+let CERT_NS = 'http://www.w3.org/ns/auth/cert#';
 
 // Creates a new WebIDControllerExtensionsl
 class WebIDControllerExtension extends Controller {
@@ -25,7 +25,7 @@ class WebIDControllerExtension extends Controller {
     if (this._protocol !== 'https') // This WebID implementation requires HTTPS
       return next();
 
-    var self = this,
+    let self = this,
         certificate = request.connection.getPeerCertificate();
 
     if (!(certificate.subject && certificate.subject.subjectAltName)) {
@@ -34,7 +34,7 @@ class WebIDControllerExtension extends Controller {
       });
     }
 
-    var webID = certificate.subject.subjectAltName.replace('uniformResourceIdentifier:', '');
+    let webID = certificate.subject.subjectAltName.replace('uniformResourceIdentifier:', '');
     this._verifyWebID(webID, certificate.modulus, parseInt(certificate.exponent, 16),
       function (error, verified, reason) {
         if (!verified) {
@@ -50,7 +50,7 @@ class WebIDControllerExtension extends Controller {
   // Verify webID
   _verifyWebID(webID, modulus, exponent, callback) {
     // request & parse
-    var parser = n3parser(),
+    let parser = n3parser(),
         id = {};
 
     // parse webID
@@ -61,7 +61,7 @@ class WebIDControllerExtension extends Controller {
         switch (triple.predicate) {
         case CERT_NS + 'modulus':
           // Add modulus
-          var literalValue = triple.object.value;
+          const literalValue = triple.object.value;
           // Apply parsing method by nodejs
           id.modulus = literalValue.slice(literalValue.indexOf('00:') === 0 ? 3 : 0).replace(/:/g, '').toUpperCase();
           break;
@@ -81,19 +81,19 @@ class WebIDControllerExtension extends Controller {
     }
 
     // Try to get WebID from cache
-    var cachedId = this._cache.get(webID),
+    let cachedId = this._cache.get(webID),
         self = this;
 
     if (cachedId)
       verify(cachedId.modulus, cachedId.exponent);
     else {
-      var req = http.request(webID, function (res) {
+      let req = http.request(webID, function (res) {
         res.setEncoding('utf8');
 
         parser.parse(res, parseTriple);
 
         res.on('end', function () {
-          var cacheControl = parseCacheControl(res.headers['Cache-Control'] || '');
+          let cacheControl = parseCacheControl(res.headers['Cache-Control'] || '');
           self._cache.set(webID, id, cacheControl['max-age'] || 0);
           verify(id.modulus, id.exponent);
         });
@@ -109,7 +109,7 @@ class WebIDControllerExtension extends Controller {
 
   _handleForbidden(request, response, options) {
     // Render the 404 message using the appropriate view
-    var view = this._negotiateView('Forbidden', request, response),
+    let view = this._negotiateView('Forbidden', request, response),
         metadata = {
           url: request.url,
           prefixes: this._prefixes,

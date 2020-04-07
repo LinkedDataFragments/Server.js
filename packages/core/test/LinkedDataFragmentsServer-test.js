@@ -1,11 +1,11 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
-var LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer');
+let LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer');
 
-var request = require('supertest');
+let request = require('supertest');
 
 describe('LinkedDataFragmentsServer', function () {
   describe('A LinkedDataFragmentsServer instance with one controller', function () {
-    var server, controller, client;
+    let server, controller, client;
     before(function () {
       controller = {
         handleRequest: sinon.spy(function (request, response, next) {
@@ -97,7 +97,7 @@ describe('LinkedDataFragmentsServer', function () {
   });
 
   describe('A LinkedDataFragmentsServer instance with two controllers', function () {
-    var server, controllerA, controllerB, client;
+    let server, controllerA, controllerB, client;
     before(function () {
       controllerA = {
         handleRequest: sinon.spy(function (request, response, next) {

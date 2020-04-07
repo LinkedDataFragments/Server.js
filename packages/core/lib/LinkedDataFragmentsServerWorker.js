@@ -1,7 +1,7 @@
 /*! @license MIT ©2014-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* LinkedDataFragmentsServerRunner is able to run a Linked Data Fragments server */
 
-var _ = require('lodash'),
+let _ = require('lodash'),
     fs = require('fs'),
     LinkedDataFragmentsServer = require('./LinkedDataFragmentsServer');
 
@@ -17,7 +17,7 @@ class LinkedDataFragmentsServerWorker {
 
     // Create all data sources
     Object.keys(config.datasources).forEach(function (datasourceId) {
-      var datasource = config.datasources[datasourceId];
+      let datasource = config.datasources[datasourceId];
       datasource.on('error', datasourceError);
       function datasourceError(error) {
         config.datasources[datasourceId].hide = true;
@@ -26,11 +26,11 @@ class LinkedDataFragmentsServerWorker {
     });
 
     // Set up logging
-    var loggingSettings = config.logging;
+    let loggingSettings = config.logging;
     // eslint-disable-next-line no-console
     config.log = console.log;
     if (loggingSettings.enabled) {
-      var accesslog = require('access-log');
+      let accesslog = require('access-log');
       config.accesslogger = function (request, response) {
         accesslog(request, response, null, function (logEntry) {
           fs.appendFile(loggingSettings.file, logEntry + '\n', function (error) {
@@ -41,10 +41,10 @@ class LinkedDataFragmentsServerWorker {
     }
 
     // Make sure the 'last' controllers are last in the array and the 'first' are first.
-    var lastControllers = _.remove(config.controllers, function (controller) {
+    let lastControllers = _.remove(config.controllers, function (controller) {
       return controller._last;
     });
-    var firstControllers = _.remove(config.controllers, function (controller) {
+    let firstControllers = _.remove(config.controllers, function (controller) {
       return controller._first;
     });
     config.controllers = firstControllers.concat(config.controllers.concat(lastControllers));
@@ -54,16 +54,16 @@ class LinkedDataFragmentsServerWorker {
 
   // Start the worker
   run(port) {
-    var config = this._config;
+    let config = this._config;
     if (port)
       config.port = port;
-    var server = new LinkedDataFragmentsServer(config);
+    let server = new LinkedDataFragmentsServer(config);
 
     // Start the server when all data sources are ready
-    var pending = _.size(config.datasources);
+    let pending = _.size(config.datasources);
     _.each(config.datasources, function (datasource) {
       // Add datasource ready-listener
-      var ready = _.once(startWhenReady);
+      let ready = _.once(startWhenReady);
       datasource.once('initialized', ready);
       datasource.once('error', ready);
 

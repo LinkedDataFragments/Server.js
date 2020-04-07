@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var ViewCollection = require('../../lib/views/ViewCollection');
+let ViewCollection = require('../../lib/views/ViewCollection');
 
-var View = require('../../lib/views/View');
+let View = require('../../lib/views/View');
 
 describe('ViewCollection', function () {
   describe('The ViewCollection module', function () {
@@ -15,7 +15,7 @@ describe('ViewCollection', function () {
   });
 
   describe('A ViewCollection instance without views', function () {
-    var viewCollection;
+    let viewCollection;
     before(function () {
       viewCollection = new ViewCollection();
     });
@@ -27,7 +27,7 @@ describe('ViewCollection', function () {
   });
 
   describe('A ViewCollection instance with one view', function () {
-    var viewCollection, viewA;
+    let viewCollection, viewA;
     before(function () {
       viewA = new View('MyView1', 'text/html,application/trig;q=0.7');
       viewCollection = new ViewCollection([viewA]);
@@ -39,7 +39,7 @@ describe('ViewCollection', function () {
     });
 
     describe('when a client requests HTML', function () {
-      var viewDetails, request, response;
+      let viewDetails, request, response;
       before(function () {
         request = { headers: { accept: 'text/html' } };
         response = {};
@@ -54,7 +54,7 @@ describe('ViewCollection', function () {
     });
 
     describe('when a client requests TriG', function () {
-      var viewDetails, request, response;
+      let viewDetails, request, response;
       before(function () {
         request = { headers: { accept: 'application/trig' } };
         response = {};
@@ -70,7 +70,7 @@ describe('ViewCollection', function () {
   });
 
   describe('A ViewCollection instance with three views of two types', function () {
-    var viewCollection, viewA, viewB, viewC;
+    let viewCollection, viewA, viewB, viewC;
     before(function () {
       viewA = new View('MyView1', 'text/html,application/trig;q=0.5');
       viewB = new View('MyView1', 'text/html;q=1.0,application/trig');
@@ -84,7 +84,7 @@ describe('ViewCollection', function () {
     });
 
     describe('when matching a request of one view type as HTML', function () {
-      var viewDetails, request, response;
+      let viewDetails, request, response;
       before(function () {
         request = { headers: { accept: 'text/html' } };
         response = {};
@@ -99,7 +99,7 @@ describe('ViewCollection', function () {
     });
 
     describe('when matching a request of one view type as TriG', function () {
-      var viewDetails, request, response;
+      let viewDetails, request, response;
       before(function () {
         request = { headers: { accept: 'application/trig' } };
         response = {};
@@ -114,7 +114,7 @@ describe('ViewCollection', function () {
     });
 
     describe('when matching a request of another view type as HTML', function () {
-      var viewDetails, request, response;
+      let viewDetails, request, response;
       before(function () {
         request = { headers: { accept: 'text/html' } };
         response = {};

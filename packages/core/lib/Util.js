@@ -13,7 +13,7 @@ module.exports.createErrorType = function (BaseError, name, init) {
   if (typeof BaseError !== 'function')
     init = name, name = BaseError, BaseError = Error;
   function ErrorType(message) {
-    var error = this instanceof ErrorType ? this : new ErrorType(message);
+    let error = this instanceof ErrorType ? this : new ErrorType(message);
     error.name = name;
     error.message = message || '';
     Error.captureStackTrace(error, error.constructor);

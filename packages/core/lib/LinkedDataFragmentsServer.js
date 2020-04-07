@@ -1,7 +1,7 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* LinkedDataFragmentsServer is an HTTP server that provides access to Linked Data Fragments */
 
-var _ = require('lodash'),
+let _ = require('lodash'),
     fs = require('fs'),
     Util = require('./Util'),
     ErrorController = require('./controllers/ErrorController'),
@@ -11,14 +11,14 @@ var _ = require('lodash'),
 class LinkedDataFragmentsServer {
   constructor(options) {
     // Create the HTTP(S) server
-    var server, sockets = 0;
-    var urlData = options && options.urlData ? options.urlData : new UrlData();
+    let server, sockets = 0;
+    let urlData = options && options.urlData ? options.urlData : new UrlData();
     switch (urlData.protocol) {
     case 'http':
       server = require('http').createServer();
       break;
     case 'https':
-      var ssl = options.ssl || {}, authentication = options.authentication || {};
+      const ssl = options.ssl || {}, authentication = options.authentication || {};
       // WebID authentication requires a client certificate
       if (authentication.webid)
         ssl.requestCert = ssl.rejectUnauthorized = true;
@@ -29,7 +29,7 @@ class LinkedDataFragmentsServer {
     }
 
     // Copy over members
-    for (var member in LinkedDataFragmentsServer.prototype)
+    for (let member in LinkedDataFragmentsServer.prototype)
       server[member] = LinkedDataFragmentsServer.prototype[member];
 
     // Assign settings
@@ -48,7 +48,7 @@ class LinkedDataFragmentsServer {
       catch (error) { server._reportError(request, response, error); }
     });
     server.on('connection', function (socket) {
-      var socketId = sockets++;
+      let socketId = sockets++;
       server._sockets[socketId] = socket;
       socket.on('close', function () { delete server._sockets[socketId]; });
     });
@@ -59,7 +59,7 @@ class LinkedDataFragmentsServer {
 // Handles an incoming HTTP request
 LinkedDataFragmentsServer.prototype._processRequest = function (request, response) {
   // Add default response headers
-  for (var header in this._defaultHeaders)
+  for (let header in this._defaultHeaders)
     response.setHeader(header, this._defaultHeaders[header]);
 
   // Verify an allowed HTTP method was used
@@ -81,7 +81,7 @@ LinkedDataFragmentsServer.prototype._processRequest = function (request, respons
   }
 
   // Try each of the controllers in order
-  var self = this, controllerId = 0;
+  let self = this, controllerId = 0;
   function nextController(error) {
     // Error if the previous controller failed
     if (error)
@@ -91,7 +91,7 @@ LinkedDataFragmentsServer.prototype._processRequest = function (request, respons
       response.emit('error', new Error('No controller for ' + request.url));
     // Otherwise, try the next controller
     else {
-      var controller = self._controllers[controllerId++], next = _.once(nextController);
+      let controller = self._controllers[controllerId++], next = _.once(nextController);
       try { controller.handleRequest(request, response, next); }
       catch (error) { next(error); }
     }
@@ -127,7 +127,7 @@ LinkedDataFragmentsServer.prototype._reportError = function (request, response, 
 LinkedDataFragmentsServer.prototype.stop = function () {
   // Don't accept new connections, and close existing ones
   this.close();
-  for (var id in this._sockets)
+  for (let id in this._sockets)
     this._sockets[id].destroy();
 
   // Close all controllers

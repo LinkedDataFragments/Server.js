@@ -1,12 +1,12 @@
 /*! @license MIT ©2013-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* Logic for starting an LDF server with a given config from the command line. */
 
-var cluster = require('cluster'),
+let cluster = require('cluster'),
     ComponentsLoader = require('componentsjs').Loader;
 
 // Run function for starting the server from the command line
 function runCli(moduleRootPath) {
-  var argv = process.argv.slice(2);
+  let argv = process.argv.slice(2);
   runCustom(argv, process.stdin, process.stdout, process.stderr, null, { mainModulePath: moduleRootPath });
 }
 
@@ -17,11 +17,11 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
     return process.exit(1);
   }
 
-  var cliPort = parseInt(args[1], 10),
+  let cliPort = parseInt(args[1], 10),
       cliWorkers = parseInt(args[2], 10),
       configUri = args[3] || componentConfigUri || 'urn:ldf-server:my';
 
-  var loader = new ComponentsLoader(properties);
+  let loader = new ComponentsLoader(properties);
   loader.registerAvailableModuleResources()
     .then(function () {
       // Start up a cluster master
@@ -57,11 +57,11 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
     });
 
   function startClusterMaster(config) {
-    var workers = cliWorkers || config.workers || 1;
+    let workers = cliWorkers || config.workers || 1;
 
     // Create workers
     stdout.write('Master ' + process.pid + ' running.\n');
-    for (var i = 0; i < workers; i++)
+    for (let i = 0; i < workers; i++)
       cluster.fork();
 
     // Respawn crashed workers
@@ -86,14 +86,14 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
       process.removeListener('SIGHUP', respawn);
 
       // Retrieve a list of old workers that will be replaced by new ones
-      var workers = Object.keys(cluster.workers).map(function (id) { return cluster.workers[id]; });
+      let workers = Object.keys(cluster.workers).map(function (id) { return cluster.workers[id]; });
       (function respawnNext() {
         // If there are still old workers, respawn a new one
         if (workers.length) {
           // Wait until the new worker starts listening to kill the old one
-          var newWorker = cluster.fork();
+          let newWorker = cluster.fork();
           newWorker.once('listening', function () {
-            var worker = workers.pop();
+            let worker = workers.pop();
             if (!worker)
               return newWorker.kill(), respawnNext(); // Dead workers are replaced automatically
             worker.once('exit', function () {

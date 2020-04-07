@@ -1,8 +1,8 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var Controller = require('../../lib/controllers/Controller'),
+let Controller = require('../../lib/controllers/Controller'),
     UrlData = require('../../lib/UrlData');
 
-var http = require('http'),
+let http = require('http'),
     request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer');
 
@@ -18,7 +18,7 @@ describe('Controller', function () {
   });
 
   describe('A Controller instance without baseURL', function () {
-    var controller, client;
+    let controller, client;
     before(function () {
       controller = new Controller();
       sinon.spy(controller, '_handleRequest');
@@ -32,7 +32,7 @@ describe('Controller', function () {
 
       it('should call _handleRequest with request, response and next', function () {
         controller._handleRequest.should.have.been.calledOnce;
-        var args = controller._handleRequest.getCall(0).args;
+        let args = controller._handleRequest.getCall(0).args;
         args[0].should.have.property('url');
         args[1].should.be.an.instanceof(http.ServerResponse);
         args[2].should.be.an.instanceof(Function);
@@ -40,7 +40,7 @@ describe('Controller', function () {
 
       it('should extend _handleRequest with the original URL as parsedUrl property', function () {
         controller._handleRequest.should.have.been.calledOnce;
-        var request = controller._handleRequest.getCall(0).args[0];
+        let request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
         request.parsedUrl.should.deep.equal({
           protocol: 'http:', host: request.headers.host, hostname: undefined, port: undefined,
@@ -56,7 +56,7 @@ describe('Controller', function () {
   });
 
   describe('A Controller instance without baseURL using Forwarded header', function () {
-    var controller, client;
+    let controller, client;
     before(function () {
       controller = new Controller({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       sinon.spy(controller, '_handleRequest');
@@ -75,7 +75,7 @@ describe('Controller', function () {
 
       it('should call _handleRequest with request, response and next', function () {
         controller._handleRequest.should.have.been.calledOnce;
-        var args = controller._handleRequest.getCall(0).args;
+        let args = controller._handleRequest.getCall(0).args;
         args[0].should.have.property('url');
         args[1].should.be.an.instanceof(http.ServerResponse);
         args[2].should.be.an.instanceof(Function);
@@ -83,7 +83,7 @@ describe('Controller', function () {
 
       it('should extend _handleRequest with the original URL as parsedUrl property', function () {
         controller._handleRequest.should.have.been.calledOnce;
-        var request = controller._handleRequest.getCall(0).args[0];
+        let request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
         request.parsedUrl.should.deep.equal({
           protocol: 'https:', host: 'bar:8000', hostname: 'example.org', port: '1234',
@@ -99,7 +99,7 @@ describe('Controller', function () {
   });
 
   describe('A Controller instance without baseURL using X-Forwarded-* headers', function () {
-    var controller, client;
+    let controller, client;
     before(function () {
       controller = new Controller();
       sinon.spy(controller, '_handleRequest');
@@ -117,7 +117,7 @@ describe('Controller', function () {
 
       it('should call _handleRequest with request, response and next', function () {
         controller._handleRequest.should.have.been.calledOnce;
-        var args = controller._handleRequest.getCall(0).args;
+        let args = controller._handleRequest.getCall(0).args;
         args[0].should.have.property('url');
         args[1].should.be.an.instanceof(http.ServerResponse);
         args[2].should.be.an.instanceof(Function);
@@ -125,7 +125,7 @@ describe('Controller', function () {
 
       it('should extend _handleRequest with the original URL as parsedUrl property', function () {
         controller._handleRequest.should.have.been.calledOnce;
-        var request = controller._handleRequest.getCall(0).args[0];
+        let request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
         request.parsedUrl.should.deep.equal({
           protocol: 'https:', host: 'foo:5000', hostname: undefined, port: undefined,
@@ -141,7 +141,7 @@ describe('Controller', function () {
   });
 
   describe('A Controller instance with baseURL', function () {
-    var controller, client;
+    let controller, client;
     before(function () {
       controller = new Controller({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       sinon.spy(controller, '_handleRequest');
@@ -155,7 +155,7 @@ describe('Controller', function () {
 
       it('should call _handleRequest with request, response and next', function () {
         controller._handleRequest.should.have.been.calledOnce;
-        var args = controller._handleRequest.getCall(0).args;
+        let args = controller._handleRequest.getCall(0).args;
         args[0].should.have.property('url');
         args[1].should.be.an.instanceof(http.ServerResponse);
         args[2].should.be.an.instanceof(Function);
@@ -163,7 +163,7 @@ describe('Controller', function () {
 
       it('should extend _handleRequest with the rebased URL as parsedUrl property', function () {
         controller._handleRequest.should.have.been.calledOnce;
-        var request = controller._handleRequest.getCall(0).args[0];
+        let request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
         request.parsedUrl.should.deep.equal({
           protocol: 'http:', host: 'example.org:1234', hostname: 'example.org', port: '1234',

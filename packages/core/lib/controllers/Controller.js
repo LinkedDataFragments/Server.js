@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* Controller is a base class for HTTP request handlers */
 
-var url = require('url'),
+let url = require('url'),
     _ = require('lodash'),
     ViewCollection = require('../views/ViewCollection'),
     UrlData = require('../UrlData'),
@@ -41,7 +41,7 @@ class Controller {
     }
 
     // Try to handle the request
-    var self = this;
+    let self = this;
     try { this._handleRequest(request, response, done, settings); }
     catch (error) { done(error); }
     function done(error) {
@@ -60,7 +60,7 @@ class Controller {
     if (!request.headers.forwarded)
       return {};
     try {
-      var forwarded = _.defaults.apply(this, parseForwarded(request.headers.forwarded));
+      let forwarded = _.defaults.apply(this, parseForwarded(request.headers.forwarded));
       return {
         protocol: forwarded.proto ? forwarded.proto + ':' : undefined,
         host: forwarded.host,
@@ -91,10 +91,10 @@ class Controller {
   // Finds an appropriate view using content negotiation
   _negotiateView(viewName, request, response) {
     // Indicate that the response is content-negotiated
-    var vary = response.getHeader('Vary');
+    let vary = response.getHeader('Vary');
     response.setHeader('Vary', 'Accept' + (vary ? ', ' + vary : ''));
     // Negotiate a view
-    var viewMatch = this._views.matchView(viewName, request);
+    let viewMatch = this._views.matchView(viewName, request);
     response.setHeader('Content-Type', viewMatch.responseType || viewMatch.type);
     return viewMatch.view;
   }

@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An ErrorRdfView represents a 500 response in RDF. */
 
-var RdfView = require('../RdfView');
+let RdfView = require('../RdfView');
 
 // Creates a new ErrorRdfView
 class ErrorRdfView extends RdfView {

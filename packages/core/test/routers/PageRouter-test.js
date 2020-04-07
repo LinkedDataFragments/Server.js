@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-var PageRouter = require('../../lib/routers/PageRouter');
+let PageRouter = require('../../lib/routers/PageRouter');
 
 describe('PageRouter', function () {
   describe('The PageRouter module', function () {
@@ -13,7 +13,7 @@ describe('PageRouter', function () {
   });
 
   describe('A PageRouter instance', function () {
-    var router = new PageRouter();
+    let router = new PageRouter();
 
     describe('extractUrlParams', function () {
       describe('with an existing query', function () {
@@ -81,7 +81,7 @@ describe('PageRouter', function () {
   });
 
   describe('A PageRouter instance with a given page size', function () {
-    var router = new PageRouter({ pageSize: 250 });
+    let router = new PageRouter({ pageSize: 250 });
 
     describe('extractUrlParams', function () {
       describe('with an existing query', function () {
@@ -149,7 +149,7 @@ describe('PageRouter', function () {
   });
 
   describe('A PageRouter instance with an invalid page size', function () {
-    var router = new PageRouter({ pageSize: -1 });
+    let router = new PageRouter({ pageSize: -1 });
 
     describe('extractUrlParams', function () {
       describe('with an existing query', function () {

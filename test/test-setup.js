@@ -1,6 +1,6 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
-var URL = require('url'),
+const URL = require('url'),
     Readable = require('stream').Readable,
     Writable = require('stream').Writable;
 
@@ -8,7 +8,7 @@ var URL = require('url'),
 global.sinon = require('sinon');
 
 // Set up the Chai assertion library
-var chai = require('chai');
+const chai = require('chai');
 global.test = {};
 global.expect = chai.expect;
 global.should = chai.should();
@@ -16,9 +16,9 @@ chai.use(require('sinon-chai'));
 
 // Test helper for the extractQueryParams function of routers
 test.extractQueryParams = function (description, url, intent, query, expectedQuery) {
-  var router = this;
+  const router = this;
   it(description + ' ' + intent, function () {
-    var result = router.extractQueryParams({ url: URL.parse(url, true) }, query);
+    const result = router.extractQueryParams({ url: URL.parse(url, true) }, query);
     expect(result).to.equal(undefined, 'should not return anything');
     expect(query).to.deep.equal(expectedQuery, 'should match the expected query');
   });
@@ -26,7 +26,7 @@ test.extractQueryParams = function (description, url, intent, query, expectedQue
 
 // Creates a dummy HTTP response
 test.createHttpResponse = function (contents, contentType) {
-  var response = new Readable();
+  const response = new Readable();
   response._read = function () {};
   response.statusCode = 200;
   response.headers = { 'content-type': contentType };
@@ -37,7 +37,7 @@ test.createHttpResponse = function (contents, contentType) {
 
 // Creates an in-memory stream
 test.createStreamCapture = function () {
-  var stream = new Writable({ objectMode: true });
+  const stream = new Writable({ objectMode: true });
   stream.buffer = '';
   stream._write = function (chunk, encoding, callback) {
     this.buffer += chunk;
@@ -49,7 +49,7 @@ test.createStreamCapture = function () {
 chai.use(function (chai, utils) {
   // Checks whether the stream contains the given number of elements
   chai.Assertion.addMethod('streamWithLength', function (expectedLength, callback) {
-    var stream = utils.flag(this, 'object'), length = 0, self = this;
+    let stream = utils.flag(this, 'object'), length = 0, self = this;
     stream.on('data', function () { length++; });
     stream.on('end', function () {
       self.assert(length === expectedLength,
