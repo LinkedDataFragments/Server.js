@@ -16,7 +16,7 @@ class LinkedDataFragmentsServerWorker {
       throw new Error('At least one router must be defined.');
 
     // Create all data sources
-    Object.keys(config.datasources).forEach(function (datasourceId) {
+    Object.keys(config.datasources).forEach((datasourceId) => {
       let datasource = config.datasources[datasourceId];
       datasource.on('error', datasourceError);
       function datasourceError(error) {
@@ -32,8 +32,8 @@ class LinkedDataFragmentsServerWorker {
     if (loggingSettings.enabled) {
       let accesslog = require('access-log');
       config.accesslogger = function (request, response) {
-        accesslog(request, response, null, function (logEntry) {
-          fs.appendFile(loggingSettings.file, logEntry + '\n', function (error) {
+        accesslog(request, response, null, (logEntry) => {
+          fs.appendFile(loggingSettings.file, logEntry + '\n', (error) => {
             error && process.stderr.write('Error when writing to access log file: ' + error);
           });
         });
@@ -41,10 +41,10 @@ class LinkedDataFragmentsServerWorker {
     }
 
     // Make sure the 'last' controllers are last in the array and the 'first' are first.
-    let lastControllers = _.remove(config.controllers, function (controller) {
+    let lastControllers = _.remove(config.controllers, (controller) => {
       return controller._last;
     });
-    let firstControllers = _.remove(config.controllers, function (controller) {
+    let firstControllers = _.remove(config.controllers, (controller) => {
       return controller._first;
     });
     config.controllers = firstControllers.concat(config.controllers.concat(lastControllers));
@@ -61,7 +61,7 @@ class LinkedDataFragmentsServerWorker {
 
     // Start the server when all data sources are ready
     let pending = _.size(config.datasources);
-    _.each(config.datasources, function (datasource) {
+    _.each(config.datasources, (datasource) => {
       // Add datasource ready-listener
       let ready = _.once(startWhenReady);
       datasource.once('initialized', ready);
@@ -80,11 +80,11 @@ class LinkedDataFragmentsServerWorker {
     }
 
     // Terminate gracefully if possible
-    process.once('SIGINT', function () {
+    process.once('SIGINT', () => {
       // eslint-disable-next-line no-console
       console.log('Stopping worker', process.pid);
       server.stop();
-      process.on('SIGINT', function () { process.exit(1); });
+      process.on('SIGINT', () => { process.exit(1); });
     });
   }
 }

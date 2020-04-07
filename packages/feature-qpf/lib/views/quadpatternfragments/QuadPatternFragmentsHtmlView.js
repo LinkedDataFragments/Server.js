@@ -16,9 +16,9 @@ class QuadPatternFragmentsHtmlView extends HtmlView {
   _render(settings, request, response, done) {
     // Read the data and metadata
     let self = this, quads = settings.quads = [], results = settings.results;
-    results.on('data', function (triple) { quads.push(triple); });
-    results.on('end',  function () { settings.metadata && renderHtml(); });
-    results.getProperty('metadata', function (metadata) {
+    results.on('data', (triple) => { quads.push(triple); });
+    results.on('end',  () => { settings.metadata && renderHtml(); });
+    results.getProperty('metadata', (metadata) => {
       settings.metadata = metadata;
       results.ended && renderHtml();
     });

@@ -7,29 +7,29 @@ let Datasource = require('@ldf/core').datasources.Datasource,
 
 let exampleTurtleUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.ttl');
 
-describe('N3Datasource', function () {
-  describe('The N3Datasource module', function () {
-    it('should be a function', function () {
+describe('N3Datasource', () => {
+  describe('The N3Datasource module', () => {
+    it('should be a function', () => {
       N3Datasource.should.be.a('function');
     });
 
-    it('should be a N3Datasource constructor', function (done) {
+    it('should be a N3Datasource constructor', (done) => {
       let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       instance.should.be.an.instanceof(N3Datasource);
       instance.close(done);
     });
 
-    it('should create Datasource objects', function (done) {
+    it('should create Datasource objects', (done) => {
       let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
   });
 
-  describe('A N3Datasource instance for an example Turtle file', function () {
+  describe('A N3Datasource instance for an example Turtle file', () => {
     let datasource = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
     datasource.initialize();
-    after(function (done) { datasource.close(done); });
+    after((done) => { datasource.close(done); });
 
     itShouldExecute(datasource,
       'the empty query',
@@ -79,20 +79,20 @@ describe('N3Datasource', function () {
 });
 
 function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
-  describe('executing ' + name, function () {
+  describe('executing ' + name, () => {
     let resultsCount = 0, totalCount;
-    before(function (done) {
+    before((done) => {
       let result = datasource.select(query);
-      result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
-      result.on('data', function (triple) { resultsCount++; });
+      result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
+      result.on('data', (triple) => { resultsCount++; });
       result.on('end', done);
     });
 
-    it('should return the expected number of triples', function () {
+    it('should return the expected number of triples', () => {
       expect(resultsCount).to.equal(expectedResultsCount);
     });
 
-    it('should emit the expected total number of triples', function () {
+    it('should emit the expected total number of triples', () => {
       expect(totalCount).to.equal(expectedTotalCount);
     });
   });

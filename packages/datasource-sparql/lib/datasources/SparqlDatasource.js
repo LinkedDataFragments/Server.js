@@ -40,15 +40,15 @@ class SparqlDatasource extends Datasource {
     // Fetch and parse matching triples using JSON responses
     let json = '';
     this._request(request, emitError)
-      .on('data', function (data) { json += data; })
+      .on('data', (data) => { json += data; })
       .on('error', emitError)
-      .on('end', function () {
+      .on('end', () => {
         let response;
         try { response = JSON.parse(json); }
         catch (e) { return emitError({ message: INVALID_JSON_RESPONSE }); }
 
-        response.results.bindings.forEach(function (binding) {
-          binding = self._sparqlJsonParser.parseJsonBindings(binding);
+        response.results.bindings.forEach((binding) => {
+          binding = this._sparqlJsonParser.parseJsonBindings(binding);
           let triple = {
             subject:   binding.s || query.subject,
             predicate: binding.p || query.predicate,
@@ -61,7 +61,7 @@ class SparqlDatasource extends Datasource {
       });
 
     // Determine the total number of matching triples
-    this._getPatternCount(sparqlPattern).then(function (count) {
+    this._getPatternCount(sparqlPattern).then((count) => {
       destination.setProperty('metadata', count);
     },
     emitError);
@@ -94,13 +94,12 @@ class SparqlDatasource extends Datasource {
     });
 
     // Parse SPARQL response in CSV format (2 lines: variable name / count value)
-    let self = this;
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       let csv = '';
-      self._resolvingCountQueries[sparqlPattern] = true;
-      countResponse.on('data', function (data) { csv += data; });
-      countResponse.on('end', function () {
-        delete self._resolvingCountQueries[sparqlPattern];
+      this._resolvingCountQueries[sparqlPattern] = true;
+      countResponse.on('data', (data) => { csv += data; });
+      countResponse.on('end', () => {
+        delete this._resolvingCountQueries[sparqlPattern];
         let countMatch = csv.match(/\d+/);
         if (!countMatch)
           reject(new Error('COUNT query failed.'));

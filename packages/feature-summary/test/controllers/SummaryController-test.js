@@ -8,24 +8,24 @@ let request = require('supertest'),
 
 let SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js');
 
-describe('SummaryController', function () {
-  describe('The SummaryController module', function () {
-    it('should be a function', function () {
+describe('SummaryController', () => {
+  describe('The SummaryController module', () => {
+    it('should be a function', () => {
       SummaryController.should.be.a('function');
     });
 
-    it('should be an SummaryController constructor', function () {
+    it('should be an SummaryController constructor', () => {
       new SummaryController().should.be.an.instanceof(SummaryController);
     });
 
-    it('should create new SummaryController objects', function () {
+    it('should create new SummaryController objects', () => {
       new SummaryController().should.be.an.instanceof(SummaryController);
     });
   });
 
-  describe('An SummaryController instance', function () {
+  describe('An SummaryController instance', () => {
     let controller, client;
-    before(function () {
+    before(() => {
       controller = new SummaryController({
         views: [new SummaryRdfView()],
         summaries: { dir: path.join(__dirname, '/../../../../test/assets') },
@@ -37,8 +37,8 @@ describe('SummaryController', function () {
       client = request.agent(new DummyServer(controller));
     });
 
-    it('should correctly serve summary in Turtle', function (done) {
-      client.get('/summaries/summary').set('Accept', 'text/turtle').expect(function (response) {
+    it('should correctly serve summary in Turtle', (done) => {
+      client.get('/summaries/summary').set('Accept', 'text/turtle').expect((response) => {
         let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
@@ -48,8 +48,8 @@ describe('SummaryController', function () {
       }).end(done);
     });
 
-    it('should correctly serve summary in Trig', function (done) {
-      client.get('/summaries/summary').expect(function (response) {
+    it('should correctly serve summary in Trig', (done) => {
+      client.get('/summaries/summary').expect((response) => {
         let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
@@ -59,8 +59,8 @@ describe('SummaryController', function () {
       }).end(done);
     });
 
-    it('should correctly serve summary in ntriples', function (done) {
-      client.get('/summaries/summary').set('Accept', 'application/n-triples').expect(function (response) {
+    it('should correctly serve summary in ntriples', (done) => {
+      client.get('/summaries/summary').set('Accept', 'application/n-triples').expect((response) => {
         let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
@@ -70,14 +70,14 @@ describe('SummaryController', function () {
       }).end(done);
     });
 
-    it('should hand over to the next controller if no summary with that name is found', function (done) {
-      client.get('/summaries/unknown').expect(function (response) {
+    it('should hand over to the next controller if no summary with that name is found', (done) => {
+      client.get('/summaries/unknown').expect((response) => {
         controller.next.should.have.been.calledOnce;
       }).end(done);
     });
 
-    it('should hand over to the next controller for non-summary paths', function (done) {
-      client.get('/other').expect(function (response) {
+    it('should hand over to the next controller for non-summary paths', (done) => {
+      client.get('/other').expect((response) => {
         controller.next.should.have.been.calledOnce;
       }).end(done);
     });

@@ -6,31 +6,31 @@ let http = require('http'),
     request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer');
 
-describe('Controller', function () {
-  describe('The Controller module', function () {
-    it('should be a function', function () {
+describe('Controller', () => {
+  describe('The Controller module', () => {
+    it('should be a function', () => {
       Controller.should.be.a('function');
     });
 
-    it('should be a Controller constructor', function () {
+    it('should be a Controller constructor', () => {
       new Controller().should.be.an.instanceof(Controller);
     });
   });
 
-  describe('A Controller instance without baseURL', function () {
+  describe('A Controller instance without baseURL', () => {
     let controller, client;
-    before(function () {
+    before(() => {
       controller = new Controller();
       sinon.spy(controller, '_handleRequest');
       client = request.agent(new DummyServer(controller));
     });
 
-    describe('receiving a request', function () {
-      before(function (done) {
+    describe('receiving a request', () => {
+      before((done) => {
         client.get('/path?a=b').end(done);
       });
 
-      it('should call _handleRequest with request, response and next', function () {
+      it('should call _handleRequest with request, response and next', () => {
         controller._handleRequest.should.have.been.calledOnce;
         let args = controller._handleRequest.getCall(0).args;
         args[0].should.have.property('url');
@@ -38,7 +38,7 @@ describe('Controller', function () {
         args[2].should.be.an.instanceof(Function);
       });
 
-      it('should extend _handleRequest with the original URL as parsedUrl property', function () {
+      it('should extend _handleRequest with the original URL as parsedUrl property', () => {
         controller._handleRequest.should.have.been.calledOnce;
         let request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
@@ -49,22 +49,22 @@ describe('Controller', function () {
         });
       });
 
-      it('should hand over to the next controller', function () {
+      it('should hand over to the next controller', () => {
         controller.next.should.have.been.calledOnce;
       });
     });
   });
 
-  describe('A Controller instance without baseURL using Forwarded header', function () {
+  describe('A Controller instance without baseURL using Forwarded header', () => {
     let controller, client;
-    before(function () {
+    before(() => {
       controller = new Controller({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       sinon.spy(controller, '_handleRequest');
       client = request.agent(new DummyServer(controller));
     });
 
-    describe('receiving a request', function () {
-      before(function (done) {
+    describe('receiving a request', () => {
+      before((done) => {
         client
           .get('/path?a=b')
           .set('X-Forwarded-Host', 'foo:5000')
@@ -73,7 +73,7 @@ describe('Controller', function () {
           .end(done);
       });
 
-      it('should call _handleRequest with request, response and next', function () {
+      it('should call _handleRequest with request, response and next', () => {
         controller._handleRequest.should.have.been.calledOnce;
         let args = controller._handleRequest.getCall(0).args;
         args[0].should.have.property('url');
@@ -81,7 +81,7 @@ describe('Controller', function () {
         args[2].should.be.an.instanceof(Function);
       });
 
-      it('should extend _handleRequest with the original URL as parsedUrl property', function () {
+      it('should extend _handleRequest with the original URL as parsedUrl property', () => {
         controller._handleRequest.should.have.been.calledOnce;
         let request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
@@ -92,22 +92,22 @@ describe('Controller', function () {
         });
       });
 
-      it('should hand over to the next controller', function () {
+      it('should hand over to the next controller', () => {
         controller.next.should.have.been.calledOnce;
       });
     });
   });
 
-  describe('A Controller instance without baseURL using X-Forwarded-* headers', function () {
+  describe('A Controller instance without baseURL using X-Forwarded-* headers', () => {
     let controller, client;
-    before(function () {
+    before(() => {
       controller = new Controller();
       sinon.spy(controller, '_handleRequest');
       client = request.agent(new DummyServer(controller));
     });
 
-    describe('receiving a request', function () {
-      before(function (done) {
+    describe('receiving a request', () => {
+      before((done) => {
         client
           .get('/path?a=b')
           .set('X-Forwarded-Host', 'foo:5000')
@@ -115,7 +115,7 @@ describe('Controller', function () {
           .end(done);
       });
 
-      it('should call _handleRequest with request, response and next', function () {
+      it('should call _handleRequest with request, response and next', () => {
         controller._handleRequest.should.have.been.calledOnce;
         let args = controller._handleRequest.getCall(0).args;
         args[0].should.have.property('url');
@@ -123,7 +123,7 @@ describe('Controller', function () {
         args[2].should.be.an.instanceof(Function);
       });
 
-      it('should extend _handleRequest with the original URL as parsedUrl property', function () {
+      it('should extend _handleRequest with the original URL as parsedUrl property', () => {
         controller._handleRequest.should.have.been.calledOnce;
         let request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
@@ -134,26 +134,26 @@ describe('Controller', function () {
         });
       });
 
-      it('should hand over to the next controller', function () {
+      it('should hand over to the next controller', () => {
         controller.next.should.have.been.calledOnce;
       });
     });
   });
 
-  describe('A Controller instance with baseURL', function () {
+  describe('A Controller instance with baseURL', () => {
     let controller, client;
-    before(function () {
+    before(() => {
       controller = new Controller({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       sinon.spy(controller, '_handleRequest');
       client = request.agent(new DummyServer(controller));
     });
 
-    describe('receiving a request', function () {
-      before(function (done) {
+    describe('receiving a request', () => {
+      before((done) => {
         client.get('/path?a=b').end(done);
       });
 
-      it('should call _handleRequest with request, response and next', function () {
+      it('should call _handleRequest with request, response and next', () => {
         controller._handleRequest.should.have.been.calledOnce;
         let args = controller._handleRequest.getCall(0).args;
         args[0].should.have.property('url');
@@ -161,7 +161,7 @@ describe('Controller', function () {
         args[2].should.be.an.instanceof(Function);
       });
 
-      it('should extend _handleRequest with the rebased URL as parsedUrl property', function () {
+      it('should extend _handleRequest with the rebased URL as parsedUrl property', () => {
         controller._handleRequest.should.have.been.calledOnce;
         let request = controller._handleRequest.getCall(0).args[0];
         request.should.have.property('parsedUrl');
@@ -172,7 +172,7 @@ describe('Controller', function () {
         });
       });
 
-      it('should hand over to the next controller', function () {
+      it('should hand over to the next controller', () => {
         controller.next.should.have.been.calledOnce;
       });
     });

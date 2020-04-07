@@ -36,8 +36,8 @@ class HtmlView extends View {
     // Render the template with its options
     let fileName = (templateName[0] === '/' ? templateName : path.join(__dirname, templateName)) + '.html';
     qejs.renderFile(fileName, options)
-    .then(function (html)  { response.write(html); done(); })
-    .fail(function (error) { done(error); });
+    .then((html) => { response.write(html); done(); })
+    .fail((error) => { done(error); });
 
     function newExtensionViewConstructor(extension, options, request, response) {
       return function (data) {
@@ -53,7 +53,7 @@ class HtmlView extends View {
   _renderViewExtensionContents(name, options, request, response) {
     let buffer = '', writer = { write: function (data) { buffer += data; }, end: _.noop };
     return q.ninvoke(this, '_renderViewExtensions', name, options, request, writer)
-            .then(function () { return buffer; });
+            .then(() => { return buffer; });
   }
 }
 

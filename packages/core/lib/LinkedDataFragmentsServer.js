@@ -41,16 +41,16 @@ class LinkedDataFragmentsServer {
     server._defaultHeaders = options.response && options.response.headers || {};
 
     // Attach event listeners
-    server.on('error', function (error) { server._reportError(error); });
-    server.on('request', function (request, response) {
+    server.on('error', (error) => { server._reportError(error); });
+    server.on('request', (request, response) => {
       server._accesslogger(request, response);
       try { server._processRequest(request, response); }
       catch (error) { server._reportError(request, response, error); }
     });
-    server.on('connection', function (socket) {
+    server.on('connection', (socket) => {
       let socketId = sockets++;
       server._sockets[socketId] = socket;
-      socket.on('close', function () { delete server._sockets[socketId]; });
+      socket.on('close', () => { delete server._sockets[socketId]; });
     });
     return server;
   }
@@ -96,7 +96,7 @@ LinkedDataFragmentsServer.prototype._processRequest = function (request, respons
       catch (error) { next(error); }
     }
   }
-  response.on('error', function (error) { self._reportError(request, response, error); });
+  response.on('error', (error) => { self._reportError(request, response, error); });
   nextController();
 };
 

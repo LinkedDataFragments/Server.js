@@ -2,22 +2,22 @@
 let QuadPatternRouter = require('../../').routers.QuadPatternRouter;
 const dataFactory = require('n3').DataFactory;
 
-describe('QuadPatternRouter', function () {
-  describe('The QuadPatternRouter module', function () {
-    it('should be a function', function () {
+describe('QuadPatternRouter', () => {
+  describe('The QuadPatternRouter module', () => {
+    it('should be a function', () => {
       QuadPatternRouter.should.be.a('function');
     });
 
-    it('should be a QuadPatternRouter constructor', function () {
+    it('should be a QuadPatternRouter constructor', () => {
       new QuadPatternRouter({}).should.be.an.instanceof(QuadPatternRouter);
     });
   });
 
-  describe('A QuadPatternRouter instance', function () {
+  describe('A QuadPatternRouter instance', () => {
     let router = new QuadPatternRouter({ dataFactory });
 
-    describe('extractUrlParams', function () {
-      describe('with an existing query', function () {
+    describe('extractUrlParams', () => {
+      describe('with an existing query', () => {
         [
           [
             'a URL without query parameters',
@@ -223,12 +223,12 @@ describe('QuadPatternRouter', function () {
             { a: 1, features: { quadPattern: true }, graph: dataFactory.defaultGraph() },
           ],
         ]
-        .forEach(function (args) { test.extractQueryParams.apply(router, args); });
+        .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });
 
-  describe('A QuadPatternRouter instance with prefixes', function () {
+  describe('A QuadPatternRouter instance with prefixes', () => {
     let router = new QuadPatternRouter({
       prefixes: {
         foo:  'http://example.org/foo#',
@@ -237,8 +237,8 @@ describe('QuadPatternRouter', function () {
       dataFactory,
     });
 
-    describe('extractUrlParams', function () {
-      describe('with an existing query', function () {
+    describe('extractUrlParams', () => {
+      describe('with an existing query', () => {
         [
           [
             'a URL without query parameters',
@@ -465,7 +465,7 @@ describe('QuadPatternRouter', function () {
             { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('foo:bar') },
           ],
         ]
-        .forEach(function (args) { test.extractQueryParams.apply(router, args); });
+        .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });

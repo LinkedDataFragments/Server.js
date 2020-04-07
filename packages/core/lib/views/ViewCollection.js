@@ -27,7 +27,7 @@ class ViewCollection {
     (this._views[view.name] || (this._views[view.name] = [])).push(view);
     // Add a match entry for each content type supported by the view
     let matchers = this._viewMatchers[view.name] || (this._viewMatchers[view.name] = []);
-    view.supportedContentTypes.forEach(function (contentType) {
+    view.supportedContentTypes.forEach((contentType) => {
       matchers.push(_.extend({ view: view }, contentType));
     });
   }

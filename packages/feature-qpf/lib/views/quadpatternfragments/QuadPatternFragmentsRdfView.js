@@ -20,7 +20,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
   // Generates quads by sending them to the data and/or metadata callbacks
   _generateRdf(settings, data, metadata, done) {
     let datasource = settings.datasource, fragment = settings.fragment, query = settings.query,
-        results = settings.results, self = this, metadataDone = false;
+        results = settings.results, metadataDone = false;
 
     // Add data source metadata
     this._generateMetadata(metadata, fragment, query, datasource);
@@ -29,8 +29,8 @@ class QuadPatternFragmentsRdfView extends RdfView {
     this._generateControls(metadata, fragment, query, datasource);
 
     // Add fragment metadata
-    results.getProperty('metadata', function (meta) {
-      self.sendFragmentMetadata(metadata, fragment, query, datasource, meta);
+    results.getProperty('metadata', (meta) => {
+      this.sendFragmentMetadata(metadata, fragment, query, datasource, meta);
 
       // End if the data was also written
       metadataDone = true;
@@ -39,7 +39,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
 
     // Add data quads
     results.on('data', data);
-    results.on('end', function () { metadataDone && done(); });
+    results.on('end', () => { metadataDone && done(); });
   }
 
   // Generate the datasource metadata

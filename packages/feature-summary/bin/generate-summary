@@ -51,10 +51,10 @@ function generate(datasourceName) {
 
     let writer = new N3.Writer({ prefixes: { ds: DS_NS, rdf: RDF_NS } });
 
-    fromDataSource(url, datasource, function (triple) {
+    fromDataSource(url, datasource, (triple) => {
       writer.addQuad(triple);
-    }, function () {
-      writer.end(function (error, result) {
+    }, () => {
+      writer.end((error, result) => {
         fs.appendFileSync(datasourceName + '.ttl', result);
         (datasourceNames.length > 0) && generate(datasourceNames.pop());
       });
@@ -85,24 +85,24 @@ function fromDataSource(uri, datasource, callback, end, chunksize) {
     let count = 0;
 
     const stream = datasource.select({ limit: limit, offset: offset }, console.error)
-        .getProperty('metadata', function (metadata) {
+        .getProperty('metadata', (metadata) => {
           let progress = Math.round((offset / metadata.totalCount) * 100);
           console.log(progress);
 
-          stream.on('data', function (triple) {
+          stream.on('data', (triple) => {
             count++;
             extractSummary(triple);
             triple = null;
           });
 
-          stream.on('end', function () {
+          stream.on('end', () => {
             stream.removeAllListeners();
             stream = null;
 
             if (count < limit)
               endSummary();
             else
-              setImmediate(function () { processSet(limit, offset + limit); });
+              setImmediate(() => { processSet(limit, offset + limit); });
           });
         });
   }

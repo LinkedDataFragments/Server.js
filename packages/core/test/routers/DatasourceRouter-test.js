@@ -1,22 +1,22 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 let DatasourceRouter = require('../../lib/routers/DatasourceRouter');
 
-describe('DatasourceRouter', function () {
-  describe('The DatasourceRouter module', function () {
-    it('should be a function', function () {
+describe('DatasourceRouter', () => {
+  describe('The DatasourceRouter module', () => {
+    it('should be a function', () => {
       DatasourceRouter.should.be.a('function');
     });
 
-    it('should be a DatasourceRouter constructor', function () {
+    it('should be a DatasourceRouter constructor', () => {
       new DatasourceRouter().should.be.an.instanceof(DatasourceRouter);
     });
   });
 
-  describe('A DatasourceRouter instance', function () {
+  describe('A DatasourceRouter instance', () => {
     let router = new DatasourceRouter();
 
-    describe('extractUrlParams', function () {
-      describe('with an existing query', function () {
+    describe('extractUrlParams', () => {
+      describe('with an existing query', () => {
         [
           [
             'a root URL without trailing slash or query parameters',
@@ -68,18 +68,18 @@ describe('DatasourceRouter', function () {
             { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
           ],
         ]
-        .forEach(function (args) { test.extractQueryParams.apply(router, args); });
+        .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });
 
-  describe('A DatasourceRouter instance with a base URL', function () {
+  describe('A DatasourceRouter instance with a base URL', () => {
     let router = new DatasourceRouter({
       urlData: { baseURLPath: '/my/base/' },
     });
 
-    describe('extractUrlParams', function () {
-      describe('with an existing query', function () {
+    describe('extractUrlParams', () => {
+      describe('with an existing query', () => {
         [
           [
             'a root URL',
@@ -96,7 +96,7 @@ describe('DatasourceRouter', function () {
             { a: 1, features: { datasource: true }, datasource: '/other/path' },
           ],
         ]
-          .forEach(function (args) { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });

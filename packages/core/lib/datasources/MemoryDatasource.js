@@ -14,7 +14,7 @@ class MemoryDatasource extends Datasource {
   // Prepares the datasource for querying
   _initialize(done) {
     let quadStore = this._quadStore = new N3Store();
-    this._getAllQuads(function (quad) { quadStore.addQuad(quad); }, done);
+    this._getAllQuads((quad) => { quadStore.addQuad(quad); }, done);
   }
 
   // Retrieves all quads in the datasource

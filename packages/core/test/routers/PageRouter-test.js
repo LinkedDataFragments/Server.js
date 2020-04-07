@@ -1,22 +1,22 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 let PageRouter = require('../../lib/routers/PageRouter');
 
-describe('PageRouter', function () {
-  describe('The PageRouter module', function () {
-    it('should be a function', function () {
+describe('PageRouter', () => {
+  describe('The PageRouter module', () => {
+    it('should be a function', () => {
       PageRouter.should.be.a('function');
     });
 
-    it('should be a PageRouter constructor', function () {
+    it('should be a PageRouter constructor', () => {
       new PageRouter().should.be.an.instanceof(PageRouter);
     });
   });
 
-  describe('A PageRouter instance', function () {
+  describe('A PageRouter instance', () => {
     let router = new PageRouter();
 
-    describe('extractUrlParams', function () {
-      describe('with an existing query', function () {
+    describe('extractUrlParams', () => {
+      describe('with an existing query', () => {
         [
           [
             'a URL without query parameters',
@@ -75,16 +75,16 @@ describe('PageRouter', function () {
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 100, offset: 200 },
           ],
         ]
-        .forEach(function (args) { test.extractQueryParams.apply(router, args); });
+        .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });
 
-  describe('A PageRouter instance with a given page size', function () {
+  describe('A PageRouter instance with a given page size', () => {
     let router = new PageRouter({ pageSize: 250 });
 
-    describe('extractUrlParams', function () {
-      describe('with an existing query', function () {
+    describe('extractUrlParams', () => {
+      describe('with an existing query', () => {
         [
           [
             'a URL without query parameters',
@@ -143,16 +143,16 @@ describe('PageRouter', function () {
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 250, offset: 500 },
           ],
         ]
-        .forEach(function (args) { test.extractQueryParams.apply(router, args); });
+        .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });
 
-  describe('A PageRouter instance with an invalid page size', function () {
+  describe('A PageRouter instance with an invalid page size', () => {
     let router = new PageRouter({ pageSize: -1 });
 
-    describe('extractUrlParams', function () {
-      describe('with an existing query', function () {
+    describe('extractUrlParams', () => {
+      describe('with an existing query', () => {
         [
           [
             'a URL without query parameters',
@@ -162,7 +162,7 @@ describe('PageRouter', function () {
             { a: 1, features: { limit: true }, limit: 100 },
           ],
         ]
-        .forEach(function (args) { test.extractQueryParams.apply(router, args); });
+        .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });

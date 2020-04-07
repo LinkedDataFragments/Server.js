@@ -27,7 +27,7 @@ class QuadPatternFragmentsController extends Controller {
   _handleRequest(request, response, next) {
     // Create the query from the request by calling the fragment routers
     let requestParams = { url: request.parsedUrl, headers: request.headers },
-        query = this._routers.reduce(function (query, router) {
+        query = this._routers.reduce((query, router) => {
           try { router.extractQueryParams(requestParams, query); }
           catch (e) { /* ignore routing errors */ }
           return query;
@@ -44,7 +44,7 @@ class QuadPatternFragmentsController extends Controller {
     let view = this._negotiateView(this.viewName, request, response),
         settings = this._createFragmentMetadata(request, query, datasource);
     settings.results = datasource.select(query,
-                      function (error) { error && next(error); });
+                      (error) => { error && next(error); });
 
     // Execute the extensions and render the query result
     let extensions = this._extensions, extensionId = 0;

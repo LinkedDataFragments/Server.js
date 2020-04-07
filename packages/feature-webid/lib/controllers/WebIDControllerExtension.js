@@ -36,7 +36,7 @@ class WebIDControllerExtension extends Controller {
 
     let webID = certificate.subject.subjectAltName.replace('uniformResourceIdentifier:', '');
     this._verifyWebID(webID, certificate.modulus, parseInt(certificate.exponent, 16),
-      function (error, verified, reason) {
+      (error, verified, reason) => {
         if (!verified) {
           return self._handleForbidden(request, response, {
             webID: webID,
@@ -81,25 +81,24 @@ class WebIDControllerExtension extends Controller {
     }
 
     // Try to get WebID from cache
-    let cachedId = this._cache.get(webID),
-        self = this;
+    let cachedId = this._cache.get(webID);
 
     if (cachedId)
       verify(cachedId.modulus, cachedId.exponent);
     else {
-      let req = http.request(webID, function (res) {
+      let req = http.request(webID, (res) => {
         res.setEncoding('utf8');
 
         parser.parse(res, parseTriple);
 
-        res.on('end', function () {
+        res.on('end', () => {
           let cacheControl = parseCacheControl(res.headers['Cache-Control'] || '');
-          self._cache.set(webID, id, cacheControl['max-age'] || 0);
+          this._cache.set(webID, id, cacheControl['max-age'] || 0);
           verify(id.modulus, id.exponent);
         });
       });
 
-      req.on('error', function (e) {
+      req.on('error', (e) => {
         callback(null, false, 'Unabled to download ' + webID + ' (' + e.message + ').');
       });
 

@@ -22,7 +22,7 @@ class HdtDatasource extends Datasource {
   // Loads the HDT datasource
   _initialize(done) {
     let datasource = this;
-    hdt.fromFile(this._hdtFile).then(function (hdtDocument) {
+    hdt.fromFile(this._hdtFile).then((hdtDocument) => {
       datasource._hdtDocument = hdtDocument;
     }).then(done, done);
   }
@@ -40,7 +40,7 @@ class HdtDatasource extends Datasource {
                                     query.predicate ? RdfString.termToString(query.predicate) : null,
                                     query.object ? RdfString.termToString(query.object) : null,
                                     { limit: query.limit, offset: query.offset })
-      .then(function (result) {
+      .then((result) => {
         let triples = result.triples,
             estimatedTotalCount = result.totalCount,
             hasExactCount = result.hasExactCount;
@@ -54,7 +54,7 @@ class HdtDatasource extends Datasource {
           destination._push(RdfString.stringQuadToQuad(triples[i], dataFactory));
         destination.close();
       },
-      function (error) { destination.emit('error', error); });
+      (error) => { destination.emit('error', error); });
   }
 
   // Closes the data source

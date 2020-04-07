@@ -9,20 +9,20 @@ let Datasource = require('@ldf/core').datasources.Datasource,
 let exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
 
-describe('HdtDatasource', function () {
-  describe('The HdtDatasource module', function () {
-    it('should be a function', function () {
+describe('HdtDatasource', () => {
+  describe('The HdtDatasource module', () => {
+    it('should be a function', () => {
       HdtDatasource.should.be.a('function');
     });
 
-    it('should be an HdtDatasource constructor', function (done) {
+    it('should be an HdtDatasource constructor', (done) => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       instance.should.be.an.instanceof(HdtDatasource);
       instance.close(done);
     });
 
-    it('should create Datasource objects', function (done) {
+    it('should create Datasource objects', (done) => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       instance.should.be.an.instanceof(Datasource);
@@ -30,15 +30,15 @@ describe('HdtDatasource', function () {
     });
   });
 
-  describe('A HdtDatasource instance for an example HDT file', function () {
+  describe('A HdtDatasource instance for an example HDT file', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    before(function (done) {
+    before((done) => {
       datasource = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       datasource.initialize();
       datasource.on('initialized', done);
     });
-    after(function (done) {
+    after((done) => {
       datasource.close(done);
     });
 
@@ -93,15 +93,15 @@ describe('HdtDatasource', function () {
       0, 0);
   });
 
-  describe('A HdtDatasource instance with blank nodes', function () {
+  describe('A HdtDatasource instance with blank nodes', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    before(function (done) {
+    before((done) => {
       datasource = new HdtDatasource({ dataFactory, file: exampleHdtFileWithBlanks });
       datasource.initialize();
       datasource.on('initialized', done);
     });
-    after(function (done) {
+    after((done) => {
       datasource.close(done);
     });
 
@@ -142,10 +142,10 @@ describe('HdtDatasource', function () {
       ]);
   });
 
-  describe('A HdtDatasource instance with blank nodes and a blank node prefix', function () {
+  describe('A HdtDatasource instance with blank nodes and a blank node prefix', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    before(function (done) {
+    before((done) => {
       datasource = new HdtDatasource({
         dataFactory,
         file: exampleHdtFileWithBlanks,
@@ -154,7 +154,7 @@ describe('HdtDatasource', function () {
       datasource.initialize();
       datasource.on('initialized', done);
     });
-    after(function (done) {
+    after((done) => {
       datasource.close(done);
     });
 
@@ -198,25 +198,25 @@ describe('HdtDatasource', function () {
 
 function itShouldExecute(getDatasource, name, query,
                          expectedResultsCount, expectedTotalCount, expectedTriples) {
-  describe('executing ' + name, function () {
+  describe('executing ' + name, () => {
     let resultsCount = 0, totalCount, triples = [];
-    before(function (done) {
+    before((done) => {
       let result = getDatasource().select(query);
-      result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
-      result.on('data', function (triple) { resultsCount++; expectedTriples && triples.push(triple); });
+      result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
+      result.on('data', (triple) => { resultsCount++; expectedTriples && triples.push(triple); });
       result.on('end', done);
     });
 
-    it('should return the expected number of triples', function () {
+    it('should return the expected number of triples', () => {
       expect(resultsCount).to.equal(expectedResultsCount);
     });
 
-    it('should emit the expected total number of triples', function () {
+    it('should emit the expected total number of triples', () => {
       expect(totalCount).to.equal(expectedTotalCount);
     });
 
     if (expectedTriples) {
-      it('should emit the expected triples', function () {
+      it('should emit the expected triples', () => {
         expect(triples.length).to.equal(expectedTriples.length);
         for (let i = 0; i < expectedTriples.length; i++)
           triples[i].should.deep.equal(RdfString.stringQuadToQuad(expectedTriples[i], dataFactory));

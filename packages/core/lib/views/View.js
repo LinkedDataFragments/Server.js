@@ -23,7 +23,7 @@ class View {
   _parseContentTypes(contentTypes) {
     let matcher = this._supportedContentTypeMatcher = Object.create(null);
     if (typeof contentTypes === 'string') {
-      contentTypes = contentTypes.split(',').map(function (typeString) {
+      contentTypes = contentTypes.split(',').map((typeString) => {
         let contentType = typeString.match(/[^;,]*/)[0],
             responseType = contentType + ';charset=utf-8',
             quality = typeString.match(/;q=([0-9.]+)/);
@@ -54,7 +54,7 @@ class View {
     settings.viewPathBase = join(__dirname, 'base.html');
 
     // Render the view and end the response when done
-    this._render(settings, request, response, function (error) {
+    this._render(settings, request, response, (error) => {
       if (error)
         response.emit('error', error);
       response.end();
@@ -66,7 +66,7 @@ class View {
   _getViewExtensions(name, contentType) {
     let extensions = this._defaults.views ? this._defaults.views.getViews(this.name + ':' + name) : [];
     if (extensions.length) {
-      extensions = extensions.filter(function (extension) {
+      extensions = extensions.filter((extension) => {
         return extension.supportsContentType(contentType);
       });
     }

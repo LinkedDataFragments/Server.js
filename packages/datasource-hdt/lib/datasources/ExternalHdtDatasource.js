@@ -53,7 +53,7 @@ class ExternalHdtDatasource extends Datasource {
     // Parse the result triples
     hdt.stdout.setEncoding('utf8');
     let parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true, dataFactory = this.dataFactory;
-    parser.parse(hdt.stdout, function (error, triple) {
+    parser.parse(hdt.stdout, (error, triple) => {
       if (error)
         destination.emit('error', new Error('Invalid query result: ' + error.message));
       else if (triple)
@@ -69,13 +69,13 @@ class ExternalHdtDatasource extends Datasource {
     parser._prefixes._ = '_:'; // Ensure blank nodes are named consistently
 
     // Extract the estimated number of total matches from the first (comment) line
-    hdt.stdout.once('data', function (header) {
+    hdt.stdout.once('data', (header) => {
       estimatedTotalCount = parseInt(header.match(/\d+/), 10) || 0;
       hasExactCount = header.indexOf('estimated') < 0;
     });
 
     // Report query errors
-    hdt.on('exit', function (exitCode) {
+    hdt.on('exit', (exitCode) => {
       exitCode && destination.emit('error', new Error('Could not query ' + hdtFile));
     });
   }

@@ -6,26 +6,26 @@ let request = require('supertest'),
     fs = require('fs'),
     path = require('path');
 
-describe('AssetsController', function () {
-  describe('The AssetsController module', function () {
-    it('should be a function', function () {
+describe('AssetsController', () => {
+  describe('The AssetsController module', () => {
+    it('should be a function', () => {
       AssetsController.should.be.a('function');
     });
 
-    it('should be an AssetsController constructor', function () {
+    it('should be an AssetsController constructor', () => {
       new AssetsController().should.be.an.instanceof(AssetsController);
     });
   });
 
-  describe('An AssetsController instance', function () {
+  describe('An AssetsController instance', () => {
     let controller, client;
-    before(function () {
+    before(() => {
       controller = new AssetsController();
       client = request.agent(new DummyServer(controller));
     });
 
-    it('should correctly serve SVG assets', function (done) {
-      client.get('/assets/images/logo').expect(function (response) {
+    it('should correctly serve SVG assets', (done) => {
+      client.get('/assets/images/logo').expect((response) => {
         let asset = fs.readFileSync(path.join(__dirname, '/../../assets/images/logo.svg'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
@@ -35,8 +35,8 @@ describe('AssetsController', function () {
       }).end(done);
     });
 
-    it('should correctly serve CSS assets', function (done) {
-      client.get('/assets/styles/ldf-server').expect(function (response) {
+    it('should correctly serve CSS assets', (done) => {
+      client.get('/assets/styles/ldf-server').expect((response) => {
         let asset = fs.readFileSync(path.join(__dirname, '/../../assets/styles/ldf-server.css'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
@@ -46,8 +46,8 @@ describe('AssetsController', function () {
       }).end(done);
     });
 
-    it('should correctly serve ICO assets', function (done) {
-      client.get('/favicon.ico').expect(function (response) {
+    it('should correctly serve ICO assets', (done) => {
+      client.get('/favicon.ico').expect((response) => {
         let asset = fs.readFileSync(path.join(__dirname, '/../../assets/favicon.ico'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
@@ -57,14 +57,14 @@ describe('AssetsController', function () {
       }).end(done);
     });
 
-    it('should hand over to the next controller if no asset with that name is found', function (done) {
-      client.get('/assets/unknown').expect(function (response) {
+    it('should hand over to the next controller if no asset with that name is found', (done) => {
+      client.get('/assets/unknown').expect((response) => {
         controller.next.should.have.been.calledOnce;
       }).end(done);
     });
 
-    it('should hand over to the next controller for non-asset paths', function (done) {
-      client.get('/other').expect(function (response) {
+    it('should hand over to the next controller for non-asset paths', (done) => {
+      client.get('/other').expect((response) => {
         controller.next.should.have.been.calledOnce;
       }).end(done);
     });

@@ -12,14 +12,14 @@ let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/tes
 let exampleTurtleUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.ttl');
 let exampleTrigUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.trig');
 
-describe('CompositeDatasource', function () {
+describe('CompositeDatasource', () => {
   let references = {
     data0: { dataFactory, settings: { dataFactory, file: exampleHdtFile }, datasourceType: HdtDatasource, size: 132 },
     data1: { dataFactory, settings: { dataFactory, file: exampleHdtFileWithBlanks, graph: 'http://example.org/graph0' }, datasourceType: HdtDatasource, size: 6 },
     data2: { dataFactory, settings: { dataFactory, url: exampleTurtleUrl }, datasourceType: N3Datasource, size: 129 },
     data3: { dataFactory, settings: { dataFactory, url: exampleTrigUrl }, datasourceType: N3Datasource, size: 7 },
   };
-  Object.keys(references).forEach(function (datasourceId) {
+  Object.keys(references).forEach((datasourceId) => {
     let datasource = references[datasourceId];
     let DatasourceType = datasource.datasourceType;
     let size = references[datasourceId].size;
@@ -27,43 +27,43 @@ describe('CompositeDatasource', function () {
     references[datasourceId].size = size;
     references[datasourceId].initialize();
   });
-  let totalSize = Object.keys(references).reduce(function (acc, key) {
+  let totalSize = Object.keys(references).reduce((acc, key) => {
     return acc + references[key].size;
   }, 0);
 
-  describe('The CompositeDatasource module', function () {
-    it('should be a function', function () {
+  describe('The CompositeDatasource module', () => {
+    it('should be a function', () => {
       CompositeDatasource.should.be.a('function');
     });
 
-    it('should be an CompositeDatasource constructor', function (done) {
+    it('should be an CompositeDatasource constructor', (done) => {
       let instance = new CompositeDatasource({ references: references });
       instance.should.be.an.instanceof(CompositeDatasource);
       instance.close(done);
     });
 
-    it('should create CompositeDatasource objects', function (done) {
+    it('should create CompositeDatasource objects', (done) => {
       let instance = new CompositeDatasource({ references: references });
       instance.should.be.an.instanceof(CompositeDatasource);
       instance.close(done);
     });
 
-    it('should create Datasource objects', function (done) {
+    it('should create Datasource objects', (done) => {
       let instance = new CompositeDatasource({ references: references });
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
   });
 
-  describe('A CompositeDatasource instance for 4 Datasources', function () {
+  describe('A CompositeDatasource instance for 4 Datasources', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    before(function (done) {
+    before((done) => {
       datasource = new CompositeDatasource({ references: references });
       datasource.initialize();
       datasource.on('initialized', done);
     });
-    after(function (done) {
+    after((done) => {
       datasource.close(done);
     });
 
@@ -156,25 +156,25 @@ describe('CompositeDatasource', function () {
 
 function itShouldExecute(getDatasource, name, query,
                          expectedResultsCount, expectedTotalCount, expectedTriples) {
-  describe('executing ' + name, function () {
+  describe('executing ' + name, () => {
     let resultsCount = 0, totalCount, triples = [];
-    before(function (done) {
+    before((done) => {
       let result = getDatasource().select(query);
-      result.getProperty('metadata', function (metadata) { totalCount = metadata.totalCount; });
-      result.on('data', function (triple) { resultsCount++; expectedTriples && triples.push(triple); });
+      result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
+      result.on('data', (triple) => { resultsCount++; expectedTriples && triples.push(triple); });
       result.on('end', done);
     });
 
-    it('should return the expected number of triples', function () {
+    it('should return the expected number of triples', () => {
       expect(resultsCount).to.equal(expectedResultsCount);
     });
 
-    it('should emit the expected total number of triples', function () {
+    it('should emit the expected total number of triples', () => {
       expect(totalCount).to.equal(expectedTotalCount);
     });
 
     if (expectedTriples) {
-      it('should emit the expected triples', function () {
+      it('should emit the expected triples', () => {
         expect(triples.length).to.equal(expectedTriples.length);
         for (let i = 0; i < expectedTriples.length; i++)
           triples[i].should.deep.equal(expectedTriples[i]);

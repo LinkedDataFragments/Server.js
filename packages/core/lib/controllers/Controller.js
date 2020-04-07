@@ -13,7 +13,7 @@ class Controller {
   constructor(options) {
     options = options || {};
     this._prefixes = options.prefixes || {};
-    this._datasources = _.reduce(options.datasources || {}, function (datasources, value, key) {
+    this._datasources = _.reduce(options.datasources || {}, (datasources, value, key) => {
       // If the path does not start with a slash, add one.
       datasources[key.replace(/^(?!\/)/, '/')] = value;
       return datasources;
@@ -22,7 +22,7 @@ class Controller {
                   options.views : new ViewCollection(options.views);
 
     // Set up base URL (if we're behind a proxy, this allows reconstructing the actual request URL)
-    this._baseUrl = _.mapValues(url.parse((options.urlData || new UrlData()).baseURL), function (value, key) {
+    this._baseUrl = _.mapValues(url.parse((options.urlData || new UrlData()).baseURL), (value, key) => {
       return value && !/^(?:href|path|search|hash)$/.test(key) ? value : undefined;
     });
   }

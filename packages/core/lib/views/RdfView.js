@@ -91,7 +91,7 @@ class RdfView extends View {
       },
       // Ends the output and flushes the stream
       end: function () {
-        writer.end(function (error, output) {
+        writer.end((error, output) => {
           response.write(error ? '' : output);
           done();
         });

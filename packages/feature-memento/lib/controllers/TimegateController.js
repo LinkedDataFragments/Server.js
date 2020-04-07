@@ -23,8 +23,8 @@ class TimegateController extends Controller {
   }
 
   static parseTimegateMap(mementos) {
-    return _.mapValues(mementos, function (mementos) {
-      return sortTimemap(mementos.map(function (memento) {
+    return _.mapValues(mementos, (mementos) => {
+      return sortTimemap(mementos.map((memento) => {
         return {
           datasource: memento.datasource,
           datasourceId: memento.datasource.id,
@@ -38,8 +38,8 @@ class TimegateController extends Controller {
   static parseInvertedTimegateMap(mementos, urlData) {
     let timemaps = TimegateController.parseTimegateMap(mementos);
     let invertedTimegateMap = {};
-    _.forIn(timemaps, function (versions, timeGateId) {
-      versions.forEach(function (version) {
+    _.forIn(timemaps, (versions, timeGateId) => {
+      versions.forEach((version) => {
         invertedTimegateMap[version.datasourceId] = {
           memento: timeGateId,
           original: version.original || (urlData.baseURL || '/') + timeGateId,
@@ -148,7 +148,7 @@ class TimegateController extends Controller {
 
 // Sort the timemap by interval start date
 function sortTimemap(timemap) {
-  return timemap.sort(function (a, b) {
+  return timemap.sort((a, b) => {
     return a.interval[0].getTime() - b.interval[0].getTime();
   });
 }

@@ -34,7 +34,7 @@ class SummaryController extends Controller {
           inputStream = fs.createReadStream(summaryFile);
 
       // If the summary cannot be read, invoke the next controller without error
-      inputStream.on('error', function (error) { next(); });
+      inputStream.on('error', (error) => { next(); });
       inputStream.pipe(streamParser);
 
       // Set caching

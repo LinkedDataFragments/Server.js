@@ -62,18 +62,18 @@ class Datasource extends EventEmitter {
 
   // Initialize the datasource asynchronously
   initialize() {
-    setImmediate(function (self) {
-      let done = _.once(function (error) {
+    setImmediate(() => {
+      let done = _.once((error) => {
         if (error)
-          self.emit('error', error);
+          this.emit('error', error);
         else {
-          self.initialized = true;
-          self.emit('initialized');
+          this.initialized = true;
+          this.emit('initialized');
         }
       });
-      try { self._initialize(done); }
+      try { this._initialize(done); }
       catch (error) { done(error); }
-    }, this);
+    });
   }
 
   // Prepares the datasource for querying
@@ -128,16 +128,16 @@ class Datasource extends EventEmitter {
       query.graph = stringToTerm(this._queryGraphReplacements[query.graph.value], this.dataFactory);
 
     // Transform the received quads
-    let destination = new BufferedIterator(), outputQuads, graph = this._graph, self = this;
-    outputQuads = destination.map(function (quad) {
+    let destination = new BufferedIterator(), outputQuads, graph = this._graph;
+    outputQuads = destination.map((quad) => {
       // Translate blank nodes in the result to blank node IRIs.
-      if (quad.subject && quad.subject.termType === 'BlankNode' && !self._skolemizeBlacklist[quad.subject.value])
-        quad.subject = self.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
-      if (quad.object  && quad.object.termType  === 'BlankNode' && !self._skolemizeBlacklist[quad.object.value])
-        quad.object  = self.dataFactory.namedNode(blankNodePrefix + quad.object.value);
+      if (quad.subject && quad.subject.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.subject.value])
+        quad.subject = this.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
+      if (quad.object  && quad.object.termType  === 'BlankNode' && !this._skolemizeBlacklist[quad.object.value])
+        quad.object  = this.dataFactory.namedNode(blankNodePrefix + quad.object.value);
       if (quad.graph   && quad.graph.termType !== 'DefaultGraph') {
-        if (quad.graph.termType === 'BlankNode' && !self._skolemizeBlacklist[quad.graph.value])
-          quad.graph = self.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
+        if (quad.graph.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.graph.value])
+          quad.graph = this.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
       }
       // If a custom default graph was set, move default graph triples there.
       quad.graph = quad.graph && quad.graph.termType !== 'DefaultGraph' ? quad.graph : (graph || quad.graph);
@@ -159,16 +159,16 @@ class Datasource extends EventEmitter {
 
   // Retrieves a stream through HTTP or the local file system
   _fetch(options) {
-    let self = this, stream,
+    let stream,
         url = options.url, protocolMatch = /^(?:([a-z]+):)?/.exec(url);
     switch (protocolMatch[1] || 'file') {
     // Fetch a representation through HTTP(S)
     case 'http':
     case 'https':
       stream = this._request(options);
-      stream.on('response', function (response) {
+      stream.on('response', (response) => {
         if (response.statusCode >= 300) {
-          setImmediate(function () {
+          setImmediate(() => {
             stream.emit('error', new Error(url + ' returned ' + response.statusCode));
           });
         }
@@ -180,16 +180,16 @@ class Datasource extends EventEmitter {
       break;
     default:
       stream = new EventEmitter();
-      setImmediate(function () {
+      setImmediate(() => {
         stream.emit('error', new Error('Unknown protocol: ' + protocolMatch[1]));
       });
     }
 
     // If the stream has no other error handlers attached (besides this one),
     // emit the stream error as a datasource error
-    stream.on('error', function (error) {
+    stream.on('error', (error) => {
       if (stream.listenerCount('error') === 1)
-        self.emit('error', error);
+        this.emit('error', error);
     });
     return stream;
   }

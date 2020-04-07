@@ -23,16 +23,16 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
 
   let loader = new ComponentsLoader(properties);
   loader.registerAvailableModuleResources()
-    .then(function () {
+    .then(() => {
       // Start up a cluster master
       if (cluster.isMaster) {
         return loader.getConfigConstructorFromUrl(configUri, args[0])
-          .then(function (constructor) {
-            return constructor.makeArguments(true).then(function (args) {
+          .then((constructor) => {
+            return constructor.makeArguments(true).then((args) => {
               startClusterMaster(args[0]);
             });
           })
-          .catch(function (e) {
+          .catch((e) => {
             stderr.write('Config error:\n');
             stderr.write(e + '\n');
             process.exit(1);
@@ -40,17 +40,17 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
       }
       else {
         return loader.instantiateFromUrl(configUri, args[0])
-          .then(function (worker) {
+          .then((worker) => {
             worker.run(cliPort);
           })
-          .catch(function (e) {
+          .catch((e) => {
             stderr.write('Instantiation error:\n');
             stderr.write(e + '\n');
             process.exit(1);
           });
       }
     })
-    .catch(function (e) {
+    .catch((e) => {
       stderr.write('Component definition error:\n');
       stderr.write(e + '\n');
       process.exit(1);
@@ -65,8 +65,8 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
       cluster.fork();
 
     // Respawn crashed workers
-    cluster.on('listening', function (worker) {
-      worker.once('exit', function (code, signal) {
+    cluster.on('listening', (worker) => {
+      worker.once('exit', (code, signal) => {
         if (!worker.exitedAfterDisconnect) {
           stdout.write('Worker ' + worker.process.pid + 'died with ' + (code || signal) + '. Starting new worker.\n');
           cluster.fork();
@@ -75,7 +75,7 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
     });
 
     // Disconnect from cluster on SIGINT, so that the process can cleanly terminate
-    process.once('SIGINT', function () {
+    process.once('SIGINT', () => {
       cluster.disconnect();
     });
 
@@ -86,17 +86,17 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
       process.removeListener('SIGHUP', respawn);
 
       // Retrieve a list of old workers that will be replaced by new ones
-      let workers = Object.keys(cluster.workers).map(function (id) { return cluster.workers[id]; });
+      let workers = Object.keys(cluster.workers).map((id) => { return cluster.workers[id]; });
       (function respawnNext() {
         // If there are still old workers, respawn a new one
         if (workers.length) {
           // Wait until the new worker starts listening to kill the old one
           let newWorker = cluster.fork();
-          newWorker.once('listening', function () {
+          newWorker.once('listening', () => {
             let worker = workers.pop();
             if (!worker)
               return newWorker.kill(), respawnNext(); // Dead workers are replaced automatically
-            worker.once('exit', function () {
+            worker.once('exit', () => {
               stdout.write('Worker ' + newWorker.process.pid + ' replaces killed worker ' + worker.process.pid + '.\n');
               respawnNext();
             });

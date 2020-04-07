@@ -9,24 +9,24 @@ let QuadPatternFragmentsHtmlView = require('../../').views.quadpatternfragments.
     QuadPatternFragmentsRdfView  = require('../../').views.quadpatternfragments.QuadPatternFragmentsRdfView,
     UrlData                      = require('@ldf/core').UrlData;
 
-describe('QuadPatternFragmentsController', function () {
-  describe('The QuadPatternFragmentsController module', function () {
-    it('should be a function', function () {
+describe('QuadPatternFragmentsController', () => {
+  describe('The QuadPatternFragmentsController module', () => {
+    it('should be a function', () => {
       QuadPatternFragmentsController.should.be.a('function');
     });
 
-    it('should be a QuadPatternFragmentsController constructor', function () {
+    it('should be a QuadPatternFragmentsController constructor', () => {
       new QuadPatternFragmentsController().should.be.an.instanceof(QuadPatternFragmentsController);
     });
   });
 
-  describe('A QuadPatternFragmentsController instance with 3 routers', function () {
+  describe('A QuadPatternFragmentsController instance with 3 routers', () => {
     let controller, client, routerA, routerB, routerC, datasource, datasources, view, prefixes;
-    before(function () {
+    before(() => {
       routerA = { extractQueryParams: sinon.stub() };
       routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
       routerC = {
-        extractQueryParams: sinon.spy(function (request, query) {
+        extractQueryParams: sinon.spy((request, query) => {
           query.features.datasource = true;
           query.features.other = true;
           query.datasource = '/my-datasource';
@@ -60,13 +60,13 @@ describe('QuadPatternFragmentsController', function () {
       datasource.select.reset();
     }
 
-    describe('receiving a request for a fragment', function () {
-      before(function (done) {
+    describe('receiving a request for a fragment', () => {
+      before((done) => {
         resetAll();
         client.get('/my-datasource?a=b&c=d').end(done);
       });
 
-      it('should call the first router with the request and an empty query', function () {
+      it('should call the first router with the request and an empty query', () => {
         routerA.extractQueryParams.should.have.been.calledOnce;
 
         let args = routerA.extractQueryParams.firstCall.args;
@@ -81,7 +81,7 @@ describe('QuadPatternFragmentsController', function () {
         expect(args[1].features).to.be.an('array');
       });
 
-      it('should call the second router with the same request and query', function () {
+      it('should call the second router with the same request and query', () => {
         routerB.extractQueryParams.should.have.been.calledOnce;
 
         routerB.extractQueryParams.firstCall.args[0].should.equal(
@@ -90,7 +90,7 @@ describe('QuadPatternFragmentsController', function () {
           routerA.extractQueryParams.firstCall.args[1]);
       });
 
-      it('should call the third router with the same request and query', function () {
+      it('should call the third router with the same request and query', () => {
         routerC.extractQueryParams.should.have.been.calledOnce;
 
         routerC.extractQueryParams.firstCall.args[0].should.equal(
@@ -99,19 +99,19 @@ describe('QuadPatternFragmentsController', function () {
           routerA.extractQueryParams.firstCall.args[1]);
       });
 
-      it('should verify whether the data source supports the query', function () {
+      it('should verify whether the data source supports the query', () => {
         let query = routerC.extractQueryParams.firstCall.args[1];
         datasource.supportsQuery.should.have.been.calledOnce;
         datasource.supportsQuery.should.have.been.calledWith(query);
       });
 
-      it('should send the query to the right data source', function () {
+      it('should send the query to the right data source', () => {
         let query = routerC.extractQueryParams.firstCall.args[1];
         datasource.select.should.have.been.calledOnce;
         datasource.select.should.have.been.calledWith(query);
       });
 
-      it('should pass the query result to the output view', function () {
+      it('should pass the query result to the output view', () => {
         view.render.should.have.been.calledOnce;
         let args = view.render.firstCall.args;
 
@@ -120,7 +120,7 @@ describe('QuadPatternFragmentsController', function () {
         args[2].should.be.an.instanceof(http.ServerResponse);
       });
 
-      it('should pass the correct settings to the view', function () {
+      it('should pass the correct settings to the view', () => {
         view.render.should.have.been.calledOnce;
         let query = routerC.extractQueryParams.firstCall.args[1];
         let settings = view.render.firstCall.args[0];
@@ -147,28 +147,28 @@ describe('QuadPatternFragmentsController', function () {
       });
     });
 
-    describe('receiving a request for an unsupported fragment', function () {
-      before(function (done) {
+    describe('receiving a request for an unsupported fragment', () => {
+      before((done) => {
         resetAll();
         datasource.supportsQuery = sinon.stub().returns(false);
         client.get('/my-datasource?a=b&c=d').end(done);
       });
 
-      it('should verify whether the data source supports the query', function () {
+      it('should verify whether the data source supports the query', () => {
         let query = routerC.extractQueryParams.firstCall.args[1];
         datasource.supportsQuery.should.have.been.calledOnce;
         datasource.supportsQuery.should.have.been.calledWith(query);
       });
 
-      it('should not send the query to the data source', function () {
+      it('should not send the query to the data source', () => {
         datasource.select.should.not.have.been.called;
       });
     });
   });
 
-  describe('A QuadPatternFragmentsController instance with 2 views', function () {
+  describe('A QuadPatternFragmentsController instance with 2 views', () => {
     let controller, client, htmlView, rdfView;
-    before(function () {
+    before(() => {
       let datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub().returns({
@@ -201,115 +201,115 @@ describe('QuadPatternFragmentsController', function () {
       rdfView.render.reset();
     }
 
-    describe('receiving a request without Accept header', function () {
+    describe('receiving a request without Accept header', () => {
       let response;
-      before(function (done) {
+      before((done) => {
         resetAll();
         client.get('/my-datasource')
-              .end(function (error, res) { response = res; done(error); });
+              .end((error, res) => { response = res; done(error); });
       });
 
-      it('should call the default view', function () {
+      it('should call the default view', () => {
         htmlView.render.should.have.been.calledOnce;
       });
 
-      it('should set the text/html content type', function () {
+      it('should set the text/html content type', () => {
         response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
       });
 
-      it('should indicate Accept in the Vary header', function () {
+      it('should indicate Accept in the Vary header', () => {
         response.headers.should.have.property('vary', 'Accept');
       });
     });
 
-    describe('receiving a request with an Accept header of */*', function () {
+    describe('receiving a request with an Accept header of */*', () => {
       let response;
-      before(function (done) {
+      before((done) => {
         resetAll();
         client.get('/my-datasource').set('Accept', '*/*')
-              .end(function (error, res) { response = res; done(error); });
+              .end((error, res) => { response = res; done(error); });
       });
 
-      it('should call the HTML view', function () {
+      it('should call the HTML view', () => {
         htmlView.render.should.have.been.calledOnce;
       });
 
-      it('should set the text/html content type', function () {
+      it('should set the text/html content type', () => {
         response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
       });
 
-      it('should indicate Accept in the Vary header', function () {
+      it('should indicate Accept in the Vary header', () => {
         response.headers.should.have.property('vary', 'Accept');
       });
     });
 
-    describe('receiving a request with an Accept header of text/html', function () {
+    describe('receiving a request with an Accept header of text/html', () => {
       let response;
-      before(function (done) {
+      before((done) => {
         resetAll();
         client.get('/my-datasource').set('Accept', 'text/html')
-              .end(function (error, res) { response = res; done(error); });
+              .end((error, res) => { response = res; done(error); });
       });
 
-      it('should call the HTML view', function () {
+      it('should call the HTML view', () => {
         htmlView.render.should.have.been.calledOnce;
       });
 
-      it('should set the text/html content type', function () {
+      it('should set the text/html content type', () => {
         response.headers.should.have.property('content-type', 'text/html;charset=utf-8');
       });
 
-      it('should indicate Accept in the Vary header', function () {
+      it('should indicate Accept in the Vary header', () => {
         response.headers.should.have.property('vary', 'Accept');
       });
     });
 
-    describe('receiving a request with an Accept header of text/turtle', function () {
+    describe('receiving a request with an Accept header of text/turtle', () => {
       let response;
-      before(function (done) {
+      before((done) => {
         resetAll();
         client.get('/my-datasource').set('Accept', 'text/turtle')
-              .end(function (error, res) { response = res; done(error); });
+              .end((error, res) => { response = res; done(error); });
       });
 
-      it('should call the Turtle view', function () {
+      it('should call the Turtle view', () => {
         rdfView.render.should.have.been.calledOnce;
       });
 
-      it('should set the text/turtle content type', function () {
+      it('should set the text/turtle content type', () => {
         response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
       });
 
-      it('should indicate Accept in the Vary header', function () {
+      it('should indicate Accept in the Vary header', () => {
         response.headers.should.have.property('vary', 'Accept');
       });
     });
 
-    describe('receiving a request with an Accept header of text/n3', function () {
+    describe('receiving a request with an Accept header of text/n3', () => {
       let response;
-      before(function (done) {
+      before((done) => {
         resetAll();
         client.get('/my-datasource').set('Accept', 'text/n3')
-              .end(function (error, res) { response = res; done(error); });
+              .end((error, res) => { response = res; done(error); });
       });
 
-      it('should call the Turtle view', function () {
+      it('should call the Turtle view', () => {
         rdfView.render.should.have.been.calledOnce;
       });
 
-      it('should set the text/n3 content type', function () {
+      it('should set the text/n3 content type', () => {
         response.headers.should.have.property('content-type', 'text/n3;charset=utf-8');
       });
 
-      it('should indicate Accept in the Vary header', function () {
+      it('should indicate Accept in the Vary header', () => {
         response.headers.should.have.property('vary', 'Accept');
       });
     });
   });
 
-  describe('A QuadPatternFragmentsController instance without matching view', function () {
+  describe('A QuadPatternFragmentsController instance without matching view', () => {
     let controller, client;
-    before(function () {
+    before(() => {
       let datasource = {
         supportsQuery: sinon.stub().returns(true),
         select: sinon.stub(),
@@ -328,52 +328,52 @@ describe('QuadPatternFragmentsController', function () {
       client = request.agent(new DummyServer(controller));
     });
 
-    describe('receiving a request without Accept header', function () {
+    describe('receiving a request without Accept header', () => {
       let response;
-      before(function (done) {
+      before((done) => {
         client.get('/my-datasource')
-              .end(function (error, res) { response = res; done(error); });
+              .end((error, res) => { response = res; done(error); });
       });
 
-      it('should return status code 406', function () {
+      it('should return status code 406', () => {
         response.should.have.property('statusCode', 406);
       });
 
-      it('should set the text/plain content type', function () {
+      it('should set the text/plain content type', () => {
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
       });
 
-      it('should indicate Accept in the Vary header', function () {
+      it('should indicate Accept in the Vary header', () => {
         response.headers.should.have.property('vary', 'Accept');
       });
     });
 
-    describe('receiving a request with an Accept header of text/html', function () {
+    describe('receiving a request with an Accept header of text/html', () => {
       let response;
-      before(function (done) {
+      before((done) => {
         client.get('/my-datasource').set('Accept', 'text/html')
-              .end(function (error, res) { response = res; done(error); });
+              .end((error, res) => { response = res; done(error); });
       });
 
-      it('should return status code 406', function () {
+      it('should return status code 406', () => {
         response.should.have.property('statusCode', 406);
       });
 
-      it('should set the text/plain content type', function () {
+      it('should set the text/plain content type', () => {
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
       });
 
-      it('should indicate Accept in the Vary header', function () {
+      it('should indicate Accept in the Vary header', () => {
         response.headers.should.have.property('vary', 'Accept');
       });
     });
   });
 
-  describe('A QuadPatternFragmentsController instance with a datasource that synchronously errors', function () {
+  describe('A QuadPatternFragmentsController instance with a datasource that synchronously errors', () => {
     let controller, client, router, datasource, error, view;
-    before(function () {
+    before(() => {
       router = {
-        extractQueryParams: sinon.spy(function (request, query) {
+        extractQueryParams: sinon.spy((request, query) => {
           query.features.datasource = true;
           query.datasource = '/my-datasource';
         }),
@@ -396,23 +396,23 @@ describe('QuadPatternFragmentsController', function () {
       router.extractQueryParams.reset();
     }
 
-    describe('receiving a request for a fragment', function () {
-      before(function (done) {
+    describe('receiving a request for a fragment', () => {
+      before((done) => {
         resetAll();
         client.get('/my-datasource?a=b&c=d').end(done);
       });
 
-      it('should emit the error', function () {
+      it('should emit the error', () => {
         expect(controller.error).to.equal(error);
       });
     });
   });
 
-  describe('A QuadPatternFragmentsController instance with a datasource that asynchronously errors', function () {
+  describe('A QuadPatternFragmentsController instance with a datasource that asynchronously errors', () => {
     let controller, client, router, datasource, error, view;
-    before(function () {
+    before(() => {
       router = {
-        extractQueryParams: sinon.spy(function (request, query) {
+        extractQueryParams: sinon.spy((request, query) => {
           query.features.datasource = true;
           query.datasource = '/my-datasource';
         }),
@@ -436,13 +436,13 @@ describe('QuadPatternFragmentsController', function () {
       router.extractQueryParams.reset();
     }
 
-    describe('receiving a request for a fragment', function () {
-      before(function (done) {
+    describe('receiving a request for a fragment', () => {
+      before((done) => {
         resetAll();
         client.get('/my-datasource?a=b&c=d').end(done);
       });
 
-      it('should emit the error', function () {
+      it('should emit the error', () => {
         expect(controller.error).to.equal(error);
       });
     });
