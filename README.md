@@ -135,7 +135,7 @@ This project can be setup by cloning and installing it as follows:
 
 ```bash
 $ git clone https://github.com/LinkedDataFragments/Server.js.git
-$ cd comunica
+$ cd Server.js
 $ yarn install
 ```
 
