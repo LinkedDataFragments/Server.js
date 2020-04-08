@@ -7,6 +7,7 @@
 A Linked Data Fragments server with Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)) support.
 
 _This package has been renamed from `ldf-server` to `@ldf/server`._
+_Find more information about migrating from `ldf-server` 2.x.x [on our wiki](https://github.com/LinkedDataFragments/Server.js/wiki/Release-3.0.0)._
 
 _This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
 

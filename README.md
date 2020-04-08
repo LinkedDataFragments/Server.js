@@ -8,6 +8,8 @@
 
 This repository contains modules for [Linked Data Fragments (LDF)](https://linkeddatafragments.org/) servers.
 
+_Find more information about migrating from `ldf-server` 2.x.x [on our wiki](https://github.com/LinkedDataFragments/Server.js/wiki/Release-3.0.0)._
+
 ## Motivation
 
 On today's Web, Linked Data is published in different ways,
