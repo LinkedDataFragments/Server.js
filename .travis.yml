@@ -44,11 +44,3 @@ deploy:
       all_branches: true
       node_js: "node"
       os: "linux"
-  - provider: script
-    skip-cleanup: true
-    script: ~/.lerna-docker/bin/lerna-docker linkeddatafragments push
-    on:
-      tags: false
-      branch: release/3
-      node_js: "node"
-      os: "linux"
