@@ -1,7 +1,7 @@
 {
   "name": "@ldf/feature-webid",
   "description": "Linked Data Fragments Server - WebID",
-  "version": "2.2.5",
+  "version": "3.0.0",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-webid",
   "lsd:components": "components/components.jsonld",
   "lsd:contexts": {
@@ -38,6 +38,6 @@
     "@ldf/core": "2.2.5"
   },
   "devDependencies": {
-    "@ldf/core": "2.2.5"
+    "@ldf/core": "^3.0.0"
   }
 }

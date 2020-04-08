@@ -1,7 +1,7 @@
 {
   "name": "@ldf/datasource-n3",
   "description": "Linked Data Fragments Server - N3 Datasources",
-  "version": "2.2.5",
+  "version": "3.0.0",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-n3",
   "lsd:components": "components/components.jsonld",
   "lsd:contexts": {
@@ -35,6 +35,6 @@
     "@ldf/core": "2.2.5"
   },
   "devDependencies": {
-    "@ldf/core": "2.2.5"
+    "@ldf/core": "^3.0.0"
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "@ldf/preset-qpf",
   "description": "Linked Data Fragments Server - Preset Quad Pattern Fragments",
-  "version": "2.2.5",
+  "version": "3.0.0",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf",
   "lsd:contexts": {
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/preset-qpf/^3.0.0/components/context.jsonld": "components/context.jsonld"

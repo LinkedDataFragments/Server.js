@@ -1,7 +1,7 @@
 {
   "name": "@ldf/datasource-sparql",
   "description": "Linked Data Fragments Server - SPARQL Datasource",
-  "version": "2.2.5",
+  "version": "3.0.0",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-sparql",
   "lsd:components": "components/components.jsonld",
   "lsd:contexts": {
@@ -29,15 +29,15 @@
     "lint": "eslint bin/* lib test"
   },
   "dependencies": {
-    "sparqljson-parse": "^1.5.1",
     "lru-cache": "^5.1.1",
     "n3": "^1.3.5",
-    "rdf-string": "^1.3.1"
+    "rdf-string": "^1.3.1",
+    "sparqljson-parse": "^1.5.1"
   },
   "peerDependencies": {
     "@ldf/core": "2.2.5"
   },
   "devDependencies": {
-    "@ldf/core": "2.2.5"
+    "@ldf/core": "^3.0.0"
   }
 }
