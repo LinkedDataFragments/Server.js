@@ -7,8 +7,7 @@
  `getViews` returns all views with a given name.
 */
 
-let _ = require('lodash'),
-    negotiate = require('negotiate'),
+let negotiate = require('negotiate'),
     Util = require('../Util');
 
 let ViewCollectionError = Util.createErrorType('ViewCollectionError');
@@ -28,7 +27,7 @@ class ViewCollection {
     // Add a match entry for each content type supported by the view
     let matchers = this._viewMatchers[view.name] || (this._viewMatchers[view.name] = []);
     view.supportedContentTypes.forEach((contentType) => {
-      matchers.push(_.extend({ view: view }, contentType));
+      matchers.push({ ...contentType, view: view });
     });
   }
 

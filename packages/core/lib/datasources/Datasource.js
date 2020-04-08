@@ -2,7 +2,6 @@
 /* A Datasource provides base functionality for queryable access to a source of quads. */
 
 let fs = require('fs'),
-    _ = require('lodash'),
     UrlData = require('../UrlData'),
     BufferedIterator = require('asynciterator').BufferedIterator,
     EventEmitter = require('events'),
@@ -111,7 +110,7 @@ class Datasource extends EventEmitter {
       return onError && onError(new Error('The datasource is not initialized yet'));
     if (!this.supportsQuery(query))
       return onError && onError(new Error('The datasource does not support the given query'));
-    query = _.clone(query);
+    query = { ...query };
 
     // Translate blank nodes IRIs in the query to blank nodes
     let blankNodePrefix = this._blankNodePrefix, blankNodePrefixLength = this._blankNodePrefixLength;

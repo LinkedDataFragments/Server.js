@@ -1,8 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* View is a base class for objects that generate server responses. */
 
-let _ = require('lodash'),
-    join = require('path').join,
+let join = require('path').join,
     ViewCollection = require('./ViewCollection');
 
 // Creates a view with the given name
@@ -46,7 +45,7 @@ class View {
   // Renders the view with the given options to the response
   render(options, request, response, done) {
     // Initialize view-specific settings
-    let settings = _.defaults({}, options, this._defaults);
+    let settings = { ...options, ...this._defaults };
     if (!settings.contentType)
       settings.contentType = response.getHeader('Content-Type');
 

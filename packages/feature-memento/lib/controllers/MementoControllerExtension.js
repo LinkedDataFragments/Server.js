@@ -3,8 +3,7 @@
 
 let Controller = require('@ldf/core').controllers.Controller,
     TimegateController = require('./TimegateController'),
-    url = require('url'),
-    _ = require('lodash');
+    url = require('url');
 
 // Creates a new MementoControllerExtension
 class MementoControllerExtension extends Controller {
@@ -24,7 +23,7 @@ class MementoControllerExtension extends Controller {
     // Add link to original if it is a memento
     if (memento && memento.interval && memento.interval.length === 2) {
       let timegatePath = this._timegateBaseUrl + memento.memento,
-          timegateUrl = url.format(_.defaults({ pathname: timegatePath }, request.parsedUrl)),
+          timegateUrl = url.format({ ...request.parsedUrl, pathname: timegatePath }),
           originalUrl = memento.original + requestQuery,
           datetime = new Date(memento.interval[0]).toUTCString();
 
@@ -39,7 +38,7 @@ class MementoControllerExtension extends Controller {
         timegate = timegateSettings + requestQuery;
       // If the timegate configuration is true, use local timegate
       else if (timegateSettings === true)
-        timegate = url.format(_.defaults({ pathname: this._timegateBaseUrl + datasource }, request.parsedUrl));
+        timegate = url.format({ ...request.parsedUrl, pathname: this._timegateBaseUrl + datasource });
       if (timegate)
         response.setHeader('Link', '<' + timegate + '>;rel=timegate');
     }

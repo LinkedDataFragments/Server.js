@@ -19,7 +19,7 @@ class HtmlView extends View {
       assetsPath: settings.urlData.assetsPath || '/', baseURL: settings.urlData.baseURL || '/',
       title: '', header: settings && settings.title,
     };
-    super(viewName, 'text/html', _.defaults({}, settings, defaults));
+    super(viewName, 'text/html', { ...settings, ...defaults });
   }
 
   // Renders the template with the given name to the response
@@ -41,7 +41,7 @@ class HtmlView extends View {
 
     function newExtensionViewConstructor(extension, options, request, response) {
       return function (data) {
-        let subOptions = _.clone(options);
+        let subOptions = { ...options };
         for (let key in data)
           subOptions[key] = data[key];
         return self._renderViewExtensionContents(extension, subOptions, request, response);

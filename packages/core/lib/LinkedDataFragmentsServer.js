@@ -22,7 +22,7 @@ class LinkedDataFragmentsServer {
       // WebID authentication requires a client certificate
       if (authentication.webid)
         ssl.requestCert = ssl.rejectUnauthorized = true;
-      server = require('https').createServer(_.assign(ssl, _.mapValues(ssl.keys, readHttpsOption)));
+      server = require('https').createServer({ ...ssl, ..._.mapValues(ssl.keys, readHttpsOption) });
       break;
     default:
       throw new Error('The configured protocol ' + urlData.protocol + ' is invalid.');
@@ -140,10 +140,10 @@ LinkedDataFragmentsServer.prototype.stop = function () {
 // Reads the value of an option for the https module
 function readHttpsOption(value) {
   // Read each value of an array
-  if (_.isArray(value))
+  if (Array.isArray(value))
     return value.map(readHttpsOption);
   // Certificates and keys can be strings or files
-  else if (_.isString(value) && fs.existsSync(value))
+  else if (typeof value === 'string' && fs.existsSync(value))
     return fs.readFileSync(value);
   // Other strings and regular objects are also allowed
   else

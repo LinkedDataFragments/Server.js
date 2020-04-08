@@ -74,7 +74,7 @@ class TimegateController extends Controller {
         // Determine the URL of the original resource
         let originalBaseURL = timemapDetails.original, originalUrl;
         if (!originalBaseURL)
-          originalUrl = _.defaults({ pathname: datasource }, request.parsedUrl);
+          originalUrl = { ...request.parsedUrl, pathname: datasource };
         else
           originalUrl = _.assign(url.parse(originalBaseURL), { query: request.parsedUrl.query });
         originalUrl = url.format(originalUrl);

@@ -100,7 +100,7 @@ class QuadPatternFragmentsController extends Controller {
         paramsNoPage = _.omit(requestUrl.query, 'page'),
         currentPage = parseInt(requestUrl.query.page, 10) || 1,
         datasourceUrl = url.format(_.omit(requestUrl, 'query')),
-        fragmentUrl = url.format(_.defaults({ query: paramsNoPage }, requestUrl)),
+        fragmentUrl = url.format({ ...requestUrl, query: paramsNoPage }),
         fragmentPageUrlBase = fragmentUrl + (/\?/.test(fragmentUrl) ? '&' : '?') + 'page=',
         indexUrl = url.format(_.omit(requestUrl, 'search', 'query', 'pathname')) + '/';
 

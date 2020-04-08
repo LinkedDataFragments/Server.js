@@ -60,8 +60,9 @@ class LinkedDataFragmentsServerWorker {
     let server = new LinkedDataFragmentsServer(config);
 
     // Start the server when all data sources are ready
-    let pending = _.size(config.datasources);
-    _.each(config.datasources, (datasource) => {
+    let pending = Object.keys(config.datasources).length;
+    for (const datasourceId in config.datasources) {
+      const datasource = config.datasources[datasourceId];
       // Add datasource ready-listener
       let ready = _.once(startWhenReady);
       datasource.once('initialized', ready);
@@ -69,7 +70,7 @@ class LinkedDataFragmentsServerWorker {
 
       // Init datasource asynchronously
       datasource.initialize();
-    });
+    }
     function startWhenReady() {
       if (!--pending) {
         server.listen(config.port);

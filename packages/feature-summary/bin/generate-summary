@@ -4,8 +4,7 @@
 
 let N3 = require('n3'),
     fs = require('fs'),
-    path = require('path'),
-    _ = require('lodash');
+    path = require('path');
 
 let regex = /^(http[s]?:\/?\/?[^:\/\s]+\/).*/;
 
@@ -23,7 +22,7 @@ if (args.length < 1 || args.length > 2) {
 let configFile = args[0],
     config = JSON.parse(fs.readFileSync(configFile)),
     datasources = config.datasources || {},
-    datasourceNames = args[1] ? [args[1]] : (datasources && _.keys(datasources));
+    datasourceNames = args[1] ? [args[1]] : (datasources && Object.keys(datasources));
 
 // Configure preset URLs
 let baseURL = config.baseURL ? config.baseURL.replace(/\/?$/, '/') : '/',
@@ -43,7 +42,7 @@ function generate(datasourceName) {
 
     // Retrieve the data source class and settings
     let Datasource = require(path.join('../lib/datasources/', datasourceConfig.type)),
-        settings = _.defaults(datasourceConfig.settings || {}, config);
+        settings = { ...config, ...(datasourceConfig.settings || {}) };
 
     // Create the data source
     let datasource = new Datasource(settings),
