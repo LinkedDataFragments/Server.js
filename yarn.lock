@@ -1096,10 +1096,10 @@ abbrev@1:
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
-access-log@^0.3.9:
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/access-log/-/access-log-0.3.9.tgz#01c2695ba7e7d32db5288ef3f14e64d6719f3ad1"
-  integrity sha1-AcJpW6fn0y21KI7z8U5k1nGfOtE=
+access-log@^0.4.0:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/access-log/-/access-log-0.4.1.tgz#e884a2b5d22a954727d2593e51687a0d089b61b8"
+  integrity sha1-6ISitdIqlUcn0lk+UWh6DQibYbg=
   dependencies:
     strftime "~0.6.2"
 

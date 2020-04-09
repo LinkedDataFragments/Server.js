@@ -49,6 +49,6 @@
     "uritemplate": "^0.3.4"
   },
   "optionalDependencies": {
-    "access-log": "^0.3.9"
+    "access-log": "^0.4.0"
   }
 }
