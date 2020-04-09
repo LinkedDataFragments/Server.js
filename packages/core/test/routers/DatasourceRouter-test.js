@@ -68,7 +68,7 @@ describe('DatasourceRouter', () => {
             { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
           ],
         ]
-        .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });

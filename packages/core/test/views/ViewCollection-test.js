@@ -22,7 +22,7 @@ describe('ViewCollection', () => {
 
     it('should throw an error when matching a view', () => {
       (function () { viewCollection.matchView('Foo'); })
-      .should.throw('No view named Foo found.');
+        .should.throw('No view named Foo found.');
     });
   });
 
@@ -35,7 +35,7 @@ describe('ViewCollection', () => {
 
     it('should throw an error when matching a view with a non-existing type', () => {
       (function () { viewCollection.matchView('Bar'); })
-      .should.throw('No view named Bar found.');
+        .should.throw('No view named Bar found.');
     });
 
     describe('when a client requests HTML', () => {
@@ -80,7 +80,7 @@ describe('ViewCollection', () => {
 
     it('should throw an error when matching a view with a non-existing type', () => {
       (function () { viewCollection.matchView('Bar'); })
-      .should.throw('No view named Bar found.');
+        .should.throw('No view named Bar found.');
     });
 
     describe('when matching a request of one view type as HTML', () => {

@@ -7,7 +7,6 @@ let Controller = require('@ldf/core').controllers.Controller,
 
 // Creates a new QuadPatternFragmentsController
 class QuadPatternFragmentsController extends Controller {
-
   constructor(options) {
     options = options || {};
     super(options);
@@ -44,7 +43,7 @@ class QuadPatternFragmentsController extends Controller {
     let view = this._negotiateView(this.viewName, request, response),
         settings = this._createFragmentMetadata(request, query, datasource);
     settings.results = datasource.select(query,
-                      (error) => { error && next(error); });
+      (error) => { error && next(error); });
 
     // Execute the extensions and render the query result
     let extensions = this._extensions, extensionId = 0;
@@ -64,7 +63,7 @@ class QuadPatternFragmentsController extends Controller {
   // Create the template URL for requesting quad patterns
   _createTemplateUrl(datasourceUrl, supportsQuads) {
     return datasourceUrl + (!supportsQuads ? '{?subject,predicate,object}' :
-                                            '{?subject,predicate,object,graph}');
+      '{?subject,predicate,object,graph}');
   }
 
   // Create parameterized pattern string for quad patterns

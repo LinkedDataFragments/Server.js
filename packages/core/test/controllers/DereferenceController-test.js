@@ -26,7 +26,7 @@ describe('DereferenceController', () => {
       let response;
       before((done) => {
         client.get('/resource/Mickey_Mouse')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should not hand over to the next controller', () => {

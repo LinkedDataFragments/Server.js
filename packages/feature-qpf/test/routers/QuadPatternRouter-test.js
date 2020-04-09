@@ -223,7 +223,7 @@ describe('QuadPatternRouter', () => {
             { a: 1, features: { quadPattern: true }, graph: dataFactory.defaultGraph() },
           ],
         ]
-        .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });
@@ -465,7 +465,7 @@ describe('QuadPatternRouter', () => {
             { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('foo:bar') },
           ],
         ]
-        .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });

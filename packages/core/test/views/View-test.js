@@ -68,7 +68,7 @@ describe('View', () => {
       it('should throw an error on calling render', () => {
         let response = { getHeader: sinon.stub() };
         (function () { new View().render(null, null, response); })
-        .should.throw('The _render method is not yet implemented.');
+          .should.throw('The _render method is not yet implemented.');
       });
     });
 

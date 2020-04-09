@@ -75,7 +75,7 @@ describe('PageRouter', () => {
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 100, offset: 200 },
           ],
         ]
-        .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });
@@ -143,7 +143,7 @@ describe('PageRouter', () => {
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 250, offset: 500 },
           ],
         ]
-        .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });
@@ -162,7 +162,7 @@ describe('PageRouter', () => {
             { a: 1, features: { limit: true }, limit: 100 },
           ],
         ]
-        .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { test.extractQueryParams.apply(router, args); });
       });
     });
   });

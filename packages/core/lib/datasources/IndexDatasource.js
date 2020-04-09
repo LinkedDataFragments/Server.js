@@ -16,7 +16,7 @@ class IndexDatasource extends MemoryDatasource {
     this.role = 'index';
   }
 
-    // Creates quads for each data source
+  // Creates quads for each data source
   _getAllQuads(addQuad, done) {
     const quad = this.dataFactory.quad, namedNode = this.dataFactory.namedNode, literal = this.dataFactory.literal;
     for (let name in this._datasources)  {

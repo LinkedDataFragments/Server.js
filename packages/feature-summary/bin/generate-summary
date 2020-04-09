@@ -74,8 +74,8 @@ function fromDataSource(uri, datasource, callback, end, chunksize) {
   // Otherwise, process dataset at once
   else {
     datasource.select({}, console.log)
-              .on('data', extractSummary)
-              .on('end', endSummary);
+      .on('data', extractSummary)
+      .on('end', endSummary);
   }
 
   // Processes DataSource in chunks
@@ -83,27 +83,27 @@ function fromDataSource(uri, datasource, callback, end, chunksize) {
     offset = offset || 0;
     let count = 0;
 
-    const stream = datasource.select({ limit: limit, offset: offset }, console.error)
-        .getProperty('metadata', (metadata) => {
-          let progress = Math.round((offset / metadata.totalCount) * 100);
-          console.log(progress);
+    let stream = datasource.select({ limit: limit, offset: offset }, console.error)
+      .getProperty('metadata', (metadata) => {
+        let progress = Math.round((offset / metadata.totalCount) * 100);
+        console.log(progress);
 
-          stream.on('data', (triple) => {
-            count++;
-            extractSummary(triple);
-            triple = null;
-          });
-
-          stream.on('end', () => {
-            stream.removeAllListeners();
-            stream = null;
-
-            if (count < limit)
-              endSummary();
-            else
-              setImmediate(() => { processSet(limit, offset + limit); });
-          });
+        stream.on('data', (triple) => {
+          count++;
+          extractSummary(triple);
+          triple = null;
         });
+
+        stream.on('end', () => {
+          stream.removeAllListeners();
+          stream = null;
+
+          if (count < limit)
+            endSummary();
+          else
+            setImmediate(() => { processSet(limit, offset + limit); });
+        });
+      });
   }
 
   function extractSummary(triple) {

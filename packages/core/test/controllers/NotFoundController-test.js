@@ -30,7 +30,7 @@ describe('NotFoundController', () => {
       let response;
       before((done) => {
         client.get('/notfound')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should not hand over to the next controller', () => {
@@ -76,7 +76,7 @@ describe('NotFoundController', () => {
       before((done) => {
         resetAll();
         client.get('/notfound')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should not hand over to the next controller', () => {
@@ -113,7 +113,7 @@ describe('NotFoundController', () => {
       before((done) => {
         resetAll();
         client.get('/notfound').set('Accept', '*/*')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should not hand over to the next controller', () => {
@@ -150,7 +150,7 @@ describe('NotFoundController', () => {
       before((done) => {
         resetAll();
         client.get('/notfound').set('Accept', 'text/html')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should not hand over to the next controller', () => {
@@ -187,7 +187,7 @@ describe('NotFoundController', () => {
       before((done) => {
         resetAll();
         client.get('/notfound').set('Accept', 'text/turtle')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should not hand over to the next controller', () => {
@@ -225,7 +225,7 @@ describe('NotFoundController', () => {
       before((done) => {
         resetAll();
         client.get('/notfound').set('Accept', 'application/trig')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should not hand over to the next controller', () => {

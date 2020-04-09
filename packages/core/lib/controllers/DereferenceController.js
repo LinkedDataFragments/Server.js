@@ -29,7 +29,7 @@ class DeferenceController extends Controller {
       response.end(entity);
     }
     else
-    next();
+      next();
   }
 }
 

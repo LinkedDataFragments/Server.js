@@ -206,7 +206,7 @@ describe('QuadPatternFragmentsController', () => {
       before((done) => {
         resetAll();
         client.get('/my-datasource')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should call the default view', () => {
@@ -227,7 +227,7 @@ describe('QuadPatternFragmentsController', () => {
       before((done) => {
         resetAll();
         client.get('/my-datasource').set('Accept', '*/*')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should call the HTML view', () => {
@@ -248,7 +248,7 @@ describe('QuadPatternFragmentsController', () => {
       before((done) => {
         resetAll();
         client.get('/my-datasource').set('Accept', 'text/html')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should call the HTML view', () => {
@@ -269,7 +269,7 @@ describe('QuadPatternFragmentsController', () => {
       before((done) => {
         resetAll();
         client.get('/my-datasource').set('Accept', 'text/turtle')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should call the Turtle view', () => {
@@ -290,7 +290,7 @@ describe('QuadPatternFragmentsController', () => {
       before((done) => {
         resetAll();
         client.get('/my-datasource').set('Accept', 'text/n3')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should call the Turtle view', () => {
@@ -332,7 +332,7 @@ describe('QuadPatternFragmentsController', () => {
       let response;
       before((done) => {
         client.get('/my-datasource')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should return status code 406', () => {
@@ -352,7 +352,7 @@ describe('QuadPatternFragmentsController', () => {
       let response;
       before((done) => {
         client.get('/my-datasource').set('Accept', 'text/html')
-              .end((error, res) => { response = res; done(error); });
+          .end((error, res) => { response = res; done(error); });
       });
 
       it('should return status code 406', () => {

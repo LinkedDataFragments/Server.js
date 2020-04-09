@@ -50,7 +50,7 @@ describe('Datasource', () => {
 
     it('should throw an error when trying to execute a supported query', () => {
       (function () { datasource.select({ features: {} }); })
-      .should.throw('_executeQuery has not been implemented');
+        .should.throw('_executeQuery has not been implemented');
     });
 
     describe('fetching a resource', () => {
@@ -315,8 +315,8 @@ describe('Datasource', () => {
       result.on('data', (q) => { quads.push(q); });
       result.on('end', () => {
         let matchingquads = [{ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o1'), graph: dataFactory.namedNode('http://example.org/#mygraph') },
-                             { subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o2'), graph: dataFactory.namedNode('http://example.org/#mygraph') },
-                             { subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o3'), graph: dataFactory.namedNode('g') }];
+          { subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o2'), graph: dataFactory.namedNode('http://example.org/#mygraph') },
+          { subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o3'), graph: dataFactory.namedNode('g') }];
         matchingquads.length.should.be.equal(quads.length);
         for (let i = 0; i < quads.length; i++)
           matchingquads[i].should.deep.equal(quads[i]);

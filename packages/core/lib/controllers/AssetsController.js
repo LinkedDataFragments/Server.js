@@ -31,7 +31,7 @@ class AssetsController extends Controller {
       assetsFolder = assetsFolder.replace('file:///', '');
     fs.readdirSync(assetsFolder).forEach(function (name) {
       let filename = path.join(assetsFolder, name), stats = fs.statSync(filename);
-    // Read an asset file into memory
+      // Read an asset file into memory
       if (stats.isFile()) {
         let assetType = mime.getType(filename);
         this._assets[assetsPath + name.replace(/[.][^.]+$/, '')] = {
@@ -39,7 +39,7 @@ class AssetsController extends Controller {
           contents: fs.readFileSync(filename),
         };
       }
-    // Read all asset files in a folder
+      // Read all asset files in a folder
       else if (stats.isDirectory())
         this._readAssetsFolder(filename, assetsPath + name + '/');
     }, this);
@@ -56,7 +56,7 @@ class AssetsController extends Controller {
       response.end(asset.contents);
     }
     else
-    next();
+      next();
   }
 }
 

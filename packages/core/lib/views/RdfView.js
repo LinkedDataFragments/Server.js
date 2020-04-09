@@ -33,7 +33,7 @@ class RdfView extends View {
     // Write the triples with a content-type-specific writer
     let self = this,
         writer = /json/.test(settings.contentType) ? this._createJsonLdWriter(settings, response, done)
-                                                  : this._createN3Writer(settings, response, done);
+          : this._createN3Writer(settings, response, done);
     settings.writer = writer;
     function main()   { self._generateRdf(settings, writer.data, writer.meta, after); }
     function after()  { self._renderViewExtensions('After',  settings, request, response, writer.end); }

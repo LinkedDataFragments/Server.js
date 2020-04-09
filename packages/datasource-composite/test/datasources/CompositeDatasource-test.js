@@ -155,7 +155,7 @@ describe('CompositeDatasource', () => {
 });
 
 function itShouldExecute(getDatasource, name, query,
-                         expectedResultsCount, expectedTotalCount, expectedTriples) {
+  expectedResultsCount, expectedTotalCount, expectedTriples) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount, triples = [];
     before((done) => {

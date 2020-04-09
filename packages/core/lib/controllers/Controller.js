@@ -19,7 +19,7 @@ class Controller {
       return datasources;
     }, {});
     this._views = options.views && options.views.matchView ?
-                  options.views : new ViewCollection(options.views);
+      options.views : new ViewCollection(options.views);
 
     // Set up base URL (if we're behind a proxy, this allows reconstructing the actual request URL)
     this._baseUrl = _.mapValues(url.parse((options.urlData || new UrlData()).baseURL), (value, key) => {
@@ -34,10 +34,10 @@ class Controller {
     if (!request.parsedUrl) {
       // Keep the request's path and query, but take over all other defined baseURL properties
       request.parsedUrl = _.defaults(_.pick(url.parse(request.url, true), 'path', 'pathname', 'query'),
-                                    this._getForwarded(request),
-                                    this._getXForwardHeaders(request),
-                                    this._baseUrl,
-                                    { protocol: 'http:', host: request.headers.host });
+        this._getForwarded(request),
+        this._getXForwardHeaders(request),
+        this._baseUrl,
+        { protocol: 'http:', host: request.headers.host });
     }
 
     // Try to handle the request

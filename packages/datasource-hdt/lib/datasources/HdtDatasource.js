@@ -34,9 +34,9 @@ class HdtDatasource extends Datasource {
     }
     let dataFactory = this.dataFactory;
     this._hdtDocument.searchTriples(query.subject ? RdfString.termToString(query.subject) : null,
-                                    query.predicate ? RdfString.termToString(query.predicate) : null,
-                                    query.object ? RdfString.termToString(query.object) : null,
-                                    { limit: query.limit, offset: query.offset })
+      query.predicate ? RdfString.termToString(query.predicate) : null,
+      query.object ? RdfString.termToString(query.object) : null,
+      { limit: query.limit, offset: query.offset })
       .then((result) => {
         let triples = result.triples,
             estimatedTotalCount = result.totalCount,

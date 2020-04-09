@@ -42,7 +42,7 @@ class ViewCollection {
     return this._views[name] || [];
   }
 
-// Gets the best match for views with the given name that accommodate the request
+  // Gets the best match for views with the given name that accommodate the request
   matchView(name, request) {
     // Retrieve the views with the given name
     let viewList = this._viewMatchers[name];

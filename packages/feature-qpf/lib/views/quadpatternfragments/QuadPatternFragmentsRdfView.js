@@ -107,7 +107,6 @@ class QuadPatternFragmentsRdfView extends RdfView {
   quad(quadObject) {
     return stringQuadToQuad(quadObject, this.dataFactory);
   }
-
 }
 
 module.exports = QuadPatternFragmentsRdfView;
