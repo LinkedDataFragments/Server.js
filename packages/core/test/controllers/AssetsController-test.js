@@ -51,7 +51,7 @@ describe('AssetsController', () => {
         let asset = fs.readFileSync(path.join(__dirname, '/../../assets/favicon.ico'), 'utf8');
         controller.next.should.not.have.been.called;
         response.should.have.property('statusCode', 200);
-        response.headers.should.have.property('content-type', 'image/x-icon');
+        response.headers.should.have.property('content-type', 'image/vnd.microsoft.icon');
         response.headers.should.have.property('cache-control', 'public,max-age=1209600');
         response.body.toString().should.equal(asset);
       }).end(done);
