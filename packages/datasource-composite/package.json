@@ -32,7 +32,7 @@
     "lru-cache": "^5.1.1"
   },
   "peerDependencies": {
-    "@ldf/core": "2.2.5"
+    "@ldf/core": "^3.0.0"
   },
   "devDependencies": {
     "@ldf/core": "^3.0.0"
