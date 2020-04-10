@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.0.6"></a>
+## [v3.0.6](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.5...v3.0.6) - 2020-04-10
+
+### Fixed
+* [Fix datasource descriptions being migrated incorrectly](https://github.com/LinkedDataFragments/Server.js/commit/8a54d95c5b67ad09ab626a678388995df366db02)
+
 <a name="v3.0.5"></a>
 ## [v3.0.5](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.4...v3.0.5) - 2020-04-10
 
