@@ -1,7 +1,7 @@
 {
   "name": "@ldf/server",
   "description": "Quad Pattern Fragments Linked Data Fragments Server",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server",
   "lsd:contexts": {
     "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server/^3.0.0/components/context.jsonld": "components/context.jsonld"
