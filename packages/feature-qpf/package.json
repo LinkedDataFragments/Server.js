@@ -1,7 +1,7 @@
 {
   "name": "@ldf/feature-qpf",
   "description": "Linked Data Fragments Server - Quad Pattern Fragments",
-  "version": "3.0.1",
+  "version": "3.0.5",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-qpf",
   "lsd:components": "components/components.jsonld",
   "lsd:contexts": {
@@ -38,6 +38,6 @@
     "@ldf/core": "^3.0.0"
   },
   "devDependencies": {
-    "@ldf/core": "^3.0.1"
+    "@ldf/core": "^3.0.5"
   }
 }

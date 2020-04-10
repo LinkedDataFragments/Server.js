@@ -1,7 +1,7 @@
 {
   "name": "@ldf/datasource-hdt",
   "description": "Linked Data Fragments Server - HDT Datasource",
-  "version": "3.0.1",
+  "version": "3.0.5",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-hdt",
   "lsd:components": "components/components.jsonld",
   "lsd:contexts": {
@@ -35,7 +35,7 @@
     "@ldf/core": "^3.0.0"
   },
   "devDependencies": {
-    "@ldf/core": "^3.0.1"
+    "@ldf/core": "^3.0.5"
   },
   "optionalDependencies": {
     "hdt": "^2.2.2"

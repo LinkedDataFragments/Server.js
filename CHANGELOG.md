@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.0.5"></a>
+## [v3.0.5](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.4...v3.0.5) - 2020-04-10
+
+### Fixed
+* [Fix enabled option on datasources being ignored](https://github.com/LinkedDataFragments/Server.js/commit/bf09c363e7c3094e7668b3dc18051bc0489f3ca2)
+* [Fix HDT source configs not being migrated correctly](https://github.com/LinkedDataFragments/Server.js/commit/bd52749d513732ee74be44af8012cebb6beff02e)
+
 <a name="v3.0.4"></a>
 ## [v3.0.4](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.3...v3.0.4) - 2020-04-10
 
