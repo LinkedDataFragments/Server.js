@@ -80,8 +80,8 @@ function migrateConfig(configFile, updateFile) {
         ... datasourceOld.licenseUrl ? { licenseUrl: datasourceOld.licenseUrl } : {},
         ... datasourceOld.copyright ? { copyright: datasourceOld.copyright } : {},
         ... datasourceOld.homepage ? { homepage: datasourceOld.homepage } : {},
-        ... datasourceOld.hide ? { hide: datasourceOld.hide } : {},
-        ... datasourceOld.enabled ? { enabled: datasourceOld.enabled } : {},
+        ... ('hide' in datasourceOld) ? { hide: datasourceOld.hide } : {},
+        ... ('enabled' in datasourceOld) ? { enabled: datasourceOld.enabled } : {},
         ... settings,
       });
     }
