@@ -121,6 +121,10 @@ class Datasource extends EventEmitter {
     if (query.graph   && query.graph.value.indexOf(blankNodePrefix) === 0)
       query.graph   = this.dataFactory.blankNode(query.graph.value.substr(blankNodePrefixLength));
 
+    // Force the default graph if QPF support is disable
+    if (!this._supportsQuads)
+      query.graph = this.dataFactory.defaultGraph();
+
     // If a custom default graph was set, query it as the default graph
     if (this._graph && query.graph && query.graph.value in this._queryGraphReplacements)
       query.graph = stringToTerm(this._queryGraphReplacements[query.graph.value], this.dataFactory);
