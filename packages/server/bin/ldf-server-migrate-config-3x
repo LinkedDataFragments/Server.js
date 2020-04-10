@@ -73,6 +73,7 @@ function migrateConfig(configFile, updateFile) {
       datasourcesNew.push({
         '@id': datasourcePathToId(datasourcePath),
         '@type': datasourceOld.type,
+        'quads': false, // QPF did not exist before 3.x, so ensure the existing datasources keep their current semantics
         'datasourcePath': datasourcePath,
         'datasourceTitle': datasourceOld.title,
         ... datasourceOld.description ? { datasourceDescription: datasourceOld.description } : {},
