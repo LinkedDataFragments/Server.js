@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.0.4"></a>
+## [v3.0.4](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.3...v3.0.4) - 2020-04-10
+
+### Fixed
+* [Remove need for softlinks in N3 datasources](https://github.com/LinkedDataFragments/Server.js/commit/2e260c560e0c3a75fedf1817690dd7a7dd2d6cca)
+* [Fix hide and enabled config entries not being migrated properly](https://github.com/LinkedDataFragments/Server.js/commit/b298789619fac911db89f1f00b736652c1bdc0cb)
+
 <a name="v3.0.3"></a>
 ## [v3.0.3](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.2...v3.0.3) - 2020-04-10
 
