@@ -78,10 +78,10 @@ function migrateConfig(configFile, updateFile) {
         ... datasourceOld.description ? { datasourceDescription: datasourceOld.description } : {},
         ... datasourceOld.license ? { license: datasourceOld.license } : {},
         ... datasourceOld.licenseUrl ? { licenseUrl: datasourceOld.licenseUrl } : {},
-        ... datasourceOld.copyright ? { licenseUrl: datasourceOld.copyright } : {},
-        ... datasourceOld.homepage ? { licenseUrl: datasourceOld.homepage } : {},
-        ... datasourceOld.hide ? { licenseUrl: datasourceOld.hide } : {},
-        ... datasourceOld.enabled ? { licenseUrl: datasourceOld.enabled } : {},
+        ... datasourceOld.copyright ? { copyright: datasourceOld.copyright } : {},
+        ... datasourceOld.homepage ? { homepage: datasourceOld.homepage } : {},
+        ... datasourceOld.hide ? { hide: datasourceOld.hide } : {},
+        ... datasourceOld.enabled ? { enabled: datasourceOld.enabled } : {},
         ... settings,
       });
     }
