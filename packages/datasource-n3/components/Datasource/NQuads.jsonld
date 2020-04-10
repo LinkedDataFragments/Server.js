@@ -9,7 +9,7 @@
       "@id": "ldfdn:Datasource/NQuads",
       "@type": "Class",
       "extends": "ldfc:Datasource/Memory",
-      "requireElement": "datasources.NQuadsDatasource",
+      "requireElement": "datasources.N3Datasource",
       "comment": "An NQuadsDatasource fetches data from Turtle/TriG/N-Triples/N-Quads/N3 documents",
       "constructorArguments": {
         "extends": "ldfc:Datasource/Memory#constructorArgumentsObject"

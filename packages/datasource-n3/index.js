@@ -4,9 +4,5 @@
 module.exports = {
   datasources: {
     N3Datasource: require('./lib/datasources/N3Datasource'),
-    NQuadsDatasource: require('./lib/datasources/NQuadsDatasource'),
-    NTriplesDatasource: require('./lib/datasources/NTriplesDatasource'),
-    TrigDatasource: require('./lib/datasources/TrigDatasource'),
-    TurtleDatasource: require('./lib/datasources/TurtleDatasource'),
   },
 };
