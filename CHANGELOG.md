@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.0.1"></a>
+## [v3.0.1](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.0...v3.0.1) - 2020-04-10
+
+### Changed
+* [Disable QPF support for datasources in migration tool](https://github.com/LinkedDataFragments/Server.js/commit/747b6adf1e049b25889f1e4c5b40c239cd528fdc)
+
+### Fixed
+* [Fix sources querying for all graphs even if QPF is disabled](https://github.com/LinkedDataFragments/Server.js/commit/45fd2ca63283ec51c8cf93147a755de254c1f579)
+* [Fix incorrect visualization of pattern string in HTML](https://github.com/LinkedDataFragments/Server.js/commit/516f009c191f845eb7afa057fcfb6b20362f9e65)
+
 <a name="v3.0.0"></a>
 ## [v3.0.0](https://github.com/LinkedDataFragments/Server.js/compare/v2.2.5...v3.0.0) - 2020-04-08
 
