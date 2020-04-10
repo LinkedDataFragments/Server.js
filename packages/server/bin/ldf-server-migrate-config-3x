@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /* Migrates an LDF server config file to the new 3.x.x format. */
 const fs = require('fs');
-const path = require('path');
 
 let args = process.argv.slice(2);
 if (!(args.length === 1 || (args.length === 2 && args[1] === '--apply'))) {
@@ -19,7 +18,7 @@ function migrateConfig(configFile, updateFile) {
     'import': 'preset-qpf:config-defaults.json',
   };
 
-  const configOld = JSON.parse(fs.readFileSync(path.join(__dirname, configFile)));
+  const configOld = JSON.parse(fs.readFileSync(configFile));
   let config = configOld;
 
   if ('@context' in configOld) {
