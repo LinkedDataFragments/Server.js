@@ -22,6 +22,9 @@ class Datasource extends EventEmitter {
     this.title = options.title;
     this.id = options.id;
     this.hide = options.hide;
+    this.enabled = options.enabled !== false;
+    if (this.enabled === false)
+      this.hide = true;
     this.description = options.description;
     this.path = this._datasourcePath;
     this.url = urlData.baseURLRoot + this._datasourcePath + '#dataset';
@@ -61,6 +64,11 @@ class Datasource extends EventEmitter {
 
   // Initialize the datasource asynchronously
   initialize() {
+    if (!this.enabled) {
+      this.initialized = true;
+      return this.emit('initialized');
+    }
+
     try {
       this._initialize()
         .then(() => {
