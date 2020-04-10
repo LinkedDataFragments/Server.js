@@ -3,7 +3,9 @@
 
 [![npm version](https://badge.fury.io/js/%40ldf%2Ffeature-qpf.svg)](https://www.npmjs.com/package/@ldf/feature-qpf)
 
-This module adds Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)) support to the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
+This module adds [Quad Pattern Fragments](https://linkeddatafragments.org/specification/quad-pattern-fragments/)
+(a.k.a. [Triple Pattern Fragments](https://linkeddatafragments.org/specification/triple-pattern-fragments/))
+support to the [Linked Data Fragments server](https://github.com/LinkedDataFragments/Server.js).
 
 _This package is a [Linked Data Fragments Server module](https://github.com/LinkedDataFragments/Server.js/)._
 

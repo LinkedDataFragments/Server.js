@@ -12,7 +12,7 @@ If you just want to run a QPF server, you can make use of [`@ldf/server`](https:
 Concretely, it configures the following packages:
 
 * [`@ldf/core`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/core): Core package of LDF servers.
-* [`@ldf/feature-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-qpf): Feature that enables Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)).
+* [`@ldf/feature-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-qpf): Feature that enables [Quad Pattern Fragments](https://linkeddatafragments.org/specification/quad-pattern-fragments/) (a.k.a. [Triple Pattern Fragments](https://linkeddatafragments.org/specification/triple-pattern-fragments/)).
 * [`@ldf/feature-summary`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-summary): Feature that adds summaries to datasources.
 * [`@ldf/feature-memento`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-memento): Feature that enables datetime negotiation using the [Memento Protocol](http://mementoweb.org/about/).
 * [`@ldf/datasource-hdt`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-hdt): Datasource that allows HDT files to be loaded.

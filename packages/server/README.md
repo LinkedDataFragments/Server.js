@@ -4,7 +4,8 @@
 [![npm version](https://badge.fury.io/js/%40ldf%2Fserver.svg)](https://www.npmjs.com/package/@ldf/server)
 [![Docker Pulls](https://img.shields.io/docker/pulls/linkeddatafragments/server.svg)](https://hub.docker.com/r/linkeddatafragments/server/)
 
-A Linked Data Fragments server with Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)) support.
+A Linked Data Fragments server with [Quad Pattern Fragments](https://linkeddatafragments.org/specification/quad-pattern-fragments/)
+(a.k.a. [Triple Pattern Fragments](https://linkeddatafragments.org/specification/triple-pattern-fragments/)) support.
 
 _This package has been renamed from `ldf-server` to `@ldf/server`._
 _Find more information about migrating from `ldf-server` 2.x.x [on our wiki](https://github.com/LinkedDataFragments/Server.js/wiki/Release-3.0.0)._
@@ -24,7 +25,8 @@ is that they are either so powerful that their servers suffer from low availabil
 ([as is the case with SPARQL](http://sw.deri.org/~aidanh/docs/epmonitorISWC.pdf)),
 or either don't allow efficient querying.
 
-Instead, this server offers Quad Pattern Fragments (a.k.a. **[Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)**).
+Instead, this server offers [Quad Pattern Fragments](https://linkeddatafragments.org/specification/quad-pattern-fragments/)
+(a.k.a. [Triple Pattern Fragments](https://linkeddatafragments.org/specification/triple-pattern-fragments/)).
 Each Quad Pattern Fragment offers:
 
 - **data** that corresponds to a _quad/triple pattern_
@@ -222,7 +224,7 @@ you can make use of [`@ldf/preset-qpf`](https://github.com/LinkedDataFragments/S
 Concretely, it configures the following packages:
 
 * [`@ldf/core`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/core): Shared functionality for LDF servers.
-* [`@ldf/feature-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-qpf): Feature that enables Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)).
+* [`@ldf/feature-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-qpf): Feature that enables [Quad Pattern Fragments](https://linkeddatafragments.org/specification/quad-pattern-fragments/) (a.k.a. [Triple Pattern Fragments](https://linkeddatafragments.org/specification/triple-pattern-fragments/)).
 * [`@ldf/feature-summary`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-summary): Feature that adds summaries to datasources.
 * [`@ldf/feature-memento`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-memento): Feature that enables datetime negotiation using the [Memento Protocol](http://mementoweb.org/about/).
 * [`@ldf/datasource-hdt`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-hdt): Datasource that allows HDT files to be loaded.

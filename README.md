@@ -23,7 +23,8 @@ is that they are either so powerful that their servers suffer from low availabil
 ([as is the case with SPARQL](http://sw.deri.org/~aidanh/docs/epmonitorISWC.pdf)),
 or either don't allow efficient querying.
 
-Instead, this server offers Quad Pattern Fragments (a.k.a. **[Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)**).
+Instead, this server offers [Quad Pattern Fragments](https://linkeddatafragments.org/specification/quad-pattern-fragments/)
+(a.k.a. **[Triple Pattern Fragments](https://linkeddatafragments.org/specification/triple-pattern-fragments/)**).
 Each Quad Pattern Fragment offers:
 
 - **data** that corresponds to a _quad/triple pattern_
@@ -107,7 +108,7 @@ The following modules are available:
 * [`@ldf/core`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/core): Shared functionality for LDF servers.
 * [`@ldf/server`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/server): An LDF server with Quad/Triple Pattern Fragments support.
 * [`@ldf/preset-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/preset-qpf): Configuration presets for Quad/Triple Pattern Fragments servers.
-* [`@ldf/feature-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-qpf): Feature that enables Quad Pattern Fragments (a.k.a. [Triple Pattern Fragments](http://www.hydra-cg.com/spec/latest/triple-pattern-fragments/)).
+* [`@ldf/feature-qpf`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-qpf): Feature that enables [Quad Pattern Fragments](https://linkeddatafragments.org/specification/quad-pattern-fragments/) (a.k.a. [Triple Pattern Fragments](https://linkeddatafragments.org/specification/triple-pattern-fragments/)).
 * [`@ldf/feature-summary`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-summary): Feature that adds summaries to datasources.
 * [`@ldf/feature-memento`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-memento): Feature that enables datetime negotiation using the [Memento Protocol](http://mementoweb.org/about/).
 * [`@ldf/feature-webid`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-webid): Feature that enables authenticated requests from clients with WebID.
