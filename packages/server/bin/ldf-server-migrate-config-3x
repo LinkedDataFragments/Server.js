@@ -65,7 +65,7 @@ function migrateConfig(configFile, updateFile) {
       if (settingsOld) {
         if ('endpoint' in settingsOld) settings.sparqlEndpoint = settingsOld.endpoint;
         if ('file' in settingsOld && datasourceOld.type !== 'HdtDatasource') settings.file = settingsOld.file;
-        if ('file' in settingsOld && datasourceOld.type === 'HdtDatasource') settings.hdtFile = settingsOld.hdtFile;
+        if ('file' in settingsOld && datasourceOld.type === 'HdtDatasource') settings.hdtFile = settingsOld.file;
         if ('references' in settingsOld) settings.compose = settingsOld.references.map(datasourcePathToId);
       }
 
