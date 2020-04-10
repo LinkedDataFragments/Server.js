@@ -71,18 +71,18 @@ class QuadPatternFragmentsController extends Controller {
     let subject = query.subject, predicate = query.predicate,
         object = query.object, graph = '';
     // Serialize subject and predicate IRIs or variables
-    subject   = subject   ? '<' + query.subject   + '> ' : '?s ';
-    predicate = predicate ? '<' + query.predicate + '> ' : '?p ';
+    subject   = subject   ? '<' + query.subject.value   + '> ' : '?s ';
+    predicate = predicate ? '<' + query.predicate.value + '> ' : '?p ';
     // Serialize object IRI, literal, or variable
     if (query.object && query.object.termType === 'NamedNode')
-      object = '<' + query.object + '> ';
+      object = '<' + query.object.value + '> ';
     else
-      object = query.object ? query.object : '?o';
+      object = query.object ? query.object.value : '?o';
     // Serialize graph IRI default graph, or variable
     if (supportsQuads) {
       graph = query.graph;
-      if (graph === '') graph = ' @default';
-      else if (graph)   graph = ' <' + graph + '>';
+      if (graph && graph.termType === 'DefaultGraph') graph = ' @default';
+      else if (graph)   graph = ' <' + graph.value + '>';
       else              graph = ' ?g';
     }
     // Join them in a pattern
