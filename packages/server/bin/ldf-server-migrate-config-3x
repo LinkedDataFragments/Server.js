@@ -75,7 +75,7 @@ function migrateConfig(configFile, updateFile) {
         'quads': false, // QPF did not exist before 3.x, so ensure the existing datasources keep their current semantics
         'datasourcePath': datasourcePath,
         'datasourceTitle': datasourceOld.title,
-        ... datasourceOld.description ? { datasourceDescription: datasourceOld.description } : {},
+        ... datasourceOld.description ? { description: datasourceOld.description } : {},
         ... datasourceOld.license ? { license: datasourceOld.license } : {},
         ... datasourceOld.licenseUrl ? { licenseUrl: datasourceOld.licenseUrl } : {},
         ... datasourceOld.copyright ? { copyright: datasourceOld.copyright } : {},
