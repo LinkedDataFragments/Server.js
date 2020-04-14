@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.0.7"></a>
+## [v3.0.7](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.6...v3.0.7) - 2020-04-14
+
+### Fixed
+* [Fix blank node prefixes in datasources not being relative to base](https://github.com/LinkedDataFragments/Server.js/commit/cf8ee9e9586a0643fde5619b93098a11035b7c78)
+
 <a name="v3.0.6"></a>
 ## [v3.0.6](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.5...v3.0.6) - 2020-04-10
 
