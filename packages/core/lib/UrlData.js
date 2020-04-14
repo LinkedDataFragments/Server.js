@@ -11,6 +11,7 @@ class UrlData {
     this.baseURLPath = this.baseURL.substr(this.baseURLRoot.length);
     this.blankNodePath = this.baseURLRoot ? '/.well-known/genid/' : '';
     this.blankNodePrefix = this.blankNodePath ? this.baseURLRoot + this.blankNodePath : 'genid:';
+    this.blankNodePrefixLength = this.blankNodePrefix.length;
     this.assetsPath = this.baseURLPath + 'assets/' || options.assetsPath;
     this.protocol = options.protocol;
     if (!this.protocol) {

@@ -14,10 +14,9 @@ class Datasource extends EventEmitter {
 
     // Set the options
     options = options || {};
-    let urlData = options.urlData || new UrlData();
+    this.urlData = options.urlData || new UrlData();
     let path = (options.path || '').replace(/^\//, '');
-    this._datasourcePath = urlData.baseURLPath + encodeURI(path);
-    this._blankNodePrefix = urlData.blankNodePath || 'genid:';
+    this._datasourcePath = this.urlData.baseURLPath + encodeURI(path);
     this._skolemizeBlacklist = options.skolemizeBlacklist || {};
     this.title = options.title;
     this.id = options.id;
@@ -27,14 +26,12 @@ class Datasource extends EventEmitter {
       this.hide = true;
     this.description = options.description;
     this.path = this._datasourcePath;
-    this.url = urlData.baseURLRoot + this._datasourcePath + '#dataset';
+    this.url = this.urlData.baseURLRoot + this._datasourcePath + '#dataset';
     this.license = options.license;
     this.licenseUrl = options.licenseUrl;
     this.copyright = options.copyright;
     this.homepage = options.homepage;
     this._request = options.request || require('request');
-    this._blankNodePrefix = options.blankNodePrefix || this._blankNodePrefix;
-    this._blankNodePrefixLength = this._blankNodePrefix.length;
     this.dataFactory = options.dataFactory;
     if (options.graph) {
       this._graph = this.dataFactory.namedNode(options.graph);
@@ -121,12 +118,12 @@ class Datasource extends EventEmitter {
     query = { ...query };
 
     // Translate blank nodes IRIs in the query to blank nodes
-    let blankNodePrefix = this._blankNodePrefix, blankNodePrefixLength = this._blankNodePrefixLength;
-    if (query.subject && query.subject.value.indexOf(blankNodePrefix) === 0)
+    let blankNodePrefix = this.urlData.blankNodePrefix, blankNodePrefixLength = this.urlData.blankNodePrefixLength;
+    if (query.subject && query.subject.termType === 'NamedNode' && query.subject.value.indexOf(blankNodePrefix) === 0)
       query.subject = this.dataFactory.blankNode(query.subject.value.substr(blankNodePrefixLength));
-    if (query.object  && query.object.value.indexOf(blankNodePrefix) === 0)
+    if (query.object && query.object.termType === 'NamedNode'  && query.object.value.indexOf(blankNodePrefix) === 0)
       query.object  = this.dataFactory.blankNode(query.object.value.substr(blankNodePrefixLength));
-    if (query.graph   && query.graph.value.indexOf(blankNodePrefix) === 0)
+    if (query.graph && query.graph.termType === 'NamedNode'   && query.graph.value.indexOf(blankNodePrefix) === 0)
       query.graph   = this.dataFactory.blankNode(query.graph.value.substr(blankNodePrefixLength));
 
     // Force the default graph if QPF support is disable

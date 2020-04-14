@@ -2,6 +2,7 @@
 let HdtDatasource = require('../../').datasources.HdtDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
+    UrlData = require('@ldf/core').UrlData,
     path = require('path'),
     dataFactory = require('n3').DataFactory,
     RdfString = require('rdf-string');
@@ -149,7 +150,7 @@ describe('HdtDatasource', () => {
       datasource = new HdtDatasource({
         dataFactory,
         file: exampleHdtFileWithBlanks,
-        blankNodePrefix: 'http://example.org/.well-known/genid/',
+        urlData: new UrlData({ baseURL: 'http://example.org/' }),
       });
       datasource.initialize();
       datasource.on('initialized', done);
