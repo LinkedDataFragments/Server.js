@@ -1,20 +1,12 @@
 sudo: required
 services:
   - docker
-language: node_js
-matrix:
-  include:
-    - node_js: '10'
-    - node_js: '12'
-    - node_js: '14'
-    - node_js: 'lts/*'
-    - node_js: 'node'
-      env: DOCUMENTATION_BUILD=true DOCKER_BUILD=true
+import: rubensworks/travis-presets:node-base.yml@master
 install: yarn install --pure-lockfile
 script:
   - yarn run lint
   - yarn test
-  - if [ "$DOCKER_BUILD" = "true" ]; then ( sh -c "`curl -fsSl https://raw.githubusercontent.com/rubensworks/lerna-docker/master/install.sh`" && ~/.lerna-docker/bin/lerna-docker linkeddatafragments build ) fi
+  - if [ "$NODE_MAIN" = "true" ]; then ( sh -c "`curl -fsSl https://raw.githubusercontent.com/rubensworks/lerna-docker/master/install.sh`" && ~/.lerna-docker/bin/lerna-docker linkeddatafragments build ) fi
 after_success:
   - yarn run coveralls
 env:
@@ -36,7 +28,7 @@ deploy:
     on:
       tags: false
       branch: master
-      node_js: "node"
+      condition: $NODE_MAIN = true
       os: "linux"
   - provider: script
     skip-cleanup: true
@@ -44,5 +36,5 @@ deploy:
     on:
       tags: true
       all_branches: true
-      node_js: "node"
+      condition: $NODE_MAIN = true
       os: "linux"
