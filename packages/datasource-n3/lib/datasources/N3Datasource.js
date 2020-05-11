@@ -16,7 +16,7 @@ class N3Datasource extends MemoryDatasource {
   // Retrieves all quads from the document
   _getAllQuads(addQuad, done) {
     let document = this._fetch({ url: this._url, headers: { accept: ACCEPT } }, done);
-    N3Parser._resetBlankNodeIds();
+    N3Parser._resetBlankNodePrefix();
     new N3Parser({ factory: this.dataFactory }).parse(document, (error, quad) => {
       quad ? addQuad(quad) : done(error);
     });
