@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.0.8"></a>
+## [v3.0.8](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.7...v3.0.8) - 2020-05-11
+
+### Fixed
+* [Fix crash due to changed function name in N3.js](https://github.com/LinkedDataFragments/Server.js/commit/ea3e7632cfd47e0ae9015f4715a15d40c61e87c8)
+
 <a name="v3.0.7"></a>
 ## [v3.0.7](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.6...v3.0.7) - 2020-04-14
 
