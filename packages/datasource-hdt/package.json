@@ -38,6 +38,6 @@
     "@ldf/core": "^3.0.7"
   },
   "optionalDependencies": {
-    "hdt": "^2.2.2"
+    "hdt": "^3.0.0"
   }
 }
