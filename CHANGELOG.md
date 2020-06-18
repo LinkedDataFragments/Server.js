@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.0.9"></a>
+## [v3.0.9](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.8...v3.0.9) - 2020-06-18
+
+### Changed
+* [Update to HDT-Node 3.x.x](https://github.com/LinkedDataFragments/Server.js/commit/7ae079452f510f13631770282345688828dcc085)
+
 <a name="v3.0.8"></a>
 ## [v3.0.8](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.7...v3.0.8) - 2020-05-11
 
