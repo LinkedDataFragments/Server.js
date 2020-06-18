@@ -5,7 +5,6 @@ let Datasource = require('@ldf/core').datasources.Datasource,
     fs = require('fs'),
     path = require('path'),
     N3Parser = require('n3').Parser,
-    RdfString = require('rdf-string'),
     spawn = require('child_process').spawn;
 
 let hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
@@ -51,12 +50,12 @@ class ExternalHdtDatasource extends Datasource {
         ], { stdio: ['ignore', 'pipe', 'ignore'] });
     // Parse the result triples
     hdt.stdout.setEncoding('utf8');
-    let parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true, dataFactory = this.dataFactory;
+    let parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true;
     parser.parse(hdt.stdout, (error, triple) => {
       if (error)
         destination.emit('error', new Error('Invalid query result: ' + error.message));
       else if (triple)
-        tripleCount++, destination._push(RdfString.stringQuadToQuad(triple, dataFactory));
+        tripleCount++, destination._push(triple);
       else {
         // Ensure the estimated total count is as least as large as the number of triples
         if (tripleCount && estimatedTotalCount < offset + tripleCount)

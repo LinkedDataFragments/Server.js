@@ -3,8 +3,7 @@
 
 let Datasource = require('@ldf/core').datasources.Datasource,
     hdt = require('hdt'),
-    ExternalHdtDatasource = require('./ExternalHdtDatasource'),
-    RdfString = require('rdf-string');
+    ExternalHdtDatasource = require('./ExternalHdtDatasource');
 
 // Creates a new HdtDatasource
 class HdtDatasource extends Datasource {
@@ -21,7 +20,7 @@ class HdtDatasource extends Datasource {
 
   // Loads the HDT datasource
   async _initialize() {
-    this._hdtDocument = await hdt.fromFile(this._hdtFile);
+    this._hdtDocument = await hdt.fromFile(this._hdtFile, { dataFactory: this.dataFactory });
   }
 
   // Writes the results of the query to the given quad stream
@@ -32,10 +31,7 @@ class HdtDatasource extends Datasource {
       destination.close();
       return;
     }
-    let dataFactory = this.dataFactory;
-    this._hdtDocument.searchTriples(query.subject ? RdfString.termToString(query.subject) : null,
-      query.predicate ? RdfString.termToString(query.predicate) : null,
-      query.object ? RdfString.termToString(query.object) : null,
+    this._hdtDocument.searchTriples(query.subject, query.predicate, query.object,
       { limit: query.limit, offset: query.offset })
       .then((result) => {
         let triples = result.triples,
@@ -48,7 +44,7 @@ class HdtDatasource extends Datasource {
         destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
         // Add the triples to the output
         for (let i = 0; i < tripleCount; i++)
-          destination._push(RdfString.stringQuadToQuad(triples[i], dataFactory));
+          destination._push(triples[i]);
         destination.close();
       },
       (error) => { destination.emit('error', error); });
