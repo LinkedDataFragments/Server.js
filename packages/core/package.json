@@ -35,7 +35,7 @@
     "node": ">=10.0"
   },
   "dependencies": {
-    "asynciterator": "^2.0.1",
+    "asynciterator": "^3.0.0",
     "componentsjs": "^3.4.0",
     "forwarded-parse": "^2.1.0",
     "jsonld-streaming-serializer": "^1.1.0",
