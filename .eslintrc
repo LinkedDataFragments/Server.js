@@ -1,8 +1,12 @@
 {
   env: {
     node: true,
-    es6: true,
+    es6: true
   },
+
+  plugins: [
+    'eslint-plugin-import'
+  ],
 
   parserOptions: {
     ecmaVersion: 9,
@@ -10,7 +14,7 @@
   },
 
   globals: {
-    Promise: true,
+    Promise: true
   },
 
   rules: {
@@ -181,5 +185,18 @@
     space-unary-ops: 2,
     spaced-comment: [2, "always", { block: { markers: ["!"] } }],
     wrap-regex: 0,
+
+    // Imports
+    "import/no-extraneous-dependencies": "error"
   },
+
+  overrides: [
+    {
+      // Specific rules for test files
+      files: [ "packages/**/test/**/*-test.js" ],
+      rules: {
+        "import/no-extraneous-dependencies": "off"
+      }
+    }
+  ]
 }
