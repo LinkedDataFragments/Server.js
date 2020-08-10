@@ -1,7 +1,7 @@
 {
   "name": "@ldf/core",
   "description": "Linked Data Fragments Server - Core",
-  "version": "3.0.7",
+  "version": "3.1.0",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core",
   "lsd:components": "components/components.jsonld",
   "lsd:contexts": {
@@ -43,9 +43,9 @@
     "mime": "^2.4.4",
     "n3": "^1.3.5",
     "negotiate": "^1.0.1",
-    "rdf-string": "^1.3.1",
     "q": "^1.4.1",
     "qejs": "^3.0.5",
+    "rdf-string": "^1.3.1",
     "request": "^2.88.2",
     "uritemplate": "^0.3.4"
   },

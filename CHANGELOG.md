@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.1.0"></a>
+## [v3.1.0](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.9...v3.1.0) - 2020-08-10
+
+### Changed
+* [Update to asynciterator v3, Closes #129](https://github.com/LinkedDataFragments/Server.js/commit/b6e3512ec21bba5cfcac79aee52033034d49583b)
+
+### Fixed
+* [Fix missing rdf-string dependency in core, Closes #131](https://github.com/LinkedDataFragments/Server.js/commit/70021d26a4112a02278801ffff604ee803114369)
+
 <a name="v3.0.9"></a>
 ## [v3.0.9](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.8...v3.0.9) - 2020-06-18
 

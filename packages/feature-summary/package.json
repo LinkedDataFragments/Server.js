@@ -1,7 +1,7 @@
 {
   "name": "@ldf/feature-summary",
   "description": "Linked Data Fragments Server - Memento",
-  "version": "3.0.7",
+  "version": "3.1.0",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-summary",
   "lsd:components": "components/components.jsonld",
   "lsd:contexts": {
@@ -40,6 +40,6 @@
     "@ldf/core": "^3.0.0"
   },
   "devDependencies": {
-    "@ldf/core": "^3.0.7"
+    "@ldf/core": "^3.1.0"
   }
 }
