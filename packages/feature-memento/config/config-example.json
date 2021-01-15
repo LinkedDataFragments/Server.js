@@ -5,7 +5,7 @@
 
   "datasources": [
     {
-      "@id": "ex:myDatasourceVersion1",
+      "@id": "urn:ldf-server:myDatasourceVersion1",
       "@type": "SparqlDatasource",
       "datasourceTitle": "My SPARQL source",
       "description": "My datasource with a SPARQL-endpoint back-end",
@@ -13,7 +13,7 @@
       "sparqlEndpoint": "https://dbpedia.org/sparql"
     },
     {
-      "@id": "ex:myDatasourceVersion2",
+      "@id": "urn:ldf-server:myDatasourceVersion2",
       "@type": "TurtleDatasource",
       "datasourceTitle": "My Turtle file",
       "description": "My dataset with a Turtle back-end",
@@ -28,12 +28,12 @@
       "timegatePath": "mydatasource",
       "versions": [
         {
-          "mementoDatasource": "ex:myDatasourceVersion1",
+          "mementoDatasource": "urn:ldf-server:myDatasourceVersion1",
           "versionStart": "2014-09-14T11:59:59Z",
           "versionEnd": "2015-04-15T00:00:00Z"
         },
         {
-          "mementoDatasource": "ex:myDatasourceVersion2",
+          "mementoDatasource": "urn:ldf-server:myDatasourceVersion2",
           "versionStart": "2015-06-15T11:59:59Z",
           "versionEnd": "2016-09-15T00:00:00Z",
           "mementoBaseURL": "http://fragments.mementodepot.org/dbpedia_201510"

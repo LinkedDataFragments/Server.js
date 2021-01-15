@@ -23,15 +23,15 @@ Example:
 
   "datasources": [
     {
-      "@id": "ex:myCompositeDatasource",
+      "@id": "urn:ldf-server:myCompositeDatasource",
       "@type": "CompositeDatasource",
       "datasourceTitle": "Composite",
       "description": "An example composite datasource",
       "datasourcePath": "composite",
-      "compose": [ "ex:myHdtDatasource", "ex:mySparqlDatasource" ]
+      "compose": [ "urn:ldf-server:myHdtDatasource", "urn:ldf-server:mySparqlDatasource" ]
     },
     {
-      "@id": "ex:myHdtDatasource",
+      "@id": "urn:ldf-server:myHdtDatasource",
       "@type": "HdtDatasource",
       "datasourceTitle": "DBpedia 2014",
       "description": "DBpedia 2014 with an HDT back-end",
@@ -39,7 +39,7 @@ Example:
       "hdtFile": "data/dbpedia2014.hdt"
     },
     {
-      "@id": "ex:mySparqlDatasource",
+      "@id": "urn:ldf-server:mySparqlDatasource",
       "@type": "SparqlDatasource",
       "datasourceTitle": "DBpedia (Virtuoso)",
       "description": "DBpedia with a Virtuoso back-end",

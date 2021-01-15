@@ -111,7 +111,7 @@ Example:
 
   "datasources": [
     {
-      "@id": "ex:myDatasourceVersion1",
+      "@id": "urn:ldf-server:myDatasourceVersion1",
       "@type": "SparqlDatasource",
       "datasourceTitle": "My SPARQL source",
       "description": "My datasource with a SPARQL-endpoint back-end",
@@ -125,7 +125,7 @@ Example:
       "homepage": "http://example.org/alice"
     },
     {
-      "@id": "ex:myDatasourceVersion2",
+      "@id": "urn:ldf-server:myDatasourceVersion2",
       "@type": "TurtleDatasource",
       "datasourceTitle": "My Turtle file",
       "description": "My dataset with a Turtle back-end",
@@ -157,7 +157,7 @@ Example:
 
   "dereference": [
     {
-      "dereferenceDatasource": "ex:myDatasourceVersion2",
+      "dereferenceDatasource": "urn:ldf-server:myDatasourceVersion2",
       "dereferencePath": "/resource/"
     }
   ],
@@ -199,22 +199,22 @@ For example:
 
   "controllers": [
     {
-      "@id": "ex:myAssetsController",
+      "@id": "urn:ldf-server:myAssetsController",
       "@type": "AssetsController"
     },
     {
-      "@id": "ex:myDereferenceController",
+      "@id": "urn:ldf-server:myDereferenceController",
       "@type": "DereferenceController"
     },
     {
-      "@id": "ex:myNotFoundController",
+      "@id": "urn:ldf-server:myNotFoundController",
       "@type": "NotFoundController"
     }
   ],
 
   "datasources": [
     {
-      "@id": "ex:myIndexDatasource",
+      "@id": "urn:ldf-server:myIndexDatasource",
       "@type": "IndexDatasource",
       "datasourceTitle": "dataset index",
       "datasourcePath": "/",
@@ -233,34 +233,34 @@ For example:
 
   "routers": [
     {
-      "@id": "ex:myDatasourceRouter",
+      "@id": "urn:ldf-server:myDatasourceRouter",
       "@type": "DatasourceRouter"
     },
     {
-      "@id": "ex:myPageRouter",
+      "@id": "urn:ldf-server:myPageRouter",
       "@type": "PageRouter"
     }
   ],
 
   "views": [
     {
-      "@id": "ex:myErrorHtmlView",
+      "@id": "urn:ldf-server:myErrorHtmlView",
       "@type": "ErrorHtmlView"
     },
     {
-      "@id": "ex:myErrorRdfView",
+      "@id": "urn:ldf-server:myErrorRdfView",
       "@type": "ErrorRdfView"
     },
     {
-      "@id": "ex:myForbiddenHtmlView",
+      "@id": "urn:ldf-server:myForbiddenHtmlView",
       "@type": "ForbiddenHtmlView"
     },
     {
-      "@id": "ex:myNotFoundHtmlView",
+      "@id": "urn:ldf-server:myNotFoundHtmlView",
       "@type": "NotFoundHtmlView"
     },
     {
-      "@id": "ex:myNotFoundRdfView",
+      "@id": "urn:ldf-server:myNotFoundRdfView",
       "@type": "NotFoundRdfView"
     }
   ]

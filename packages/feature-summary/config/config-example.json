@@ -5,7 +5,7 @@
 
   "datasources": [
     {
-      "@id": "ex:myDatasourceVersion1",
+      "@id": "urn:ldf-server:myDatasourceVersion1",
       "@type": "SparqlDatasource",
       "datasourceTitle": "My SPARQL source",
       "description": "My datasource with a SPARQL-endpoint back-end",

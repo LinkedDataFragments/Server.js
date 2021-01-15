@@ -1,6 +1,6 @@
 {
   "@context": [
-    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^3.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^4.0.0/components/context.jsonld",
     {
       "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
       "ldfc": "npmd:@ldf/core/",
@@ -72,7 +72,7 @@
       "protocol": "ldfc:Server#protocol",
       "datasource": "ldfc:Server#datasource",
       "datasources": "ldfc:Server#datasource",
-      "prefixes": "ldfc:Server#prefixes",
+      "prefixes": "ldfc:Server#prefix",
       "prefix": "rdfa:prefix",
       "uri": "rdfa:uri",
       "router": "ldfc:Server#router",

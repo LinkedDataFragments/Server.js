@@ -24,7 +24,7 @@ Example:
 
   "datasources": [
     {
-      "@id": "ex:myHdtDatasource",
+      "@id": "urn:ldf-server:myHdtDatasource",
       "@type": "HdtDatasource",
       "datasourceTitle": "My HDT file",
       "description": "My dataset with an HDT back-end",

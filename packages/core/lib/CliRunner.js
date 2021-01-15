@@ -2,7 +2,7 @@
 /* Logic for starting an LDF server with a given config from the command line. */
 
 let cluster = require('cluster'),
-    ComponentsLoader = require('componentsjs').Loader;
+    ComponentsManager = require('componentsjs').ComponentsManager;
 
 // Run function for starting the server from the command line
 function runCli(moduleRootPath) {
@@ -21,38 +21,27 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
       cliWorkers = parseInt(args[2], 10),
       configUri = args[3] || componentConfigUri || 'urn:ldf-server:my';
 
-  let loader = new ComponentsLoader(properties);
-  loader.registerAvailableModuleResources()
-    .then(() => {
-      // Start up a cluster master
-      if (cluster.isMaster) {
-        return loader.getConfigConstructorFromUrl(configUri, args[0])
-          .then((constructor) => {
-            return constructor.makeArguments(true).then((args) => {
-              startClusterMaster(args[0]);
-            });
-          })
-          .catch((e) => {
-            stderr.write('Config error:\n');
-            stderr.write(e + '\n');
-            process.exit(1);
-          });
-      }
-      else {
-        return loader.instantiateFromUrl(configUri, args[0])
-          .then((worker) => {
+  ComponentsManager.build({
+    ...properties,
+    configLoader: (registry) => registry.register(args[0]),
+  })
+    .then((manager) => {
+      return manager.instantiate(configUri)
+        .then((worker) => {
+          if (cluster.isMaster)
+            startClusterMaster(worker._config);
+          else
             worker.run(cliPort);
-          })
-          .catch((e) => {
-            stderr.write('Instantiation error:\n');
-            stderr.write(e + '\n');
-            process.exit(1);
-          });
-      }
+        })
+        .catch((e) => {
+          stderr.write('Instantiation error:\n');
+          stderr.write(e.stack + '\n');
+          process.exit(1);
+        });
     })
     .catch((e) => {
       stderr.write('Component definition error:\n');
-      stderr.write(e + '\n');
+      stderr.write(e.stack + '\n');
       process.exit(1);
     });
 

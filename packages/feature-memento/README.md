@@ -17,7 +17,7 @@ This time gate can contain several version, each pointing to a certain datasourc
 The version time range is identified using the `versionStart` and `versionEnd` timestamps.
 Each timestamp must be in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
 
-For example, the datasources `ex:myDbpedia2015` and `ex:myDbpedia2014` are mementos of DBpedia valid in 2014 and 2015:
+For example, the datasources `urn:ldf-server:myDbpedia2015` and `urn:ldf-server:myDbpedia2014` are mementos of DBpedia valid in 2014 and 2015:
 
 ```json
 {
@@ -26,13 +26,13 @@ For example, the datasources `ex:myDbpedia2015` and `ex:myDbpedia2014` are memen
       "timegatePath": "dbpedia",
       "versions": [
         {
-          "mementoDatasource": "ex:myDbpedia2015",
+          "mementoDatasource": "urn:ldf-server:myDbpedia2015",
           "start": "2014-09-14T11:59:59Z",
           "end": "2015-04-15T00:00:00Z",
           "originalBaseURL": "http://fragments.mementodepot.org/dbpedia_201510"
         },
         {
-          "mementoDatasource": "ex:myDbpedia2014",
+          "mementoDatasource": "urn:ldf-server:myDbpedia2014",
           "start": "2013-06-15T11:59:59Z",
           "end": "2014-09-15T00:00:00Z"
         }
@@ -94,7 +94,7 @@ Example:
 
   "datasources": [
     {
-      "@id": "ex:myDatasourceVersion1",
+      "@id": "urn:ldf-server:myDatasourceVersion1",
       "@type": "SparqlDatasource",
       "datasourceTitle": "My SPARQL source",
       "description": "My datasource with a SPARQL-endpoint back-end",
@@ -102,7 +102,7 @@ Example:
       "sparqlEndpoint": "https://dbpedia.org/sparql"
     },
     {
-      "@id": "ex:myDatasourceVersion2",
+      "@id": "urn:ldf-server:myDatasourceVersion2",
       "@type": "TurtleDatasource",
       "datasourceTitle": "My Turtle file",
       "description": "My dataset with a Turtle back-end",
@@ -117,12 +117,12 @@ Example:
       "timegatePath": "mydatasource",
       "versions": [
         {
-          "mementoDatasource": "ex:myDatasourceVersion1",
+          "mementoDatasource": "urn:ldf-server:myDatasourceVersion1",
           "versionStart": "2014-09-14T11:59:59Z",
           "versionEnd": "2015-04-15T00:00:00Z"
         },
         {
-          "mementoDatasource": "ex:myDatasourceVersion2",
+          "mementoDatasource": "urn:ldf-server:myDatasourceVersion2",
           "versionStart": "2015-06-15T11:59:59Z",
           "versionEnd": "2016-09-15T00:00:00Z",
           "mementoBaseURL": "http://fragments.mementodepot.org/dbpedia_201510"
@@ -152,14 +152,14 @@ For example:
 
   "controllers": [
     {
-      "@id": "ex:myTimegateController",
+      "@id": "urn:ldf-server:myTimegateController",
       "@type": "TimegateController"
     },
     {
-      "@id": "ex:myQuadPatternFragmentsController", // This should refer to your existing QuadPatternFragmentsController
+      "@id": "urn:ldf-server:myQuadPatternFragmentsController", // This should refer to your existing QuadPatternFragmentsController
       "@type": "QuadPatternFragmentsController",
       "qpfControllerExtension": {
-        "@id": "ex:myMementoControllerExtension",
+        "@id": "urn:ldf-server:myMementoControllerExtension",
         "@type": "MementoControllerExtension"
       }
     }
@@ -167,10 +167,10 @@ For example:
 
   "views": [
     {
-      "@id": "ex:myQpfHtmlView", // This should refer to your existing QpfHtmlView
+      "@id": "urn:ldf-server:myQpfHtmlView", // This should refer to your existing QpfHtmlView
       "@type": "QpfHtmlView",
       "viewExtension": {
-        "@id": "ex:myMementoQpfHtmlView",
+        "@id": "urn:ldf-server:myMementoQpfHtmlView",
         "@type": "MementoQpfHtmlView"
       }
     }

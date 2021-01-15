@@ -26,7 +26,7 @@ Example:
 
   "datasources": [
     {
-      "@id": "ex:myTurtleDatasource",
+      "@id": "urn:ldf-server:myTurtleDatasource",
       "@type": "TurtleDatasource",
       "datasourceTitle": "My Turtle file",
       "description": "My dataset with a Turtle back-end",

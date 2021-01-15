@@ -38,25 +38,25 @@ For example:
 
   "controllers": [
     {
-      "@id": "ex:myQuadPatternFragmentsController",
+      "@id": "urn:ldf-server:myQuadPatternFragmentsController",
       "@type": "QuadPatternFragmentsController"
     }
   ],
 
   "routers": [
     {
-      "@id": "ex:myQuadPatternRouter",
+      "@id": "urn:ldf-server:myQuadPatternRouter",
       "@type": "QuadPatternRouter"
     }
   ],
 
   "views": [
     {
-      "@id": "ex:myQpfHtmlView",
+      "@id": "urn:ldf-server:myQpfHtmlView",
       "@type": "QpfHtmlView"
     },
     {
-      "@id": "ex:myQpfRdfView",
+      "@id": "urn:ldf-server:myQpfRdfView",
       "@type": "QpfRdfView"
     }
   ]

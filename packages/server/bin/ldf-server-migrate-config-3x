@@ -156,5 +156,5 @@ function migrateConfig(configFile, updateFile) {
 }
 
 function datasourcePathToId(datasourcePath) {
-  return 'ex:myDatasource' + datasourcePath;
+  return 'urn:ldf-server:myDatasource' + datasourcePath;
 }

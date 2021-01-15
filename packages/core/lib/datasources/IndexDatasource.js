@@ -14,6 +14,7 @@ class IndexDatasource extends MemoryDatasource {
     super(options);
     this._datasources = options ? options.datasources : {};
     this.role = 'index';
+    delete this._datasources['/'];
   }
 
   // Creates quads for each data source

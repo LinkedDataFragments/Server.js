@@ -14,7 +14,7 @@
 
   "datasources": [
     {
-      "@id": "ex:myHdtDatasource",
+      "@id": "urn:ldf-server:myHdtDatasource",
       "@type": "HdtDatasource",
       "datasourceTitle": "DBpedia 2014",
       "description": "DBpedia 2014 with an HDT back-end",
@@ -22,7 +22,7 @@
       "hdtFile": "data/dbpedia2014.hdt"
     },
     {
-      "@id": "ex:mySparqlDatasource",
+      "@id": "urn:ldf-server:mySparqlDatasource",
       "@type": "SparqlDatasource",
       "datasourceTitle": "DBpedia (Virtuoso)",
       "description": "DBpedia with a Virtuoso back-end",

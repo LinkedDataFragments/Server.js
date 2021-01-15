@@ -52,28 +52,28 @@ For example:
 
   "controllers": [
     {
-      "@id": "ex:mySummaryController",
+      "@id": "urn:ldf-server:mySummaryController",
       "@type": "SummaryController"
     }
   ],
 
   "views": [
     {
-      "@id": "ex:myQpfHtmlView", // This should refer to your existing QpfHtmlView
+      "@id": "urn:ldf-server:myQpfHtmlView", // This should refer to your existing QpfHtmlView
       "viewExtension": {
-        "@id": "ex:mySummaryQpfHtmlView",
+        "@id": "urn:ldf-server:mySummaryQpfHtmlView",
         "@type": "SummaryQpfHtmlView"
       }
     },
     {
-      "@id": "ex:myQpfRdfView", // This should refer to your existing QpfRdfView
+      "@id": "urn:ldf-server:myQpfRdfView", // This should refer to your existing QpfRdfView
       "viewExtension": {
-        "@id": "ex:mySummaryQpfRdfView",
+        "@id": "urn:ldf-server:mySummaryQpfRdfView",
         "@type": "SummaryQpfRdfView"
       }
     },
     {
-      "@id": "ex:mySummaryRdfView",
+      "@id": "urn:ldf-server:mySummaryRdfView",
       "@type": "SummaryRdfView"
     }
   ]

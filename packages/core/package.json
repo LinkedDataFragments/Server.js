@@ -2,14 +2,7 @@
   "name": "@ldf/core",
   "description": "Linked Data Fragments Server - Core",
   "version": "3.1.0",
-  "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core",
-  "lsd:components": "components/components.jsonld",
-  "lsd:contexts": {
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/context.jsonld": "components/context.jsonld"
-  },
-  "lsd:importPaths": {
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/core/^3.0.0/components/": "components/"
-  },
+  "lsd:module": true,
   "license": "MIT",
   "main": "index.js",
   "publishConfig": {
@@ -36,7 +29,7 @@
   },
   "dependencies": {
     "asynciterator": "^3.0.0",
-    "componentsjs": "^3.4.0",
+    "componentsjs": "^4.0.4",
     "forwarded-parse": "^2.1.0",
     "jsonld-streaming-serializer": "^1.1.0",
     "lodash": "^4.0.0",

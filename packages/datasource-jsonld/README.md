@@ -22,7 +22,7 @@ Example:
 
   "datasources": [
     {
-      "@id": "ex:myJsonLdDatasource",
+      "@id": "urn:ldf-server:myJsonLdDatasource",
       "@type": "JsonLdDatasource",
       "datasourceTitle": "My JSON-LD file",
       "description": "My dataset with a JSON-LD back-end",

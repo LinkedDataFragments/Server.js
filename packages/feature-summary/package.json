@@ -2,14 +2,7 @@
   "name": "@ldf/feature-summary",
   "description": "Linked Data Fragments Server - Memento",
   "version": "3.1.0",
-  "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-summary",
-  "lsd:components": "components/components.jsonld",
-  "lsd:contexts": {
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-summary/^3.0.0/components/context.jsonld": "components/context.jsonld"
-  },
-  "lsd:importPaths": {
-    "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/feature-summary/^3.0.0/components/": "components/"
-  },
+  "lsd:module": true,
   "license": "MIT",
   "bin": {
     "generate-summary": "./bin/generate-summary"

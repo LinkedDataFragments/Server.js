@@ -24,8 +24,7 @@
           "@id": "ldffq:Controller/QuadPatternFragments#controllerExtension",
           "comment": "An extension for this controller",
           "range": {
-            "@id": "ldfc:ControllerExtension",
-            "extends": "AbstractClass"
+            "@id": "ldfc:ControllerExtension"
           }
         }
       ],

@@ -23,7 +23,7 @@ Example:
 
   "datasources": [
     {
-      "@id": "ex:mySparqlDatasource",
+      "@id": "urn:ldf-server:mySparqlDatasource",
       "@type": "SparqlDatasource",
       "datasourceTitle": "My SPARQL source",
       "description": "My datasource with a SPARQL-endpoint back-end",

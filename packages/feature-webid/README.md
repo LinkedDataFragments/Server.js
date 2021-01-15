@@ -33,10 +33,10 @@ For example:
 
   "controllers": [
     {
-      "@id": "ex:myQuadPatternFragmentsController", // This should refer to your existing QuadPatternFragmentsController
+      "@id": "urn:ldf-server:myQuadPatternFragmentsController", // This should refer to your existing QuadPatternFragmentsController
       "@type": "QuadPatternFragmentsController",
       "qpfControllerExtension": {
-        "@id": "ex:myWebIdControllerExtension",
+        "@id": "urn:ldf-server:myWebIdControllerExtension",
         "@type": "WebIdControllerExtension"
       }
     }

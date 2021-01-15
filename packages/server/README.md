@@ -65,7 +65,7 @@ and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
 
   "datasources": [
     {
-      "@id": "ex:myHdtDatasource",
+      "@id": "urn:ldf-server:myHdtDatasource",
       "@type": "HdtDatasource",
       "datasourceTitle": "DBpedia 2014",
       "description": "DBpedia 2014 with an HDT back-end",
@@ -73,7 +73,7 @@ and a [SPARQL endpoint](http://www.w3.org/TR/sparql11-protocol/) as sources:
       "hdtFile": "data/dbpedia2014.hdt"
     },
     {
-      "@id": "ex:mySparqlDatasource",
+      "@id": "urn:ldf-server:mySparqlDatasource",
       "@type": "SparqlDatasource",
       "datasourceTitle": "DBpedia (Virtuoso)",
       "description": "DBpedia with a Virtuoso back-end",
