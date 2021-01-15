@@ -1,7 +1,7 @@
 {
   "name": "@ldf/feature-summary",
   "description": "Linked Data Fragments Server - Memento",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "lsd:module": true,
   "license": "MIT",
   "bin": {
@@ -33,6 +33,6 @@
     "@ldf/core": "^3.0.0"
   },
   "devDependencies": {
-    "@ldf/core": "^3.1.0"
+    "@ldf/core": "^3.2.0"
   }
 }

@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.2.0"></a>
+## [v3.2.0](https://github.com/LinkedDataFragments/Server.js/compare/v3.1.0...v3.2.0) - 2021-01-15
+
+### Changed
+* [Update to Components.js 4](https://github.com/LinkedDataFragments/Server.js/commit/e90db5c3e439259466fa0cf789e2c4b028b584f2)
+
 <a name="v3.1.0"></a>
 ## [v3.1.0](https://github.com/LinkedDataFragments/Server.js/compare/v3.0.9...v3.1.0) - 2020-08-10
 

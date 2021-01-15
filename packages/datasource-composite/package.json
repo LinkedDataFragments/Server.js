@@ -1,7 +1,7 @@
 {
   "name": "@ldf/datasource-composite",
   "description": "Linked Data Fragments Server - Composite Datasource",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "lsd:module": true,
   "license": "MIT",
   "main": "index.js",
@@ -28,6 +28,6 @@
     "@ldf/core": "^3.0.0"
   },
   "devDependencies": {
-    "@ldf/core": "^3.1.0"
+    "@ldf/core": "^3.2.0"
   }
 }
