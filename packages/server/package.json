@@ -27,15 +27,15 @@
     "lint": "eslint bin/* lib test"
   },
   "dependencies": {
-    "@ldf/core": "^3.2.0",
-    "@ldf/datasource-composite": "^3.2.0",
-    "@ldf/datasource-hdt": "^3.2.0",
-    "@ldf/datasource-jsonld": "^3.2.0",
-    "@ldf/datasource-n3": "^3.2.0",
-    "@ldf/datasource-sparql": "^3.2.0",
-    "@ldf/feature-memento": "^3.2.0",
-    "@ldf/feature-qpf": "^3.2.0",
-    "@ldf/feature-summary": "^3.2.0",
-    "@ldf/preset-qpf": "^3.2.0"
+    "@ldf/core": "3.2.0",
+    "@ldf/datasource-composite": "3.2.0",
+    "@ldf/datasource-hdt": "3.2.0",
+    "@ldf/datasource-jsonld": "3.2.0",
+    "@ldf/datasource-n3": "3.2.0",
+    "@ldf/datasource-sparql": "3.2.0",
+    "@ldf/feature-memento": "3.2.0",
+    "@ldf/feature-qpf": "3.2.0",
+    "@ldf/feature-summary": "3.2.0",
+    "@ldf/preset-qpf": "3.2.0"
   }
 }
