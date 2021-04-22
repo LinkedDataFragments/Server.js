@@ -137,18 +137,25 @@ class Datasource extends EventEmitter {
     // Transform the received quads
     let destination = new BufferedIterator(), outputQuads, graph = this._graph;
     outputQuads = destination.map((quad) => {
+      let transformedSubject, transformedObject, transformedGraph;
       // Translate blank nodes in the result to blank node IRIs.
       if (quad.subject && quad.subject.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.subject.value])
         quad.subject = this.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
       if (quad.object  && quad.object.termType  === 'BlankNode' && !this._skolemizeBlacklist[quad.object.value])
         quad.object  = this.dataFactory.namedNode(blankNodePrefix + quad.object.value);
-      if (quad.graph   && quad.graph.termType !== 'DefaultGraph') {
-        if (quad.graph.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.graph.value])
-          quad.graph = this.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
-      }
+      if (quad.graph && quad.graph.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.graph.value])
+        transformedGraph = this.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
       // If a custom default graph was set, move default graph triples there.
-      quad.graph = quad.graph && quad.graph.termType !== 'DefaultGraph' ? quad.graph : (graph || quad.graph);
-      return quad;
+      else if (graph && (!quad.graph || quad.graph.termType === 'DefaultGraph'))
+        transformedGraph = graph;
+
+      const transformedQuad = this.dataFactory.quad(
+        transformedSubject || quad.subject,
+        quad.predicate,
+        transformedObject || quad.object,
+        transformedGraph || quad.graph,
+      );
+      return transformedQuad;
     });
     outputQuads.copyProperties(destination, ['metadata']);
     onError && outputQuads.on('error', onError);
