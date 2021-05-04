@@ -149,13 +149,12 @@ class Datasource extends EventEmitter {
       else if (graph && (!quad.graph || quad.graph.termType === 'DefaultGraph'))
         transformedGraph = graph;
 
-      const transformedQuad = this.dataFactory.quad(
+      return this.dataFactory.quad(
         transformedSubject || quad.subject,
         quad.predicate,
         transformedObject || quad.object,
         transformedGraph || quad.graph,
       );
-      return transformedQuad;
     });
     outputQuads.copyProperties(destination, ['metadata']);
     onError && outputQuads.on('error', onError);
