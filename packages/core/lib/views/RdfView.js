@@ -86,8 +86,9 @@ class RdfView extends View {
           metadataGraph = settings.metadataGraph;
           writer.addQuad(dataFactory.namedNode(metadataGraph), dataFactory.namedNode(primaryTopic), dataFactory.namedNode(settings.fragmentUrl), dataFactory.namedNode(metadataGraph));
         }
-        quad.graph = quad.graph.termType === 'DefaultGraph' ? (metadataGraph ? dataFactory.namedNode(metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
-        writer.addQuad(quad);
+        const graph = quad.graph.termType === 'DefaultGraph' ? (metadataGraph ? dataFactory.namedNode(metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
+        const newQuad = dataFactory.quad(quad.subject, quad.predicate, quad.object, graph);
+        writer.addQuad(newQuad);
       },
       // Ends the output and flushes the stream
       end: function () {
@@ -117,8 +118,9 @@ class RdfView extends View {
       },
       // Adds the metadata triple to the output
       meta: function (quad) {
-        quad.graph = quad.graph.termType === 'DefaultGraph' ? (settings.metadataGraph  ? dataFactory.namedNode(settings.metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
-        mySerializer.write(quad);
+        const graph = quad.graph.termType === 'DefaultGraph' ? (settings.metadataGraph  ? dataFactory.namedNode(settings.metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
+        const newQuad = dataFactory.quad(quad.subject, quad.predicate, quad.object, graph);
+        mySerializer.write(newQuad);
       },
       // Ends the output and flushes the stream
       end: function () {

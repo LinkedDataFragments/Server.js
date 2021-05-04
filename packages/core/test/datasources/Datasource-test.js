@@ -300,9 +300,9 @@ describe('Datasource', () => {
     });
     datasource.initialize();
     datasource._executeQuery = sinon.spy((query, destination) => {
-      destination._push({ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o1') });
-      destination._push({ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o2'), graph: dataFactory.defaultGraph() });
-      destination._push({ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o3'), graph: dataFactory.namedNode('g') });
+      destination._push(dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o1')));
+      destination._push(dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o2'), dataFactory.defaultGraph()));
+      destination._push(dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o3'), dataFactory.namedNode('g')));
       destination.close();
     });
 
@@ -314,12 +314,14 @@ describe('Datasource', () => {
       let result = datasource.select({ features: { custom: true } }, done), quads = [];
       result.on('data', (q) => { quads.push(q); });
       result.on('end', () => {
-        let matchingquads = [{ subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o1'), graph: dataFactory.namedNode('http://example.org/#mygraph') },
-          { subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o2'), graph: dataFactory.namedNode('http://example.org/#mygraph') },
-          { subject: dataFactory.namedNode('s'), predicate: dataFactory.namedNode('p'), object: dataFactory.namedNode('o3'), graph: dataFactory.namedNode('g') }];
+        let matchingquads = [
+          dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o1'), dataFactory.namedNode('http://example.org/#mygraph')),
+          dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o2'), dataFactory.namedNode('http://example.org/#mygraph')),
+          dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o3'), dataFactory.namedNode('g')),
+        ];
         matchingquads.length.should.be.equal(quads.length);
         for (let i = 0; i < quads.length; i++)
-          matchingquads[i].should.deep.equal(quads[i]);
+          quads[i].should.deep.equal(matchingquads[i]);
         done();
       });
     });

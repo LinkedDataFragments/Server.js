@@ -25,9 +25,9 @@ _:graph hydra:variable "graph";
     dcterms:title "Linked Data Fragment of My data"@en;
     dcterms:description "Triple/Quad Pattern Fragment of the 'My data' dataset containing triples matching the pattern { a ?b ?c ?d }."@en;
     dcterms:source <http://ex.org/data#dataset>;
-    hydra:totalItems "1234"^^xsd:integer;
-    void:triples "1234"^^xsd:integer;
-    hydra:itemsPerPage "100"^^xsd:integer;
+    hydra:totalItems 1234;
+    void:triples 1234;
+    hydra:itemsPerPage 100;
     hydra:first <http://ex.org/data?fragment&page=1>;
     hydra:previous <http://ex.org/data?fragment&page=2>;
     hydra:next <http://ex.org/data?fragment&page=4>.

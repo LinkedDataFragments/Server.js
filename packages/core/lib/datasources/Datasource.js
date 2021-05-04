@@ -140,9 +140,9 @@ class Datasource extends EventEmitter {
       let transformedSubject, transformedObject, transformedGraph;
       // Translate blank nodes in the result to blank node IRIs.
       if (quad.subject && quad.subject.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.subject.value])
-        quad.subject = this.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
+        transformedSubject = this.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
       if (quad.object  && quad.object.termType  === 'BlankNode' && !this._skolemizeBlacklist[quad.object.value])
-        quad.object  = this.dataFactory.namedNode(blankNodePrefix + quad.object.value);
+        transformedObject  = this.dataFactory.namedNode(blankNodePrefix + quad.object.value);
       if (quad.graph && quad.graph.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.graph.value])
         transformedGraph = this.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
       // If a custom default graph was set, move default graph triples there.
