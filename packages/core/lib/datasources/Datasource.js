@@ -135,26 +135,20 @@ class Datasource extends EventEmitter {
       query.graph = stringToTerm(this._queryGraphReplacements[query.graph.value], this.dataFactory);
 
     // Transform the received quads
-    let destination = new BufferedIterator(), outputQuads, graph = this._graph;
+    let destination = new BufferedIterator(), outputQuads, defaultGraph = this._graph;
     outputQuads = destination.map((quad) => {
-      let transformedSubject, transformedObject, transformedGraph;
+      let { subject, predicate, object, graph } = quad;
       // Translate blank nodes in the result to blank node IRIs.
       if (quad.subject && quad.subject.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.subject.value])
-        transformedSubject = this.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
+        subject = this.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
       if (quad.object  && quad.object.termType  === 'BlankNode' && !this._skolemizeBlacklist[quad.object.value])
-        transformedObject  = this.dataFactory.namedNode(blankNodePrefix + quad.object.value);
+        object = this.dataFactory.namedNode(blankNodePrefix + quad.object.value);
       if (quad.graph && quad.graph.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.graph.value])
-        transformedGraph = this.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
+        graph = this.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
       // If a custom default graph was set, move default graph triples there.
-      else if (graph && (!quad.graph || quad.graph.termType === 'DefaultGraph'))
-        transformedGraph = graph;
-
-      return this.dataFactory.quad(
-        transformedSubject || quad.subject,
-        quad.predicate,
-        transformedObject || quad.object,
-        transformedGraph || quad.graph,
-      );
+      else if (defaultGraph && (!quad.graph || quad.graph.termType === 'DefaultGraph'))
+        graph = defaultGraph;
+      return this.dataFactory.quad(subject, predicate, object, graph);
     });
     outputQuads.copyProperties(destination, ['metadata']);
     onError && outputQuads.on('error', onError);
