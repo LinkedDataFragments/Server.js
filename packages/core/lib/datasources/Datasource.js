@@ -135,20 +135,20 @@ class Datasource extends EventEmitter {
       query.graph = stringToTerm(this._queryGraphReplacements[query.graph.value], this.dataFactory);
 
     // Transform the received quads
-    let destination = new BufferedIterator(), outputQuads, graph = this._graph;
+    let destination = new BufferedIterator(), outputQuads, defaultGraph = this._graph;
     outputQuads = destination.map((quad) => {
+      let { subject, predicate, object, graph } = quad;
       // Translate blank nodes in the result to blank node IRIs.
       if (quad.subject && quad.subject.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.subject.value])
-        quad.subject = this.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
+        subject = this.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
       if (quad.object  && quad.object.termType  === 'BlankNode' && !this._skolemizeBlacklist[quad.object.value])
-        quad.object  = this.dataFactory.namedNode(blankNodePrefix + quad.object.value);
-      if (quad.graph   && quad.graph.termType !== 'DefaultGraph') {
-        if (quad.graph.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.graph.value])
-          quad.graph = this.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
-      }
+        object = this.dataFactory.namedNode(blankNodePrefix + quad.object.value);
+      if (quad.graph && quad.graph.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.graph.value])
+        graph = this.dataFactory.namedNode(blankNodePrefix + quad.graph.value);
       // If a custom default graph was set, move default graph triples there.
-      quad.graph = quad.graph && quad.graph.termType !== 'DefaultGraph' ? quad.graph : (graph || quad.graph);
-      return quad;
+      else if (defaultGraph && (!quad.graph || quad.graph.termType === 'DefaultGraph'))
+        graph = defaultGraph;
+      return this.dataFactory.quad(subject, predicate, object, graph);
     });
     outputQuads.copyProperties(destination, ['metadata']);
     onError && outputQuads.on('error', onError);

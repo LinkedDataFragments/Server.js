@@ -37,19 +37,19 @@ describe('CompositeDatasource', () => {
     });
 
     it('should be an CompositeDatasource constructor', (done) => {
-      let instance = new CompositeDatasource({ references: references });
+      let instance = new CompositeDatasource({ references: references, dataFactory });
       instance.should.be.an.instanceof(CompositeDatasource);
       instance.close(done);
     });
 
     it('should create CompositeDatasource objects', (done) => {
-      let instance = new CompositeDatasource({ references: references });
+      let instance = new CompositeDatasource({ references: references, dataFactory });
       instance.should.be.an.instanceof(CompositeDatasource);
       instance.close(done);
     });
 
     it('should create Datasource objects', (done) => {
-      let instance = new CompositeDatasource({ references: references });
+      let instance = new CompositeDatasource({ references: references, dataFactory });
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
     });
@@ -59,7 +59,7 @@ describe('CompositeDatasource', () => {
     let datasource;
     function getDatasource() { return datasource; }
     before((done) => {
-      datasource = new CompositeDatasource({ references: references });
+      datasource = new CompositeDatasource({ references: references, dataFactory });
       datasource.initialize();
       datasource.on('initialized', done);
     });
