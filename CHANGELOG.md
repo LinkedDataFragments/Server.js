@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.2.1"></a>
+## [v3.2.1](https://github.com/LinkedDataFragments/Server.js/compare/v3.2.0...v3.2.1) - 2021-05-10
+
+### Fixed
+* [Fix illegal mutation of quads, Closes #137](https://github.com/LinkedDataFragments/Server.js/commit/a459b74c6411bc9d042a0e7d4caca079a349fe7f)
+
 <a name="v3.2.0"></a>
 ## [v3.2.0](https://github.com/LinkedDataFragments/Server.js/compare/v3.1.0...v3.2.0) - 2021-01-15
 

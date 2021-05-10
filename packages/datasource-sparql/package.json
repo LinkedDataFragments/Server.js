@@ -1,7 +1,7 @@
 {
   "name": "@ldf/datasource-sparql",
   "description": "Linked Data Fragments Server - SPARQL Datasource",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "lsd:module": true,
   "license": "MIT",
   "main": "index.js",
@@ -31,6 +31,6 @@
     "@ldf/core": "^3.0.0"
   },
   "devDependencies": {
-    "@ldf/core": "^3.2.0"
+    "@ldf/core": "^3.2.1"
   }
 }
