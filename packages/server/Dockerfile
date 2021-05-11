@@ -1,4 +1,4 @@
-FROM node:10-slim
+FROM node:16-slim
 
 # Install location
 ENV dir /var/www/@ldf/server
