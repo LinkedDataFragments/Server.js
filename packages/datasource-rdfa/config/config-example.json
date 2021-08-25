@@ -1,0 +1,16 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/server/^3.0.0/components/context.jsonld",
+  "@id": "urn:ldf-server:my",
+  "import": "preset-qpf:config-defaults.json",
+
+  "datasources": [
+    {
+      "@id": "urn:ldf-server:myRdfaDatasource",
+      "@type": "RdfaDatasource",
+      "datasourceTitle": "My RDFa HTML file",
+      "description": "My dataset with a RDFa back-end",
+      "datasourcePath": "myrdfa",
+      "file": "path/to/file.html"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "@ldf/datasource-rdfa",
+  "description": "Linked Data Fragments Server - RDFa Datasource",
+  "version": "0.0.0",
+  "lsd:module": true,
+  "license": "MIT",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "components",
+    "lib/**/*.js",
+    "index.js"
+  ],
+  "repository": "https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-rdfa",
+  "bugs": {
+    "url": "https://github.com/LinkedDataFragments/Server.js/issues"
+  },
+  "scripts": {
+    "test": "nyc mocha",
+    "lint": "eslint bin/* lib test"
+  },
+  "dependencies": {
+    "rdf-string": "^1.3.1",
+    "rdfa-streaming-parser": "^1.5.0"
+  },
+  "peerDependencies": {
+    "@ldf/core": "^3.0.0"
+  },
+  "devDependencies": {
+    "@ldf/core": "^3.2.1"
+  }
+}

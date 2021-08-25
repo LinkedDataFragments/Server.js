@@ -17,6 +17,7 @@
         "packages/datasource-composite/package.json",
         "packages/preset-qpf/package.json",
         "packages/datasource-jsonld/package.json",
+        "packages/datasource-rdfa/package.json",
         "packages/feature-qpf/package.json",
         "packages/feature-summary/package.json"
       ]

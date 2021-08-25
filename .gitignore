@@ -13,3 +13,4 @@ config/*.json
 
 # Ignore dev environment files
 .idea
+.devcontainer

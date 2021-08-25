@@ -1,0 +1,9 @@
+{
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-rdfa/^0.0.0/components/context.jsonld",
+  "@id": "npmd:@ldf/datasource-rdfa",
+  "@type": "Module",
+  "requireName": "@ldf/datasource-rdfa",
+  "import": [
+    "files-ldfdr:components/Datasource/Rdfa.jsonld"
+  ]
+}
