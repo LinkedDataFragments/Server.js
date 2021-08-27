@@ -1,5 +1,5 @@
 {
-  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-rdfa/^0.0.0/components/context.jsonld",
+  "@context": "https://linkedsoftwaredependencies.org/bundles/npm/@ldf/datasource-rdfa/^3.0.0/components/context.jsonld",
   "@id": "npmd:@ldf/datasource-rdfa",
   "@type": "Module",
   "requireName": "@ldf/datasource-rdfa",

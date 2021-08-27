@@ -4,7 +4,7 @@
         {
             "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
             "ldfdr": "npmd:@ldf/datasource-rdfa/",
-            "files-ldfdr": "ldfdr:^0.0.0/",
+            "files-ldfdr": "ldfdr:^3.0.0/",
             "RdfaDatasource": "ldfdr:Datasource/Rdfa"
         }
     ]
