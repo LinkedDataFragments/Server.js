@@ -1,7 +1,7 @@
 # Linked Data Fragments Server
 <img src="http://linkeddatafragments.org/images/logo.svg" width="200" align="right" alt="" />
 
-[![Build Status](https://travis-ci.org/LinkedDataFragments/Server.js.svg?branch=master)](https://travis-ci.org/LinkedDataFragments/Server.js)
+[![Build status](https://github.com/LinkedDataFragments/Server.js/workflows/CI/badge.svg)](https://github.com/LinkedDataFragments/Server.js/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/github/LinkedDataFragments/Server.js/badge.svg?branch=master)](https://coveralls.io/github/LinkedDataFragments/Server.js?branch=master)
 [![npm version](https://badge.fury.io/js/%40ldf%2Fserver.svg)](https://www.npmjs.com/package/@ldf/server)
 [![DOI](https://zenodo.org/badge/16891600.svg)](https://zenodo.org/badge/latestdoi/16891600)

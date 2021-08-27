@@ -30,7 +30,7 @@
     "lint-changed": "lerna run lint --since HEAD",
     "mocha": "mocha \"packages/*/test/**/*-test.js\" --recursive --require ./test/test-setup --timeout 500",
     "test": "nyc npm run mocha",
-    "coveralls": "nyc --reporter=text-lcov npm run mocha | coveralls",
+    "test-ci": "nyc --reporter=lcov npm run mocha",
     "lint": "eslint packages/*/bin/* packages/*/lib packages/*/test",
     "clean": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules",
     "publish": "lerna publish",
