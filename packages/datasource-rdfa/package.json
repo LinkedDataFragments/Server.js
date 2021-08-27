@@ -1,7 +1,7 @@
 {
   "name": "@ldf/datasource-rdfa",
   "description": "Linked Data Fragments Server - RDFa Datasource",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "lsd:module": true,
   "license": "MIT",
   "main": "index.js",

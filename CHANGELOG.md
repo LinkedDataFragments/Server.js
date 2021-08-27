@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v3.3.0"></a>
+## [v3.3.0](https://github.com/LinkedDataFragments/Server.js/compare/v3.2.1...v3.3.0) - 2021-08-27
+
+### Added
+* [Add RDFa datasource (#142)](https://github.com/LinkedDataFragments/Server.js/commit/58c64c03539ed5ab25080b6a352e70019e4053ff)
+
 <a name="v3.2.1"></a>
 ## [v3.2.1](https://github.com/LinkedDataFragments/Server.js/compare/v3.2.0...v3.2.1) - 2021-05-10
 

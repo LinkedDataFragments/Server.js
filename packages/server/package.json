@@ -1,7 +1,7 @@
 {
   "name": "@ldf/server",
   "description": "Quad Pattern Fragments Linked Data Fragments Server",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "lsd:module": true,
   "license": "MIT",
   "bin": {
@@ -31,8 +31,8 @@
     "@ldf/datasource-composite": "^3.2.1",
     "@ldf/datasource-hdt": "^3.2.1",
     "@ldf/datasource-jsonld": "^3.2.1",
-    "@ldf/datasource-rdfa": "^3.0.0",
     "@ldf/datasource-n3": "^3.2.1",
+    "@ldf/datasource-rdfa": "^3.3.0",
     "@ldf/datasource-sparql": "^3.2.1",
     "@ldf/feature-memento": "^3.2.1",
     "@ldf/feature-qpf": "^3.2.1",
