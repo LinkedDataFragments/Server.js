@@ -114,6 +114,7 @@ The following modules are available:
 * [`@ldf/feature-webid`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/feature-webid): Feature that enables authenticated requests from clients with WebID.
 * [`@ldf/datasource-hdt`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-hdt): Datasource that allows HDT files to be loaded.
 * [`@ldf/datasource-jsonld`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-jsonld): Datasource that allows JSON-LD files to be loaded.
+* [`@ldf/datasource-rdfa`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-rdfa): Datasource that allows RDFa files to be loaded.
 * [`@ldf/datasource-n3`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-n3): Datasource that allows [N-Quads](https://www.w3.org/TR/n-quads/), [N-Triples](https://www.w3.org/TR/n-triples/), [Trig](https://www.w3.org/TR/trig/) and [Turtle](https://www.w3.org/TR/turtle/) files to be loaded.
 * [`@ldf/datasource-sparql`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-sparql): Datasource that allows SPARQL endpoints to be used as a data proxy.
 * [`@ldf/datasource-composite`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/datasource-composite): Datasource that delegates queries to an sequence of other datasources.

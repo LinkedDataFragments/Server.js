@@ -1,0 +1,11 @@
+{
+    "@context": [
+        "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^4.0.0/components/context.jsonld",
+        {
+            "npmd": "https://linkedsoftwaredependencies.org/bundles/npm/",
+            "ldfdr": "npmd:@ldf/datasource-rdfa/",
+            "files-ldfdr": "ldfdr:^3.0.0/",
+            "RdfaDatasource": "ldfdr:Datasource/Rdfa"
+        }
+    ]
+}
