@@ -102,7 +102,7 @@ Now visit `http://localhost:5000/` in your browser.
 
 This repository should be used by LDF Server module **developers** as it contains multiple LDF Server modules that can be composed.
 We manage this repository as a [monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md)
-using [Lerna](https://lernajs.io/).
+using [Lerna](https://lerna.js.org/).
 
 The following modules are available:
 * [`@ldf/core`](https://github.com/LinkedDataFragments/Server.js/tree/master/packages/core): Shared functionality for LDF servers.
