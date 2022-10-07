@@ -12,7 +12,7 @@ _This package is a [Linked Data Fragments Server module](https://github.com/Link
 
 This package exposes the following config entries:
 * `SparqlDatasource`: A SPARQL-endpoint-based datasource that requires at least one `sparqlEndpoint` field. _Should be used as `@type` value._
-* `sparqlEndpoint`: Refers to an absolute or relative file location of an HDT file. _Should be used as key in a `SparqlDatasource`._
+* `sparqlEndpoint`: Refers to a SPARQL endpoint capable of receiving and processing SPARQL Protocol requests. _Should be used as key in a `SparqlDatasource`._
 
 Example:
 ```json
