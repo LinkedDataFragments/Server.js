@@ -1,5 +1,5 @@
 FROM node:16-slim
-
+LABEL description="Triple Pattern Fragment Server."
 # Install location
 ENV dir /var/www/@ldf/server
 
@@ -16,15 +16,17 @@ RUN npm config set @ldf:registry $NPM_REGISTRY
 # Install the node module
 RUN apt-get update && \
     apt-get install -y g++ make python && \
-    cd ${dir} && npm install --only=production && \
-    apt-get remove -y g++ make python && apt-get autoremove -y && \
+    cd ${dir} 
+
+WORKDIR ${dir}
+RUN npm install --only=production 
+RUN apt-get remove -y g++ make python && apt-get autoremove -y && \
     rm -rf /var/cache/apt/archives
 
 # Expose the default port
 EXPOSE 3000
 
 # Run base binary
-WORKDIR ${dir}
 ENTRYPOINT ["node", "bin/ldf-server"]
 
 # Default command
