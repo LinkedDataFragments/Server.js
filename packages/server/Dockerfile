@@ -1,4 +1,4 @@
-FROM node:16-slim
+FROM node:18-slim
 LABEL description="Triple Pattern Fragment Server."
 # Install location
 ENV dir /var/www/@ldf/server
