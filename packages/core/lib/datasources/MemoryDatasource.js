@@ -9,6 +9,12 @@ class MemoryDatasource extends Datasource {
   constructor(options) {
     let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
     super(options, supportedFeatureList);
+    if (options.file) {
+      if (!options.file.startsWith('file://') && !options.file.startsWith('http://') && !options.file.startsWith('https://'))
+        options.file = `file://${options.file}`;
+    }
+
+    this._url = options && (options.url || options.file);
   }
 
   // Prepares the datasource for querying
