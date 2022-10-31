@@ -10,7 +10,6 @@ let ACCEPT = 'application/ld+json;q=1.0,application/json;q=0.7';
 class JsonLdDatasource extends MemoryDatasource {
   constructor(options) {
     super(options);
-    this._url = options && (options.url || options.file);
   }
 
   // Retrieves all quads from the document
