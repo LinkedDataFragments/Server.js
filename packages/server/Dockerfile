@@ -1,5 +1,5 @@
 FROM node:16-slim
-LABEL description="A Docker Image for Triple Pattern Fragment Server (NodeJS)"
+LABEL description="Triple Pattern Fragment Server."
 # Install location
 ENV dir /var/www/@ldf/server
 
