@@ -1136,7 +1136,7 @@
   dependencies:
     "@octokit/openapi-types" "^5.2.2"
 
-"@rdfjs/data-model@^1.1.1", "@rdfjs/data-model@^1.1.2":
+"@rdfjs/data-model@^1.1.1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@rdfjs/data-model/-/data-model-1.1.2.tgz#e2f48a422c7e837b8a7d96d240732be3287df713"
   integrity sha512-pk/G/JLYGaXesoBLvEmoC/ic0H3B79fTyS0Ujjh5YQB2DZW+mn05ZowFFv88rjB9jf7c1XE5XSmf8jzn6U0HHA==
@@ -1208,6 +1208,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.20.tgz#f7974863edd21d1f8a494a73e8e2b3658615c340"
   integrity sha512-Y93R97Ouif9JEOWPIUyU+eyIdyRqQR0I8Ez1dzku4hDx34NWh4HbtIc3WNzwB1Y9ULvNGeu5B8h8bVL5cAk4/A==
 
+"@types/node@^18.0.0":
+  version "18.11.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.9.tgz#02d013de7058cea16d36168ef2fc653464cfbad4"
+  integrity sha512-CRpX21/kGdzjOpFsZSkcrXMGIBWMGNIHXXBVFSH+ggkftxg+XYP20TESbh+zFvFj3EQOl5byk0HTRn1IL6hbqg==
+
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
@@ -1234,13 +1239,6 @@
   version "2.0.11"
   resolved "https://registry.yarnpkg.com/@types/rdf-js/-/rdf-js-2.0.11.tgz#b9e398504ceb9f00eaa3b3036b643dc3490cf362"
   integrity sha512-GC5MZU2HbL5JnlrLAzoxSqLprqtKwocz0TNVugqM04t1ZeeNFpZRqqBQc9Jhev35hEwdH84siRLaCesxHHYlmA==
-  dependencies:
-    "@types/node" "*"
-
-"@types/rdf-js@^2.0.11":
-  version "2.0.12"
-  resolved "https://registry.yarnpkg.com/@types/rdf-js/-/rdf-js-2.0.12.tgz#d305a0b6fd105e33f58d5c1b3de33ff8edcb3210"
-  integrity sha512-NBzHFHp2vHOJkPlSqzsOrkEsD9grKn+PdFjZieIw59pc0FlRG6WEQAjQZvHzFxJlYzC6ZDCFyTA1wBvUnnzUQw==
   dependencies:
     "@types/node" "*"
 
@@ -3970,18 +3968,17 @@ jsonld-context-parser@^2.0.1, jsonld-context-parser@^2.0.2, jsonld-context-parse
     http-link-header "^1.0.2"
     relative-to-absolute-iri "^1.0.5"
 
-jsonld-streaming-parser@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/jsonld-streaming-parser/-/jsonld-streaming-parser-2.0.0.tgz#d943202d17cd630b4ef2b23726a474575beda8c2"
-  integrity sha512-iaG4mpwOSe1F0YXso38SWy0F1r1+CxTFXJBHA+MobowC6HFXtVzwPzb7uoILZgYv31OrqE/ft9XoSP1mTegebw==
+jsonld-context-parser@^2.1.3:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/jsonld-context-parser/-/jsonld-context-parser-2.2.2.tgz#2c206b022eddd335bb7477046e1bd6dfb4322c34"
+  integrity sha512-3VWIg/4NCMTXP6NsI6O93spFTd4qIOucKEmD8I+Exhxk9ZUVrnkLp2G4f0toR5jVleZkiiB9YGPS+yT1wwMqnQ==
   dependencies:
-    "@rdfjs/data-model" "^1.1.2"
     "@types/http-link-header" "^1.0.1"
-    "@types/rdf-js" "^2.0.11"
+    "@types/node" "^18.0.0"
     canonicalize "^1.0.1"
+    cross-fetch "^3.0.6"
     http-link-header "^1.0.2"
-    jsonld-context-parser "^2.0.0"
-    jsonparse "^1.3.1"
+    relative-to-absolute-iri "^1.0.5"
 
 jsonld-streaming-parser@^2.1.1:
   version "2.2.0"
@@ -3995,6 +3992,22 @@ jsonld-streaming-parser@^2.1.1:
     jsonld-context-parser "^2.0.1"
     jsonparse "^1.3.1"
     rdf-data-factory "^1.0.2"
+
+jsonld-streaming-parser@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/jsonld-streaming-parser/-/jsonld-streaming-parser-3.0.1.tgz#6503bacbc8640bb6eacafc29bcac583af5205407"
+  integrity sha512-zSJlEgrKypQDk/85R+xkudeCZo6vmnvJuCPvcjk2BzHPLzv1yqiwoKQDyFzfgfgCHM0p7YCJBZl0liT9RMUZJw==
+  dependencies:
+    "@rdfjs/types" "*"
+    "@types/http-link-header" "^1.0.1"
+    "@types/readable-stream" "^2.3.13"
+    buffer "^6.0.3"
+    canonicalize "^1.0.1"
+    http-link-header "^1.0.2"
+    jsonld-context-parser "^2.1.3"
+    jsonparse "^1.3.1"
+    rdf-data-factory "^1.1.0"
+    readable-stream "^4.0.0"
 
 jsonld-streaming-serializer@^2.0.0:
   version "2.0.1"
