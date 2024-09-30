@@ -31,7 +31,7 @@
     "asynciterator": "^3.0.0",
     "componentsjs": "^4.0.4",
     "forwarded-parse": "^2.1.0",
-    "jsonld-streaming-serializer": "^2.0.0",
+    "jsonld-streaming-serializer": "^3.0.0",
     "lodash": "^4.0.0",
     "mime": "^2.4.4",
     "n3": "^1.10.0",
