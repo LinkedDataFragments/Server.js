@@ -33,7 +33,7 @@
     "forwarded-parse": "^2.1.0",
     "jsonld-streaming-serializer": "^3.0.0",
     "lodash": "^4.0.0",
-    "mime": "^2.4.4",
+    "mime": "^4.0.0",
     "n3": "^1.10.0",
     "negotiate": "^1.0.1",
     "q": "^1.4.1",
