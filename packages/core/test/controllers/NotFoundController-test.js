@@ -67,8 +67,8 @@ describe('NotFoundController', () => {
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      htmlView.render.reset();
-      rdfView.render.reset();
+      htmlView.render.resetHistory();
+      rdfView.render.resetHistory();
     }
 
     describe('receiving a request without Accept header', () => {

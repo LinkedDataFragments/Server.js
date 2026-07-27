@@ -34,7 +34,7 @@ describe('LinkedDataFragmentsServer', () => {
       client = request.agent(server);
     });
     beforeEach(() => {
-      controller.handleRequest.reset();
+      controller.handleRequest.resetHistory();
     });
 
     it('should send the configured headers', (done) => {
@@ -134,8 +134,8 @@ describe('LinkedDataFragmentsServer', () => {
       client = request.agent(server);
     });
     beforeEach(() => {
-      controllerA.handleRequest.reset();
-      controllerB.handleRequest.reset();
+      controllerA.handleRequest.resetHistory();
+      controllerB.handleRequest.resetHistory();
     });
 
     it('should not allow POST requests', (done) => {
