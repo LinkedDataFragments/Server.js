@@ -13,7 +13,6 @@
   "packages": [
     "packages/*"
   ],
-  "useWorkspaces": true,
   "version": "3.3.0",
   "loglevel": "success",
   "registry": "https://registry.npmjs.org/",
