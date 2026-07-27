@@ -307,7 +307,7 @@ describe('Datasource', () => {
     });
 
     beforeEach(() => {
-      datasource._executeQuery.resetHistory();
+      datasource._executeQuery.reset();
     });
 
     it('should move triples in the default graph to the given graph', (done) => {

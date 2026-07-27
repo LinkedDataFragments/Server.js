@@ -196,7 +196,7 @@ describe('SparqlDatasource', () => {
     describe('when invalid JSON is returned in response to the data query', () => {
       let result, error;
       before((done) => {
-        request.resetHistory();
+        request.reset();
         request.onFirstCall().returns(test.createHttpResponse('invalid', 'application/sparql-results+json'));
         request.onSecondCall().returns(test.createHttpResponse(countResult, 'text/csv'));
         let query = { subject: dataFactory.namedNode('abcd'), features: { quadPattern: true } };
@@ -212,7 +212,7 @@ describe('SparqlDatasource', () => {
     describe('when invalid JSON is returned in response to the count query', () => {
       let result, error;
       before((done) => {
-        request.resetHistory();
+        request.reset();
         request.onFirstCall().returns(test.createHttpResponse(jsonResult, 'application/sparql-results+json'));
         request.onSecondCall().returns(test.createHttpResponse('invalid', 'application/trig'));
         let query = { subject: dataFactory.namedNode('abcde'), features: { quadPattern: true } };
@@ -228,7 +228,7 @@ describe('SparqlDatasource', () => {
     describe('when the data query request errors', () => {
       let result, error;
       before((done) => {
-        request.resetHistory();
+        request.reset();
         let query = { subject: dataFactory.namedNode('abcde'), features: { quadPattern: true } };
         result = datasource.select(query);
         result.on('error', (e) => { error = e; done(); });
@@ -243,7 +243,7 @@ describe('SparqlDatasource', () => {
     describe('when the count query request errors', () => {
       let result, totalCount;
       before(() => {
-        request.resetHistory();
+        request.reset();
         let query = { subject: dataFactory.namedNode('abcdef'), features: { quadPattern: true } };
         result = datasource.select(query);
         request.returnValues[1].emit('error', new Error());
@@ -297,7 +297,7 @@ function itShouldExecute(datasource, request, name, query, constructQuery, count
   describe('executing ' + name, () => {
     let result, totalCount;
     before(() => {
-      request.resetHistory();
+      request.reset();
       request.onFirstCall().returns(test.createHttpResponse(jsonResult, 'application/sparql-results+json'));
       request.onSecondCall().returns(test.createHttpResponse(countResult, 'text/csv'));
       result = datasource.select(query);

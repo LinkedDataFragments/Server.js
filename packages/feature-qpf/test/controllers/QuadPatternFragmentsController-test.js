@@ -53,11 +53,11 @@ describe('QuadPatternFragmentsController', () => {
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      routerA.extractQueryParams.resetHistory();
-      routerB.extractQueryParams.resetHistory();
-      routerC.extractQueryParams.resetHistory();
-      datasource.supportsQuery.resetHistory();
-      datasource.select.resetHistory();
+      routerA.extractQueryParams.reset();
+      routerB.extractQueryParams.reset();
+      routerC.extractQueryParams.reset();
+      datasource.supportsQuery.reset();
+      datasource.select.reset();
     }
 
     describe('receiving a request for a fragment', () => {
@@ -197,8 +197,8 @@ describe('QuadPatternFragmentsController', () => {
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      htmlView.render.resetHistory();
-      rdfView.render.resetHistory();
+      htmlView.render.reset();
+      rdfView.render.reset();
     }
 
     describe('receiving a request without Accept header', () => {
@@ -393,7 +393,7 @@ describe('QuadPatternFragmentsController', () => {
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      router.extractQueryParams.resetHistory();
+      router.extractQueryParams.reset();
     }
 
     describe('receiving a request for a fragment', () => {
@@ -433,7 +433,7 @@ describe('QuadPatternFragmentsController', () => {
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      router.extractQueryParams.resetHistory();
+      router.extractQueryParams.reset();
     }
 
     describe('receiving a request for a fragment', () => {
