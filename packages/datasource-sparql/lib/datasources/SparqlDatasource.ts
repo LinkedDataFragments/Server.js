@@ -155,8 +155,8 @@ class SparqlDatasource extends Datasource {
     // LIMIT and OFFSET might be meaningless without ORDER BY,
     // this doesn't seem a problem in practice.
     // Furthermore, sorting can be slow. Therefore, don't sort.
-    limit && query.push('LIMIT', limit as unknown as string);
-    offset && query.push('OFFSET', offset as unknown as string);
+    limit && query.push('LIMIT', String(limit));
+    offset && query.push('OFFSET', String(offset));
     return query.join(' ');
   }
 

@@ -37,6 +37,10 @@ namespace LinkedDataFragmentsServer {
 }
 type LdfHttpServer = LinkedDataFragmentsServer.LdfHttpServer;
 
+interface LinkedDataFragmentsServerConstructor {
+  new (options: LinkedDataFragmentsServerOptions): LdfHttpServer;
+}
+
 // Creates a new LinkedDataFragmentsServer
 //
 // NOTE: the methods below are intentionally attached via `.prototype.x = function` rather than
@@ -187,4 +191,4 @@ function readHttpsOption(value: unknown): unknown {
     return value;
 }
 
-export = LinkedDataFragmentsServer;
+export = LinkedDataFragmentsServer as unknown as LinkedDataFragmentsServerConstructor;

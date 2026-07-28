@@ -46,10 +46,10 @@ class LinkedDataFragmentsServerWorker {
 
     // Make sure the 'last' controllers are last in the array and the 'first' are first.
     let lastControllers = _.remove(config.controllers, (controller: Controller) => {
-      return (controller as any)._last;
+      return controller._last;
     });
     let firstControllers = _.remove(config.controllers, (controller: Controller) => {
-      return (controller as any)._first;
+      return controller._first;
     });
     config.controllers = firstControllers.concat(config.controllers.concat(lastControllers));
 
@@ -61,7 +61,7 @@ class LinkedDataFragmentsServerWorker {
     let config = this._config;
     if (port)
       config.port = port;
-    let server = new LinkedDataFragmentsServer(config) as unknown as LinkedDataFragmentsServer.LdfHttpServer;
+    let server = new LinkedDataFragmentsServer(config);
 
     // Start the server when all data sources are ready
     let pending = Object.keys(config.datasources).length;

@@ -7,8 +7,6 @@ import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
 
 // Creates a new NotFoundController
 class NotFoundController extends Controller {
-  protected _last: boolean;
-
   constructor(options?: ControllerOptions) {
     super(options);
     this._last = true;

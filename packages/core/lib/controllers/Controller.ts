@@ -21,6 +21,8 @@ function isViewCollection(views: View[] | ViewCollection | undefined): views is 
 
 // Creates a new Controller
 class Controller {
+  _first?: boolean;
+  _last?: boolean;
   protected _prefixes: Record<string, string>;
   protected _datasources: DatasourceRegistry;
   protected _views: ViewCollection;

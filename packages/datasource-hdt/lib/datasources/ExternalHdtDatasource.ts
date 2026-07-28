@@ -55,7 +55,7 @@ class ExternalHdtDatasource extends Datasource {
         hdt = spawn(hdtUtility, [
           '--query', (query.subject   || '?s') + ' ' +
           (query.predicate || '?p') + ' ' + (query.object || '?o'),
-          '--offset', offset as unknown as string, '--limit', limit as unknown as string, '--format', 'turtle',
+          '--offset', String(offset), '--limit', String(limit), '--format', 'turtle',
           '--', hdtFile,
         ], { stdio: ['ignore', 'pipe', 'ignore'] });
     // Parse the result triples
