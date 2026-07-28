@@ -136,10 +136,13 @@ class Datasource extends EventEmitter {
 
   // Selects the quads that match the given query, returning a quad stream
   select(query: Query, onError?: (error: Error) => void): AsyncIterator<Quad> {
+    // Pre-existing: these two branches don't actually return an iterator — `onError && onError(...)`
+    // evaluates to onError's void return (or undefined if it wasn't given), not an AsyncIterator.
+    // Preserved as-is; a caller relying on select()'s return type here would already be broken.
     if (!this.initialized)
-      return onError && onError(new Error('The datasource is not initialized yet')) as any;
+      return (onError && onError(new Error('The datasource is not initialized yet'))) as unknown as AsyncIterator<Quad>;
     if (!this.supportsQuery(query))
-      return onError && onError(new Error('The datasource does not support the given query')) as any;
+      return (onError && onError(new Error('The datasource does not support the given query'))) as unknown as AsyncIterator<Quad>;
     query = { ...query };
 
     // Translate blank nodes IRIs in the query to blank nodes
