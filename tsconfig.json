@@ -1,0 +1,32 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es2023",
+    "lib": ["es2023"],
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "strict": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitOverride": true,
+    "declaration": true,
+    "inlineSources": true,
+    "preserveConstEnums": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "packages/*/index.ts",
+    "packages/*/lib/**/*",
+    "packages/*/bin/**/*",
+    "types/**/*.d.ts"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "packages/*/index.d.ts",
+    "packages/*/lib/**/*.d.ts",
+    "packages/*/bin/**/*.d.ts"
+  ]
+}
