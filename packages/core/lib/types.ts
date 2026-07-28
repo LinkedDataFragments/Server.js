@@ -3,6 +3,7 @@
 
 import type { DataFactory, Term } from 'rdf-js';
 import type { IncomingMessage, ServerResponse } from 'http';
+import type { UrlObject } from 'url';
 import type Datasource = require('./datasources/Datasource');
 import type UrlData = require('./UrlData');
 import type View = require('./views/View');
@@ -63,7 +64,7 @@ export interface DatasourceOptions {
 export type RenderDone = (error?: Error | null) => void;
 
 export interface LdfRequest extends IncomingMessage {
-  parsedUrl?: Record<string, any>;
+  parsedUrl?: UrlObject;
 }
 
 export interface LdfResponse extends ServerResponse {

@@ -2,7 +2,7 @@
 /* Controller is a base class for HTTP request handlers */
 
 import * as url from 'url';
-import type { Url } from 'url';
+import type { Url, UrlObject } from 'url';
 import * as _ from 'lodash';
 import ViewCollection = require('../views/ViewCollection');
 import UrlData = require('../UrlData');
@@ -48,11 +48,14 @@ class Controller {
     // containing the parsed request URL, resolved against the base URL
     if (!request.parsedUrl) {
       // Keep the request's path and query, but take over all other defined baseURL properties
+      // _baseUrl's value type is a single union shared across all its keys (a lodash
+      // mapValues limitation — see its declaration), so it doesn't line up field-by-field
+      // with UrlObject even though every value it can actually hold does.
       request.parsedUrl = _.defaults(_.pick(url.parse(request.url!, true), 'path', 'pathname', 'query'),
         this._getForwarded(request),
         this._getXForwardHeaders(request),
         this._baseUrl,
-        { protocol: 'http:', host: request.headers.host });
+        { protocol: 'http:', host: request.headers.host }) as UrlObject;
     }
 
     // Try to handle the request

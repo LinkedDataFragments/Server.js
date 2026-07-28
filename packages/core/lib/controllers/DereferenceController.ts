@@ -28,7 +28,7 @@ class DeferenceController extends Controller {
     if (datasource = match && this._paths[match[1]]) {
       let entity = url.format(_.defaults({
         pathname: datasource.path,
-        query: { subject: url.format(request.parsedUrl as any) },
+        query: { subject: url.format(request.parsedUrl!) },
       }, request.parsedUrl));
       response.writeHead(303, { 'Location': entity, 'Content-Type': Util.MIME_PLAINTEXT });
       response.end(entity);
