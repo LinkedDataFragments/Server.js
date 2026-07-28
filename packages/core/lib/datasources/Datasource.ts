@@ -119,7 +119,7 @@ class Datasource extends EventEmitter {
     let features = query.features, supportedFeatures = this.supportedFeatures, feature: string;
     if (features) {
       for (feature in features) {
-        if ((features as Record<string, boolean | undefined>)[feature] && !supportedFeatures[feature])
+        if (features[feature] && !supportedFeatures[feature])
           return false;
       }
       return true;

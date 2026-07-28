@@ -10,7 +10,9 @@ import type View = require('./views/View');
 import type ViewCollection = require('./views/ViewCollection');
 import type Controller = require('./controllers/Controller');
 
-// Features a query can require a datasource to support
+// Features a query can require a datasource to support — datasource
+// subclasses declare their own supportedFeatureList (see Datasource's
+// constructor), so this isn't a closed set.
 export interface QueryFeatures {
   datasource?: boolean;
   limit?: boolean;
@@ -18,6 +20,7 @@ export interface QueryFeatures {
   quadPattern?: boolean;
   triplePattern?: boolean;
   totalCount?: boolean;
+  [feature: string]: boolean | undefined;
 }
 
 // A quad pattern query, as built up by routers and executed by datasources
