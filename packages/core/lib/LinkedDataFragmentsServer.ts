@@ -12,7 +12,7 @@ import type Controller = require('./controllers/Controller');
 import type { ControllerOptions, LdfRequest, LdfResponse } from './types';
 
 interface LinkedDataFragmentsServerOptions extends ControllerOptions {
-  ssl?: Record<string, any>;
+  ssl?: https.ServerOptions & { keys?: any };
   authentication?: { webid?: boolean };
   log?: (...args: any[]) => void;
   accesslogger?: (request: LdfRequest, response: LdfResponse) => void;
@@ -24,7 +24,7 @@ interface LinkedDataFragmentsServerOptions extends ControllerOptions {
 namespace LinkedDataFragmentsServer {
   // The augmented http(s).Server instance actually returned by `new LinkedDataFragmentsServer(...)`
   export interface LdfHttpServer extends http.Server {
-    _sockets: Record<string, any>;
+    _sockets: Record<string, import('net').Socket>;
     _log: (...args: any[]) => void;
     _accesslogger: (request: LdfRequest, response: LdfResponse) => void;
     _controllers: Controller[];

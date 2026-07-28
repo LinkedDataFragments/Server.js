@@ -195,7 +195,7 @@ class Datasource extends EventEmitter {
 
   // Retrieves a stream through HTTP or the local file system
   protected _fetch(options: { url: string; [key: string]: any }): EventEmitter {
-    let stream: any,
+    let stream: EventEmitter,
         url = options.url, protocolMatch = /^(?:([a-z]+):)?/.exec(url)!;
     switch (protocolMatch[1] || 'file') {
     // Fetch a representation through HTTP(S)

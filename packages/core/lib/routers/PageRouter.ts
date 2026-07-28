@@ -14,7 +14,7 @@ class PageRouter {
 
   // Extracts a page parameter from the request and adds it to the query
   extractQueryParams(request: RouterRequest, query: Query): void {
-    let page: string | number | undefined = request.url && request.url.query && request.url.query.page,
+    let page: string | string[] | number | undefined = request.url && request.url.query && request.url.query.page,
         features = query.features || (query.features = {});
 
     // Set the limit to the page size

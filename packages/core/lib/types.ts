@@ -2,7 +2,8 @@
 /* Shared type definitions for @ldf/core */
 
 import type { DataFactory, Term } from 'rdf-js';
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'http';
+import type { ParsedUrlQuery } from 'querystring';
 import type { UrlObject } from 'url';
 import type Datasource = require('./datasources/Datasource');
 import type UrlData = require('./UrlData');
@@ -77,8 +78,8 @@ export interface LdfResponse extends ServerResponse {
 // The (already-parsed) request shape routers' extractQueryParams receives —
 // note this is distinct from LdfRequest: callers pass { url: request.parsedUrl, headers }.
 export interface RouterRequest {
-  url?: { pathname?: string; query?: Record<string, any> };
-  headers?: Record<string, any>;
+  url?: { pathname?: string; query?: ParsedUrlQuery };
+  headers?: IncomingHttpHeaders;
 }
 
 // Options accepted by the Controller base class (and its subclasses) constructor
@@ -113,10 +114,10 @@ export interface ViewSettings {
 export interface WorkerConfig extends ControllerOptions {
   datasources: DatasourceRegistry;
   controllers: Controller[];
-  routers: any[];
+  routers: unknown[];
   logging: { enabled?: boolean; file?: string };
   log?: (...args: any[]) => void;
-  accesslogger?: (...args: any[]) => void;
+  accesslogger?: (request: LdfRequest, response: LdfResponse) => void;
   port?: number;
   workers?: number;
 }

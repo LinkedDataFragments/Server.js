@@ -26,7 +26,7 @@ class HtmlView extends View {
   // Renders the template with the given name to the response
   protected _renderTemplate(templateName: string, options: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // Initialize all view extensions
-    let extensions: Record<string, any> = options.extensions || (options.extensions = {}), self = this;
+    let extensions = options.extensions || (options.extensions = {}), self = this;
     for (let extension in extensions) {
       if (!extensions[extension])
         extensions[extension] = this._renderViewExtensionContents(extension, options, request, response);
