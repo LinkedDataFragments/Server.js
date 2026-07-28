@@ -43,8 +43,8 @@ class RdfView extends View {
         writer = /json/.test(settings.contentType) ? this._createJsonLdWriter(settings, response, done)
           : this._createN3Writer(settings, response, done);
     settings.writer = writer;
-    function main() { self._generateRdf(settings, writer.data, writer.meta, after); }
-    function after() { self._renderViewExtensions('After', settings, request, response, writer.end); }
+    function main()   { self._generateRdf(settings, writer.data, writer.meta, after); }
+    function after()  { self._renderViewExtensions('After',  settings, request, response, writer.end); }
     function before() { self._renderViewExtensions('Before', settings, request, response, main); }
     before();
   }
@@ -68,7 +68,7 @@ class RdfView extends View {
       let datasource = datasources[datasourceName];
       if (datasource.url) {
         const quad = this.dataFactory!.quad, namedNode = this.dataFactory!.namedNode, literal = this.dataFactory!.literal;
-        metadata(quad(namedNode(datasource.url), namedNode(rdf + 'type'), namedNode(voID + 'Dataset')));
+        metadata(quad(namedNode(datasource.url), namedNode(rdf + 'type'), namedNode(voID  + 'Dataset')));
         metadata(quad(namedNode(datasource.url), namedNode(rdf + 'type'), namedNode(hydra + 'Collection')));
         metadata(quad(namedNode(datasource.url), namedNode(dcTerms + 'title'), literal('"' + datasource.title + '"', 'en')));
       }
@@ -125,7 +125,7 @@ class RdfView extends View {
       },
       // Adds the metadata triple to the output
       meta: function (quad: Quad) {
-        const graph = quad.graph.termType === 'DefaultGraph' ? (settings.metadataGraph ? dataFactory.namedNode(settings.metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
+        const graph = quad.graph.termType === 'DefaultGraph' ? (settings.metadataGraph  ? dataFactory.namedNode(settings.metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
         mySerializer.write(dataFactory.quad(quad.subject, quad.predicate, quad.object, graph) as any);
       },
       // Ends the output and flushes the stream

@@ -29,7 +29,7 @@ interface CountEstimate {
 let DEFAULT_COUNT_ESTIMATE: CountEstimate = { totalCount: 1e9, hasExactCount: false };
 let ENDPOINT_ERROR = 'Error accessing SPARQL endpoint';
 let INVALID_JSON_RESPONSE = 'The endpoint returned an invalid SPARQL results JSON response.';
-const xsd = 'http://www.w3.org/2001/XMLSchema#';
+const xsd  = 'http://www.w3.org/2001/XMLSchema#';
 
 // Creates a new SparqlDatasource
 class SparqlDatasource extends Datasource {
@@ -78,10 +78,10 @@ class SparqlDatasource extends Datasource {
         response.results.bindings.forEach((binding: any) => {
           binding = this._sparqlJsonParser.parseJsonBindings(binding);
           let triple = {
-            subject: binding.s || query.subject,
+            subject:   binding.s || query.subject,
             predicate: binding.p || query.predicate,
-            object: binding.o || query.object,
-            graph: binding.g || query.graph,
+            object:    binding.o || query.object,
+            graph:     binding.g || query.graph,
           };
           (destination as any)._push(triple);
         });
@@ -212,7 +212,7 @@ class SparqlDatasource extends Datasource {
     if (!term)
       return '?o';
     else {
-      return ((!/["\\]/.test(term.value)) ? '"' + term.value + '"' : '"""' + term.value.replace(/(["\\])/g, '\\$1') + '"""') +
+      return ((!/["\\]/.test(term.value)) ?  '"' + term.value + '"' : '"""' + term.value.replace(/(["\\])/g, '\\$1') + '"""') +
         (term.language ? '@' + term.language :
           (term.datatype && term.datatype.value !== xsd + 'string' ? '^^' + this._encodeObject(term.datatype) : this._forceTypedLiterals ? '^^<http://www.w3.org/2001/XMLSchema#string>' : ''));
     }

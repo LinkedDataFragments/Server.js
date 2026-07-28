@@ -53,7 +53,7 @@ class ExternalHdtDatasource extends Datasource {
     // Execute the external HDT utility
     let hdtFile = this._hdtFile, offset = query.offset || 0, limit = query.limit || Infinity,
         hdt = spawn(hdtUtility, [
-          '--query', (query.subject || '?s') + ' ' +
+          '--query', (query.subject   || '?s') + ' ' +
           (query.predicate || '?p') + ' ' + (query.object || '?o'),
           '--offset', offset as unknown as string, '--limit', limit as unknown as string, '--format', 'turtle',
           '--', hdtFile,

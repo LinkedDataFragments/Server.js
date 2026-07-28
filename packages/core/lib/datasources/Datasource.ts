@@ -74,7 +74,7 @@ class Datasource extends EventEmitter {
       let objectSupportedFeatures: Record<string, boolean> = {};
       for (let i = 0; i < supportedFeatureList.length; i++)
         objectSupportedFeatures[supportedFeatureList[i]] = true;
-      this.supportedFeatures = objectSupportedFeatures;
+      this.supportedFeatures =  objectSupportedFeatures;
     }
     else
       this.supportedFeatures = {};
@@ -149,10 +149,10 @@ class Datasource extends EventEmitter {
     let blankNodePrefix = this.urlData.blankNodePrefix, blankNodePrefixLength = this.urlData.blankNodePrefixLength;
     if (query.subject && query.subject.termType === 'NamedNode' && query.subject.value.indexOf(blankNodePrefix) === 0)
       query.subject = this.dataFactory.blankNode(query.subject.value.substr(blankNodePrefixLength));
-    if (query.object && query.object.termType === 'NamedNode' && query.object.value.indexOf(blankNodePrefix) === 0)
-      query.object = this.dataFactory.blankNode(query.object.value.substr(blankNodePrefixLength));
-    if (query.graph && query.graph.termType === 'NamedNode' && query.graph.value.indexOf(blankNodePrefix) === 0)
-      query.graph = this.dataFactory.blankNode(query.graph.value.substr(blankNodePrefixLength));
+    if (query.object && query.object.termType === 'NamedNode'  && query.object.value.indexOf(blankNodePrefix) === 0)
+      query.object  = this.dataFactory.blankNode(query.object.value.substr(blankNodePrefixLength));
+    if (query.graph && query.graph.termType === 'NamedNode'   && query.graph.value.indexOf(blankNodePrefix) === 0)
+      query.graph   = this.dataFactory.blankNode(query.graph.value.substr(blankNodePrefixLength));
 
     // Force the default graph if QPF support is disable
     if (!this._supportsQuads)
@@ -169,7 +169,7 @@ class Datasource extends EventEmitter {
       // Translate blank nodes in the result to blank node IRIs.
       if (quad.subject && quad.subject.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.subject.value])
         subject = this.dataFactory.namedNode(blankNodePrefix + quad.subject.value);
-      if (quad.object && quad.object.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.object.value])
+      if (quad.object  && quad.object.termType  === 'BlankNode' && !this._skolemizeBlacklist[quad.object.value])
         object = this.dataFactory.namedNode(blankNodePrefix + quad.object.value);
       if (quad.graph && quad.graph.termType === 'BlankNode' && !this._skolemizeBlacklist[quad.graph.value])
         graph = this.dataFactory.namedNode(blankNodePrefix + quad.graph.value);

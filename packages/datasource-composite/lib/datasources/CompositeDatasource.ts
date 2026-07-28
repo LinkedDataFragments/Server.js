@@ -155,7 +155,7 @@ class CompositeDatasource extends Datasource {
 
   // Writes the results of the query to the given quad stream
   protected override _executeQuery(query: Query, destination: BufferedIterator<Quad>): void {
-    let offset = query.offset || 0, limit = query.limit || Infinity;
+    let offset =  query.offset || 0, limit = query.limit || Infinity;
     this._getDatasourceInfo(query, offset, (datasourceIndex, relativeOffset, totalCount, hasExactCount) => {
       if (datasourceIndex < 0) {
         // No valid datasource has been found
