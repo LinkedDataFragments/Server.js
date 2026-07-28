@@ -2,6 +2,7 @@
 /* Controller is a base class for HTTP request handlers */
 
 import * as url from 'url';
+import type { Url } from 'url';
 import * as _ from 'lodash';
 import ViewCollection = require('../views/ViewCollection');
 import UrlData = require('../UrlData');
@@ -9,13 +10,21 @@ import Util = require('../Util');
 import parseForwarded = require('forwarded-parse');
 import type { ControllerOptions, LdfRequest, LdfResponse, ViewSettings } from '../types';
 import type { DatasourceRegistry } from '../types';
+import type View = require('../views/View');
+
+// Duck-types (rather than `instanceof`s) a ViewCollection, matching the
+// original check's semantics exactly — some callers pass ViewCollection-like
+// objects (e.g. test doubles) that aren't literal ViewCollection instances.
+function isViewCollection(views: View[] | ViewCollection | undefined): views is ViewCollection {
+  return !!(views as ViewCollection | undefined)?.matchView;
+}
 
 // Creates a new Controller
 class Controller {
   protected _prefixes: Record<string, string>;
   protected _datasources: DatasourceRegistry;
   protected _views: ViewCollection;
-  protected _baseUrl: Record<string, any>;
+  protected _baseUrl: Record<keyof Url, string | boolean | undefined>;
 
   constructor(options?: ControllerOptions) {
     options = options || {};
@@ -25,8 +34,7 @@ class Controller {
       datasources[key.replace(/^(?!\/)/, '/')] = value;
       return datasources;
     }, {} as DatasourceRegistry);
-    this._views = options.views && (options.views as ViewCollection).matchView ?
-      options.views as ViewCollection : new ViewCollection(options.views as any);
+    this._views = isViewCollection(options.views) ? options.views : new ViewCollection(options.views);
 
     // Set up base URL (if we're behind a proxy, this allows reconstructing the actual request URL)
     this._baseUrl = _.mapValues(url.parse((options.urlData || new UrlData()).baseURL), (value, key) => {
