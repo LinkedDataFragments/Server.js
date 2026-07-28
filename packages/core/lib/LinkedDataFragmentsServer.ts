@@ -106,7 +106,7 @@ class LinkedDataFragmentsServer {
   case 'HEAD':
   case 'OPTIONS':
     (response as any).write = function () {};
-    response.end = response.end.bind(response, '', '' as BufferEncoding) as any;
+    response.end = response.end.bind(response, '', '' as BufferEncoding);
     break;
   // Reject all other methods
   default:
@@ -175,7 +175,7 @@ class LinkedDataFragmentsServer {
 };
 
 // Reads the value of an option for the https module
-function readHttpsOption(value: any): any {
+function readHttpsOption(value: unknown): unknown {
   // Read each value of an array
   if (Array.isArray(value))
     return value.map(readHttpsOption);

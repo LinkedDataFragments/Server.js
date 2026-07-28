@@ -3,6 +3,7 @@
 
 import type { Cluster } from 'cluster';
 import { ComponentsManager } from 'componentsjs';
+import type { ConfigRegistry, IComponentsManagerBuilderOptions } from 'componentsjs';
 
 // The 'cluster' module's own type declarations use an ESM-style default
 // export that doesn't line up with plain CJS `require()` under
@@ -40,8 +41,8 @@ function runCustom(
 
   ComponentsManager.build<LinkedDataFragmentsServerWorker>({
     ...properties,
-    configLoader: (registry: { register: (path: string) => void }) => registry.register(args[0]),
-  } as any)
+    configLoader: (registry: ConfigRegistry) => registry.register(args[0]),
+  } as IComponentsManagerBuilderOptions<LinkedDataFragmentsServerWorker>)
     .then((manager) => {
       return manager.instantiate(configUri)
         .then((worker) => {

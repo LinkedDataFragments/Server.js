@@ -30,7 +30,7 @@ export function createErrorType(
   // The prototype-chain rewiring below has no static TS representation,
   // since ErrorType's shape changes at runtime to match BaseError.
   function ErrorType(this: Error, message?: string, ...rest: any[]) {
-    const error: any = this instanceof ErrorType ? this : new (ErrorType as any)(message, ...rest);
+    const error: Error = this instanceof ErrorType ? this : new (ErrorType as any)(message, ...rest);
     error.name = errorName;
     error.message = message || '';
     Error.captureStackTrace(error, error.constructor);

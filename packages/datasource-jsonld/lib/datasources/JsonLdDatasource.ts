@@ -17,8 +17,8 @@ class JsonLdDatasource extends MemoryDatasource {
   // Retrieves all quads from the document
   protected override _getAllQuads(addQuad: (quad: Quad) => void, done: (error?: Error) => void): void {
     let document = this._fetch({ url: this._url!, headers: { accept: ACCEPT } });
-    new JsonLdParser({ baseIRI: this._url, dataFactory: this.dataFactory } as any)
-      .import(document as any)
+    new JsonLdParser({ baseIRI: this._url, dataFactory: this.dataFactory })
+      .import(document)
       .on('error', done)
       .on('data', addQuad)
       .on('end', done);

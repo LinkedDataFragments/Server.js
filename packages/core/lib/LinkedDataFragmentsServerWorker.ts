@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import * as fs from 'fs';
 import LinkedDataFragmentsServer = require('./LinkedDataFragmentsServer');
 import type Controller = require('./controllers/Controller');
-import type { WorkerConfig } from './types';
+import type { LdfRequest, LdfResponse, WorkerConfig } from './types';
 
 // Creates a new LinkedDataFragmentsServerWorker
 class LinkedDataFragmentsServerWorker {
@@ -35,7 +35,7 @@ class LinkedDataFragmentsServerWorker {
     config.log = console.log;
     if (loggingSettings.enabled) {
       let accesslog = require('access-log');
-      config.accesslogger = function (request: any, response: any) {
+      config.accesslogger = function (request: LdfRequest, response: LdfResponse) {
         accesslog(request, response, null, (logEntry: string) => {
           fs.appendFile(loggingSettings.file!, logEntry + '\n', (error) => {
             error && process.stderr.write('Error when writing to access log file: ' + error);

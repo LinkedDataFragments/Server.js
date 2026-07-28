@@ -19,7 +19,7 @@ class N3Datasource extends MemoryDatasource {
   protected override _getAllQuads(addQuad: (quad: Quad) => void, done: (error?: Error) => void): void {
     let document = this._fetch({ url: this._url!, headers: { accept: ACCEPT } });
     (N3Parser as any)._resetBlankNodePrefix();
-    new N3Parser({ factory: this.dataFactory } as any).parse(document as any, (error: Error, quad: Quad) => {
+    new N3Parser({ factory: this.dataFactory }).parse(document as any, (error: Error, quad: Quad) => {
       quad ? addQuad(quad) : done(error);
     });
   }

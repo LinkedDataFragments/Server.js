@@ -63,7 +63,7 @@ class ViewCollection {
     if (!viewList || !viewList.length)
       throw new ViewCollectionError('No view named ' + name + ' found.');
     // Negotiate the view best matching the request's requirements
-    let viewDetails = negotiate.choose(viewList, request as any)[0];
+    let viewDetails = negotiate.choose(viewList, request)[0];
     if (!viewDetails)
       throw new ViewCollectionError('No matching view named ' + name + ' found.');
     return viewDetails;

@@ -3,7 +3,7 @@
 
 import Datasource = require('@ldf/core/lib/datasources/Datasource');
 import { SparqlJsonParser } from 'sparqljson-parse';
-import type { Quad, Term } from 'rdf-js';
+import type { Literal, Quad, Term } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, Query } from '@ldf/core/lib/types';
 
@@ -46,7 +46,7 @@ class SparqlDatasource extends Datasource {
 
     this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
     this._resolvingCountQueries = {};
-    this._sparqlJsonParser = new SparqlJsonParser({ dataFactory: this.dataFactory } as any);
+    this._sparqlJsonParser = new SparqlJsonParser({ dataFactory: this.dataFactory });
 
     // Set endpoint URL and default graph
     options = options || {};
@@ -208,7 +208,7 @@ class SparqlDatasource extends Datasource {
     }
   }
 
-  protected _convertLiteral(term: any): string {
+  protected _convertLiteral(term?: Literal): string {
     if (!term)
       return '?o';
     else {

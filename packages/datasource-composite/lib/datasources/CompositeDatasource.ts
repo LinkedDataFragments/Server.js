@@ -121,7 +121,7 @@ class CompositeDatasource extends Datasource {
         let outputQuads = datasource.select(emptyQuery);
         outputQuads.getProperty('metadata', (metadata: { totalCount: number; hasExactCount: boolean }) => {
           // If we are still looking for an appropriate datasource, we need exact counts
-          let count = metadata.totalCount, exact: any = metadata.hasExactCount;
+          let count = metadata.totalCount, exact = metadata.hasExactCount;
           if (offset > 0 && !exact) {
             self._getExactCount(datasource, query, (exactCount) => {
               count = exactCount;
