@@ -1,24 +1,52 @@
 /*! @license MIT ©2014-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* A SparqlDatasource provides queryable access to a SPARQL endpoint. */
 
-let Datasource = require('@ldf/core').datasources.Datasource,
-    SparqlJsonParser = require('sparqljson-parse').SparqlJsonParser,
-    LRU = require('lru-cache');
+import Datasource = require('@ldf/core/lib/datasources/Datasource');
+import { SparqlJsonParser } from 'sparqljson-parse';
+import type { Quad, Term } from 'rdf-js';
+import type { BufferedIterator } from 'asynciterator';
+import type { DatasourceOptions, Query } from '@ldf/core/lib/types';
 
-let DEFAULT_COUNT_ESTIMATE = { totalCount: 1e9, hasExactCount: false };
+// lru-cache v5 (this package's actual declared/installed dependency) ships no
+// types of its own, and the monorepo's hoisted root lru-cache is a much
+// newer, API-incompatible major version — so this is pulled in untyped
+// rather than resolving to the wrong package's declarations.
+const LRU: new (options: { max: number; maxAge: number }) => {
+  get(key: string): number | undefined;
+  set(key: string, value: number): void;
+} = require('lru-cache');
+
+interface SparqlDatasourceOptions extends DatasourceOptions {
+  endpoint?: string;
+  forceTypedLiterals?: boolean;
+}
+
+interface CountEstimate {
+  totalCount: number;
+  hasExactCount: boolean;
+}
+
+let DEFAULT_COUNT_ESTIMATE: CountEstimate = { totalCount: 1e9, hasExactCount: false };
 let ENDPOINT_ERROR = 'Error accessing SPARQL endpoint';
 let INVALID_JSON_RESPONSE = 'The endpoint returned an invalid SPARQL results JSON response.';
-const xsd  = 'http://www.w3.org/2001/XMLSchema#';
+const xsd = 'http://www.w3.org/2001/XMLSchema#';
 
 // Creates a new SparqlDatasource
 class SparqlDatasource extends Datasource {
-  constructor(options) {
+  protected _countCache: InstanceType<typeof LRU>;
+  protected _resolvingCountQueries: Record<string, boolean>;
+  protected _sparqlJsonParser: SparqlJsonParser;
+  protected _endpoint: string;
+  protected _endpointUrl: string;
+  protected _forceTypedLiterals?: boolean;
+
+  constructor(options: SparqlDatasourceOptions) {
     let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
     super(options, supportedFeatureList);
 
     this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
     this._resolvingCountQueries = {};
-    this._sparqlJsonParser = new SparqlJsonParser({ dataFactory: this.dataFactory });
+    this._sparqlJsonParser = new SparqlJsonParser({ dataFactory: this.dataFactory } as any);
 
     // Set endpoint URL and default graph
     options = options || {};
@@ -29,7 +57,7 @@ class SparqlDatasource extends Datasource {
   }
 
   // Writes the results of the query to the given triple stream
-  _executeQuery(query, destination) {
+  protected override _executeQuery(query: Query, destination: BufferedIterator<Quad>): void {
     // Create the HTTP request
     let sparqlPattern = this._createQuadPattern(query), self = this,
         selectQuery = this._createSelectQuery(sparqlPattern, query.offset, query.limit),
@@ -40,22 +68,22 @@ class SparqlDatasource extends Datasource {
     // Fetch and parse matching triples using JSON responses
     let json = '';
     this._request(request, emitError)
-      .on('data', (data) => { json += data; })
+      .on('data', (data: string) => { json += data; })
       .on('error', emitError)
       .on('end', () => {
         let response;
         try { response = JSON.parse(json); }
         catch (e) { return emitError({ message: INVALID_JSON_RESPONSE }); }
 
-        response.results.bindings.forEach((binding) => {
+        response.results.bindings.forEach((binding: any) => {
           binding = this._sparqlJsonParser.parseJsonBindings(binding);
           let triple = {
-            subject:   binding.s || query.subject,
+            subject: binding.s || query.subject,
             predicate: binding.p || query.predicate,
-            object:    binding.o || query.object,
-            graph:     binding.g || query.graph,
+            object: binding.o || query.object,
+            graph: binding.g || query.graph,
           };
-          destination._push(triple);
+          (destination as any)._push(triple);
         });
         destination.close();
       });
@@ -68,7 +96,7 @@ class SparqlDatasource extends Datasource {
 
     // Emits an error on the triple stream
     let errored = false;
-    function emitError(error) {
+    function emitError(error?: { message: string }) {
       if (!error || errored) return;
       errored = true;
       destination.emit('error', new Error(ENDPOINT_ERROR + ' ' + self._endpoint + ': ' + error.message));
@@ -76,7 +104,7 @@ class SparqlDatasource extends Datasource {
   }
 
   // Retrieves the (approximate) number of triples that match the SPARQL pattern
-  _getPatternCount(sparqlPattern) {
+  protected _getPatternCount(sparqlPattern: string): Promise<CountEstimate> {
     // Try to find a cache match
     let cache = this._countCache, count = cache.get(sparqlPattern);
     if (count)
@@ -97,7 +125,7 @@ class SparqlDatasource extends Datasource {
     return new Promise((resolve, reject) => {
       let csv = '';
       this._resolvingCountQueries[sparqlPattern] = true;
-      countResponse.on('data', (data) => { csv += data; });
+      countResponse.on('data', (data: string) => { csv += data; });
       countResponse.on('end', () => {
         delete this._resolvingCountQueries[sparqlPattern];
         let countMatch = csv.match(/\d+/);
@@ -121,41 +149,41 @@ class SparqlDatasource extends Datasource {
   }
 
   // Creates a SELECT query from the given SPARQL pattern
-  _createSelectQuery(sparqlPattern, offset, limit) {
+  protected _createSelectQuery(sparqlPattern: string, offset?: number, limit?: number): string {
     let query = ['SELECT * WHERE', sparqlPattern];
     // Even though the SPARQL spec indicates that
     // LIMIT and OFFSET might be meaningless without ORDER BY,
     // this doesn't seem a problem in practice.
     // Furthermore, sorting can be slow. Therefore, don't sort.
-    limit  && query.push('LIMIT',  limit);
-    offset && query.push('OFFSET', offset);
+    limit && query.push('LIMIT', limit as unknown as string);
+    offset && query.push('OFFSET', offset as unknown as string);
     return query.join(' ');
   }
 
   // Creates a SELECT COUNT(*) query from the given SPARQL pattern
-  _createCountQuery(sparqlPattern) {
+  protected _createCountQuery(sparqlPattern: string): string {
     return 'SELECT (COUNT(*) AS ?c) WHERE ' + sparqlPattern;
   }
 
   // Creates a SPARQL pattern for the given triple pattern
-  _createQuadPattern(quad) {
+  protected _createQuadPattern(quad: Query): string {
     let query = ['{'];
 
     // Encapsulate in graph if we are not querying the default graph
     if (!quad.graph || quad.graph.termType !== 'DefaultGraph') {
       query.push('GRAPH ');
-      quad.graph ? query.push(this._encodeObject(quad.graph)) : query.push('?g');
+      quad.graph ? query.push(this._encodeObject(quad.graph)!) : query.push('?g');
       query.push('{');
     }
 
     // Add a possible subject IRI
-    quad.subject ? query.push(this._encodeObject(quad.subject) + ' ') : query.push('?s ');
+    quad.subject ? query.push(this._encodeObject(quad.subject)! + ' ') : query.push('?s ');
 
     // Add a possible predicate IRI
-    quad.predicate ? query.push(this._encodeObject(quad.predicate) + ' ') : query.push('?p ');
+    quad.predicate ? query.push(this._encodeObject(quad.predicate)! + ' ') : query.push('?p ');
 
     // Add a possible object IRI
-    quad.object ? query.push(this._encodeObject(quad.object)) : query.push('?o');
+    quad.object ? query.push(this._encodeObject(quad.object)!) : query.push('?o');
 
     if (!quad.graph || quad.graph.termType !== 'DefaultGraph')
       query.push('}'); // close the GRAPH brackets
@@ -163,7 +191,7 @@ class SparqlDatasource extends Datasource {
     return query.push('}'), query.join('');
   }
 
-  _encodeObject(term) {
+  protected _encodeObject(term: Term): string | null {
     switch (term.termType) {
     case 'NamedNode':
       return '<' + term.value + '>';
@@ -180,15 +208,15 @@ class SparqlDatasource extends Datasource {
     }
   }
 
-  _convertLiteral(term) {
+  protected _convertLiteral(term: any): string {
     if (!term)
       return '?o';
     else {
-      return ((!/["\\]/.test(term.value)) ?  '"' + term.value + '"' : '"""' + term.value.replace(/(["\\])/g, '\\$1') + '"""') +
+      return ((!/["\\]/.test(term.value)) ? '"' + term.value + '"' : '"""' + term.value.replace(/(["\\])/g, '\\$1') + '"""') +
         (term.language ? '@' + term.language :
           (term.datatype && term.datatype.value !== xsd + 'string' ? '^^' + this._encodeObject(term.datatype) : this._forceTypedLiterals ? '^^<http://www.w3.org/2001/XMLSchema#string>' : ''));
     }
   }
 }
 
-module.exports = SparqlDatasource;
+export = SparqlDatasource;
