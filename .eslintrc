@@ -197,6 +197,24 @@
       rules: {
         "import/no-extraneous-dependencies": "off"
       }
+    },
+    {
+      // TypeScript source files
+      files: [ "packages/**/*.ts" ],
+      parser: "@typescript-eslint/parser",
+      parserOptions: {
+        ecmaVersion: 9,
+        sourceType: "module",
+        project: "./tsconfig.json"
+      },
+      plugins: [ "@typescript-eslint" ],
+      rules: {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [ 2, { args: "none" } ],
+        // The TS compiler already catches undefined references, and this rule
+        // otherwise misfires on TS-only constructs (interfaces, type imports).
+        "no-undef": "off"
+      }
     }
   ]
 }
