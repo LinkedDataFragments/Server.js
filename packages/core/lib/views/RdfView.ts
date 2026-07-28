@@ -25,6 +25,15 @@ interface RdfWriter {
   end: () => void;
 }
 
+// Duck-types a view extension that generates RDF, matching the original
+// check's exact semantics (`extension._generateRdf`, not `instanceof RdfView`).
+interface RdfViewExtension extends View {
+  _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void;
+}
+function isRdfViewExtension(extension: View): extension is RdfViewExtension {
+  return !!(extension as Partial<RdfViewExtension>)._generateRdf;
+}
+
 // Creates a new RDF view with the given name and settings
 class RdfView extends View {
   constructor(viewName?: string, settings?: ViewSettings) {
@@ -57,8 +66,8 @@ class RdfView extends View {
   // Renders the specified view extension
   protected override _renderViewExtension(extension: View, options: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // only view extensions that generate triples are supported
-    if ((extension as any)._generateRdf)
-      (extension as any)._generateRdf(options, options.writer.data, options.writer.meta, done);
+    if (isRdfViewExtension(extension))
+      extension._generateRdf(options, options.writer.data, options.writer.meta, done);
   }
 
   // Adds details about the datasources
@@ -77,7 +86,7 @@ class RdfView extends View {
 
   // Creates a writer for Turtle/N-Triples/TriG/N-Quads
   protected _createN3Writer(settings: ViewSettings, response: LdfResponse, done: RenderDone): RdfWriter {
-    let writer = new N3.Writer({ format: settings.contentType, prefixes: settings.prefixes } as any),
+    let writer = new N3.Writer({ format: settings.contentType, prefixes: settings.prefixes }),
         supportsGraphs = /trig|quad/.test(settings.contentType!), metadataGraph: string | undefined;
 
     const dataFactory = this.dataFactory!;
@@ -85,17 +94,17 @@ class RdfView extends View {
       // Adds the data quad to the output
       // NOTE: The first parameter can also be a quad object
       data: function (quad: Quad) {
-        writer.addQuad(quad as any);
+        writer.addQuad(quad);
       },
       // Adds the metadata triple to the output
       meta: function (quad: Quad) {
         // Relate the metadata graph to the data.
         if (supportsGraphs && !metadataGraph) {
           metadataGraph = settings.metadataGraph;
-          writer.addQuad(dataFactory.namedNode(metadataGraph!) as any, dataFactory.namedNode(primaryTopic) as any, dataFactory.namedNode(settings.fragmentUrl) as any, dataFactory.namedNode(metadataGraph!) as any);
+          writer.addQuad(dataFactory.namedNode(metadataGraph!), dataFactory.namedNode(primaryTopic), dataFactory.namedNode(settings.fragmentUrl), dataFactory.namedNode(metadataGraph!));
         }
         const graph = quad.graph.termType === 'DefaultGraph' ? (metadataGraph ? dataFactory.namedNode(metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
-        writer.addQuad(dataFactory.quad(quad.subject, quad.predicate, quad.object, graph) as any);
+        writer.addQuad(dataFactory.quad(quad.subject, quad.predicate, quad.object, graph));
       },
       // Ends the output and flushes the stream
       end: function () {
@@ -109,11 +118,11 @@ class RdfView extends View {
 
   // Creates a writer for JSON-LD
   protected _createJsonLdWriter(settings: ViewSettings, response: LdfResponse, done: RenderDone): RdfWriter {
-    let prefixes = settings.prefixes || {}, context: Record<string, any> = _.omit(prefixes, ''), base = (prefixes as Record<string, string>)[''];
+    let prefixes = settings.prefixes || {}, context: Record<string, any> = _.omit(prefixes, ''), base = prefixes[''];
     base && (context['@base'] = base);
-    const mySerializer = new JsonLdSerializer({ space: '  ', context: context, baseIRI: (prefixes as Record<string, string>)[''], useNativeTypes: true } as any)
+    const mySerializer = new JsonLdSerializer({ space: '  ', context: context, baseIRI: prefixes[''], useNativeTypes: true })
       .on('error', done);
-    mySerializer.pipe(response as any);
+    mySerializer.pipe(response);
     mySerializer.on('error', (e: Error) => done(e));
     mySerializer.on('end', () => done(null));
 
@@ -121,12 +130,12 @@ class RdfView extends View {
     return {
       // Adds the data triple to the output
       data: function (quad: Quad) {
-        mySerializer.write(quad as any);
+        mySerializer.write(quad);
       },
       // Adds the metadata triple to the output
       meta: function (quad: Quad) {
         const graph = quad.graph.termType === 'DefaultGraph' ? (settings.metadataGraph  ? dataFactory.namedNode(settings.metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
-        mySerializer.write(dataFactory.quad(quad.subject, quad.predicate, quad.object, graph) as any);
+        mySerializer.write(dataFactory.quad(quad.subject, quad.predicate, quad.object, graph));
       },
       // Ends the output and flushes the stream
       end: function () {
