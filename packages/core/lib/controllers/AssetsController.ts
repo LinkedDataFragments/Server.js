@@ -1,16 +1,25 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An AssetsController responds to requests for assets */
 
-let Controller = require('./Controller'),
-    fs = require('fs'),
-    path = require('path'),
-    mime = require('mime'),
-    Util = require('../Util'),
-    UrlData = require('../UrlData');
+import Controller = require('./Controller');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as mime from 'mime';
+import Util = require('../Util');
+import UrlData = require('../UrlData');
+import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
+
+interface Asset {
+  type: string;
+  contents: Buffer;
+}
 
 // Creates a new AssetsController
 class AssetsController extends Controller {
-  constructor(options) {
+  protected _matcher: RegExp;
+  protected _assets: Record<string, Asset>;
+
+  constructor(options?: ControllerOptions) {
     options = options || {};
     super(options);
 
@@ -26,14 +35,14 @@ class AssetsController extends Controller {
   }
 
   // Recursively reads assets in the folder, assigning them to the URL path
-  _readAssetsFolder(assetsFolder, assetsPath) {
+  protected _readAssetsFolder(assetsFolder: string, assetsPath: string): void {
     if (assetsFolder.indexOf('file:///') === 0)
       assetsFolder = assetsFolder.replace('file:///', '');
-    fs.readdirSync(assetsFolder).forEach(function (name) {
+    fs.readdirSync(assetsFolder).forEach(function (this: AssetsController, name: string) {
       let filename = path.join(assetsFolder, name), stats = fs.statSync(filename);
       // Read an asset file into memory
       if (stats.isFile()) {
-        let assetType = mime.getType(filename);
+        let assetType = mime.getType(filename)!;
         this._assets[assetsPath + name.replace(/[.][^.]+$/, '')] = {
           type: assetType.indexOf('text/') ? assetType : assetType + ';charset=utf-8',
           contents: fs.readFileSync(filename),
@@ -46,8 +55,8 @@ class AssetsController extends Controller {
   }
 
   // Try to serve the requested asset
-  _handleRequest(request, response, next) {
-    let assetMatch = request.url.match(this._matcher), asset;
+  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
+    let assetMatch = request.url!.match(this._matcher), asset: Asset | null | undefined;
     if (asset = assetMatch && this._assets[assetMatch[1] || assetMatch[2]]) {
       response.writeHead(200, {
         'Content-Type': asset.type,
@@ -60,4 +69,4 @@ class AssetsController extends Controller {
   }
 }
 
-module.exports = AssetsController;
+export = AssetsController;

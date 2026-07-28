@@ -1,13 +1,17 @@
 /*! @license MIT ©2014-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* LinkedDataFragmentsServerRunner is able to run a Linked Data Fragments server */
 
-let _ = require('lodash'),
-    fs = require('fs'),
-    LinkedDataFragmentsServer = require('./LinkedDataFragmentsServer');
+import * as _ from 'lodash';
+import * as fs from 'fs';
+import LinkedDataFragmentsServer = require('./LinkedDataFragmentsServer');
+import type Controller = require('./controllers/Controller');
+import type { WorkerConfig } from './types';
 
 // Creates a new LinkedDataFragmentsServerWorker
 class LinkedDataFragmentsServerWorker {
-  constructor(config) {
+  protected _config: WorkerConfig;
+
+  constructor(config: WorkerConfig) {
     if (!config.datasources)
       throw new Error('At least one datasource must be defined.');
     if (!config.controllers)
@@ -19,7 +23,7 @@ class LinkedDataFragmentsServerWorker {
     Object.keys(config.datasources).forEach((datasourceId) => {
       let datasource = config.datasources[datasourceId];
       datasource.on('error', datasourceError);
-      function datasourceError(error) {
+      function datasourceError(error: Error) {
         config.datasources[datasourceId].hide = true;
         process.stderr.write('WARNING: skipped datasource ' + datasourceId + '. ' + error.message + '\n');
       }
@@ -31,9 +35,9 @@ class LinkedDataFragmentsServerWorker {
     config.log = console.log;
     if (loggingSettings.enabled) {
       let accesslog = require('access-log');
-      config.accesslogger = function (request, response) {
-        accesslog(request, response, null, (logEntry) => {
-          fs.appendFile(loggingSettings.file, logEntry + '\n', (error) => {
+      config.accesslogger = function (request: any, response: any) {
+        accesslog(request, response, null, (logEntry: string) => {
+          fs.appendFile(loggingSettings.file!, logEntry + '\n', (error) => {
             error && process.stderr.write('Error when writing to access log file: ' + error);
           });
         });
@@ -41,11 +45,11 @@ class LinkedDataFragmentsServerWorker {
     }
 
     // Make sure the 'last' controllers are last in the array and the 'first' are first.
-    let lastControllers = _.remove(config.controllers, (controller) => {
-      return controller._last;
+    let lastControllers = _.remove(config.controllers, (controller: Controller) => {
+      return (controller as any)._last;
     });
-    let firstControllers = _.remove(config.controllers, (controller) => {
-      return controller._first;
+    let firstControllers = _.remove(config.controllers, (controller: Controller) => {
+      return (controller as any)._first;
     });
     config.controllers = firstControllers.concat(config.controllers.concat(lastControllers));
 
@@ -53,11 +57,11 @@ class LinkedDataFragmentsServerWorker {
   }
 
   // Start the worker
-  run(port) {
+  run(port?: number): void {
     let config = this._config;
     if (port)
       config.port = port;
-    let server = new LinkedDataFragmentsServer(config);
+    let server = new LinkedDataFragmentsServer(config) as unknown as LinkedDataFragmentsServer.LdfHttpServer;
 
     // Start the server when all data sources are ready
     let pending = Object.keys(config.datasources).length;
@@ -76,7 +80,7 @@ class LinkedDataFragmentsServerWorker {
         server.listen(config.port);
         // eslint-disable-next-line no-console
         console.log('Worker %d running on %s://localhost:%d/ (URL: %s).',
-          process.pid, config.urlData.protocol, config.port, config.urlData.baseURL);
+          process.pid, config.urlData!.protocol, config.port, config.urlData!.baseURL);
       }
     }
 
@@ -90,4 +94,4 @@ class LinkedDataFragmentsServerWorker {
   }
 }
 
-module.exports = LinkedDataFragmentsServerWorker;
+export = LinkedDataFragmentsServerWorker;

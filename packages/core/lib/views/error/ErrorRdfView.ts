@@ -1,20 +1,22 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An ErrorRdfView represents a 500 response in RDF. */
 
-let RdfView = require('../RdfView');
+import RdfView = require('../RdfView');
+import type { Quad } from 'rdf-js';
+import type { RenderDone, ViewSettings } from '../../types';
 
 // Creates a new ErrorRdfView
 class ErrorRdfView extends RdfView {
-  constructor(settings) {
+  constructor(settings?: ViewSettings) {
     super('Error', settings);
   }
 
   // Generates triples and quads by sending them to the data and/or metadata callbacks
-  _generateRdf(settings, data, metadata, done) {
+  protected override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     this._addDatasources(settings, data, metadata);
     done();
   }
 }
 
 
-module.exports = ErrorRdfView;
+export = ErrorRdfView;

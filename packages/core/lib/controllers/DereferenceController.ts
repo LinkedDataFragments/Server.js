@@ -1,14 +1,19 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A DeferenceController responds to dereferencing requests */
 
-let Controller = require('./Controller'),
-    url = require('url'),
-    _ = require('lodash'),
-    Util = require('../Util');
+import Controller = require('./Controller');
+import * as url from 'url';
+import * as _ from 'lodash';
+import Util = require('../Util');
+import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
+import type Datasource = require('../datasources/Datasource');
 
 // Creates a new DeferenceController
 class DeferenceController extends Controller {
-  constructor(options) {
+  protected _paths: Record<string, Datasource>;
+  protected _matcher: RegExp;
+
+  constructor(options?: ControllerOptions) {
     options = options || {};
     super(options);
     let paths = this._paths = options.dereference || {};
@@ -18,12 +23,12 @@ class DeferenceController extends Controller {
   }
 
   // Dereferences a URL by redirecting to its subject fragment of a certain data source
-  _handleRequest(request, response, next) {
-    let match = this._matcher.exec(request.url), datasource;
+  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
+    let match = this._matcher.exec(request.url!), datasource: Datasource | null | undefined;
     if (datasource = match && this._paths[match[1]]) {
       let entity = url.format(_.defaults({
         pathname: datasource.path,
-        query: { subject: url.format(request.parsedUrl) },
+        query: { subject: url.format(request.parsedUrl as any) },
       }, request.parsedUrl));
       response.writeHead(303, { 'Location': entity, 'Content-Type': Util.MIME_PLAINTEXT });
       response.end(entity);
@@ -33,4 +38,4 @@ class DeferenceController extends Controller {
   }
 }
 
-module.exports = DeferenceController;
+export = DeferenceController;

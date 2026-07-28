@@ -1,29 +1,45 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* View is a base class for objects that generate server responses. */
 
-let join = require('path').join,
-    ViewCollection = require('./ViewCollection');
+import { join } from 'path';
+import type { DataFactory } from 'rdf-js';
+import ViewCollection = require('./ViewCollection');
+import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../types';
+
+interface ContentTypeDescriptor {
+  type: string;
+  responseType: string;
+  quality: number;
+}
 
 // Creates a view with the given name
 class View {
-  constructor(viewName, contentTypes, defaults) {
+  name: string;
+  supportedContentTypes!: ContentTypeDescriptor[];
+  dataFactory?: DataFactory;
+
+  protected _supportedContentTypeMatcher!: Record<string, boolean>;
+  protected _defaults: ViewSettings;
+
+  constructor(viewName?: string, contentTypes?: string, defaults?: ViewSettings) {
     this.name = viewName || '';
     this._parseContentTypes(contentTypes);
     this._defaults = defaults || {};
     this.dataFactory = this._defaults.dataFactory;
     if (this._defaults.views)
-      this._defaults.views = new ViewCollection(defaults.views);
+      this._defaults.views = new ViewCollection(defaults!.views as View[]);
   }
 
   // Parses a string of content types into an array of objects
   // i.e., 'a/b,q=0.7' => [{ type: 'a/b', responseType: 'a/b;charset=utf-8', quality: 0.7 }]
   // The "type" represents the MIME type,
   // whereas "responseType" contains the value of the Content-Type header with encoding.
-  _parseContentTypes(contentTypes) {
-    let matcher = this._supportedContentTypeMatcher = Object.create(null);
+  protected _parseContentTypes(contentTypes?: string): void {
+    let matcher: Record<string, boolean> = this._supportedContentTypeMatcher = Object.create(null);
+    let parsedContentTypes: ContentTypeDescriptor[] | undefined;
     if (typeof contentTypes === 'string') {
-      contentTypes = contentTypes.split(',').map((typeString) => {
-        let contentType = typeString.match(/[^;,]*/)[0],
+      parsedContentTypes = contentTypes.split(',').map((typeString) => {
+        let contentType = typeString.match(/[^;,]*/)![0],
             responseType = contentType + ';charset=utf-8',
             quality = typeString.match(/;q=([0-9.]+)/);
         matcher[contentType] = matcher[responseType] = true;
@@ -34,20 +50,20 @@ class View {
         };
       });
     }
-    this.supportedContentTypes = contentTypes || [];
+    this.supportedContentTypes = parsedContentTypes || [];
   }
 
   // Indicates whether the view supports the given content type
-  supportsContentType(contentType) {
+  supportsContentType(contentType: string): boolean {
     return this._supportedContentTypeMatcher[contentType];
   }
 
   // Renders the view with the given options to the response
-  render(options, request, response, done) {
+  render(options: ViewSettings, request: LdfRequest, response: LdfResponse, done?: RenderDone): void {
     // Initialize view-specific settings
-    let settings = { ...options, ...this._defaults };
+    let settings: ViewSettings = { ...options, ...this._defaults };
     if (!settings.contentType)
-      settings.contentType = response.getHeader('Content-Type');
+      settings.contentType = response.getHeader('Content-Type') as string;
 
     // Export our base view, so it can be reused by other modules
     settings.viewPathBase = join(__dirname, 'base.html');
@@ -62,18 +78,18 @@ class View {
   }
 
   // Gets extensions with the given name for this view
-  _getViewExtensions(name, contentType) {
-    let extensions = this._defaults.views ? this._defaults.views.getViews(this.name + ':' + name) : [];
+  protected _getViewExtensions(name: string, contentType?: string): View[] {
+    let extensions: View[] = this._defaults.views ? (this._defaults.views as ViewCollection).getViews(this.name + ':' + name) : [];
     if (extensions.length) {
       extensions = extensions.filter((extension) => {
-        return extension.supportsContentType(contentType);
+        return extension.supportsContentType(contentType!);
       });
     }
     return extensions;
   }
 
   // Renders the extensions with the given name for this view
-  _renderViewExtensions(name, options, request, response, done) {
+  protected _renderViewExtensions(name: string, options: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     let self = this, extensions = this._getViewExtensions(name, options.contentType), i = 0;
     (function next() {
       if (i < extensions.length)
@@ -84,17 +100,17 @@ class View {
   }
 
   // Renders the specified view extension
-  _renderViewExtension(extension, options, request, response, done) {
+  protected _renderViewExtension(extension: View, options: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     extension.render(options, request, response, done);
   }
 
   // Renders the view with the given settings to the response
   // (settings combines the view defaults with instance-specific options)
-  _render(settings, request, response, done) {
+  protected _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     throw new Error('The _render method is not yet implemented.');
   }
 }
 
 
 
-module.exports = View;
+export = View;

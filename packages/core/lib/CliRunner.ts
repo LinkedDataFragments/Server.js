@@ -1,17 +1,34 @@
 /*! @license MIT ©2013-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* Logic for starting an LDF server with a given config from the command line. */
 
-let cluster = require('cluster'),
-    ComponentsManager = require('componentsjs').ComponentsManager;
+import type { Cluster } from 'cluster';
+import { ComponentsManager } from 'componentsjs';
+
+// The 'cluster' module's own type declarations use an ESM-style default
+// export that doesn't line up with plain CJS `require()` under
+// esModuleInterop:false, so the value is pulled in untyped and annotated
+// explicitly against the real `Cluster` interface instead.
+const cluster: Cluster = require('cluster');
+import LinkedDataFragmentsServerWorker = require('./LinkedDataFragmentsServerWorker');
+import type { WorkerConfig } from './types';
+
+type Writable = { write(chunk: string): void };
 
 // Run function for starting the server from the command line
-function runCli(moduleRootPath) {
+function runCli(moduleRootPath: string): void {
   let argv = process.argv.slice(2);
   runCustom(argv, process.stdin, process.stdout, process.stderr, null, { mainModulePath: moduleRootPath });
 }
 
 // Generic run function for starting the server from a given config
-function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) {
+function runCustom(
+  args: string[],
+  stdin: NodeJS.ReadableStream,
+  stdout: Writable,
+  stderr: Writable,
+  componentConfigUri: string | null,
+  properties: Record<string, any>,
+): void {
   if (args.length < 1 || args.length > 4 || /^--?h(elp)?$/.test(args[0])) {
     stdout.write('usage: server config.json [port [workers [componentConfigUri]]]\n');
     return process.exit(1);
@@ -21,31 +38,31 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
       cliWorkers = parseInt(args[2], 10),
       configUri = args[3] || componentConfigUri || 'urn:ldf-server:my';
 
-  ComponentsManager.build({
+  ComponentsManager.build<LinkedDataFragmentsServerWorker>({
     ...properties,
-    configLoader: (registry) => registry.register(args[0]),
-  })
+    configLoader: (registry: { register: (path: string) => void }) => registry.register(args[0]),
+  } as any)
     .then((manager) => {
       return manager.instantiate(configUri)
         .then((worker) => {
           if (cluster.isMaster)
-            startClusterMaster(worker._config);
+            startClusterMaster((worker as any)._config);
           else
             worker.run(cliPort);
         })
-        .catch((e) => {
+        .catch((e: Error) => {
           stderr.write('Instantiation error:\n');
           stderr.write(e.stack + '\n');
           process.exit(1);
         });
     })
-    .catch((e) => {
+    .catch((e: Error) => {
       stderr.write('Component definition error:\n');
       stderr.write(e.stack + '\n');
       process.exit(1);
     });
 
-  function startClusterMaster(config) {
+  function startClusterMaster(config: WorkerConfig & { workers?: number }): void {
     let workers = cliWorkers || config.workers || 1;
 
     // Create workers
@@ -75,7 +92,7 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
       process.removeListener('SIGHUP', respawn);
 
       // Retrieve a list of old workers that will be replaced by new ones
-      let workers = Object.keys(cluster.workers).map((id) => { return cluster.workers[id]; });
+      let workers = Object.keys(cluster.workers!).map((id) => { return cluster.workers![id]!; });
       (function respawnNext() {
         // If there are still old workers, respawn a new one
         if (workers.length) {
@@ -86,7 +103,7 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
             if (!worker)
               return newWorker.kill(), respawnNext(); // Dead workers are replaced automatically
             worker.once('exit', () => {
-              stdout.write('Worker ' + newWorker.process.pid + ' replaces killed worker ' + worker.process.pid + '.\n');
+              stdout.write('Worker ' + newWorker.process.pid + ' replaces killed worker ' + worker!.process.pid + '.\n');
               respawnNext();
             });
             worker.kill();
@@ -94,8 +111,8 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
           });
           // Abort the respawning process if creating a new worker fails
           newWorker.on('exit', abort);
-          function abort(code, signal) {
-            if (!newWorker.suicide) {
+          function abort(code: number, signal: string) {
+            if (!(newWorker as any).suicide) {
               stdout.write('Respawning aborted because worker ' + newWorker.process.pid + ' died with ' +
                 (code || signal) + '.\n');
               process.addListener('SIGHUP', respawn);
@@ -115,4 +132,4 @@ function runCustom(args, stdin, stdout, stderr, componentConfigUri, properties) 
   }
 }
 
-module.exports = { runCli: runCli, runCustom: runCustom };
+export = { runCli: runCli, runCustom: runCustom };

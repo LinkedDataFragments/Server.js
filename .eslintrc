@@ -213,7 +213,12 @@
         "@typescript-eslint/no-unused-vars": [ 2, { args: "none" } ],
         // The TS compiler already catches undefined references, and this rule
         // otherwise misfires on TS-only constructs (interfaces, type imports).
-        "no-undef": "off"
+        "no-undef": "off",
+        // Misfires on TS function-overload signatures (multiple declarations
+        // for one implementation) — the TS compiler already validates those.
+        "no-redeclare": "off",
+        // Third-party type names (e.g. rdf-js's Quad_Graph) aren't ours to rename.
+        "camelcase": "off"
       }
     }
   ]

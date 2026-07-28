@@ -1,18 +1,19 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* A ForbiddenHtmlView represents a 401 response in HTML. */
 
-let HtmlView = require('../HtmlView');
+import HtmlView = require('../HtmlView');
+import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../../types';
 
 // Creates a new ForbiddenHtmlView
 class ForbiddenHtmlView extends HtmlView {
-  constructor(settings) {
+  constructor(settings?: ViewSettings) {
     super('Forbidden', settings);
   }
 
   // Renders the view with the given settings to the response
-  _render(settings, request, response, done) {
+  protected override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     this._renderTemplate('forbidden/forbidden', settings, request, response, done);
   }
 }
 
-module.exports = ForbiddenHtmlView;
+export = ForbiddenHtmlView;

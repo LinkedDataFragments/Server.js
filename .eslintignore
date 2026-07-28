@@ -1,0 +1,9 @@
+node_modules
+coverage
+.nyc_output
+
+# Compiled output for packages already converted to TypeScript
+packages/core/lib/**/*.js
+packages/core/lib/**/*.d.ts
+packages/core/index.js
+packages/core/index.d.ts

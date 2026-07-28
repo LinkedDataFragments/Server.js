@@ -1,18 +1,21 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A NotFoundController responds to requests that cannot be resolved */
 
-let Controller = require('./Controller'),
-    Util = require('../Util');
+import Controller = require('./Controller');
+import Util = require('../Util');
+import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
 
 // Creates a new NotFoundController
 class NotFoundController extends Controller {
-  constructor(options) {
+  protected _last: boolean;
+
+  constructor(options?: ControllerOptions) {
     super(options);
     this._last = true;
   }
 
   // Serves a 404 response
-  _handleRequest(request, response, next) {
+  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     // Cache 404 responses
     response.setHeader('Cache-Control', 'public,max-age=3600');
 
@@ -24,10 +27,10 @@ class NotFoundController extends Controller {
   }
 
   // Writes the 404 in plaintext if no view was found
-  _handleNotAcceptable(request, response, next) {
+  protected override _handleNotAcceptable(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     response.writeHead(404, { 'Content-Type': Util.MIME_PLAINTEXT });
     response.end(request.url + ' not found\n');
   }
 }
 
-module.exports = NotFoundController;
+export = NotFoundController;

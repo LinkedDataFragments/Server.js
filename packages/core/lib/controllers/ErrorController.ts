@@ -1,17 +1,18 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An ErrorController responds to requests that caused an error */
 
-let Controller = require('./Controller'),
-    Util = require('../Util');
+import Controller = require('./Controller');
+import Util = require('../Util');
+import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
 
 // Creates a new ErrorController
 class ErrorController extends Controller {
-  constructor(options) {
+  constructor(options?: ControllerOptions) {
     super(options);
   }
 
   // Serves an error response
-  _handleRequest(request, response, next) {
+  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     // Try to write an error response through an appropriate view
     let error = response.error || (response.error = new Error('Unknown error')),
         view = this._negotiateView('Error', request, response),
@@ -21,10 +22,10 @@ class ErrorController extends Controller {
   }
 
   // Writes the error in plaintext if no view was found
-  _handleNotAcceptable(request, response, next) {
+  protected override _handleNotAcceptable(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     response.writeHead(500, { 'Content-Type': Util.MIME_PLAINTEXT });
-    response.end('Application error: ' + response.error.message + '\n');
+    response.end('Application error: ' + response.error!.message + '\n');
   }
 }
 
-module.exports = ErrorController;
+export = ErrorController;

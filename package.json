@@ -8,7 +8,11 @@
     "node": ">=20.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.24",
+    "@types/mime": "^2.0.3",
     "@types/node": "^22.20.1",
+    "@types/q": "^1.5.8",
+    "@types/request": "^2.48.13",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "chai": "^4.0.0",

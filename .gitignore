@@ -14,3 +14,11 @@ config/*.json
 # Ignore dev environment files
 .idea
 .devcontainer
+
+# Compiled output for packages already converted to TypeScript
+packages/core/lib/**/*.js
+packages/core/lib/**/*.js.map
+packages/core/lib/**/*.d.ts
+packages/core/index.js
+packages/core/index.js.map
+packages/core/index.d.ts

@@ -1,20 +1,22 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A NotFoundRdfView represents a 404 response in RDF. */
 
-let RdfView = require('../RdfView');
+import RdfView = require('../RdfView');
+import type { Quad } from 'rdf-js';
+import type { RenderDone, ViewSettings } from '../../types';
 
 // Creates a new NotFoundRdfView
 class NotFoundRdfView extends RdfView {
-  constructor(settings) {
+  constructor(settings?: ViewSettings) {
     super('NotFound', settings);
   }
 
   // Generates triples and quads by sending them to the data and/or metadata callbacks
-  _generateRdf(settings, data, metadata, done) {
+  protected override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     this._addDatasources(settings, data, metadata);
     done();
   }
 }
 
 
-module.exports = NotFoundRdfView;
+export = NotFoundRdfView;
