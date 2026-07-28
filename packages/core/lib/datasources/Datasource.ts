@@ -8,6 +8,7 @@ import { stringToTerm } from 'rdf-string';
 import type { DataFactory, Quad, Quad_Graph } from 'rdf-js';
 import UrlData = require('../UrlData');
 import type { DatasourceOptions, Query } from '../types';
+import type { CoreOptions, RequestAPI, RequiredUriUrl, Request as RequestT } from 'request';
 
 // Creates a new Datasource
 class Datasource extends EventEmitter {
@@ -29,7 +30,7 @@ class Datasource extends EventEmitter {
 
   protected _datasourcePath: string;
   protected _skolemizeBlacklist: Record<string, boolean>;
-  protected _request: (...args: any[]) => any;
+  protected _request: RequestAPI<RequestT, CoreOptions, RequiredUriUrl>;
   protected _graph?: Quad_Graph;
   protected _queryGraphReplacements?: Record<string, string>;
   protected _supportsQuads: boolean;
