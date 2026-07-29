@@ -4,7 +4,7 @@
 import Datasource = require('@ldf/core/lib/datasources/Datasource');
 import { SparqlJsonParser } from 'sparqljson-parse';
 import type { IBindings } from 'sparqljson-parse';
-import type { Literal, Quad, Term } from 'rdf-js';
+import type { Literal, NamedNode, Quad, Term } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, Query } from '@ldf/core/lib/types';
 
@@ -173,18 +173,18 @@ class SparqlDatasource extends Datasource {
     // Encapsulate in graph if we are not querying the default graph
     if (!quad.graph || quad.graph.termType !== 'DefaultGraph') {
       query.push('GRAPH ');
-      quad.graph ? query.push(this._encodeObject(quad.graph)!) : query.push('?g');
+      quad.graph ? query.push(this._encodeObject(quad.graph) as unknown as string) : query.push('?g');
       query.push('{');
     }
 
     // Add a possible subject IRI
-    quad.subject ? query.push(this._encodeObject(quad.subject)! + ' ') : query.push('?s ');
+    quad.subject ? query.push((this._encodeObject(quad.subject) as unknown as string) + ' ') : query.push('?s ');
 
     // Add a possible predicate IRI
-    quad.predicate ? query.push(this._encodeObject(quad.predicate)! + ' ') : query.push('?p ');
+    quad.predicate ? query.push((this._encodeObject(quad.predicate) as unknown as string) + ' ') : query.push('?p ');
 
     // Add a possible object IRI
-    quad.object ? query.push(this._encodeObject(quad.object)!) : query.push('?o');
+    quad.object ? query.push(this._encodeObject(quad.object) as unknown as string) : query.push('?o');
 
     if (!quad.graph || quad.graph.termType !== 'DefaultGraph')
       query.push('}'); // close the GRAPH brackets
@@ -192,6 +192,8 @@ class SparqlDatasource extends Datasource {
     return query.push('}'), query.join('');
   }
 
+  protected _encodeObject(term: NamedNode): string;
+  protected _encodeObject(term: Term): string | null;
   protected _encodeObject(term: Term): string | null {
     switch (term.termType) {
     case 'NamedNode':
@@ -215,7 +217,7 @@ class SparqlDatasource extends Datasource {
     else {
       return ((!/["\\]/.test(term.value)) ?  '"' + term.value + '"' : '"""' + term.value.replace(/(["\\])/g, '\\$1') + '"""') +
         (term.language ? '@' + term.language :
-          (term.datatype && term.datatype.value !== xsd + 'string' ? '^^' + this._encodeObject(term.datatype)! : this._forceTypedLiterals ? '^^<http://www.w3.org/2001/XMLSchema#string>' : ''));
+          (term.datatype && term.datatype.value !== xsd + 'string' ? '^^' + this._encodeObject(term.datatype) : this._forceTypedLiterals ? '^^<http://www.w3.org/2001/XMLSchema#string>' : ''));
     }
   }
 }

@@ -50,7 +50,7 @@ class HdtDatasource extends Datasource {
         // Ensure the estimated total count is as least as large as the number of triples
         let tripleCount = triples.length, offset = query.offset || 0;
         if (tripleCount && estimatedTotalCount < offset + tripleCount)
-          estimatedTotalCount = offset + (tripleCount < query.limit! ? tripleCount : 2 * tripleCount);
+          estimatedTotalCount = offset + (tripleCount < (query.limit as unknown as number) ? tripleCount : 2 * tripleCount);
         destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
         // Add the triples to the output
         for (let i = 0; i < tripleCount; i++)

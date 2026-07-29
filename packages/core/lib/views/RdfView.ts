@@ -5,7 +5,7 @@ import View = require('./View');
 import * as N3 from 'n3';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import * as _ from 'lodash';
-import type { Quad } from 'rdf-js';
+import type { DataFactory, Quad } from 'rdf-js';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../types';
 
 let dcTerms = 'http://purl.org/dc/terms/',
@@ -36,6 +36,10 @@ function isRdfViewExtension(extension: View): extension is RdfViewExtension {
 
 // Creates a new RDF view with the given name and settings
 class RdfView extends View {
+  // Every RdfView subclass generates quads, so unlike the base View (where a
+  // dataFactory is optional), one is a required dependency here.
+  declare dataFactory: DataFactory;
+
   constructor(viewName?: string, settings?: ViewSettings) {
     super(viewName, contentTypes, settings);
   }
@@ -77,7 +81,7 @@ class RdfView extends View {
     for (let datasourceName in datasources) {
       let datasource = datasources[datasourceName];
       if (datasource.url) {
-        const quad = this.dataFactory!.quad, namedNode = this.dataFactory!.namedNode, literal = this.dataFactory!.literal;
+        const quad = this.dataFactory.quad, namedNode = this.dataFactory.namedNode, literal = this.dataFactory.literal;
         metadata(quad(namedNode(datasource.url), namedNode(rdf + 'type'), namedNode(voID  + 'Dataset')));
         metadata(quad(namedNode(datasource.url), namedNode(rdf + 'type'), namedNode(hydra + 'Collection')));
         metadata(quad(namedNode(datasource.url), namedNode(dcTerms + 'title'), literal('"' + (datasource.title as string) + '"', 'en')));
@@ -90,7 +94,7 @@ class RdfView extends View {
     let writer = new N3.Writer({ format: settings.contentType, prefixes: settings.prefixes }),
         supportsGraphs = /trig|quad/.test(settings.contentType!), metadataGraph: string | undefined;
 
-    const dataFactory = this.dataFactory!;
+    const dataFactory = this.dataFactory;
     return {
       // Adds the data quad to the output
       // NOTE: The first parameter can also be a quad object
@@ -127,7 +131,7 @@ class RdfView extends View {
     mySerializer.on('error', (e: Error) => done(e));
     mySerializer.on('end', () => done(null));
 
-    const dataFactory = this.dataFactory!;
+    const dataFactory = this.dataFactory;
     return {
       // Adds the data triple to the output
       data: function (quad: Quad) {
