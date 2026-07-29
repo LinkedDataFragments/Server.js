@@ -5,6 +5,7 @@ import Controller = require('@ldf/core/lib/controllers/Controller');
 import * as url from 'url';
 import * as _ from 'lodash';
 import type { ParsedUrlQuery } from 'querystring';
+import type { Term } from 'rdf-js';
 import type { ControllerOptions, LdfRequest, LdfResponse, Query, QueryFeatures, RouterRequest, ViewSettings } from '@ldf/core/lib/types';
 import type Datasource = require('@ldf/core/lib/datasources/Datasource');
 
@@ -97,12 +98,12 @@ class QuadPatternFragmentsController extends Controller {
     // Serialize graph IRI default graph, or variable
     if (supportsQuads) {
       graph = query.graph;
-      if (graph && graph.termType === 'DefaultGraph') graph = ' @default';
-      else if (graph)   graph = ' <' + graph.value + '>';
+      if (graph && (graph as Term).termType === 'DefaultGraph') graph = ' @default';
+      else if (graph)   graph = ' <' + (graph as Term).value + '>';
       else              graph = ' ?g';
     }
     // Join them in a pattern
-    return '{ ' + subject + predicate + object + graph + '. }';
+    return '{ ' + (subject as string) + (predicate as string) + (object as string) + (graph as string) + '. }';
   }
 
   // Creates metadata about the requested fragment

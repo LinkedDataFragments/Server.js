@@ -26,7 +26,7 @@ class HtmlView extends View {
   // Renders the template with the given name to the response
   protected _renderTemplate(templateName: string, options: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // Initialize all view extensions
-    let extensions = options.extensions || (options.extensions = {}), self = this;
+    let extensions: Record<string, any> = options.extensions || (options.extensions = {}), self = this;
     for (let extension in extensions) {
       if (!extensions[extension])
         extensions[extension] = this._renderViewExtensionContents(extension, options, request, response);
@@ -36,7 +36,7 @@ class HtmlView extends View {
 
     // Render the template with its options
     let fileName = (templateName[0] === '/' ? templateName : path.join(__dirname, templateName)) + '.html';
-    qejs.renderFile(fileName, options)
+    void qejs.renderFile(fileName, options)
       .then((html: string) => { response.write(html); done(); })
       .fail((error: Error) => { done(error); });
 

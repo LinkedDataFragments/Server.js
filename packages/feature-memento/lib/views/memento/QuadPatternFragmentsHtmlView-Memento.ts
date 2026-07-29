@@ -21,7 +21,7 @@ class MementoHtmlViewExtension extends HtmlView {
 
   // Renders the view with the given settings to the response
   protected override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
-    let memento = this._invertedTimegateMap[settings.datasource.id];
+    let memento = this._invertedTimegateMap[(settings.datasource as { id?: string }).id as string];
     if (!memento)
       return done();
     this._renderTemplate(path.join(__dirname, 'memento-details'), {

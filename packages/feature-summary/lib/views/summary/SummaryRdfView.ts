@@ -2,6 +2,7 @@
 /* A SummaryRdfView represents a data summary in RDF. */
 
 import RdfView = require('@ldf/core/lib/views/RdfView');
+import type { StreamParser } from 'n3';
 import type { Quad } from 'rdf-js';
 import type { RenderDone, ViewSettings } from '@ldf/core/lib/types';
 
@@ -14,8 +15,9 @@ class SummaryRdfView extends RdfView {
   // Generates triples and quads by sending them to the data and/or metadata callbacks
   protected override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     // Add summary triples
-    settings.results.on('data', data);
-    settings.results.on('end',  done);
+    let results: StreamParser = settings.results;
+    results.on('data', data);
+    results.on('end',  done);
   }
 }
 

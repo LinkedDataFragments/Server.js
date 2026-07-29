@@ -126,13 +126,13 @@ class TimegateController extends Controller {
         originalUrl = url.format(originalUrl);
 
         // Perform 200-style negotiation (https://tools.ietf.org/html/rfc7089#section-4.1.2)
-        response.setHeader('Link', '<' + originalUrl + '>;rel="original",' +
-          '<' + mementoUrl  + '>;rel="memento";' +
+        response.setHeader('Link', '<' + (originalUrl as string) + '>;rel="original",' +
+          '<' + (mementoUrl as string)  + '>;rel="memento";' +
           'datetime="' + memento.interval[0].toUTCString() + '"');
         response.setHeader('Vary', 'Accept-Datetime');
         response.setHeader('Content-Location', mementoUrl);
         // Set request URL to the memento URL, which should be handled by a next controller
-        request.url = mementoUrl.replace(/^[^:]+:\/\/[^\/]+/, '');
+        request.url = (mementoUrl as string).replace(/^[^:]+:\/\/[^\/]+/, '');
         delete request.parsedUrl;
       }
     }

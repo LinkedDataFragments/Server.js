@@ -31,7 +31,7 @@ class Datasource extends EventEmitter {
   protected _datasourcePath: string;
   protected _skolemizeBlacklist: Record<string, boolean>;
   protected _request: RequestAPI<RequestT, CoreOptions, RequiredUriUrl>;
-  protected _graph?: Quad_Graph;
+  _graph?: Quad_Graph;
   protected _queryGraphReplacements?: Record<string, string>;
   protected _supportsQuads: boolean;
 

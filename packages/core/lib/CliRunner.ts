@@ -47,19 +47,19 @@ function runCustom(
       return manager.instantiate(configUri)
         .then((worker) => {
           if (cluster.isMaster)
-            startClusterMaster((worker as any)._config);
+            startClusterMaster(worker._config);
           else
             worker.run(cliPort);
         })
         .catch((e: Error) => {
           stderr.write('Instantiation error:\n');
-          stderr.write(e.stack + '\n');
+          stderr.write((e.stack as string) + '\n');
           process.exit(1);
         });
     })
     .catch((e: Error) => {
       stderr.write('Component definition error:\n');
-      stderr.write(e.stack + '\n');
+      stderr.write((e.stack as string) + '\n');
       process.exit(1);
     });
 
@@ -75,7 +75,7 @@ function runCustom(
     cluster.on('listening', (worker) => {
       worker.once('exit', (code, signal) => {
         if (!worker.exitedAfterDisconnect) {
-          stdout.write('Worker ' + worker.process.pid + 'died with ' + (code || signal) + '. Starting new worker.\n');
+          stdout.write('Worker ' + (worker.process.pid as number) + 'died with ' + (code || signal) + '. Starting new worker.\n');
           cluster.fork();
         }
       });
@@ -104,7 +104,7 @@ function runCustom(
             if (!worker)
               return newWorker.kill(), respawnNext(); // Dead workers are replaced automatically
             worker.once('exit', () => {
-              stdout.write('Worker ' + newWorker.process.pid + ' replaces killed worker ' + worker!.process.pid + '.\n');
+              stdout.write('Worker ' + (newWorker.process.pid as number) + ' replaces killed worker ' + (worker.process.pid as number) + '.\n');
               respawnNext();
             });
             worker.kill();
@@ -113,8 +113,8 @@ function runCustom(
           // Abort the respawning process if creating a new worker fails
           newWorker.on('exit', abort);
           function abort(code: number, signal: string) {
-            if (!(newWorker as any).suicide) {
-              stdout.write('Respawning aborted because worker ' + newWorker.process.pid + ' died with ' +
+            if (!(newWorker as unknown as { suicide?: boolean }).suicide) {
+              stdout.write('Respawning aborted because worker ' + (newWorker.process.pid as number) + ' died with ' +
                 (code || signal) + '.\n');
               process.addListener('SIGHUP', respawn);
               process.removeListener('SIGHUP', respawnPending);

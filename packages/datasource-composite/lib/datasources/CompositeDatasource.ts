@@ -67,13 +67,13 @@ class CompositeDatasource extends Datasource {
   }
 
   protected _hasDatasourceMatchingGraph(datasource: Datasource, datasourceIndex: number, query: Query): boolean {
-    return !query.graph || datasource.supportedFeatures.quadPattern || query.graph === (datasource as any)._graph;
+    return !query.graph || datasource.supportedFeatures.quadPattern || query.graph === datasource._graph;
   }
 
   // Count the quads in the query result to get an exact count.
   protected _getExactCount(datasource: Datasource, query: Query, callback: (count: number) => void): void {
     // Try to find a cache match
-    let cacheKey = query.subject + '|' + query.predicate + '|' + query.object + '|' + query.graph;
+    let cacheKey = (query.subject as unknown as string) + '|' + (query.predicate as unknown as string) + '|' + (query.object as unknown as string) + '|' + (query.graph as unknown as string);
     let cache = this._countCache, count = cache.get(cacheKey);
     if (count) { setImmediate(callback, count); return; }
 
@@ -101,7 +101,7 @@ class CompositeDatasource extends Datasource {
     // NOTE: the trailing `true` argument here has no matching parameter — findRecursive only
     // declares 6 — so `hasExactCount` on the first call actually receives `callback` itself
     // (truthy, hence "works"). Pre-existing quirk, preserved as-is.
-    return (findRecursive as any)(0, absoluteOffset, -1, -1, 0, callback, true);
+    return (findRecursive as unknown as (...args: any[]) => void)(0, absoluteOffset, -1, -1, 0, callback, true);
 
     function findRecursive(datasourceIndex: number, offset: number, chosenDatasource: number, chosenOffset: number, totalCount: number, hasExactCount: any): void {
       if (datasourceIndex >= self._datasourceNames.length)
@@ -206,9 +206,11 @@ class CompositeDatasource extends Datasource {
 
     // Counts the number of quads and sends them through the callback,
     // only closing the iterator when the callback returns true.
-    function countItems(destination: any, closeCallback: (count: number) => boolean): void {
-      let count = 0, originalPush = destination._push, originalClose = destination.close;
-      destination._push = function (element: Quad) {
+    function countItems(destination: BufferedIterator<Quad>, closeCallback: (count: number) => boolean): void {
+      let count = 0,
+          originalPush = (destination as unknown as { _push: (item: Quad) => void })._push,
+          originalClose = destination.close;
+      (destination as unknown as { _push: (item: Quad) => void })._push = function (element: Quad) {
         if (element) count++;
         originalPush.call(destination, element);
       };
@@ -219,7 +221,7 @@ class CompositeDatasource extends Datasource {
     }
 
     function pushToDestination(quad: Quad) {
-      (destination as any)._push(quad);
+      (destination as unknown as { _push(item: Quad): void })._push(quad);
     }
     function closeDestination() {
       destination.close();

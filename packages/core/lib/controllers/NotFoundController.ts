@@ -27,7 +27,7 @@ class NotFoundController extends Controller {
   // Writes the 404 in plaintext if no view was found
   protected override _handleNotAcceptable(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     response.writeHead(404, { 'Content-Type': Util.MIME_PLAINTEXT });
-    response.end(request.url + ' not found\n');
+    response.end((request.url as string) + ' not found\n');
   }
 }
 

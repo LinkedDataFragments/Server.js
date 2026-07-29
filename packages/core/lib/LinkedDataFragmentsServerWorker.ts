@@ -9,7 +9,7 @@ import type { LdfRequest, LdfResponse, WorkerConfig } from './types';
 
 // Creates a new LinkedDataFragmentsServerWorker
 class LinkedDataFragmentsServerWorker {
-  protected _config: WorkerConfig;
+  _config: WorkerConfig;
 
   constructor(config: WorkerConfig) {
     if (!config.datasources)
@@ -34,11 +34,11 @@ class LinkedDataFragmentsServerWorker {
     // eslint-disable-next-line no-console
     config.log = console.log;
     if (loggingSettings.enabled) {
-      let accesslog = require('access-log');
+      let accesslog: (request: LdfRequest, response: LdfResponse, opts: null, callback: (logEntry: string) => void) => void = require('access-log');
       config.accesslogger = function (request: LdfRequest, response: LdfResponse) {
         accesslog(request, response, null, (logEntry: string) => {
           fs.appendFile(loggingSettings.file!, logEntry + '\n', (error) => {
-            error && process.stderr.write('Error when writing to access log file: ' + error);
+            error && process.stderr.write('Error when writing to access log file: ' + (error as unknown as string));
           });
         });
       };

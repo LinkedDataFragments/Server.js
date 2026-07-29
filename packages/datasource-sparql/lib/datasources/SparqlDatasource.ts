@@ -3,6 +3,7 @@
 
 import Datasource = require('@ldf/core/lib/datasources/Datasource');
 import { SparqlJsonParser } from 'sparqljson-parse';
+import type { IBindings } from 'sparqljson-parse';
 import type { Literal, Quad, Term } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, Query } from '@ldf/core/lib/types';
@@ -71,19 +72,19 @@ class SparqlDatasource extends Datasource {
       .on('data', (data: string) => { json += data; })
       .on('error', emitError)
       .on('end', () => {
-        let response;
+        let response: { results: { bindings: any[] } };
         try { response = JSON.parse(json); }
         catch (e) { return emitError({ message: INVALID_JSON_RESPONSE }); }
 
-        response.results.bindings.forEach((binding: any) => {
-          binding = this._sparqlJsonParser.parseJsonBindings(binding);
+        response.results.bindings.forEach((rawBinding: any) => {
+          const binding: IBindings = this._sparqlJsonParser.parseJsonBindings(rawBinding);
           let triple = {
             subject:   binding.s || query.subject,
             predicate: binding.p || query.predicate,
             object:    binding.o || query.object,
             graph:     binding.g || query.graph,
           };
-          (destination as any)._push(triple);
+          (destination as unknown as { _push(item: any): void })._push(triple);
         });
         destination.close();
       });
@@ -214,7 +215,7 @@ class SparqlDatasource extends Datasource {
     else {
       return ((!/["\\]/.test(term.value)) ?  '"' + term.value + '"' : '"""' + term.value.replace(/(["\\])/g, '\\$1') + '"""') +
         (term.language ? '@' + term.language :
-          (term.datatype && term.datatype.value !== xsd + 'string' ? '^^' + this._encodeObject(term.datatype) : this._forceTypedLiterals ? '^^<http://www.w3.org/2001/XMLSchema#string>' : ''));
+          (term.datatype && term.datatype.value !== xsd + 'string' ? '^^' + this._encodeObject(term.datatype)! : this._forceTypedLiterals ? '^^<http://www.w3.org/2001/XMLSchema#string>' : ''));
     }
   }
 }

@@ -46,8 +46,13 @@ interface LinkedDataFragmentsServerConstructor {
 // NOTE: the methods below are intentionally attached via `.prototype.x = function` rather than
 // as class-body methods: class-body methods are non-enumerable, which would break the
 // `for (let member in LinkedDataFragmentsServer.prototype)` copy loop the constructor relies on
-// to transplant them onto the actual http(s).Server instance it returns.
+// to transplant them onto the actual http(s).Server instance it returns. The `declare` members
+// below give the prototype a real type for that assignment without emitting any code of their own.
 class LinkedDataFragmentsServer {
+  declare _processRequest: LdfHttpServer['_processRequest'];
+  declare _reportError: LdfHttpServer['_reportError'];
+  declare stop: LdfHttpServer['stop'];
+
   constructor(options: LinkedDataFragmentsServerOptions) {
     // Create the HTTP(S) server
     let server: LdfHttpServer, sockets = 0;
@@ -69,7 +74,7 @@ class LinkedDataFragmentsServer {
 
     // Copy over members
     for (let member in LinkedDataFragmentsServer.prototype)
-      (server as any)[member] = (LinkedDataFragmentsServer.prototype as any)[member];
+      (server as unknown as Record<string, unknown>)[member] = (LinkedDataFragmentsServer.prototype as unknown as Record<string, unknown>)[member];
 
     // Assign settings
     server._sockets = {};
@@ -96,7 +101,7 @@ class LinkedDataFragmentsServer {
 }
 
 // Handles an incoming HTTP request
-(LinkedDataFragmentsServer.prototype as any)._processRequest = function (this: LdfHttpServer, request: LdfRequest, response: LdfResponse): void {
+LinkedDataFragmentsServer.prototype._processRequest = function (this: LdfHttpServer, request: LdfRequest, response: LdfResponse): void {
   // Add default response headers
   for (let header in this._defaultHeaders)
     response.setHeader(header, this._defaultHeaders[header]);
@@ -109,13 +114,13 @@ class LinkedDataFragmentsServer {
   // Don't write a body with HEAD and OPTIONS
   case 'HEAD':
   case 'OPTIONS':
-    (response as any).write = function () {};
+    (response as unknown as { write: () => void }).write = function () {};
     response.end = response.end.bind(response, '', '' as BufferEncoding);
     break;
   // Reject all other methods
   default:
     response.writeHead(405, { 'Content-Type': Util.MIME_PLAINTEXT });
-    response.end('The HTTP method "' + request.method + '" is not allowed; try "GET" instead.');
+    response.end('The HTTP method "' + (request.method as string) + '" is not allowed; try "GET" instead.');
     return;
   }
 
@@ -127,7 +132,7 @@ class LinkedDataFragmentsServer {
       response.emit('error', error);
     // Error if no controller left
     else if (controllerId >= self._controllers.length)
-      response.emit('error', new Error('No controller for ' + request.url));
+      response.emit('error', new Error('No controller for ' + (request.url as string)));
     // Otherwise, try the next controller
     else {
       let controller = self._controllers[controllerId++], next = _.once(nextController);
@@ -140,7 +145,7 @@ class LinkedDataFragmentsServer {
 };
 
 // Serves an application error
-(LinkedDataFragmentsServer.prototype as any)._reportError = function (this: LdfHttpServer, request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void {
+LinkedDataFragmentsServer.prototype._reportError = function (this: LdfHttpServer, request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void {
   // If no request or response is available, the server failed outside of a request; don't recover
   if (!response) {
     error = request as Error, response = request = undefined;
@@ -165,7 +170,7 @@ class LinkedDataFragmentsServer {
 };
 
 // Stops the server
-(LinkedDataFragmentsServer.prototype as any).stop = function (this: LdfHttpServer): void {
+LinkedDataFragmentsServer.prototype.stop = function (this: LdfHttpServer): void {
   // Don't accept new connections, and close existing ones
   this.close();
   for (let id in this._sockets)

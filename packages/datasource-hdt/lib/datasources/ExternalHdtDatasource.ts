@@ -32,6 +32,7 @@ class ExternalHdtDatasource extends Datasource {
   }
 
   // Prepares the datasource for querying
+  // eslint-disable-next-line @typescript-eslint/require-await
   protected override async _initialize(): Promise<void> {
     if (this._options.checkFile !== false) {
       if (!fs.existsSync(this._hdtFile))
@@ -53,19 +54,19 @@ class ExternalHdtDatasource extends Datasource {
     // Execute the external HDT utility
     let hdtFile = this._hdtFile, offset = query.offset || 0, limit = query.limit || Infinity,
         hdt = spawn(hdtUtility, [
-          '--query', (query.subject   || '?s') + ' ' +
-          (query.predicate || '?p') + ' ' + (query.object || '?o'),
+          '--query', ((query.subject as unknown as string)   || '?s') + ' ' +
+          ((query.predicate as unknown as string) || '?p') + ' ' + ((query.object as unknown as string) || '?o'),
           '--offset', String(offset), '--limit', String(limit), '--format', 'turtle',
           '--', hdtFile,
         ], { stdio: ['ignore', 'pipe', 'ignore'] });
     // Parse the result triples
-    hdt.stdout!.setEncoding('utf8');
+    hdt.stdout.setEncoding('utf8');
     let parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true;
     parser.parse(hdt.stdout as any, (error: Error, triple: Quad) => {
       if (error)
         destination.emit('error', new Error('Invalid query result: ' + error.message));
       else if (triple)
-        tripleCount++, (destination as any)._push(triple);
+        tripleCount++, (destination as unknown as { _push(item: Quad): void })._push(triple);
       else {
         // Ensure the estimated total count is as least as large as the number of triples
         if (tripleCount && estimatedTotalCount < offset + tripleCount)
@@ -74,10 +75,10 @@ class ExternalHdtDatasource extends Datasource {
         destination.close();
       }
     });
-    (parser as any)._prefixes._ = '_:'; // Ensure blank nodes are named consistently
+    parser._prefixes._ = '_:'; // Ensure blank nodes are named consistently
 
     // Extract the estimated number of total matches from the first (comment) line
-    hdt.stdout!.once('data', (header: string) => {
+    hdt.stdout.once('data', (header: string) => {
       estimatedTotalCount = parseInt(header.match(/\d+/) as any, 10) || 0;
       hasExactCount = header.indexOf('estimated') < 0;
     });

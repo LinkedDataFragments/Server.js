@@ -30,7 +30,7 @@ class QuadPatternFragmentsHtmlView extends HtmlView {
 
     // Generates the HTML after the data and metadata have been retrieved
     function renderHtml() {
-      let template = settings.datasource.role === 'index' ? 'index' : 'datasource';
+      let template = (settings.datasource as { role?: string }).role === 'index' ? 'index' : 'datasource';
       settings.extensions = { Before: null, FormBefore: null, FormAfter: null, QuadBefore: 'function', QuadAfter: 'function', After: null };
       self._renderTemplate(join(self.viewDirectory, template), settings, request, response, done);
     }

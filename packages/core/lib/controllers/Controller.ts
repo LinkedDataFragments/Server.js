@@ -80,7 +80,7 @@ class Controller {
     if (!request.headers.forwarded)
       return {};
     try {
-      let forwarded = _.defaults.apply(this, parseForwarded(request.headers.forwarded as string));
+      let forwarded: { proto?: string; host?: string } = _.defaults.apply(this, parseForwarded(request.headers.forwarded) as any);
       return {
         protocol: forwarded.proto ? forwarded.proto + ':' : undefined,
         host: forwarded.host,
@@ -92,7 +92,7 @@ class Controller {
   // Get host and protocol from HTTP's X-Forwarded-* headers
   protected _getXForwardHeaders(request: LdfRequest): { protocol?: string; host?: string | string[] } {
     return {
-      protocol: request.headers['x-forwarded-proto'] ? request.headers['x-forwarded-proto'] + ':' : undefined,
+      protocol: request.headers['x-forwarded-proto'] ? (request.headers['x-forwarded-proto'] as string) + ':' : undefined,
       host: request.headers['x-forwarded-host'],
     };
   }
@@ -112,7 +112,7 @@ class Controller {
   protected _negotiateView(viewName: string, request: LdfRequest, response: LdfResponse) {
     // Indicate that the response is content-negotiated
     let vary = response.getHeader('Vary');
-    response.setHeader('Vary', 'Accept' + (vary ? ', ' + vary : ''));
+    response.setHeader('Vary', 'Accept' + (vary ? ', ' + (vary as string) : ''));
     // Negotiate a view
     let viewMatch = this._views.matchView(viewName, request);
     response.setHeader('Content-Type', viewMatch.responseType || viewMatch.type);

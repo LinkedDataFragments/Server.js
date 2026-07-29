@@ -43,8 +43,9 @@ class RdfView extends View {
   // Renders the view with the given settings to the response
   protected override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // Add generic writer settings
-    settings.fragmentUrl = settings.fragment && settings.fragment.url || '';
-    settings.metadataGraph = settings.fragmentUrl + '#metadata';
+    let fragmentUrl: string = settings.fragment && (settings.fragment as { url?: string }).url || '';
+    settings.fragmentUrl = fragmentUrl;
+    settings.metadataGraph = fragmentUrl + '#metadata';
     settings.contentType = response.getHeader('Content-Type') as string;
 
     // Write the triples with a content-type-specific writer
@@ -67,7 +68,7 @@ class RdfView extends View {
   protected override _renderViewExtension(extension: View, options: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // only view extensions that generate triples are supported
     if (isRdfViewExtension(extension))
-      extension._generateRdf(options, options.writer.data, options.writer.meta, done);
+      extension._generateRdf(options, (options.writer as RdfWriter).data, (options.writer as RdfWriter).meta, done);
   }
 
   // Adds details about the datasources
@@ -79,7 +80,7 @@ class RdfView extends View {
         const quad = this.dataFactory!.quad, namedNode = this.dataFactory!.namedNode, literal = this.dataFactory!.literal;
         metadata(quad(namedNode(datasource.url), namedNode(rdf + 'type'), namedNode(voID  + 'Dataset')));
         metadata(quad(namedNode(datasource.url), namedNode(rdf + 'type'), namedNode(hydra + 'Collection')));
-        metadata(quad(namedNode(datasource.url), namedNode(dcTerms + 'title'), literal('"' + datasource.title + '"', 'en')));
+        metadata(quad(namedNode(datasource.url), namedNode(dcTerms + 'title'), literal('"' + (datasource.title as string) + '"', 'en')));
       }
     }
   }

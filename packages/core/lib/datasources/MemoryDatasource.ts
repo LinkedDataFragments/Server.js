@@ -48,7 +48,7 @@ class MemoryDatasource extends Datasource {
     destination.setProperty('metadata', { totalCount: quads.length, hasExactCount: true });
     // Send the requested subset of quads
     for (let i = offset, l = Math.min(offset + limit, quads.length); i < l; i++)
-      (destination as any)._push(quads[i]);
+      (destination as unknown as { _push(item: Quad): void })._push(quads[i]);
     destination.close();
   }
 }

@@ -6,7 +6,8 @@ import { stringQuadToQuad } from 'rdf-string';
 import type { IStringQuad } from 'rdf-string';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
-import type { RenderDone, ViewSettings } from '@ldf/core/lib/types';
+import type { Query, RenderDone, ViewSettings } from '@ldf/core/lib/types';
+import type Datasource = require('@ldf/core/lib/datasources/Datasource');
 
 let dcTerms = 'http://purl.org/dc/terms/',
     rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -14,6 +15,16 @@ let dcTerms = 'http://purl.org/dc/terms/',
     sd = 'http://www.w3.org/ns/sparql-service-description#',
     hydra = 'http://www.w3.org/ns/hydra/core#',
     voID = 'http://rdfs.org/ns/void#';
+
+interface FragmentInfo {
+  url: string;
+  pageUrl: string;
+  firstPageUrl: string;
+  nextPageUrl: string;
+  previousPageUrl: string | null;
+}
+
+type DatasourceInfo = Datasource & { index: string; templateUrl: string; supportsQuads: boolean };
 
 // Creates a new QuadPatternFragmentsRdfView
 class QuadPatternFragmentsRdfView extends RdfView {
@@ -23,7 +34,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
 
   // Generates quads by sending them to the data and/or metadata callbacks
   protected override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
-    let datasource = settings.datasource, fragment = settings.fragment, query = settings.query,
+    let datasource: DatasourceInfo = settings.datasource, fragment: FragmentInfo = settings.fragment, query: Query = settings.query,
         results: AsyncIterator<Quad> = settings.results, metadataDone = false;
 
     // Add data source metadata
@@ -47,7 +58,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
   }
 
   // Generate the datasource metadata
-  protected _generateMetadata(metadata: (quad: Quad) => void, fragment: any, query: any, datasource: any): void {
+  protected _generateMetadata(metadata: (quad: Quad) => void, fragment: FragmentInfo, query: Query, datasource: DatasourceInfo): void {
     if (!datasource.url) return;
     datasource.index && metadata(this.quad({ subject: datasource.index, predicate: hydra + 'member', object: datasource.url }));
     metadata(this.quad({ subject: datasource.url, predicate: rdf + 'type', object: voID  + 'Dataset' }));
@@ -58,7 +69,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
   }
 
   // Generate the datasource controls
-  protected _generateControls(metadata: (quad: Quad) => void, fragment: any, query: any, datasource: any): void {
+  protected _generateControls(metadata: (quad: Quad) => void, fragment: FragmentInfo, query: Query, datasource: DatasourceInfo): void {
     if (datasource.url && datasource.supportsQuads)
       metadata(this.quad({ subject: datasource.url, predicate: sd + 'defaultGraph', object: 'urn:ldf:defaultGraph' }));
     datasource.url && metadata(this.quad({ subject: datasource.url, predicate: hydra + 'search', object: '_:pattern' }));
@@ -82,7 +93,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
   }
 
   // Generate the fragment metadata
-  sendFragmentMetadata(metadata: (quad: Quad) => void, fragment: any, query: any, datasource: any, meta: any): void {
+  sendFragmentMetadata(metadata: (quad: Quad) => void, fragment: FragmentInfo, query: Query, datasource: DatasourceInfo, meta: { totalCount: number; hasExactCount: boolean }): void {
     if (!fragment.pageUrl) return;
     // General fragment metadata
     fragment.url && metadata(this.quad({ subject: fragment.url, predicate: voID + 'subset', object: fragment.pageUrl }));
@@ -91,7 +102,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
       object: '"Linked Data Fragment of ' + (datasource.title || '') + '"@en' }));
     metadata(this.quad({ subject: fragment.pageUrl, predicate: dcTerms + 'description',
       object: '"Triple/Quad Pattern Fragment of the \'' + (datasource.title || '') + '\' dataset ' +
-      'containing triples matching the pattern ' + query.patternString + '."@en' }));
+      'containing triples matching the pattern ' + (query.patternString as string) + '."@en' }));
     datasource.url && metadata(this.quad({ subject: fragment.pageUrl, predicate: dcTerms + 'source', object: datasource.url }));
 
     // Total pattern matches count
@@ -100,11 +111,11 @@ class QuadPatternFragmentsRdfView extends RdfView {
     metadata(this.quad({ subject: fragment.pageUrl, predicate: voID  + 'triples', object: '"' + totalCount + '"^^' + xsd + 'integer' }));
 
     // Page metadata
-    metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'itemsPerPage', object: '"' + query.limit + '"^^' + xsd + 'integer' }));
+    metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'itemsPerPage', object: '"' + query.limit! + '"^^' + xsd + 'integer' }));
     fragment.firstPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'first', object: fragment.firstPageUrl }));
     if (query.offset)
       fragment.previousPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'previous', object: fragment.previousPageUrl }));
-    if (totalCount >= query.limit + (query.offset || 0))
+    if (totalCount >= query.limit! + (query.offset || 0))
       fragment.nextPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'next', object: fragment.nextPageUrl }));
   }
 

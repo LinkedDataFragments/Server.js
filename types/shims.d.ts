@@ -1,5 +1,11 @@
 declare module 'forwarded-parse' {
-  const parseForwarded: any;
+  interface ForwardedElement {
+    by?: string;
+    for?: string;
+    host?: string;
+    proto?: string;
+  }
+  function parseForwarded(header: string): ForwardedElement[];
   export = parseForwarded;
 }
 
@@ -15,8 +21,9 @@ declare module 'negotiate' {
 }
 
 declare module 'qejs' {
-  const qejs: any;
-  export = qejs;
+  import Q = require('q');
+  function renderFile(fileName: string, options: any): Q.Promise<string>;
+  export = { renderFile };
 }
 
 declare module 'access-log' {

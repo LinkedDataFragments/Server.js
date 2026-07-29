@@ -71,13 +71,13 @@ class WebIDControllerExtension extends Controller {
   // Verify webID
   protected _verifyWebID(webID: string, modulus: string | undefined, exponent: number, callback: (error: string | null, verified?: boolean, reason?: string) => void): void {
     // request & parse
-    let parser: N3.Parser = (n3parser as any)(),
+    let parser: N3.Parser = (n3parser as unknown as () => N3.Parser)(),
         id: CachedId = {};
 
     // parse webID
     function parseTriple(error: Error, triple: N3.Quad, prefixes?: N3.Prefixes) {
       if (error)
-        callback('Cannot parse WebID: ' + error);
+        callback('Cannot parse WebID: ' + (error as unknown as string));
       else if (triple) {
         switch (triple.predicate as any) {
         case CERT_NS + 'modulus':
@@ -98,7 +98,7 @@ class WebIDControllerExtension extends Controller {
       if (m && m === modulus && e && e === exponent)
         callback(null, true);
       else
-        callback(null, false, 'WebID does not match certificate: ' + m + ' - ' + e + ' (webid) <> ' + modulus + ' - ' + exponent + ' (cert)');
+        callback(null, false, 'WebID does not match certificate: ' + (m as string) + ' - ' + (e as number) + ' (webid) <> ' + (modulus as string) + ' - ' + exponent + ' (cert)');
     }
 
     // Try to get WebID from cache
@@ -144,7 +144,7 @@ class WebIDControllerExtension extends Controller {
     response.writeHead(401, {
       'Content-Type': Util.MIME_PLAINTEXT,
     });
-    response.end('Access to ' + request.url + ' is not allowed, verification for WebID ' + ((options as any).webID || '') + ' failed. Reason: ' + ((options as any).reason || ''));
+    response.end('Access to ' + (request.url as string) + ' is not allowed, verification for WebID ' + ((options as unknown as { webID?: string; reason?: string }).webID || '') + ' failed. Reason: ' + ((options as unknown as { webID?: string; reason?: string }).reason || ''));
   }
 }
 
