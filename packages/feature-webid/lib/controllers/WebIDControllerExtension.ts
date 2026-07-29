@@ -1,32 +1,53 @@
 /*! @license MIT ©2016 Miel Vander Sande, Ghent University - imec */
 /* A WebIDControllerExtension extends Triple Pattern Fragments responses with WebID authentication. */
 
-let http = require('http'),
-    lru = require('lru-cache'),
-    parseCacheControl = require('parse-cache-control'),
-    N3 = require('n3'),
-    n3parser = N3.Parser,
-    Util = require('@ldf/core').Util,
-    Controller = require('@ldf/core').controllers.Controller;
+import * as http from 'http';
+import type { TLSSocket } from 'tls';
+import parseCacheControl = require('parse-cache-control');
+import * as N3 from 'n3';
+import Controller = require('@ldf/core/lib/controllers/Controller');
+import Util = require('@ldf/core/lib/Util');
+import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
+
+const n3parser = N3.Parser;
 
 let CERT_NS = 'http://www.w3.org/ns/auth/cert#';
 
+interface CachedId {
+  modulus?: string;
+  exponent?: number;
+}
+
+interface WebIdCache {
+  get(key: string): CachedId | undefined;
+  set(key: string, value: CachedId, maxAge?: number): void;
+}
+const lru: (max: number) => WebIdCache = require('lru-cache');
+
+interface ForbiddenOptions {
+  webID?: string;
+  reason?: string;
+}
+
 // Creates a new WebIDControllerExtensionsl
 class WebIDControllerExtension extends Controller {
-  constructor(settings) {
+  protected _cache: WebIdCache;
+  protected _protocol?: string;
+
+  constructor(settings: ControllerOptions) {
     super(settings);
     this._cache = lru(50);
-    this._protocol = settings.urlData.protocol;
+    this._protocol = settings.urlData!.protocol;
   }
 
   // Add WebID Link headers
-  _handleRequest(request, response, next, settings) {
+  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void, settings?: ControllerOptions): void {
     // Get WebID from certificate
     if (this._protocol !== 'https') // This WebID implementation requires HTTPS
       return next();
 
     let self = this,
-        certificate = request.connection.getPeerCertificate();
+        certificate = (request.connection as unknown as TLSSocket).getPeerCertificate();
 
     if (!(certificate.subject && certificate.subject.subjectAltName)) {
       return this._handleForbidden(request, response, {
@@ -34,9 +55,9 @@ class WebIDControllerExtension extends Controller {
       });
     }
 
-    let webID = certificate.subject.subjectAltName.replace('uniformResourceIdentifier:', '');
-    this._verifyWebID(webID, certificate.modulus, parseInt(certificate.exponent, 16),
-      (error, verified, reason) => {
+    let webID = (certificate.subject.subjectAltName as string).replace('uniformResourceIdentifier:', '');
+    this._verifyWebID(webID, certificate.modulus, parseInt(certificate.exponent!, 16),
+      (error: string | null, verified?: boolean, reason?: string) => {
         if (!verified) {
           return self._handleForbidden(request, response, {
             webID: webID,
@@ -48,17 +69,17 @@ class WebIDControllerExtension extends Controller {
   }
 
   // Verify webID
-  _verifyWebID(webID, modulus, exponent, callback) {
+  protected _verifyWebID(webID: string, modulus: string | undefined, exponent: number, callback: (error: string | null, verified?: boolean, reason?: string) => void): void {
     // request & parse
-    let parser = n3parser(),
-        id = {};
+    let parser: N3.Parser = (n3parser as any)(),
+        id: CachedId = {};
 
     // parse webID
-    function parseTriple(error, triple, prefixes) {
+    function parseTriple(error: Error, triple: N3.Quad, prefixes?: N3.Prefixes) {
       if (error)
         callback('Cannot parse WebID: ' + error);
       else if (triple) {
-        switch (triple.predicate) {
+        switch (triple.predicate as any) {
         case CERT_NS + 'modulus':
           // Add modulus
           const literalValue = triple.object.value;
@@ -73,7 +94,7 @@ class WebIDControllerExtension extends Controller {
       }
     }
 
-    function verify(m, e) {
+    function verify(m?: string, e?: number) {
       if (m && m === modulus && e && e === exponent)
         callback(null, true);
       else
@@ -89,16 +110,16 @@ class WebIDControllerExtension extends Controller {
       let req = http.request(webID, (res) => {
         res.setEncoding('utf8');
 
-        parser.parse(res, parseTriple);
+        parser.parse(res as any, parseTriple);
 
         res.on('end', () => {
-          let cacheControl = parseCacheControl(res.headers['Cache-Control'] || '');
-          this._cache.set(webID, id, cacheControl['max-age'] || 0);
+          let cacheControl = parseCacheControl(res.headers['Cache-Control'] as string || '');
+          this._cache.set(webID, id, cacheControl && cacheControl['max-age'] || 0);
           verify(id.modulus, id.exponent);
         });
       });
 
-      req.on('error', (e) => {
+      req.on('error', (e: Error) => {
         callback(null, false, 'Unabled to download ' + webID + ' (' + e.message + ').');
       });
 
@@ -106,7 +127,7 @@ class WebIDControllerExtension extends Controller {
     }
   }
 
-  _handleForbidden(request, response, options) {
+  protected _handleForbidden(request: LdfRequest, response: LdfResponse, options: ForbiddenOptions): void {
     // Render the 404 message using the appropriate view
     let view = this._negotiateView('Forbidden', request, response),
         metadata = {
@@ -119,12 +140,12 @@ class WebIDControllerExtension extends Controller {
     view.render(metadata, request, response);
   }
 
-  _handleNotAcceptable(request, response, options) {
+  protected override _handleNotAcceptable(request: LdfRequest, response: LdfResponse, options: (error?: Error) => void): void {
     response.writeHead(401, {
       'Content-Type': Util.MIME_PLAINTEXT,
     });
-    response.end('Access to ' + request.url + ' is not allowed, verification for WebID ' + (options.webID || '') + ' failed. Reason: ' + (options.reason || ''));
+    response.end('Access to ' + request.url + ' is not allowed, verification for WebID ' + ((options as any).webID || '') + ' failed. Reason: ' + ((options as any).reason || ''));
   }
 }
 
-module.exports = WebIDControllerExtension;
+export = WebIDControllerExtension;

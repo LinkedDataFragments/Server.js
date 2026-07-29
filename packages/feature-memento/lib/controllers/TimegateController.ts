@@ -1,14 +1,58 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* An TimegateController responds to timegate requests */
 
-let Controller = require('@ldf/core').controllers.Controller,
-    _ = require('lodash'),
-    url = require('url'),
-    Util = require('@ldf/core').Util;
+import Controller = require('@ldf/core/lib/controllers/Controller');
+import * as _ from 'lodash';
+import * as url from 'url';
+import Util = require('@ldf/core/lib/Util');
+import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
+import type Datasource = require('@ldf/core/lib/datasources/Datasource');
+import type UrlData = require('@ldf/core/lib/UrlData');
+
+// eslint-disable-next-line no-redeclare
+namespace TimegateController {
+  export interface MementoConfig {
+    datasource: Datasource;
+    initial: string | Date;
+    final: string | Date;
+    originalBaseURL?: string;
+  }
+
+  export interface TimegatesConfig {
+    baseUrl?: string;
+    baseURL?: string;
+    mementos?: Record<string, MementoConfig[]>;
+  }
+
+  export interface TimegateControllerOptions extends ControllerOptions {
+    timegates?: TimegatesConfig;
+  }
+
+  export interface ParsedTimemapEntry {
+    datasource: Datasource;
+    datasourceId?: string;
+    interval: [Date, Date];
+    original?: string;
+  }
+
+  export interface InvertedTimegateEntry {
+    memento: string;
+    original: string;
+    interval: [Date, Date];
+  }
+}
+type MementoConfig = TimegateController.MementoConfig;
+type TimegateControllerOptions = TimegateController.TimegateControllerOptions;
+type ParsedTimemapEntry = TimegateController.ParsedTimemapEntry;
+type InvertedTimegateEntry = TimegateController.InvertedTimegateEntry;
 
 // Creates a new TimegateController
 class TimegateController extends Controller {
-  constructor(options) {
+  protected _timemaps: Record<string, ParsedTimemapEntry[]>;
+  protected _timegatePath: string;
+  protected _matcher: RegExp;
+
+  constructor(options?: TimegateControllerOptions) {
     options = options || {};
     super(options);
     this._first = true;
@@ -22,25 +66,25 @@ class TimegateController extends Controller {
     this._matcher = new RegExp('^' + Util.toRegExp(this._timegatePath) + '(.+?)\/?(?:\\?.*)?$');
   }
 
-  static parseTimegateMap(mementos) {
-    return _.mapValues(mementos, (mementos) => {
+  static parseTimegateMap(mementos?: Record<string, MementoConfig[]>): Record<string, ParsedTimemapEntry[]> {
+    return _.mapValues(mementos, (mementos: MementoConfig[]) => {
       return sortTimemap(mementos.map((memento) => {
         return {
           datasource: memento.datasource,
           datasourceId: memento.datasource.id,
-          interval: [memento.initial, memento.final].map(toDate),
+          interval: [memento.initial, memento.final].map(toDate) as [Date, Date],
           original: memento.originalBaseURL,
         };
       }));
     });
   }
 
-  static parseInvertedTimegateMap(mementos, urlData) {
+  static parseInvertedTimegateMap(mementos: Record<string, MementoConfig[]> | undefined, urlData: UrlData): Record<string, InvertedTimegateEntry> {
     let timemaps = TimegateController.parseTimegateMap(mementos);
-    let invertedTimegateMap = {};
-    _.forIn(timemaps, (versions, timeGateId) => {
+    let invertedTimegateMap: Record<string, InvertedTimegateEntry> = {};
+    _.forIn(timemaps, (versions: ParsedTimemapEntry[], timeGateId: string) => {
       versions.forEach((version) => {
-        invertedTimegateMap[version.datasourceId] = {
+        invertedTimegateMap[version.datasourceId!] = {
           memento: timeGateId,
           original: version.original || (urlData.baseURL || '/') + timeGateId,
           interval: version.interval,
@@ -51,16 +95,18 @@ class TimegateController extends Controller {
   }
 
   // Perform time negotiation if applicable
-  _handleRequest(request, response, next) {
-    let timegateMatch = this._matcher.exec(request.url),
+  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
+    let timegateMatch = this._matcher.exec(request.url!),
         datasource = timegateMatch && timegateMatch[1],
         timemapDetails = datasource && this._timemaps[datasource];
 
     // Is this resource a well-configured timegate?
     if (timemapDetails) {
       // For OPTIONS (preflight) requests, send only headers (avoiding expensive lookups)
-      if (request.method === 'OPTIONS')
-        return response.end();
+      if (request.method === 'OPTIONS') {
+        response.end();
+        return;
+      }
 
       // Try to find the memento closest to the requested date
       let acceptDatetime = toDate(request.headers['accept-datetime']),
@@ -68,15 +114,15 @@ class TimegateController extends Controller {
 
       if (memento) {
         // Determine the URL of the memento
-        let mementoUrl = _.assign(request.parsedUrl, { pathname: memento.datasource.path });
+        let mementoUrl: any = _.assign(request.parsedUrl, { pathname: memento.datasource.path });
         mementoUrl = url.format(mementoUrl);
 
         // Determine the URL of the original resource
-        let originalBaseURL = timemapDetails.original, originalUrl;
+        let originalBaseURL = memento.original, originalUrl: any;
         if (!originalBaseURL)
           originalUrl = { ...request.parsedUrl, pathname: datasource };
         else
-          originalUrl = _.assign(url.parse(originalBaseURL), { query: request.parsedUrl.query });
+          originalUrl = _.assign(url.parse(originalBaseURL), { query: request.parsedUrl!.query });
         originalUrl = url.format(originalUrl);
 
         // Perform 200-style negotiation (https://tools.ietf.org/html/rfc7089#section-4.1.2)
@@ -108,7 +154,7 @@ class TimegateController extends Controller {
       ];
       get_closest_memento(timemap, "2011-10-20T12:22:24Z", false);
   */
-  _getClosestMemento(timemap, acceptDatetime, unsorted) {
+  protected _getClosestMemento(timemap: ParsedTimemapEntry[], acceptDatetime: any, unsorted?: boolean): ParsedTimemapEntry | null {
     // NOTE: assuming that the interval is always specified as [start_date, end_date]
     // empty timemap can't give any mementos
     if (timemap.length === 0)
@@ -147,16 +193,16 @@ class TimegateController extends Controller {
 
 
 // Sort the timemap by interval start date
-function sortTimemap(timemap) {
+function sortTimemap(timemap: ParsedTimemapEntry[]): ParsedTimemapEntry[] {
   return timemap.sort((a, b) => {
     return a.interval[0].getTime() - b.interval[0].getTime();
   });
 }
 
 // Convert the value to a date
-function toDate(value) {
-  return typeof value === 'string' ? new Date(value) : (value || new Date());
+function toDate(value: string | string[] | Date | undefined): Date {
+  return typeof value === 'string' ? new Date(value) : (value || new Date()) as Date;
 }
 
 
-module.exports = TimegateController;
+export = TimegateController;

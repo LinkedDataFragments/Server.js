@@ -1176,6 +1176,11 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
+"@types/parse-cache-control@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/parse-cache-control/-/parse-cache-control-1.0.4.tgz#1ed7c5a894c323de21d6202fc35d9d56f79326d9"
+  integrity sha512-YA9hcvRn3oYBdLK0PdWRsw5ehrqmfdCwfz68sSAxi2OB6L7B3jJEhrqlLfMvxnWfsZcUdbR6QI6NfkY1Y4e2zg==
+
 "@types/parse-link-header@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-link-header/-/parse-link-header-1.0.0.tgz#69f059e40a0fa93dc2e095d4142395ae6adc5d7a"

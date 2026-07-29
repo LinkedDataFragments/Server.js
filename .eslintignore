@@ -31,3 +31,15 @@ packages/datasource-hdt/lib/**/*.js
 packages/datasource-hdt/lib/**/*.d.ts
 packages/datasource-hdt/index.js
 packages/datasource-hdt/index.d.ts
+packages/feature-webid/lib/**/*.js
+packages/feature-webid/lib/**/*.d.ts
+packages/feature-webid/index.js
+packages/feature-webid/index.d.ts
+packages/feature-summary/lib/**/*.js
+packages/feature-summary/lib/**/*.d.ts
+packages/feature-summary/index.js
+packages/feature-summary/index.d.ts
+packages/feature-memento/lib/**/*.js
+packages/feature-memento/lib/**/*.d.ts
+packages/feature-memento/index.js
+packages/feature-memento/index.d.ts

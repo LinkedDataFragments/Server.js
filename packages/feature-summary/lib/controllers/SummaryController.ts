@@ -1,15 +1,25 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* An SummaryController responds to requests for summaries */
 
-let Controller = require('@ldf/core').controllers.Controller,
-    fs = require('fs'),
-    path = require('path'),
-    StreamParser = require('n3').StreamParser,
-    Util = require('@ldf/core').Util;
+import Controller = require('@ldf/core/lib/controllers/Controller');
+import * as fs from 'fs';
+import * as path from 'path';
+import { StreamParser } from 'n3';
+import Util = require('@ldf/core/lib/Util');
+import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
+
+interface SummaryControllerOptions extends ControllerOptions {
+  summaries?: { dir?: string; path?: string };
+}
 
 // Creates a new SummaryController
 class SummaryController extends Controller {
-  constructor(options) {
+  protected _enabled?: string;
+  protected _summariesFolder: string;
+  protected _summariesPath: string;
+  protected _matcher: RegExp;
+
+  constructor(options?: SummaryControllerOptions) {
     options = options || {};
     super(options);
     // Settings for data summaries
@@ -21,16 +31,16 @@ class SummaryController extends Controller {
     this._matcher = new RegExp('^' + Util.toRegExp(this._summariesPath) + '(.+)$');
   }
 
-  _handleRequest(request, response, next) {
+  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     if (!this._enabled)
       return next();
 
-    let summaryMatch = this._matcher && this._matcher.exec(request.url), datasource;
+    let summaryMatch = this._matcher && this._matcher.exec(request.url!), datasource;
     if (datasource = summaryMatch && summaryMatch[1]) {
       let summaryFile = path.join(this._summariesFolder, datasource + '.ttl');
 
       // Read summary triples from file
-      let streamParser = new StreamParser({ blankNodePrefix: '', baseIRI: this._baseUrl.pathname }),
+      let streamParser = new StreamParser({ blankNodePrefix: '', baseIRI: this._baseUrl.pathname as string }),
           inputStream = fs.createReadStream(summaryFile);
 
       // If the summary cannot be read, invoke the next controller without error
@@ -49,4 +59,4 @@ class SummaryController extends Controller {
   }
 }
 
-module.exports = SummaryController;
+export = SummaryController;
