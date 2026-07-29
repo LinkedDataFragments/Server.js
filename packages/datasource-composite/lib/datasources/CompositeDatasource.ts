@@ -73,7 +73,7 @@ class CompositeDatasource extends Datasource {
   // Count the quads in the query result to get an exact count.
   protected _getExactCount(datasource: Datasource, query: Query, callback: (count: number) => void): void {
     // Try to find a cache match
-    let cacheKey = (query.subject as unknown as string) + '|' + (query.predicate as unknown as string) + '|' + (query.object as unknown as string) + '|' + (query.graph as unknown as string);
+    let cacheKey = String(query.subject) + '|' + String(query.predicate) + '|' + String(query.object) + '|' + String(query.graph);
     let cache = this._countCache, count = cache.get(cacheKey);
     if (count) { setImmediate(callback, count); return; }
 

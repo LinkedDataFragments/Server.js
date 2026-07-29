@@ -111,11 +111,11 @@ class QuadPatternFragmentsRdfView extends RdfView {
     metadata(this.quad({ subject: fragment.pageUrl, predicate: voID  + 'triples', object: '"' + totalCount + '"^^' + xsd + 'integer' }));
 
     // Page metadata
-    metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'itemsPerPage', object: '"' + (query.limit as unknown as string) + '"^^' + xsd + 'integer' }));
+    metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'itemsPerPage', object: '"' + String(query.limit) + '"^^' + xsd + 'integer' }));
     fragment.firstPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'first', object: fragment.firstPageUrl }));
     if (query.offset)
       fragment.previousPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'previous', object: fragment.previousPageUrl }));
-    if (totalCount >= (query.limit as unknown as number) + (query.offset || 0))
+    if (totalCount >= Number(query.limit) + (query.offset || 0))
       fragment.nextPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'next', object: fragment.nextPageUrl }));
   }
 

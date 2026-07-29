@@ -238,7 +238,38 @@
         "@typescript-eslint/unbound-method": "off",
         // no-floating-promises' own suggested fix for an intentionally-unawaited
         // promise chain is prefixing it with `void`.
-        "no-void": [ 2, { allowAsStatement: true } ]
+        "no-void": [ 2, { allowAsStatement: true } ],
+        // `x as unknown as Y` opts out of type checking entirely for x. Files with
+        // an existing, individually-reviewed need for it are exempted below;
+        // this catches it showing up anywhere else. Prefer a real type, or
+        // String(x)/Number(x) if this is really just coercion.
+        "no-restricted-syntax": [ 2, {
+          selector: "TSAsExpression > TSAsExpression[typeAnnotation.type='TSUnknownKeyword']",
+          message: "as unknown as X bypasses type checking. Prefer a real type; if unavoidable, add this file to the no-restricted-syntax exemption list in .eslintrc."
+        } ]
+      }
+    },
+    {
+      // Files with a reviewed, necessary use of `as unknown as X` (protected
+      // third-party members, constructor-return-type mismatches, deliberate
+      // signature overrides) — see the commit history for the reasoning behind
+      // each. New files should not be added here without the same review.
+      files: [
+        "packages/core/lib/CliRunner.ts",
+        "packages/core/lib/LinkedDataFragmentsServer.ts",
+        "packages/core/lib/UrlData.ts",
+        "packages/core/lib/Util.ts",
+        "packages/core/lib/datasources/Datasource.ts",
+        "packages/core/lib/datasources/MemoryDatasource.ts",
+        "packages/datasource-composite/lib/datasources/CompositeDatasource.ts",
+        "packages/datasource-hdt/lib/datasources/ExternalHdtDatasource.ts",
+        "packages/datasource-hdt/lib/datasources/HdtDatasource.ts",
+        "packages/datasource-sparql/lib/datasources/SparqlDatasource.ts",
+        "packages/feature-qpf/lib/controllers/QuadPatternFragmentsController.ts",
+        "packages/feature-webid/lib/controllers/WebIDControllerExtension.ts"
+      ],
+      rules: {
+        "no-restricted-syntax": "off"
       }
     }
   ]

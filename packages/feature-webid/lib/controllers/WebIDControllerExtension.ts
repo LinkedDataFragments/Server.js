@@ -78,7 +78,7 @@ class WebIDControllerExtension extends Controller {
     // parse webID
     function parseTriple(error: Error, triple: N3.Quad, prefixes?: N3.Prefixes) {
       if (error)
-        callback('Cannot parse WebID: ' + (error as unknown as string));
+        callback('Cannot parse WebID: ' + String(error));
       else if (triple) {
         switch (triple.predicate as any) {
         case CERT_NS + 'modulus':

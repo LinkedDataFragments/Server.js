@@ -38,7 +38,7 @@ class LinkedDataFragmentsServerWorker {
       config.accesslogger = function (request: LdfRequest, response: LdfResponse) {
         accesslog(request, response, null, (logEntry: string) => {
           fs.appendFile(loggingSettings.file!, logEntry + '\n', (error) => {
-            error && process.stderr.write('Error when writing to access log file: ' + (error as unknown as string));
+            error && process.stderr.write('Error when writing to access log file: ' + String(error));
           });
         });
       };

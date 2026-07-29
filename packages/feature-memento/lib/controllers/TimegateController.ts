@@ -84,7 +84,7 @@ class TimegateController extends Controller {
     let invertedTimegateMap: Record<string, InvertedTimegateEntry> = {};
     _.forIn(timemaps, (versions: ParsedTimemapEntry[], timeGateId: string) => {
       versions.forEach((version) => {
-        invertedTimegateMap[version.datasourceId as unknown as string] = {
+        invertedTimegateMap[String(version.datasourceId)] = {
           memento: timeGateId,
           original: version.original || (urlData.baseURL || '/') + timeGateId,
           interval: version.interval,

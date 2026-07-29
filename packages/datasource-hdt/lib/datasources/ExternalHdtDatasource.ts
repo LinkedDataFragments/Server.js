@@ -70,7 +70,7 @@ class ExternalHdtDatasource extends Datasource {
       else {
         // Ensure the estimated total count is as least as large as the number of triples
         if (tripleCount && estimatedTotalCount < offset + tripleCount)
-          estimatedTotalCount = offset + (tripleCount < (query.limit as unknown as number) ? tripleCount : 2 * tripleCount);
+          estimatedTotalCount = offset + (tripleCount < Number(query.limit) ? tripleCount : 2 * tripleCount);
         destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
         destination.close();
       }

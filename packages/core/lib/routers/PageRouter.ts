@@ -9,7 +9,7 @@ class PageRouter {
 
   constructor(config?: { pageSize?: number }) {
     config = config || {};
-    let pageSize = config.pageSize as unknown as number;
+    let pageSize = Number(config.pageSize);
     this.pageSize = isFinite(pageSize) && pageSize > 1 ? ~~pageSize : 100;
   }
 
