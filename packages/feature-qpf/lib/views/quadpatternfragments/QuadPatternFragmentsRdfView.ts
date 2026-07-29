@@ -1,8 +1,12 @@
 /*! @license MIT ©2015-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* A QuadPatternFragmentsRdfView represents a Quad Pattern Fragment in RDF. */
 
-let RdfView = require('@ldf/core').views.RdfView,
-    stringQuadToQuad = require('rdf-string').stringQuadToQuad;
+import RdfView = require('@ldf/core/lib/views/RdfView');
+import { stringQuadToQuad } from 'rdf-string';
+import type { IStringQuad } from 'rdf-string';
+import type { AsyncIterator } from 'asynciterator';
+import type { Quad } from 'rdf-js';
+import type { RenderDone, ViewSettings } from '@ldf/core/lib/types';
 
 let dcTerms = 'http://purl.org/dc/terms/',
     rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -13,14 +17,14 @@ let dcTerms = 'http://purl.org/dc/terms/',
 
 // Creates a new QuadPatternFragmentsRdfView
 class QuadPatternFragmentsRdfView extends RdfView {
-  constructor(settings) {
+  constructor(settings?: ViewSettings) {
     super((settings || {}).viewNameOverride || 'QuadPatternFragments', settings);
   }
 
   // Generates quads by sending them to the data and/or metadata callbacks
-  _generateRdf(settings, data, metadata, done) {
+  protected override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     let datasource = settings.datasource, fragment = settings.fragment, query = settings.query,
-        results = settings.results, metadataDone = false;
+        results: AsyncIterator<Quad> = settings.results, metadataDone = false;
 
     // Add data source metadata
     this._generateMetadata(metadata, fragment, query, datasource);
@@ -29,7 +33,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
     this._generateControls(metadata, fragment, query, datasource);
 
     // Add fragment metadata
-    results.getProperty('metadata', (meta) => {
+    results.getProperty('metadata', (meta: { totalCount: number; hasExactCount: boolean }) => {
       this.sendFragmentMetadata(metadata, fragment, query, datasource, meta);
 
       // End if the data was also written
@@ -43,7 +47,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
   }
 
   // Generate the datasource metadata
-  _generateMetadata(metadata, fragment, query, datasource) {
+  protected _generateMetadata(metadata: (quad: Quad) => void, fragment: any, query: any, datasource: any): void {
     if (!datasource.url) return;
     datasource.index && metadata(this.quad({ subject: datasource.index, predicate: hydra + 'member', object: datasource.url }));
     metadata(this.quad({ subject: datasource.url, predicate: rdf + 'type', object: voID  + 'Dataset' }));
@@ -54,7 +58,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
   }
 
   // Generate the datasource controls
-  _generateControls(metadata, fragment, query, datasource) {
+  protected _generateControls(metadata: (quad: Quad) => void, fragment: any, query: any, datasource: any): void {
     if (datasource.url && datasource.supportsQuads)
       metadata(this.quad({ subject: datasource.url, predicate: sd + 'defaultGraph', object: 'urn:ldf:defaultGraph' }));
     datasource.url && metadata(this.quad({ subject: datasource.url, predicate: hydra + 'search', object: '_:pattern' }));
@@ -78,7 +82,7 @@ class QuadPatternFragmentsRdfView extends RdfView {
   }
 
   // Generate the fragment metadata
-  sendFragmentMetadata(metadata, fragment, query, datasource, meta) {
+  sendFragmentMetadata(metadata: (quad: Quad) => void, fragment: any, query: any, datasource: any, meta: any): void {
     if (!fragment.pageUrl) return;
     // General fragment metadata
     fragment.url && metadata(this.quad({ subject: fragment.url, predicate: voID + 'subset', object: fragment.pageUrl }));
@@ -104,9 +108,9 @@ class QuadPatternFragmentsRdfView extends RdfView {
       fragment.nextPageUrl && metadata(this.quad({ subject: fragment.pageUrl, predicate: hydra + 'next', object: fragment.nextPageUrl }));
   }
 
-  quad(quadObject) {
+  quad(quadObject: IStringQuad): Quad {
     return stringQuadToQuad(quadObject, this.dataFactory);
   }
 }
 
-module.exports = QuadPatternFragmentsRdfView;
+export = QuadPatternFragmentsRdfView;

@@ -35,6 +35,7 @@ export interface Query {
   limit?: number;
   offset?: number;
   page?: number;
+  patternString?: string;
 }
 
 // A registry of datasources keyed by their path

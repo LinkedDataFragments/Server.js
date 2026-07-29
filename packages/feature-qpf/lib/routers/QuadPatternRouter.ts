@@ -1,7 +1,9 @@
 /*! @license MIT ©2014–17 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /** A QuadPatternRouter routes basic quad patterns */
 
-const stringToTerm = require('rdf-string').stringToTerm;
+import { stringToTerm } from 'rdf-string';
+import type { DataFactory } from 'rdf-js';
+import type { Query, RouterRequest } from '@ldf/core/lib/types';
 
 let iriMatcher = /^(<?)([^_?$"<>][^"<>]*)>?$/;
 let literalMatcher = /^("[^]*")(?:|\^\^<?([^"<>]+)>?|@[a-z0-9\-]+)$/i;
@@ -12,38 +14,46 @@ let DEFAULT_GRAPH = 'urn:ldf:defaultGraph';
 // However, users might find "@default" easier to type (not spec-compatible)
 let DEFAULT_GRAPH_ALT = '@default';
 
+interface QuadPatternRouterConfig {
+  prefixes?: Record<string, string>;
+  dataFactory?: DataFactory;
+}
+
 // Creates a new QuadPatternRouter
 class QuadPatternRouter {
-  constructor(config) {
+  protected _prefixes: Record<string, string>;
+  dataFactory?: DataFactory;
+
+  constructor(config: QuadPatternRouterConfig) {
     this._prefixes = config.prefixes || {};
     this.dataFactory = config.dataFactory;
   }
 
   // Extracts triple or quad pattern parameters from the request and add them to the query
-  extractQueryParams(request, query) {
-    let queryString = request.url && request.url.query, match,
-        hasTriplePattern = false, hasQuadPattern = false;
+  extractQueryParams(request: RouterRequest, query: Query): void {
+    let queryString = (request.url && request.url.query)!, match,
+        hasTriplePattern: any = false, hasQuadPattern: any = false;
 
     // Try to extract a subject IRI
-    if (queryString.subject && (match = iriMatcher.exec(queryString.subject)))
+    if (queryString.subject && (match = iriMatcher.exec(queryString.subject as string)))
       hasTriplePattern = query.subject = stringToTerm(match[1] ? match[2] : this._expandIRI(match[2]), this.dataFactory);
 
     // Try to extract a predicate IRI
-    if (queryString.predicate && (match = iriMatcher.exec(queryString.predicate)))
+    if (queryString.predicate && (match = iriMatcher.exec(queryString.predicate as string)))
       hasTriplePattern = query.predicate = stringToTerm(match[1] ? match[2] : this._expandIRI(match[2]), this.dataFactory);
 
     // Try to extract an object
     if (queryString.object) {
       // The object can be an IRI…
-      if (match = iriMatcher.exec(queryString.object))
+      if (match = iriMatcher.exec(queryString.object as string))
         hasTriplePattern = query.object = stringToTerm(match[1] ? match[2] : this._expandIRI(match[2]), this.dataFactory);
       // or the object can be a literal (with a type or language)
-      else if (match = literalMatcher.exec(queryString.object))
+      else if (match = literalMatcher.exec(queryString.object as string))
         hasTriplePattern = query.object = stringToTerm(match[2] ? match[1] + '^^' + this._expandIRI(match[2]) : match[0], this.dataFactory);
     }
 
     // Try to extract a graph IRI
-    if (queryString.graph && (match = iriMatcher.exec(queryString.graph))) {
+    if (queryString.graph && (match = iriMatcher.exec(queryString.graph as string))) {
       hasTriplePattern = false;
       hasQuadPattern = match[1] ? match[2] : this._expandIRI(match[2]);
       // When a client specifies DEFAULT_GRAPH as graph,
@@ -62,10 +72,10 @@ class QuadPatternRouter {
   }
 
   // Expands a prefixed named into a full IRI
-  _expandIRI(name) {
+  protected _expandIRI(name: string): string {
     let match = prefixedNameMatcher.exec(name), prefix;
     return match && (prefix = this._prefixes[match[1]]) ? prefix + match[2] : name;
   }
 }
 
-module.exports = QuadPatternRouter;
+export = QuadPatternRouter;

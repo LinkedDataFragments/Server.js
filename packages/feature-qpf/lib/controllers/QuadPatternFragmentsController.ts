@@ -1,13 +1,29 @@
 /*! @license MIT ©2015-2018 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /** A QuadPatternFragmentsController responds to requests for TPFs and QPFs */
 
-let Controller = require('@ldf/core').controllers.Controller,
-    url = require('url'),
-    _ = require('lodash');
+import Controller = require('@ldf/core/lib/controllers/Controller');
+import * as url from 'url';
+import * as _ from 'lodash';
+import type { ParsedUrlQuery } from 'querystring';
+import type { ControllerOptions, LdfRequest, LdfResponse, Query, QueryFeatures, RouterRequest, ViewSettings } from '@ldf/core/lib/types';
+import type Datasource = require('@ldf/core/lib/datasources/Datasource');
+
+interface Router {
+  extractQueryParams(request: RouterRequest, query: Query): void;
+}
+
+interface QuadPatternFragmentsControllerOptions extends ControllerOptions {
+  routers?: Router[];
+  extensions?: Controller[];
+}
 
 // Creates a new QuadPatternFragmentsController
 class QuadPatternFragmentsController extends Controller {
-  constructor(options) {
+  viewName: string;
+  protected _routers: Router[];
+  protected _extensions: Controller[];
+
+  constructor(options?: QuadPatternFragmentsControllerOptions) {
     options = options || {};
     super(options);
     this._routers = options.routers || [];
@@ -17,24 +33,24 @@ class QuadPatternFragmentsController extends Controller {
   }
 
   // The required features the given datasource must have
-  supportsDatasource(datasource) {
+  supportsDatasource(datasource: Datasource): boolean {
     return datasource.supportedFeatures.triplePattern ||
           datasource.supportedFeatures.quadPattern;
   }
 
   // Try to serve the requested fragment
-  _handleRequest(request, response, next) {
+  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     // Create the query from the request by calling the fragment routers
-    let requestParams = { url: request.parsedUrl, headers: request.headers },
-        query = this._routers.reduce((query, router) => {
+    let requestParams = { url: request.parsedUrl, headers: request.headers } as RouterRequest,
+        query = this._routers.reduce((query: Query, router) => {
           try { router.extractQueryParams(requestParams, query); }
           catch (e) { /* ignore routing errors */ }
           return query;
-        }, { features: [] });
+        }, { features: [] as unknown as QueryFeatures });
 
     // Execute the query on the data source
-    let datasource = query.features.datasource && this._datasources[query.datasource];
-    delete query.features.datasource;
+    let datasource = query.features!.datasource && this._datasources[query.datasource!];
+    delete query.features!.datasource;
     if (!datasource || !datasource.supportsQuery(query) ||
       !this.supportsDatasource(datasource))
       return next();
@@ -47,10 +63,10 @@ class QuadPatternFragmentsController extends Controller {
 
     // Execute the extensions and render the query result
     let extensions = this._extensions, extensionId = 0;
-    (function nextExtension(error) {
+    (function nextExtension(error?: Error) {
       // Log a possible error with the previous extension
       if (error)
-        process.stderr.write(error.stack + '\n');
+        process.stderr.write((error.stack as string) + '\n');
       // Execute the next extension
       if (extensionId < extensions.length)
         extensions[extensionId++].handleRequest(request, response, nextExtension, settings);
@@ -61,18 +77,18 @@ class QuadPatternFragmentsController extends Controller {
   }
 
   // Create the template URL for requesting quad patterns
-  _createTemplateUrl(datasourceUrl, supportsQuads) {
+  protected _createTemplateUrl(datasourceUrl: string, supportsQuads: boolean): string {
     return datasourceUrl + (!supportsQuads ? '{?subject,predicate,object}' :
       '{?subject,predicate,object,graph}');
   }
 
   // Create parameterized pattern string for quad patterns
-  _createPatternString(query, supportsQuads) {
-    let subject = query.subject, predicate = query.predicate,
-        object = query.object, graph = '';
+  protected _createPatternString(query: Query, supportsQuads: boolean): string {
+    let subject: any = query.subject, predicate: any = query.predicate,
+        object: any = query.object, graph: any = '';
     // Serialize subject and predicate IRIs or variables
-    subject   = subject   ? '<' + query.subject.value   + '> ' : '?s ';
-    predicate = predicate ? '<' + query.predicate.value + '> ' : '?p ';
+    subject   = subject   ? '<' + query.subject!.value   + '> ' : '?s ';
+    predicate = predicate ? '<' + query.predicate!.value + '> ' : '?p ';
     // Serialize object IRI, literal, or variable
     if (query.object && query.object.termType === 'NamedNode')
       object = '<' + query.object.value + '> ';
@@ -90,14 +106,14 @@ class QuadPatternFragmentsController extends Controller {
   }
 
   // Creates metadata about the requested fragment
-  _createFragmentMetadata(request, query, datasourceSettings) {
+  protected _createFragmentMetadata(request: LdfRequest, query: Query, datasourceSettings: Datasource): ViewSettings {
     // TODO: these URLs should be generated by the routers
-    let requestUrl = request.parsedUrl,
+    let requestUrl = request.parsedUrl!,
         // maintain the originally requested query string to avoid encoding differences
-        origQuery = request.url.replace(/[^?]+/, ''),
+        origQuery = request.url!.replace(/[^?]+/, ''),
         pageUrl = url.format(requestUrl).replace(/\?.*/, origQuery),
-        paramsNoPage = _.omit(requestUrl.query, 'page'),
-        currentPage = parseInt(requestUrl.query.page, 10) || 1,
+        paramsNoPage = _.omit(requestUrl.query as ParsedUrlQuery, 'page'),
+        currentPage = parseInt((requestUrl.query as ParsedUrlQuery).page as string, 10) || 1,
         datasourceUrl = url.format(_.omit(requestUrl, 'query')),
         fragmentUrl = url.format({ ...requestUrl, query: paramsNoPage }),
         fragmentPageUrlBase = fragmentUrl + (/\?/.test(fragmentUrl) ? '&' : '?') + 'page=',
@@ -128,7 +144,7 @@ class QuadPatternFragmentsController extends Controller {
   }
 
   // Close all data sources
-  close() {
+  override close(): void {
     for (let datasourceName in this._datasources) {
       try { this._datasources[datasourceName].close(); }
       catch (error) { /* ignore closing errors */ }
@@ -136,4 +152,4 @@ class QuadPatternFragmentsController extends Controller {
   }
 }
 
-module.exports = QuadPatternFragmentsController;
+export = QuadPatternFragmentsController;

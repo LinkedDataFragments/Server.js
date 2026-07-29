@@ -43,3 +43,7 @@ packages/feature-memento/lib/**/*.js
 packages/feature-memento/lib/**/*.d.ts
 packages/feature-memento/index.js
 packages/feature-memento/index.d.ts
+packages/feature-qpf/lib/**/*.js
+packages/feature-qpf/lib/**/*.d.ts
+packages/feature-qpf/index.js
+packages/feature-qpf/index.d.ts
