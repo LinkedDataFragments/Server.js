@@ -6,6 +6,7 @@ import type { TLSSocket } from 'tls';
 import parseCacheControl = require('parse-cache-control');
 import * as N3 from 'n3';
 import Controller = require('@ldf/core/lib/controllers/Controller');
+import UrlData = require('@ldf/core/lib/UrlData');
 import Util = require('@ldf/core/lib/Util');
 import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
 
@@ -37,7 +38,7 @@ class WebIDControllerExtension extends Controller {
   constructor(settings: ControllerOptions) {
     super(settings);
     this._cache = lru(50);
-    this._protocol = settings.urlData!.protocol;
+    this._protocol = (settings.urlData || new UrlData()).protocol;
   }
 
   // Add WebID Link headers
