@@ -12,13 +12,13 @@
     "coveralls": "^3.0.9",
     "eslint": "^7.0.0",
     "eslint-plugin-import": "^2.22.0",
-    "lerna": "^4.0.0",
+    "lerna": "9.0.7",
     "manual-git-changelog": "^1.0.1",
     "mocha": "^8.0.0",
     "nyc": "^15.0.0",
     "pre-commit": "^1.1.3",
     "sinon": "^1.17.4",
-    "sinon-chai": "^3.0.0",
+    "sinon-chai": "^2.14.0",
     "supertest": "^6.0.0"
   },
   "pre-commit": [
@@ -33,6 +33,7 @@
     "test-ci": "nyc --reporter=lcov npm run mocha",
     "lint": "eslint packages/*/bin/* packages/*/lib packages/*/test",
     "clean": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules",
+    "dedupe": "npx yarn-deduplicate yarn.lock --scopes",
     "publish": "lerna publish",
     "publish-bare": "lerna exec -- npm publish --silent",
     "postinstall": "lerna run prepare",
