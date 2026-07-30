@@ -1,7 +1,7 @@
-FROM node:16-slim
+FROM node:22-slim
 LABEL description="Triple Pattern Fragment Server."
 # Install location
-ENV dir /var/www/@ldf/server
+ENV dir=/var/www/@ldf/server
 
 # Copy the server files
 COPY components ${dir}/components/
@@ -15,12 +15,12 @@ RUN npm config set @ldf:registry $NPM_REGISTRY
 
 # Install the node module
 RUN apt-get update && \
-    apt-get install -y g++ make python && \
-    cd ${dir} 
+    apt-get install -y g++ make python3 && \
+    cd ${dir}
 
 WORKDIR ${dir}
-RUN npm install --only=production 
-RUN apt-get remove -y g++ make python && apt-get autoremove -y && \
+RUN npm install --only=production
+RUN apt-get remove -y g++ make python3 && apt-get autoremove -y && \
     rm -rf /var/cache/apt/archives
 
 # Expose the default port
