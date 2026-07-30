@@ -4,10 +4,11 @@
 import Controller = require('@ldf/core/lib/controllers/Controller');
 import TimegateController = require('./TimegateController');
 import * as url from 'url';
-import type { LdfRequest, LdfResponse, ViewSettings } from '@ldf/core/lib/types';
+import type { LdfRequest, LdfResponse, Query, ViewSettings } from '@ldf/core/lib/types';
 
 type InvertedTimegateEntry = TimegateController.InvertedTimegateEntry;
 type TimegateControllerOptions = TimegateController.TimegateControllerOptions;
+type DatasourceRef = TimegateController.DatasourceRef;
 
 // Creates a new MementoControllerExtension
 class MementoControllerExtension extends Controller {
@@ -23,8 +24,8 @@ class MementoControllerExtension extends Controller {
 
   // Add Memento Link headers
   protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
-    let datasource = (settings!.query as { datasource?: string }).datasource,
-        memento = this._invertedTimegateMap[(settings!.datasource as { id?: string }).id as string],
+    let datasource = (settings!.query as Query).datasource,
+        memento = this._invertedTimegateMap[(settings!.datasource as DatasourceRef).id as string],
         requestQuery = request.url!.match(/\?.*|$/)![0];
 
     // Add link to original if it is a memento
@@ -39,7 +40,7 @@ class MementoControllerExtension extends Controller {
     }
     // Add timegate link if resource is not a memento
     else {
-      let timegateSettings = (settings!.datasource as { timegate?: string | boolean }).timegate, timegate;
+      let timegateSettings = (settings!.datasource as DatasourceRef).timegate, timegate;
       // If a timegate URL is given, use it
       if (typeof timegateSettings === 'string')
         timegate = timegateSettings + requestQuery;

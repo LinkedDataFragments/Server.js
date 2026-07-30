@@ -8,6 +8,7 @@ import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/cor
 
 type InvertedTimegateEntry = TimegateController.InvertedTimegateEntry;
 type TimegateControllerOptions = TimegateController.TimegateControllerOptions;
+type DatasourceRef = TimegateController.DatasourceRef;
 
 // Creates a new MementoHtmlViewExtension
 class MementoHtmlViewExtension extends HtmlView {
@@ -21,7 +22,7 @@ class MementoHtmlViewExtension extends HtmlView {
 
   // Renders the view with the given settings to the response
   protected override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
-    let memento = this._invertedTimegateMap[(settings.datasource as { id?: string }).id as string];
+    let memento = this._invertedTimegateMap[(settings.datasource as DatasourceRef).id as string];
     if (!memento)
       return done();
     this._renderTemplate(path.join(__dirname, 'memento-details'), {

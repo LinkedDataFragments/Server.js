@@ -6,6 +6,7 @@ import { join } from 'path';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core/lib/types';
+import type IndexDatasource = require('@ldf/core/lib/datasources/IndexDatasource');
 
 // Creates a new QuadPatternFragmentsHtmlView
 class QuadPatternFragmentsHtmlView extends HtmlView {
@@ -30,7 +31,7 @@ class QuadPatternFragmentsHtmlView extends HtmlView {
 
     // Generates the HTML after the data and metadata have been retrieved
     function renderHtml() {
-      let template = (settings.datasource as { role?: string }).role === 'index' ? 'index' : 'datasource';
+      let template = (settings.datasource as Partial<IndexDatasource>).role === 'index' ? 'index' : 'datasource';
       settings.extensions = { Before: null, FormBefore: null, FormAfter: null, QuadBefore: 'function', QuadAfter: 'function', After: null };
       self._renderTemplate(join(self.viewDirectory, template), settings, request, response, done);
     }

@@ -40,6 +40,10 @@ namespace TimegateController {
     original: string;
     interval: [Date, Date];
   }
+
+  export interface DatasourceRef extends Datasource {
+    timegate?: string | boolean;
+  }
 }
 type MementoConfig = TimegateController.MementoConfig;
 type TimegateControllerOptions = TimegateController.TimegateControllerOptions;
