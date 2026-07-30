@@ -20,9 +20,13 @@ interface LinkedDataFragmentsServerOptions extends ControllerOptions {
   response?: { headers?: Record<string, string> };
 }
 
-// eslint-disable-next-line no-redeclare
 namespace LinkedDataFragmentsServer {
-  // The augmented http(s).Server instance actually returned by `new LinkedDataFragmentsServer(...)`
+  // The augmented server instance actually returned by `new LinkedDataFragmentsServer(...)`.
+  // Modeled on http.Server rather than https.Server: the constructor below assigns either
+  // one to `server`, and this file only relies on the http.Server-shaped surface (the
+  // 'request' event, .listen(), etc.), which https.Server duck-types identically despite
+  // not nominally extending http.Server in Node's own types — hence the net.Server-mediated
+  // cast for both branches below, rather than a direct one.
   export interface LdfHttpServer extends http.Server {
     _sockets: Record<string, import('net').Socket>;
     _log: (...args: any[]) => void;
@@ -59,7 +63,7 @@ class LinkedDataFragmentsServer {
     let urlData = options && options.urlData ? options.urlData : new UrlData();
     switch (urlData.protocol) {
     case 'http':
-      server = http.createServer() as LdfHttpServer;
+      server = http.createServer() as import('net').Server as LdfHttpServer;
       break;
     case 'https':
       const ssl = options.ssl || {}, authentication = options.authentication || {};

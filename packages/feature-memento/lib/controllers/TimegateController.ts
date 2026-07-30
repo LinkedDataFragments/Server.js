@@ -9,7 +9,6 @@ import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/t
 import type Datasource = require('@ldf/core/lib/datasources/Datasource');
 import type UrlData = require('@ldf/core/lib/UrlData');
 
-// eslint-disable-next-line no-redeclare
 namespace TimegateController {
   export interface MementoConfig {
     datasource: Datasource;

@@ -6,13 +6,11 @@ import * as hdt from 'hdt';
 import ExternalHdtDatasource = require('./ExternalHdtDatasource');
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
-import type { DatasourceOptions, Query } from '@ldf/core/lib/types';
+import type { DatasourceOptions, Pushable, Query } from '@ldf/core/lib/types';
 
 interface HdtDatasourceOptions extends DatasourceOptions {
   external?: boolean;
 }
-
-type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
 
 // Creates a new HdtDatasource
 class HdtDatasource extends Datasource {
@@ -32,7 +30,7 @@ class HdtDatasource extends Datasource {
 
   // Loads the HDT datasource
   protected override async _initialize(): Promise<void> {
-    this._hdtDocument = await hdt.fromFile(this._hdtFile, { dataFactory: this.dataFactory as any });
+    this._hdtDocument = await hdt.fromFile(this._hdtFile, { dataFactory: this.dataFactory } as Parameters<typeof hdt.fromFile>[1]);
   }
 
   // Writes the results of the query to the given quad stream
@@ -56,7 +54,7 @@ class HdtDatasource extends Datasource {
         destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
         // Add the triples to the output
         for (let i = 0; i < tripleCount; i++)
-          (destination as Pushable)._push(triples[i]);
+          (destination as Pushable<Quad>)._push(triples[i]);
         destination.close();
       },
       (error) => { destination.emit('error', error); });
@@ -66,7 +64,7 @@ class HdtDatasource extends Datasource {
   override close(done?: (error?: Error) => void): void {
     // Close the HDT document if it is open
     if (this._hdtDocument) {
-      this._hdtDocument.close().then(done as any, done as any);
+      this._hdtDocument.close().then(() => { done && done(); }, done);
       delete this._hdtDocument;
     }
     // If initialization was still pending, close immediately after initializing

@@ -6,7 +6,7 @@ import { SparqlJsonParser } from 'sparqljson-parse';
 import type { IBindings } from 'sparqljson-parse';
 import type { Literal, NamedNode, Quad, Quad_Graph, Quad_Object, Quad_Predicate, Quad_Subject, Term } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
-import type { DatasourceOptions, Query } from '@ldf/core/lib/types';
+import type { DatasourceOptions, Pushable, Query } from '@ldf/core/lib/types';
 
 // lru-cache v5 (this package's actual declared/installed dependency) ships no
 // types of its own, and the monorepo's hoisted root lru-cache is a much
@@ -26,8 +26,6 @@ interface CountEstimate {
   totalCount: number;
   hasExactCount: boolean;
 }
-
-type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
 
 let DEFAULT_COUNT_ESTIMATE: CountEstimate = { totalCount: 1e9, hasExactCount: false };
 let ENDPOINT_ERROR = 'Error accessing SPARQL endpoint';
@@ -86,7 +84,7 @@ class SparqlDatasource extends Datasource {
             (binding.o || query.object) as Quad_Object,
             (binding.g || query.graph) as Quad_Graph | undefined,
           );
-          (destination as Pushable)._push(triple);
+          (destination as Pushable<Quad>)._push(triple);
         });
         destination.close();
       });

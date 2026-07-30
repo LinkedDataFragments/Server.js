@@ -8,15 +8,13 @@ import { Parser as N3Parser } from 'n3';
 import { spawn } from 'child_process';
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
-import type { DatasourceOptions, Query } from '@ldf/core/lib/types';
+import type { DatasourceOptions, Pushable, Query } from '@ldf/core/lib/types';
 
 let hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
 
 interface ExternalHdtDatasourceOptions extends DatasourceOptions {
   checkFile?: boolean;
 }
-
-type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
 
 // Creates a new ExternalHdtDatasource
 class ExternalHdtDatasource extends Datasource {
@@ -64,11 +62,11 @@ class ExternalHdtDatasource extends Datasource {
     // Parse the result triples
     hdt.stdout.setEncoding('utf8');
     let parser = new N3Parser(), tripleCount = 0, estimatedTotalCount = 0, hasExactCount = true;
-    parser.parse(hdt.stdout as any, (error: Error, triple: Quad) => {
+    parser.parse(hdt.stdout, (error: Error, triple: Quad) => {
       if (error)
         destination.emit('error', new Error('Invalid query result: ' + error.message));
       else if (triple)
-        tripleCount++, (destination as Pushable)._push(triple);
+        tripleCount++, (destination as Pushable<Quad>)._push(triple);
       else {
         // Ensure the estimated total count is as least as large as the number of triples
         if (tripleCount && estimatedTotalCount < offset + tripleCount)
@@ -81,7 +79,7 @@ class ExternalHdtDatasource extends Datasource {
 
     // Extract the estimated number of total matches from the first (comment) line
     hdt.stdout.once('data', (header: string) => {
-      estimatedTotalCount = parseInt(header.match(/\d+/) as any, 10) || 0;
+      estimatedTotalCount = parseInt(header.match(/\d+/)?.[0] ?? '', 10) || 0;
       hasExactCount = header.indexOf('estimated') < 0;
     });
 

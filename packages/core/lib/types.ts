@@ -5,6 +5,7 @@ import type { DataFactory, Term } from 'rdf-js';
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'http';
 import type { ParsedUrlQuery } from 'querystring';
 import type { UrlObject } from 'url';
+import type { BufferedIterator } from 'asynciterator';
 import type Datasource = require('./datasources/Datasource');
 import type UrlData = require('./UrlData');
 import type View = require('./views/View');
@@ -40,6 +41,8 @@ export interface Query {
 
 // A registry of datasources keyed by their path
 export type DatasourceRegistry = Record<string, Datasource>;
+
+export type Pushable<T> = BufferedIterator<T> & { _push(item: T): void };
 
 // Options accepted by the Datasource base class constructor
 export interface DatasourceOptions {

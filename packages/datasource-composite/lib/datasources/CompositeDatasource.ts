@@ -4,7 +4,7 @@
 import Datasource = require('@ldf/core/lib/datasources/Datasource');
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
-import type { DatasourceOptions, DatasourceRegistry, Query } from '@ldf/core/lib/types';
+import type { DatasourceOptions, DatasourceRegistry, Pushable, Query } from '@ldf/core/lib/types';
 
 // lru-cache v5 (this package's actual declared/installed dependency) ships no
 // types of its own, and the monorepo's hoisted root lru-cache is a much
@@ -18,8 +18,6 @@ const LRU: new (options: { max: number; maxAge: number }) => {
 interface CompositeDatasourceOptions extends DatasourceOptions {
   references?: DatasourceRegistry;
 }
-
-type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
 
 // Creates a new CompositeDatasource
 class CompositeDatasource extends Datasource {
@@ -210,9 +208,9 @@ class CompositeDatasource extends Datasource {
     // only closing the iterator when the callback returns true.
     function countItems(destination: BufferedIterator<Quad>, closeCallback: (count: number) => boolean): void {
       let count = 0,
-          originalPush = (destination as Pushable)._push,
+          originalPush = (destination as Pushable<Quad>)._push,
           originalClose = destination.close;
-      (destination as Pushable)._push = function (element: Quad) {
+      (destination as Pushable<Quad>)._push = function (element: Quad) {
         if (element) count++;
         originalPush.call(destination, element);
       };
@@ -223,7 +221,7 @@ class CompositeDatasource extends Datasource {
     }
 
     function pushToDestination(quad: Quad) {
-      (destination as Pushable)._push(quad);
+      (destination as Pushable<Quad>)._push(quad);
     }
     function closeDestination() {
       destination.close();

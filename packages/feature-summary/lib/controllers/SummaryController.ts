@@ -8,7 +8,6 @@ import { StreamParser } from 'n3';
 import Util = require('@ldf/core/lib/Util');
 import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
 
-// eslint-disable-next-line no-redeclare
 namespace SummaryController {
   export interface SummariesConfig {
     dir?: string;

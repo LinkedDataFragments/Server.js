@@ -2,12 +2,10 @@
 /* A MemoryDatasource queries a set of in-memory quads. */
 
 import { Store as N3Store } from 'n3';
-import { BufferedIterator } from 'asynciterator';
+import type { BufferedIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
 import Datasource = require('./Datasource');
-import type { DatasourceOptions, Query } from '../types';
-
-type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
+import type { DatasourceOptions, Pushable, Query } from '../types';
 
 // Creates a new MemoryDatasource
 class MemoryDatasource extends Datasource {
@@ -50,7 +48,7 @@ class MemoryDatasource extends Datasource {
     destination.setProperty('metadata', { totalCount: quads.length, hasExactCount: true });
     // Send the requested subset of quads
     for (let i = offset, l = Math.min(offset + limit, quads.length); i < l; i++)
-      (destination as Pushable)._push(quads[i]);
+      (destination as Pushable<Quad>)._push(quads[i]);
     destination.close();
   }
 }
