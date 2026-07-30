@@ -6,7 +6,7 @@ import * as url from 'url';
 import * as _ from 'lodash';
 import type { ParsedUrlQuery } from 'querystring';
 import type { Term } from 'rdf-js';
-import type { ControllerOptions, LdfRequest, LdfResponse, Query, QueryFeatures, RouterRequest, ViewSettings } from '@ldf/core/lib/types';
+import type { ControllerOptions, LdfRequest, LdfResponse, Query, RouterRequest, ViewSettings } from '@ldf/core/lib/types';
 import type Datasource = require('@ldf/core/lib/datasources/Datasource');
 
 interface Router {
@@ -47,7 +47,7 @@ class QuadPatternFragmentsController extends Controller {
           try { router.extractQueryParams(requestParams, query); }
           catch (e) { /* ignore routing errors */ }
           return query;
-        }, { features: [] as unknown as QueryFeatures });
+        }, { features: {} });
 
     // Execute the query on the data source
     let datasource = query.features!.datasource && this._datasources[query.datasource!];

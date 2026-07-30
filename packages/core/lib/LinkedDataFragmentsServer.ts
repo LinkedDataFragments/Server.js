@@ -59,14 +59,14 @@ class LinkedDataFragmentsServer {
     let urlData = options && options.urlData ? options.urlData : new UrlData();
     switch (urlData.protocol) {
     case 'http':
-      server = http.createServer() as unknown as LdfHttpServer;
+      server = http.createServer() as LdfHttpServer;
       break;
     case 'https':
       const ssl = options.ssl || {}, authentication = options.authentication || {};
       // WebID authentication requires a client certificate
       if (authentication.webid)
         ssl.requestCert = ssl.rejectUnauthorized = true;
-      server = https.createServer({ ...ssl, ..._.mapValues(ssl.keys, readHttpsOption) }) as unknown as LdfHttpServer;
+      server = https.createServer({ ...ssl, ..._.mapValues(ssl.keys, readHttpsOption) }) as import('net').Server as LdfHttpServer;
       break;
     default:
       throw new Error('The configured protocol ' + urlData.protocol + ' is invalid.');
@@ -74,7 +74,7 @@ class LinkedDataFragmentsServer {
 
     // Copy over members
     for (let member in LinkedDataFragmentsServer.prototype)
-      (server as unknown as Record<string, unknown>)[member] = (LinkedDataFragmentsServer.prototype as unknown as Record<string, unknown>)[member];
+      (server as LdfHttpServer & Record<string, unknown>)[member] = (LinkedDataFragmentsServer.prototype as LinkedDataFragmentsServer & Record<string, unknown>)[member];
 
     // Assign settings
     server._sockets = {};
@@ -114,7 +114,7 @@ LinkedDataFragmentsServer.prototype._processRequest = function (this: LdfHttpSer
   // Don't write a body with HEAD and OPTIONS
   case 'HEAD':
   case 'OPTIONS':
-    (response as unknown as { write: () => void }).write = function () {};
+    response.write = function (chunk: any, encoding?: any, callback?: any): boolean { return true; };
     response.end = response.end.bind(response, '', '' as BufferEncoding);
     break;
   // Reject all other methods
@@ -196,4 +196,4 @@ function readHttpsOption(value: unknown): unknown {
     return value;
 }
 
-export = LinkedDataFragmentsServer as unknown as LinkedDataFragmentsServerConstructor;
+export = LinkedDataFragmentsServer as LinkedDataFragmentsServerConstructor;

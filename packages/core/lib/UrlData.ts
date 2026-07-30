@@ -28,7 +28,7 @@ class UrlData {
     this.blankNodePrefix = this.blankNodePath ? this.baseURLRoot + this.blankNodePath : 'genid:';
     this.blankNodePrefixLength = this.blankNodePrefix.length;
     this.assetsPath = this.baseURLPath + 'assets/' || options.assetsPath!;
-    this.protocol = options.protocol as unknown as string;
+    this.protocol = options.protocol || '';
     if (!this.protocol) {
       let protocolMatch = (this.baseURL || '').match(/^(\w+):/);
       this.protocol = protocolMatch ? protocolMatch[1] : 'http';

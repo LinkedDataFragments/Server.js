@@ -7,6 +7,8 @@ import type { Quad } from 'rdf-js';
 import Datasource = require('./Datasource');
 import type { DatasourceOptions, Query } from '../types';
 
+type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
+
 // Creates a new MemoryDatasource
 class MemoryDatasource extends Datasource {
   protected _url?: string;
@@ -48,7 +50,7 @@ class MemoryDatasource extends Datasource {
     destination.setProperty('metadata', { totalCount: quads.length, hasExactCount: true });
     // Send the requested subset of quads
     for (let i = offset, l = Math.min(offset + limit, quads.length); i < l; i++)
-      (destination as unknown as { _push(item: Quad): void })._push(quads[i]);
+      (destination as Pushable)._push(quads[i]);
     destination.close();
   }
 }

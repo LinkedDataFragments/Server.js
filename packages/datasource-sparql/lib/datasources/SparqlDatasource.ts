@@ -4,7 +4,7 @@
 import Datasource = require('@ldf/core/lib/datasources/Datasource');
 import { SparqlJsonParser } from 'sparqljson-parse';
 import type { IBindings } from 'sparqljson-parse';
-import type { Literal, NamedNode, Quad, Term } from 'rdf-js';
+import type { Literal, NamedNode, Quad, Quad_Graph, Quad_Object, Quad_Predicate, Quad_Subject, Term } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, Query } from '@ldf/core/lib/types';
 
@@ -26,6 +26,8 @@ interface CountEstimate {
   totalCount: number;
   hasExactCount: boolean;
 }
+
+type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
 
 let DEFAULT_COUNT_ESTIMATE: CountEstimate = { totalCount: 1e9, hasExactCount: false };
 let ENDPOINT_ERROR = 'Error accessing SPARQL endpoint';
@@ -78,13 +80,13 @@ class SparqlDatasource extends Datasource {
 
         response.results.bindings.forEach((rawBinding: any) => {
           const binding: IBindings = this._sparqlJsonParser.parseJsonBindings(rawBinding);
-          let triple = {
-            subject:   binding.s || query.subject,
-            predicate: binding.p || query.predicate,
-            object:    binding.o || query.object,
-            graph:     binding.g || query.graph,
-          };
-          (destination as unknown as { _push(item: any): void })._push(triple);
+          let triple = this.dataFactory.quad(
+            (binding.s || query.subject) as Quad_Subject,
+            (binding.p || query.predicate) as Quad_Predicate,
+            (binding.o || query.object) as Quad_Object,
+            (binding.g || query.graph) as Quad_Graph | undefined,
+          );
+          (destination as Pushable)._push(triple);
         });
         destination.close();
       });
@@ -173,18 +175,18 @@ class SparqlDatasource extends Datasource {
     // Encapsulate in graph if we are not querying the default graph
     if (!quad.graph || quad.graph.termType !== 'DefaultGraph') {
       query.push('GRAPH ');
-      quad.graph ? query.push(this._encodeObject(quad.graph) as unknown as string) : query.push('?g');
+      quad.graph ? query.push(this._encodeObject(quad.graph) ?? '') : query.push('?g');
       query.push('{');
     }
 
     // Add a possible subject IRI
-    quad.subject ? query.push((this._encodeObject(quad.subject) as unknown as string) + ' ') : query.push('?s ');
+    quad.subject ? query.push((this._encodeObject(quad.subject) ?? '') + ' ') : query.push('?s ');
 
     // Add a possible predicate IRI
-    quad.predicate ? query.push((this._encodeObject(quad.predicate) as unknown as string) + ' ') : query.push('?p ');
+    quad.predicate ? query.push((this._encodeObject(quad.predicate) ?? '') + ' ') : query.push('?p ');
 
     // Add a possible object IRI
-    quad.object ? query.push(this._encodeObject(quad.object) as unknown as string) : query.push('?o');
+    quad.object ? query.push(this._encodeObject(quad.object) ?? '') : query.push('?o');
 
     if (!quad.graph || quad.graph.termType !== 'DefaultGraph')
       query.push('}'); // close the GRAPH brackets

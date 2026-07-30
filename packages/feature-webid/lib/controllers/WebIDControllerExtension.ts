@@ -10,8 +10,6 @@ import UrlData = require('@ldf/core/lib/UrlData');
 import Util = require('@ldf/core/lib/Util');
 import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
 
-const n3parser = N3.Parser;
-
 let CERT_NS = 'http://www.w3.org/ns/auth/cert#';
 
 interface CachedId {
@@ -48,7 +46,7 @@ class WebIDControllerExtension extends Controller {
       return next();
 
     let self = this,
-        certificate = (request.connection as unknown as TLSSocket).getPeerCertificate();
+        certificate = (request.connection as TLSSocket).getPeerCertificate();
 
     if (!(certificate.subject && certificate.subject.subjectAltName)) {
       return this._handleForbidden(request, response, {
@@ -72,7 +70,7 @@ class WebIDControllerExtension extends Controller {
   // Verify webID
   protected _verifyWebID(webID: string, modulus: string | undefined, exponent: number, callback: (error: string | null, verified?: boolean, reason?: string) => void): void {
     // request & parse
-    let parser: N3.Parser = (n3parser as unknown as () => N3.Parser)(),
+    let parser: N3.Parser = new N3.Parser(),
         id: CachedId = {};
 
     // parse webID
@@ -141,11 +139,12 @@ class WebIDControllerExtension extends Controller {
     view.render(metadata, request, response);
   }
 
-  protected override _handleNotAcceptable(request: LdfRequest, response: LdfResponse, options: (error?: Error) => void): void {
+  protected override _handleNotAcceptable(request: LdfRequest, response: LdfResponse, options: ((error?: Error) => void) | ForbiddenOptions): void {
     response.writeHead(401, {
       'Content-Type': Util.MIME_PLAINTEXT,
     });
-    response.end('Access to ' + (request.url as string) + ' is not allowed, verification for WebID ' + ((options as unknown as { webID?: string; reason?: string }).webID || '') + ' failed. Reason: ' + ((options as unknown as { webID?: string; reason?: string }).reason || ''));
+    let forbidden = typeof options === 'function' ? {} : options;
+    response.end('Access to ' + (request.url as string) + ' is not allowed, verification for WebID ' + (forbidden.webID || '') + ' failed. Reason: ' + (forbidden.reason || ''));
   }
 }
 

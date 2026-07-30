@@ -12,6 +12,8 @@ interface HdtDatasourceOptions extends DatasourceOptions {
   external?: boolean;
 }
 
+type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
+
 // Creates a new HdtDatasource
 class HdtDatasource extends Datasource {
   protected _hdtFile!: string;
@@ -54,7 +56,7 @@ class HdtDatasource extends Datasource {
         destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
         // Add the triples to the output
         for (let i = 0; i < tripleCount; i++)
-          (destination as unknown as { _push(item: Quad): void })._push(triples[i]);
+          (destination as Pushable)._push(triples[i]);
         destination.close();
       },
       (error) => { destination.emit('error', error); });

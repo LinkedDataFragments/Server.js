@@ -16,6 +16,8 @@ interface ExternalHdtDatasourceOptions extends DatasourceOptions {
   checkFile?: boolean;
 }
 
+type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
+
 // Creates a new ExternalHdtDatasource
 class ExternalHdtDatasource extends Datasource {
   protected _options: ExternalHdtDatasourceOptions;
@@ -54,8 +56,8 @@ class ExternalHdtDatasource extends Datasource {
     // Execute the external HDT utility
     let hdtFile = this._hdtFile, offset = query.offset || 0, limit = query.limit || Infinity,
         hdt = spawn(hdtUtility, [
-          '--query', ((query.subject as unknown as string)   || '?s') + ' ' +
-          ((query.predicate as unknown as string) || '?p') + ' ' + ((query.object as unknown as string) || '?o'),
+          '--query', (query.subject ? String(query.subject) : '?s') + ' ' +
+          (query.predicate ? String(query.predicate) : '?p') + ' ' + (query.object ? String(query.object) : '?o'),
           '--offset', String(offset), '--limit', String(limit), '--format', 'turtle',
           '--', hdtFile,
         ], { stdio: ['ignore', 'pipe', 'ignore'] });
@@ -66,7 +68,7 @@ class ExternalHdtDatasource extends Datasource {
       if (error)
         destination.emit('error', new Error('Invalid query result: ' + error.message));
       else if (triple)
-        tripleCount++, (destination as unknown as { _push(item: Quad): void })._push(triple);
+        tripleCount++, (destination as Pushable)._push(triple);
       else {
         // Ensure the estimated total count is as least as large as the number of triples
         if (tripleCount && estimatedTotalCount < offset + tripleCount)

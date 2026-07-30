@@ -250,23 +250,16 @@
       }
     },
     {
-      // Files with a reviewed, necessary use of `as unknown as X` (protected
-      // third-party members, constructor-return-type mismatches, deliberate
-      // signature overrides) — see the commit history for the reasoning behind
-      // each. New files should not be added here without the same review.
+      // HdtDatasource's constructor swaps in an ExternalHdtDatasource instance in place
+      // of `this`; the two are sibling classes (not a subtype relationship), and each
+      // independently overrides several of Datasource's protected methods, which brands
+      // them as structurally incompatible for TS's purposes even though they're
+      // interchangeable at runtime. Resolving this for real means either widening those
+      // protected overrides to public across both classes, or replacing the pattern with
+      // a factory function — both bigger changes than a type-only cleanup; see the
+      // commit history for the investigation.
       files: [
-        "packages/core/lib/CliRunner.ts",
-        "packages/core/lib/LinkedDataFragmentsServer.ts",
-        "packages/core/lib/UrlData.ts",
-        "packages/core/lib/Util.ts",
-        "packages/core/lib/datasources/Datasource.ts",
-        "packages/core/lib/datasources/MemoryDatasource.ts",
-        "packages/datasource-composite/lib/datasources/CompositeDatasource.ts",
-        "packages/datasource-hdt/lib/datasources/ExternalHdtDatasource.ts",
-        "packages/datasource-hdt/lib/datasources/HdtDatasource.ts",
-        "packages/datasource-sparql/lib/datasources/SparqlDatasource.ts",
-        "packages/feature-qpf/lib/controllers/QuadPatternFragmentsController.ts",
-        "packages/feature-webid/lib/controllers/WebIDControllerExtension.ts"
+        "packages/datasource-hdt/lib/datasources/HdtDatasource.ts"
       ],
       rules: {
         "no-restricted-syntax": "off"

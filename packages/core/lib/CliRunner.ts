@@ -113,7 +113,7 @@ function runCustom(
           // Abort the respawning process if creating a new worker fails
           newWorker.on('exit', abort);
           function abort(code: number, signal: string) {
-            if (!(newWorker as unknown as { suicide?: boolean }).suicide) {
+            if (!newWorker.exitedAfterDisconnect) {
               stdout.write('Respawning aborted because worker ' + (newWorker.process.pid as number) + ' died with ' +
                 (code || signal) + '.\n');
               process.addListener('SIGHUP', respawn);

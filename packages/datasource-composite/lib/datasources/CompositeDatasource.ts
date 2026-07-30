@@ -19,6 +19,8 @@ interface CompositeDatasourceOptions extends DatasourceOptions {
   references?: DatasourceRegistry;
 }
 
+type Pushable = BufferedIterator<Quad> & { _push(item: Quad): void };
+
 // Creates a new CompositeDatasource
 class CompositeDatasource extends Datasource {
   protected _datasources: DatasourceRegistry;
@@ -101,9 +103,9 @@ class CompositeDatasource extends Datasource {
     // NOTE: the trailing `true` argument here has no matching parameter — findRecursive only
     // declares 6 — so `hasExactCount` on the first call actually receives `callback` itself
     // (truthy, hence "works"). Pre-existing quirk, preserved as-is.
-    return (findRecursive as unknown as (...args: any[]) => void)(0, absoluteOffset, -1, -1, 0, callback, true);
+    return findRecursive(0, absoluteOffset, -1, -1, 0, callback, true);
 
-    function findRecursive(datasourceIndex: number, offset: number, chosenDatasource: number, chosenOffset: number, totalCount: number, hasExactCount: any): void {
+    function findRecursive(datasourceIndex: number, offset: number, chosenDatasource: number, chosenOffset: number, totalCount: number, hasExactCount: any, _unused?: boolean): void {
       if (datasourceIndex >= self._datasourceNames.length)
         // We checked all datasources, return our accumulated information
         callback(chosenDatasource, chosenOffset, totalCount, hasExactCount);
@@ -208,9 +210,9 @@ class CompositeDatasource extends Datasource {
     // only closing the iterator when the callback returns true.
     function countItems(destination: BufferedIterator<Quad>, closeCallback: (count: number) => boolean): void {
       let count = 0,
-          originalPush = (destination as unknown as { _push: (item: Quad) => void })._push,
+          originalPush = (destination as Pushable)._push,
           originalClose = destination.close;
-      (destination as unknown as { _push: (item: Quad) => void })._push = function (element: Quad) {
+      (destination as Pushable)._push = function (element: Quad) {
         if (element) count++;
         originalPush.call(destination, element);
       };
@@ -221,7 +223,7 @@ class CompositeDatasource extends Datasource {
     }
 
     function pushToDestination(quad: Quad) {
-      (destination as unknown as { _push(item: Quad): void })._push(quad);
+      (destination as Pushable)._push(quad);
     }
     function closeDestination() {
       destination.close();

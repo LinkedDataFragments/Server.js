@@ -78,7 +78,7 @@ describe('QuadPatternFragmentsController', () => {
 
         expect(args[1]).to.be.an('object');
         expect(args[1]).to.have.property('features');
-        expect(args[1].features).to.be.an('array');
+        expect(args[1].features).to.be.an('object');
       });
 
       it('should call the second router with the same request and query', () => {
