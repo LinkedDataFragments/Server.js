@@ -264,6 +264,16 @@
       rules: {
         "no-restricted-syntax": "off"
       }
+    },
+    {
+      // Needs `as unknown as X` to reach n3.Parser's internals,
+      // since @types/n3 has no typing for them.
+      files: [
+        "packages/core/lib/N3ParserExtended.ts"
+      ],
+      rules: {
+        "no-restricted-syntax": "off"
+      }
     }
   ]
 }

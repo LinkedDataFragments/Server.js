@@ -4,10 +4,11 @@
 import * as http from 'http';
 import type { TLSSocket } from 'tls';
 import parseCacheControl = require('parse-cache-control');
-import * as N3 from 'n3';
+import N3Parser = require('@ldf/core/lib/N3ParserExtended');
 import Controller = require('@ldf/core/lib/controllers/Controller');
 import UrlData = require('@ldf/core/lib/UrlData');
 import Util = require('@ldf/core/lib/Util');
+import type { Quad as N3Quad, Prefixes as N3Prefixes } from 'n3';
 import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
 
 let CERT_NS = 'http://www.w3.org/ns/auth/cert#';
@@ -70,11 +71,11 @@ class WebIDControllerExtension extends Controller {
   // Verify webID
   protected _verifyWebID(webID: string, modulus: string | undefined, exponent: number, callback: (error: string | null, verified?: boolean, reason?: string) => void): void {
     // request & parse
-    let parser: N3.Parser = new N3.Parser(),
+    let parser = new N3Parser(),
         id: CachedId = {};
 
     // parse webID
-    function parseTriple(error: Error, triple: N3.Quad, prefixes?: N3.Prefixes) {
+    function parseTriple(error: Error, triple: N3Quad, prefixes?: N3Prefixes) {
       if (error)
         callback('Cannot parse WebID: ' + String(error));
       else if (triple) {

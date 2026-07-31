@@ -4,7 +4,7 @@
 import Datasource = require('@ldf/core/lib/datasources/Datasource');
 import * as fs from 'fs';
 import * as path from 'path';
-import { Parser as N3Parser } from 'n3';
+import N3Parser = require('@ldf/core/lib/N3ParserExtended');
 import { spawn } from 'child_process';
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
@@ -75,7 +75,7 @@ class ExternalHdtDatasource extends Datasource {
         destination.close();
       }
     });
-    parser._prefixes._ = '_:'; // Ensure blank nodes are named consistently
+    parser.prefixMap._ = '_:'; // Ensure blank nodes are named consistently
 
     // Extract the estimated number of total matches from the first (comment) line
     hdt.stdout.once('data', (header: string) => {

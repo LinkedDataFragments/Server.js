@@ -2,7 +2,7 @@
 /** An N3Datasource fetches data from Turtle/TriG/N-Triples/N-Quads/N3 documents. */
 
 import MemoryDatasource = require('@ldf/core/lib/datasources/MemoryDatasource');
-import { Parser as N3Parser } from 'n3';
+import N3Parser = require('@ldf/core/lib/N3ParserExtended');
 import type { Quad } from 'rdf-js';
 import type { DatasourceOptions } from '@ldf/core/lib/types';
 
@@ -18,7 +18,7 @@ class N3Datasource extends MemoryDatasource {
   // Retrieves all quads from the document
   protected override _getAllQuads(addQuad: (quad: Quad) => void, done: (error?: Error) => void): void {
     let document = this._fetch({ url: this._url!, headers: { accept: ACCEPT } });
-    N3Parser._resetBlankNodePrefix();
+    N3Parser.resetBlankNodePrefix();
     new N3Parser({ factory: this.dataFactory }).parse(document, (error: Error, quad: Quad) => {
       quad ? addQuad(quad) : done(error);
     });
