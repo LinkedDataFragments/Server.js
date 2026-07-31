@@ -109,7 +109,7 @@ class WebIDControllerExtension extends Controller {
       let req = http.request(webID, (res) => {
         res.setEncoding('utf8');
 
-        parser.parse(res as any, parseTriple);
+        parser.parse(res, parseTriple);
 
         res.on('end', () => {
           let cacheControl = parseCacheControl(res.headers['Cache-Control'] as string || '');
