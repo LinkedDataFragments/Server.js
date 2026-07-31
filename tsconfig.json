@@ -15,7 +15,7 @@
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": false
   },
   "include": [
     "packages/*/index.ts",

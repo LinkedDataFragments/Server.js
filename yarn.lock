@@ -6254,7 +6254,7 @@ quick-lru@^4.0.1:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-4.0.1.tgz#5b8878f113a58217848c6482026c73e1ba57727f"
   integrity sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==
 
-rdf-data-factory@^1.0.0, rdf-data-factory@^1.0.1, rdf-data-factory@^1.0.2, rdf-data-factory@^1.0.3, rdf-data-factory@^1.0.4:
+rdf-data-factory@^1.0.0, rdf-data-factory@^1.0.1, rdf-data-factory@^1.0.2, rdf-data-factory@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/rdf-data-factory/-/rdf-data-factory-1.0.4.tgz#4e22fc462620fbca650eb2d26c4a13a103edd777"
   integrity sha512-ZIIwEkLcV7cTc+atvQFzAETFVRHz1BRe/MhdkZqYse8vxskErj8/bF/Ittc3B5c0GTyw6O3jVF2V7xBRGyRoSQ==
@@ -6283,14 +6283,15 @@ rdf-literal@^1.2.0:
     "@types/rdf-js" "^4.0.0"
     rdf-data-factory "^1.0.1"
 
-rdf-object@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/rdf-object/-/rdf-object-1.8.0.tgz#f7b6c3c997d87d72a5a5651c6bb7ef63d6e0af24"
-  integrity sha512-/yq5vk8eqspZwIcK1BS3wPcmv4kinooaPX5SRDpCnthCjOcDiyNgPnfXqMt5OpDWhykDkNJeTCvqQifFqZRPyw==
+rdf-object@^1.14.0, rdf-object@^1.8.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/rdf-object/-/rdf-object-1.14.0.tgz#a51a2e575d4f838f88eced1e5096616769d17281"
+  integrity sha512-/KSUWr7onDtL7d81kOpcUzJ2vHYOYJc2KU9WzBZRYydBhK0Sksh5Hg4VCQNaxUEvYEgdrrTuq9SLpOOCmag0rQ==
   dependencies:
+    "@rdfjs/types" "*"
     jsonld-context-parser "^2.0.2"
-    rdf-data-factory "^1.0.3"
-    rdf-string "^1.5.0"
+    rdf-data-factory "^1.1.0"
+    rdf-string "^1.6.0"
     streamify-array "^1.0.1"
 
 rdf-parse@^1.7.0:
@@ -6340,6 +6341,14 @@ rdf-string@^1.5.0:
   integrity sha512-3TEJuDIKUADgZrfcZG+zAN4GfVA1Ei2sKA7Z7QVHkAE36wWoRGPJbGihPQMldgzvy9lG2nzZU+CXz+6oGSQNsQ==
   dependencies:
     rdf-data-factory "^1.0.0"
+
+rdf-string@^1.6.0:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/rdf-string/-/rdf-string-1.6.3.tgz#5c3173fad13e6328698277fb8ff151e3423282ab"
+  integrity sha512-HIVwQ2gOqf+ObsCLSUAGFZMIl3rh9uGcRf1KbM85UDhKqP+hy6qj7Vz8FKt3GA54RiThqK3mNcr66dm1LP0+6g==
+  dependencies:
+    "@rdfjs/types" "*"
+    rdf-data-factory "^1.1.0"
 
 rdf-string@^2.0.1:
   version "2.0.1"

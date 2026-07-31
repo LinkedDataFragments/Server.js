@@ -1,3 +1,6 @@
+// type declarations for dependencies that ship no types of their own
+// and have no @types package on npm.
+
 declare module 'forwarded-parse' {
   interface ForwardedElement {
     by?: string;
@@ -22,8 +25,11 @@ declare module 'negotiate' {
 
 declare module 'qejs' {
   import Q = require('q');
-  function renderFile(fileName: string, options: any): Q.Promise<string>;
-  export = { renderFile };
+  interface Qejs {
+    renderFile(fileName: string, options: any): Q.Promise<string>;
+  }
+  const qejs: Qejs;
+  export = qejs;
 }
 
 declare module 'access-log' {
