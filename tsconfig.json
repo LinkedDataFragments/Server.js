@@ -15,7 +15,10 @@
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": true,
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    "paths": {
+      "lru-cache": ["./node_modules/@types/lru-cache/index.d.ts"]
+    }
   },
   "include": [
     "packages/*/index.ts",

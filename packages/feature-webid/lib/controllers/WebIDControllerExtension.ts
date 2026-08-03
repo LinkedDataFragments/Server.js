@@ -38,11 +38,6 @@ class WebIDControllerExtension extends Controller {
 
   constructor(settings: ControllerOptions) {
     super(settings);
-    // Calling this as a plain function (no `new`) throws at runtime, since
-    // lru-cache v5 is a real class — a pre-existing bug preserved as-is;
-    // `require` is used directly here (rather than the `LRU` import above,
-    // which is only for the field's type) so this keeps its current,
-    // already-broken behavior unchanged.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     this._cache = require('lru-cache')(50);
     this._protocol = (settings.urlData || new UrlData()).protocol;

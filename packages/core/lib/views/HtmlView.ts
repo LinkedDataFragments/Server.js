@@ -2,13 +2,18 @@
 /* HtmlView is a base class for views that generate HTML responses. */
 
 import View = require('./View');
-import qejs = require('qejs');
 import q = require('q');
 import * as path from 'path';
 import * as _ from 'lodash';
 import * as RdfString from 'rdf-string';
 import UrlData = require('../UrlData');
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../types';
+
+interface Qejs {
+  renderFile(fileName: string, options: ViewSettings): q.Promise<string>;
+}
+// qejs ships no types of its own and has no @types package.
+const qejs = require('qejs') as Qejs;
 
 // Creates a new HTML view with the given name and settings
 class HtmlView extends View {

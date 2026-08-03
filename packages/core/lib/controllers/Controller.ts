@@ -7,10 +7,18 @@ import * as _ from 'lodash';
 import ViewCollection = require('../views/ViewCollection');
 import UrlData = require('../UrlData');
 import Util = require('../Util');
-import parseForwarded = require('forwarded-parse');
 import type { ControllerOptions, LdfRequest, LdfResponse, ViewSettings } from '../types';
 import type { DatasourceRegistry } from '../types';
 import type View = require('../views/View');
+
+interface ForwardedElement {
+  by?: string;
+  for?: string;
+  host?: string;
+  proto?: string;
+}
+// forwarded-parse ships no types of its own and has no @types package.
+const parseForwarded = require('forwarded-parse') as (header: string) => ForwardedElement[];
 
 // Duck-types (rather than `instanceof`s) a ViewCollection, matching the
 // original check's semantics exactly — some callers pass ViewCollection-like
@@ -80,7 +88,7 @@ class Controller {
     if (!request.headers.forwarded)
       return {};
     try {
-      let forwarded: { proto?: string; host?: string } = _.defaults.apply(this, parseForwarded(request.headers.forwarded) as any);
+      let forwarded: { proto?: string; host?: string } = _.defaults.apply(this, parseForwarded(request.headers.forwarded) as [ForwardedElement, ...ForwardedElement[]]);
       return {
         protocol: forwarded.proto ? forwarded.proto + ':' : undefined,
         host: forwarded.host,

@@ -7,6 +7,8 @@ import LinkedDataFragmentsServer = require('./LinkedDataFragmentsServer');
 import type Controller = require('./controllers/Controller');
 import type { LdfRequest, LdfResponse, WorkerConfig } from './types';
 
+type AccessLog = (request: LdfRequest, response: LdfResponse, opts: null, callback: (logEntry: string) => void) => void;
+
 // Creates a new LinkedDataFragmentsServerWorker
 class LinkedDataFragmentsServerWorker {
   _config: WorkerConfig;
@@ -34,7 +36,7 @@ class LinkedDataFragmentsServerWorker {
     // eslint-disable-next-line no-console
     config.log = console.log;
     if (loggingSettings.enabled) {
-      let accesslog: (request: LdfRequest, response: LdfResponse, opts: null, callback: (logEntry: string) => void) => void = require('access-log');
+      let accesslog = require('access-log') as AccessLog;
       config.accesslogger = function (request: LdfRequest, response: LdfResponse) {
         accesslog(request, response, null, (logEntry: string) => {
           fs.appendFile(loggingSettings.file!, logEntry + '\n', (error) => {

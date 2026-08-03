@@ -7,7 +7,6 @@
  `getViews` returns all views with a given name.
 */
 
-import negotiate = require('negotiate');
 import Util = require('../Util');
 import type View = require('./View');
 import type { LdfRequest } from '../types';
@@ -18,6 +17,15 @@ interface ViewMatch {
   quality: number;
   view: View;
 }
+
+interface Negotiate {
+  choose<T extends { type: string; responseType: string; quality: number }>(
+    candidates: T[],
+    request: { headers: import('http').IncomingHttpHeaders },
+  ): T[];
+}
+// negotiate ships no types of its own and has no @types package.
+const negotiate = require('negotiate') as Negotiate;
 
 let ViewCollectionError = Util.createErrorType('ViewCollectionError');
 
