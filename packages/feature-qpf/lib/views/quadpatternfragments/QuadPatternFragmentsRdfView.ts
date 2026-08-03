@@ -6,7 +6,7 @@ import { stringQuadToQuad } from 'rdf-string';
 import type { IStringQuad } from 'rdf-string';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
-import type { Query, RenderDone, ViewSettings } from '@ldf/core/lib/types';
+import type { Query, RenderDone, ViewSettings } from '@ldf/core';
 import type Datasource = require('@ldf/core/lib/datasources/Datasource');
 
 let dcTerms = 'http://purl.org/dc/terms/',

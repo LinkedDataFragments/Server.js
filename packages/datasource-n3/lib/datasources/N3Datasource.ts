@@ -4,7 +4,7 @@
 import MemoryDatasource = require('@ldf/core/lib/datasources/MemoryDatasource');
 import N3Parser = require('@ldf/core/lib/N3ParserExtended');
 import type { Quad } from 'rdf-js';
-import type { DatasourceOptions } from '@ldf/core/lib/types';
+import type { DatasourceOptions } from '@ldf/core';
 
 let ACCEPT = 'application/trig;q=1.0,application/n-quads;q=0.9,text/turtle;q=0.8,application/n-triples;q=0.7,text/n3;q=0.4';
 

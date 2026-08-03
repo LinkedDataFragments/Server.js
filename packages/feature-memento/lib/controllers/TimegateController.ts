@@ -5,7 +5,7 @@ import Controller = require('@ldf/core/lib/controllers/Controller');
 import * as _ from 'lodash';
 import * as url from 'url';
 import Util = require('@ldf/core/lib/Util');
-import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
+import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core';
 import type Datasource = require('@ldf/core/lib/datasources/Datasource');
 import type UrlData = require('@ldf/core/lib/UrlData');
 
@@ -42,6 +42,13 @@ namespace TimegateController {
 
   export interface DatasourceRef extends Datasource {
     timegate?: string | boolean;
+  }
+
+  // The view-settings fields MementoControllerExtension and its view
+  // extension read off the request's `query`/`datasource` context.
+  export interface MementoRequestSettings {
+    query: Query;
+    datasource: DatasourceRef;
   }
 }
 type MementoConfig = TimegateController.MementoConfig;

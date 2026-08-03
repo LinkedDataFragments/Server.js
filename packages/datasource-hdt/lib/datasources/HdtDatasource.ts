@@ -6,7 +6,7 @@ import * as hdt from 'hdt';
 import ExternalHdtDatasource = require('./ExternalHdtDatasource');
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
-import type { DatasourceOptions, Pushable, Query } from '@ldf/core/lib/types';
+import type { DatasourceOptions, Pushable, Query } from '@ldf/core';
 
 interface HdtDatasourceOptions extends DatasourceOptions {
   external?: boolean;

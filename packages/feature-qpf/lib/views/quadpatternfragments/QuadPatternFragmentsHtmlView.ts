@@ -5,8 +5,12 @@ import HtmlView = require('@ldf/core/lib/views/HtmlView');
 import { join } from 'path';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
-import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core/lib/types';
+import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core';
 import type IndexDatasource = require('@ldf/core/lib/datasources/IndexDatasource');
+
+interface QuadPatternFragmentsViewSettings extends ViewSettings {
+  datasource: Partial<IndexDatasource>;
+}
 
 // Creates a new QuadPatternFragmentsHtmlView
 class QuadPatternFragmentsHtmlView extends HtmlView {
@@ -19,7 +23,7 @@ class QuadPatternFragmentsHtmlView extends HtmlView {
   }
 
   // Renders the view with the given settings to the response
-  protected override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
+  protected override _render(settings: QuadPatternFragmentsViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // Read the data and metadata
     let self = this, quads: Quad[] = settings.quads = [], results: AsyncIterator<Quad> = settings.results;
     results.on('data', (triple) => { quads.push(triple); });
@@ -31,7 +35,7 @@ class QuadPatternFragmentsHtmlView extends HtmlView {
 
     // Generates the HTML after the data and metadata have been retrieved
     function renderHtml() {
-      let template = (settings.datasource as Partial<IndexDatasource>).role === 'index' ? 'index' : 'datasource';
+      let template = settings.datasource.role === 'index' ? 'index' : 'datasource';
       settings.extensions = { Before: null, FormBefore: null, FormAfter: null, QuadBefore: 'function', QuadAfter: 'function', After: null };
       self._renderTemplate(join(self.viewDirectory, template), settings, request, response, done);
     }

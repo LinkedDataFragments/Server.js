@@ -8,6 +8,12 @@ export function toRegExp(string: string): string {
 // The MIME type for plaintext
 export const MIME_PLAINTEXT = 'text/plain;charset=utf-8';
 
+// Normalizes an unknown catch-clause value into an Error, preserving a
+// non-Error throw as `cause` rather than discarding it
+export function toError(value: unknown): Error {
+  return value instanceof Error ? value : new Error(String(value), { cause: value });
+}
+
 // A constructor for a custom Error subtype, as produced by createErrorType
 export type ErrorTypeConstructor = new (message?: string) => Error;
 

@@ -63,7 +63,7 @@ class Controller {
     // Try to handle the request
     let self: Controller | null = this;
     try { this._handleRequest(request, response, done, settings); }
-    catch (error) { done(error as Error); }
+    catch (error) { done(Util.toError(error)); }
     function done(error?: Error) {
       if (self) {
         // Send a 406 response if no suitable view was found

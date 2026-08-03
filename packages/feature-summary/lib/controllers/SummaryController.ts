@@ -6,12 +6,22 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { StreamParser } from 'n3';
 import Util = require('@ldf/core/lib/Util');
-import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
+import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core';
+import type Datasource = require('@ldf/core/lib/datasources/Datasource');
 
 namespace SummaryController {
   export interface SummariesConfig {
     dir?: string;
     path?: string;
+  }
+
+  // The view-settings fields the summary view extensions read off the
+  // request's context; the HTML view doesn't need `datasource`.
+  export interface SummaryRenderSettings {
+    summaries?: SummariesConfig;
+    datasource: Datasource;
+    query: Query;
+    baseURL?: string;
   }
 }
 type SummariesConfig = SummaryController.SummariesConfig;

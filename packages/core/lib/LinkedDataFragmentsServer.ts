@@ -93,7 +93,7 @@ class LinkedDataFragmentsServer {
     server.on('request', (request: LdfRequest, response: LdfResponse) => {
       server._accesslogger(request, response);
       try { server._processRequest(request, response); }
-      catch (error) { server._reportError(request, response, error as Error); }
+      catch (error) { server._reportError(request, response, Util.toError(error)); }
     });
     server.on('connection', (socket) => {
       let socketId = sockets++;
@@ -141,7 +141,7 @@ LinkedDataFragmentsServer.prototype._processRequest = function (this: LdfHttpSer
     else {
       let controller = self._controllers[controllerId++], next = _.once(nextController);
       try { controller.handleRequest(request, response, next); }
-      catch (error) { next(error as Error); }
+      catch (error) { next(Util.toError(error)); }
     }
   }
   response.on('error', (error) => { self._reportError(request, response, error); });
@@ -152,7 +152,8 @@ LinkedDataFragmentsServer.prototype._processRequest = function (this: LdfHttpSer
 LinkedDataFragmentsServer.prototype._reportError = function (this: LdfHttpServer, request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void {
   // If no request or response is available, the server failed outside of a request; don't recover
   if (!response) {
-    error = request as Error, response = request = undefined;
+    error = Util.toError(request);
+    response = request = undefined;
     this._log('Fatal error, exiting process\n', error.stack);
     return process.exit(-1);
   }
@@ -170,7 +171,7 @@ LinkedDataFragmentsServer.prototype._reportError = function (this: LdfHttpServer
     response.error = error;
     this._errorController.handleRequest(request as LdfRequest, response, _.noop);
   }
-  catch (responseError) { this._log((responseError as Error).stack); }
+  catch (responseError) { this._log(Util.toError(responseError).stack); }
 };
 
 // Stops the server

@@ -4,7 +4,7 @@
 import MemoryDatasource = require('@ldf/core/lib/datasources/MemoryDatasource');
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import type { Quad } from 'rdf-js';
-import type { DatasourceOptions } from '@ldf/core/lib/types';
+import type { DatasourceOptions } from '@ldf/core';
 
 let ACCEPT = 'application/ld+json;q=1.0,application/json;q=0.7';
 

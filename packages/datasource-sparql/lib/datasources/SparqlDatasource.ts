@@ -6,7 +6,7 @@ import { SparqlJsonParser } from 'sparqljson-parse';
 import type { IBindings } from 'sparqljson-parse';
 import type { Literal, NamedNode, Quad, Quad_Graph, Quad_Object, Quad_Predicate, Quad_Subject, Term } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
-import type { DatasourceOptions, Pushable, Query } from '@ldf/core/lib/types';
+import type { DatasourceOptions, Pushable, Query } from '@ldf/core';
 
 // lru-cache v5 (this package's actual declared/installed dependency) ships no
 // types of its own, and the monorepo's hoisted root lru-cache is a much

@@ -4,7 +4,7 @@
 import MemoryDatasource = require('@ldf/core/lib/datasources/MemoryDatasource');
 import { RdfaParser } from 'rdfa-streaming-parser';
 import type { Quad } from 'rdf-js';
-import type { DatasourceOptions } from '@ldf/core/lib/types';
+import type { DatasourceOptions } from '@ldf/core';
 
 let ACCEPT = 'text/html;q=1.0,application/xhtml+xml;q=0.7';
 

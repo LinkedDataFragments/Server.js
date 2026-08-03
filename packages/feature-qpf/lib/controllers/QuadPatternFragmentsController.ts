@@ -6,7 +6,7 @@ import * as url from 'url';
 import * as _ from 'lodash';
 import type { ParsedUrlQuery } from 'querystring';
 import type { Term } from 'rdf-js';
-import type { ControllerOptions, LdfRequest, LdfResponse, Query, RouterRequest, ViewSettings } from '@ldf/core/lib/types';
+import type { ControllerOptions, LdfRequest, LdfResponse, Query, RouterRequest, ViewSettings } from '@ldf/core';
 import type Datasource = require('@ldf/core/lib/datasources/Datasource');
 
 interface Router {

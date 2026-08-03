@@ -4,11 +4,12 @@
 import HtmlView = require('@ldf/core/lib/views/HtmlView');
 import TimegateController = require('../../controllers/TimegateController');
 import * as path from 'path';
-import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core/lib/types';
+import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core';
 
 type InvertedTimegateEntry = TimegateController.InvertedTimegateEntry;
 type TimegateControllerOptions = TimegateController.TimegateControllerOptions;
-type DatasourceRef = TimegateController.DatasourceRef;
+
+type MementoViewSettings = ViewSettings & Pick<TimegateController.MementoRequestSettings, 'datasource'>;
 
 // Creates a new MementoHtmlViewExtension
 class MementoHtmlViewExtension extends HtmlView {
@@ -21,8 +22,8 @@ class MementoHtmlViewExtension extends HtmlView {
   }
 
   // Renders the view with the given settings to the response
-  protected override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
-    let memento = this._invertedTimegateMap[(settings.datasource as DatasourceRef).id as string];
+  protected override _render(settings: MementoViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
+    let memento = this._invertedTimegateMap[settings.datasource.id as string];
     if (!memento)
       return done();
     this._renderTemplate(path.join(__dirname, 'memento-details'), {

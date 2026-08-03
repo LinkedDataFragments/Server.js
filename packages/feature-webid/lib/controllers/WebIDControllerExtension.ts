@@ -2,14 +2,15 @@
 /* A WebIDControllerExtension extends Triple Pattern Fragments responses with WebID authentication. */
 
 import * as http from 'http';
-import type { TLSSocket } from 'tls';
+import { TLSSocket } from 'tls';
+import type { Socket } from 'net';
 import parseCacheControl = require('parse-cache-control');
 import N3Parser = require('@ldf/core/lib/N3ParserExtended');
 import Controller = require('@ldf/core/lib/controllers/Controller');
 import UrlData = require('@ldf/core/lib/UrlData');
 import Util = require('@ldf/core/lib/Util');
 import type { Quad as N3Quad, Prefixes as N3Prefixes } from 'n3';
-import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
+import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core';
 
 let CERT_NS = 'http://www.w3.org/ns/auth/cert#';
 
@@ -29,6 +30,12 @@ interface ForbiddenOptions {
   reason?: string;
 }
 
+// Asserts that a socket is a TLS socket, as required to read a peer certificate from it
+function assertTlsSocket(socket: Socket): asserts socket is TLSSocket {
+  if (!(socket instanceof TLSSocket))
+    throw new Error('Expected a TLS connection, but the socket is not a TLSSocket.');
+}
+
 // Creates a new WebIDControllerExtensionsl
 class WebIDControllerExtension extends Controller {
   protected _cache: WebIdCache;
@@ -46,8 +53,10 @@ class WebIDControllerExtension extends Controller {
     if (this._protocol !== 'https') // This WebID implementation requires HTTPS
       return next();
 
+    assertTlsSocket(request.connection);
+
     let self = this,
-        certificate = (request.connection as TLSSocket).getPeerCertificate();
+        certificate = request.connection.getPeerCertificate();
 
     if (!(certificate.subject && certificate.subject.subjectAltName)) {
       return this._handleForbidden(request, response, {
@@ -113,7 +122,8 @@ class WebIDControllerExtension extends Controller {
         parser.parse(res, parseTriple);
 
         res.on('end', () => {
-          let cacheControl = parseCacheControl(res.headers['Cache-Control'] as string || '');
+          let rawCacheControl = res.headers['Cache-Control'],
+              cacheControl = parseCacheControl(typeof rawCacheControl === 'string' ? rawCacheControl : '');
           this._cache.set(webID, id, cacheControl && cacheControl['max-age'] || 0);
           verify(id.modulus, id.exponent);
         });

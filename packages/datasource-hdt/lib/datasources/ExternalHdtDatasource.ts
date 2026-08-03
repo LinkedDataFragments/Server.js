@@ -8,7 +8,7 @@ import N3Parser = require('@ldf/core/lib/N3ParserExtended');
 import { spawn } from 'child_process';
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
-import type { DatasourceOptions, Pushable, Query } from '@ldf/core/lib/types';
+import type { DatasourceOptions, Pushable, Query } from '@ldf/core';
 
 let hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
 

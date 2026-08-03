@@ -4,7 +4,7 @@
 import Datasource = require('@ldf/core/lib/datasources/Datasource');
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
-import type { DatasourceOptions, DatasourceRegistry, Pushable, Query } from '@ldf/core/lib/types';
+import type { DatasourceOptions, DatasourceRegistry, Pushable, Query } from '@ldf/core';
 
 // lru-cache v5 (this package's actual declared/installed dependency) ships no
 // types of its own, and the monorepo's hoisted root lru-cache is a much

@@ -4,7 +4,7 @@
 import RdfView = require('@ldf/core/lib/views/RdfView');
 import type { StreamParser } from 'n3';
 import type { Quad } from 'rdf-js';
-import type { RenderDone, ViewSettings } from '@ldf/core/lib/types';
+import type { RenderDone, ViewSettings } from '@ldf/core';
 
 // Creates a new SummaryRdfView
 class SummaryRdfView extends RdfView {
