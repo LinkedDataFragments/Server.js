@@ -2,18 +2,10 @@
 /* A CompositeDatasource delegates queries to an consecutive list of datasources. */
 
 import Datasource = require('@ldf/core/lib/datasources/Datasource');
+import LRU = require('lru-cache');
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, DatasourceRegistry, Pushable, Query } from '@ldf/core';
-
-// lru-cache v5 (this package's actual declared/installed dependency) ships no
-// types of its own, and the monorepo's hoisted root lru-cache is a much
-// newer, API-incompatible major version — so this is pulled in untyped
-// rather than resolving to the wrong package's declarations.
-const LRU: new (options: { max: number; maxAge: number }) => {
-  get(key: string): number | undefined;
-  set(key: string, value: number): void;
-} = require('lru-cache');
 
 interface CompositeDatasourceOptions extends DatasourceOptions {
   references?: DatasourceRegistry;
@@ -23,7 +15,7 @@ interface CompositeDatasourceOptions extends DatasourceOptions {
 class CompositeDatasource extends Datasource {
   protected _datasources: DatasourceRegistry;
   protected _datasourceNames: string[];
-  protected _countCache: InstanceType<typeof LRU>;
+  protected _countCache: LRU<string, number>;
 
   constructor(options: CompositeDatasourceOptions) {
     let supportedFeatureList = ['quadPattern', 'triplePattern', 'limit', 'offset', 'totalCount'];
@@ -44,7 +36,7 @@ class CompositeDatasource extends Datasource {
         this._datasourceNames.push(datasourceName);
       }
     }
-    this._countCache = new LRU({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
+    this._countCache = new LRU<string, number>({ max: 1000, maxAge: 1000 * 60 * 60 * 3 });
   }
 
   // Checks whether the data source can evaluate the given query

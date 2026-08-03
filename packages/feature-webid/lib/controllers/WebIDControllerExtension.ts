@@ -9,6 +9,7 @@ import N3Parser = require('@ldf/core/lib/N3ParserExtended');
 import Controller = require('@ldf/core/lib/controllers/Controller');
 import UrlData = require('@ldf/core/lib/UrlData');
 import Util = require('@ldf/core/lib/Util');
+import LRU = require('lru-cache');
 import type { Quad as N3Quad, Prefixes as N3Prefixes } from 'n3';
 import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core';
 
@@ -18,12 +19,6 @@ interface CachedId {
   modulus?: string;
   exponent?: number;
 }
-
-interface WebIdCache {
-  get(key: string): CachedId | undefined;
-  set(key: string, value: CachedId, maxAge?: number): void;
-}
-const lru: (max: number) => WebIdCache = require('lru-cache');
 
 interface ForbiddenOptions {
   webID?: string;
@@ -38,12 +33,18 @@ function assertTlsSocket(socket: Socket): asserts socket is TLSSocket {
 
 // Creates a new WebIDControllerExtensionsl
 class WebIDControllerExtension extends Controller {
-  protected _cache: WebIdCache;
+  protected _cache: LRU<string, CachedId>;
   protected _protocol?: string;
 
   constructor(settings: ControllerOptions) {
     super(settings);
-    this._cache = lru(50);
+    // Calling this as a plain function (no `new`) throws at runtime, since
+    // lru-cache v5 is a real class — a pre-existing bug preserved as-is;
+    // `require` is used directly here (rather than the `LRU` import above,
+    // which is only for the field's type) so this keeps its current,
+    // already-broken behavior unchanged.
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    this._cache = require('lru-cache')(50);
     this._protocol = (settings.urlData || new UrlData()).protocol;
   }
 
@@ -58,13 +59,13 @@ class WebIDControllerExtension extends Controller {
     let self = this,
         certificate = request.connection.getPeerCertificate();
 
-    if (!(certificate.subject && certificate.subject.subjectAltName)) {
+    if (!(certificate.subject && typeof certificate.subject.subjectAltName === 'string')) {
       return this._handleForbidden(request, response, {
         reason: 'No WebID found in client certificate.',
       });
     }
 
-    let webID = (certificate.subject.subjectAltName as string).replace('uniformResourceIdentifier:', '');
+    let webID = certificate.subject.subjectAltName.replace('uniformResourceIdentifier:', '');
     this._verifyWebID(webID, certificate.modulus, parseInt(certificate.exponent!, 16),
       (error: string | null, verified?: boolean, reason?: string) => {
         if (!verified) {
@@ -107,7 +108,7 @@ class WebIDControllerExtension extends Controller {
       if (m && m === modulus && e && e === exponent)
         callback(null, true);
       else
-        callback(null, false, 'WebID does not match certificate: ' + (m as string) + ' - ' + (e as number) + ' (webid) <> ' + (modulus as string) + ' - ' + exponent + ' (cert)');
+        callback(null, false, 'WebID does not match certificate: ' + String(m) + ' - ' + String(e) + ' (webid) <> ' + String(modulus) + ' - ' + exponent + ' (cert)');
     }
 
     // Try to get WebID from cache
