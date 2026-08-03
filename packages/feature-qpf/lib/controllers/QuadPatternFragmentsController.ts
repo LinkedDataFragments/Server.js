@@ -5,7 +5,6 @@ import Controller = require('@ldf/core/lib/controllers/Controller');
 import * as url from 'url';
 import * as _ from 'lodash';
 import type { ParsedUrlQuery } from 'querystring';
-import type { Term } from 'rdf-js';
 import type { ControllerOptions, LdfRequest, LdfResponse, Query, RouterRequest, ViewSettings } from '@ldf/core';
 import type Datasource = require('@ldf/core/lib/datasources/Datasource');
 
@@ -67,7 +66,7 @@ class QuadPatternFragmentsController extends Controller {
     (function nextExtension(error?: Error) {
       // Log a possible error with the previous extension
       if (error)
-        process.stderr.write((error.stack as string) + '\n');
+        process.stderr.write((error.stack || String(error)) + '\n');
       // Execute the next extension
       if (extensionId < extensions.length)
         extensions[extensionId++].handleRequest(request, response, nextExtension, settings);
@@ -85,25 +84,21 @@ class QuadPatternFragmentsController extends Controller {
 
   // Create parameterized pattern string for quad patterns
   protected _createPatternString(query: Query, supportsQuads: boolean): string {
-    let subject: any = query.subject, predicate: any = query.predicate,
-        object: any = query.object, graph: any = '';
     // Serialize subject and predicate IRIs or variables
-    subject   = subject   ? '<' + query.subject!.value   + '> ' : '?s ';
-    predicate = predicate ? '<' + query.predicate!.value + '> ' : '?p ';
-    // Serialize object IRI, literal, or variable
-    if (query.object && query.object.termType === 'NamedNode')
-      object = '<' + query.object.value + '> ';
-    else
-      object = query.object ? query.object.value : '?o';
-    // Serialize graph IRI default graph, or variable
+    let subject   = query.subject   ? '<' + query.subject.value   + '> ' : '?s ',
+        predicate = query.predicate ? '<' + query.predicate.value + '> ' : '?p ',
+        // Serialize object IRI, literal, or variable
+        object = query.object && query.object.termType === 'NamedNode' ? '<' + query.object.value + '> ' :
+          query.object ? query.object.value : '?o',
+        graph = '';
+    // Serialize graph IRI, default graph, or variable
     if (supportsQuads) {
-      graph = query.graph;
-      if (graph && (graph as Term).termType === 'DefaultGraph') graph = ' @default';
-      else if (graph)   graph = ' <' + (graph as Term).value + '>';
-      else              graph = ' ?g';
+      if (query.graph && query.graph.termType === 'DefaultGraph') graph = ' @default';
+      else if (query.graph)   graph = ' <' + query.graph.value + '>';
+      else                    graph = ' ?g';
     }
     // Join them in a pattern
-    return '{ ' + (subject as string) + (predicate as string) + (object as string) + (graph as string) + '. }';
+    return '{ ' + subject + predicate + object + graph + '. }';
   }
 
   // Creates metadata about the requested fragment

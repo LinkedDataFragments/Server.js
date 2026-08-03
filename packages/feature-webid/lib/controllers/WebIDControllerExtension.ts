@@ -122,8 +122,7 @@ class WebIDControllerExtension extends Controller {
         parser.parse(res, parseTriple);
 
         res.on('end', () => {
-          let rawCacheControl = res.headers['Cache-Control'],
-              cacheControl = parseCacheControl(typeof rawCacheControl === 'string' ? rawCacheControl : '');
+          let cacheControl = parseCacheControl(res.headers['Cache-Control'] as string || '');
           this._cache.set(webID, id, cacheControl && cacheControl['max-age'] || 0);
           verify(id.modulus, id.exponent);
         });
@@ -155,7 +154,7 @@ class WebIDControllerExtension extends Controller {
       'Content-Type': Util.MIME_PLAINTEXT,
     });
     let forbidden = typeof options === 'function' ? {} : options;
-    response.end('Access to ' + (request.url as string) + ' is not allowed, verification for WebID ' + (forbidden.webID || '') + ' failed. Reason: ' + (forbidden.reason || ''));
+    response.end('Access to ' + String(request.url) + ' is not allowed, verification for WebID ' + (forbidden.webID || '') + ' failed. Reason: ' + (forbidden.reason || ''));
   }
 }
 

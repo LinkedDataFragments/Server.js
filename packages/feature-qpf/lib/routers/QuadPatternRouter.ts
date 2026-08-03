@@ -35,25 +35,25 @@ class QuadPatternRouter {
         hasTriplePattern: any = false, hasQuadPattern: any = false;
 
     // Try to extract a subject IRI
-    if (queryString.subject && (match = iriMatcher.exec(queryString.subject as string)))
+    if (typeof queryString.subject === 'string' && (match = iriMatcher.exec(queryString.subject)))
       hasTriplePattern = query.subject = stringToTerm(match[1] ? match[2] : this._expandIRI(match[2]), this.dataFactory);
 
     // Try to extract a predicate IRI
-    if (queryString.predicate && (match = iriMatcher.exec(queryString.predicate as string)))
+    if (typeof queryString.predicate === 'string' && (match = iriMatcher.exec(queryString.predicate)))
       hasTriplePattern = query.predicate = stringToTerm(match[1] ? match[2] : this._expandIRI(match[2]), this.dataFactory);
 
     // Try to extract an object
-    if (queryString.object) {
+    if (typeof queryString.object === 'string') {
       // The object can be an IRI…
-      if (match = iriMatcher.exec(queryString.object as string))
+      if (match = iriMatcher.exec(queryString.object))
         hasTriplePattern = query.object = stringToTerm(match[1] ? match[2] : this._expandIRI(match[2]), this.dataFactory);
       // or the object can be a literal (with a type or language)
-      else if (match = literalMatcher.exec(queryString.object as string))
+      else if (match = literalMatcher.exec(queryString.object))
         hasTriplePattern = query.object = stringToTerm(match[2] ? match[1] + '^^' + this._expandIRI(match[2]) : match[0], this.dataFactory);
     }
 
     // Try to extract a graph IRI
-    if (queryString.graph && (match = iriMatcher.exec(queryString.graph as string))) {
+    if (typeof queryString.graph === 'string' && (match = iriMatcher.exec(queryString.graph))) {
       hasTriplePattern = false;
       hasQuadPattern = match[1] ? match[2] : this._expandIRI(match[2]);
       // When a client specifies DEFAULT_GRAPH as graph,
