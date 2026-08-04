@@ -124,11 +124,11 @@ class TimegateController extends Controller {
 
       if (memento) {
         // Determine the URL of the memento
-        let mementoUrl: any = _.assign(request.parsedUrl, { pathname: memento.datasource.path });
+        let mementoUrl: url.UrlObject | string = _.assign(request.parsedUrl, { pathname: memento.datasource.path });
         mementoUrl = url.format(mementoUrl);
 
         // Determine the URL of the original resource
-        let originalBaseURL = memento.original, originalUrl: any;
+        let originalBaseURL = memento.original, originalUrl: url.UrlObject | string;
         if (!originalBaseURL)
           originalUrl = { ...request.parsedUrl, pathname: datasource };
         else
@@ -136,13 +136,13 @@ class TimegateController extends Controller {
         originalUrl = url.format(originalUrl);
 
         // Perform 200-style negotiation (https://tools.ietf.org/html/rfc7089#section-4.1.2)
-        response.setHeader('Link', '<' + (originalUrl as string) + '>;rel="original",' +
-          '<' + (mementoUrl as string)  + '>;rel="memento";' +
+        response.setHeader('Link', '<' + originalUrl + '>;rel="original",' +
+          '<' + mementoUrl  + '>;rel="memento";' +
           'datetime="' + memento.interval[0].toUTCString() + '"');
         response.setHeader('Vary', 'Accept-Datetime');
         response.setHeader('Content-Location', mementoUrl);
         // Set request URL to the memento URL, which should be handled by a next controller
-        request.url = (mementoUrl as string).replace(/^[^:]+:\/\/[^\/]+/, '');
+        request.url = mementoUrl.replace(/^[^:]+:\/\/[^\/]+/, '');
         delete request.parsedUrl;
       }
     }
@@ -164,37 +164,37 @@ class TimegateController extends Controller {
       ];
       get_closest_memento(timemap, "2011-10-20T12:22:24Z", false);
   */
-  protected _getClosestMemento(timemap: ParsedTimemapEntry[], acceptDatetime: any, unsorted?: boolean): ParsedTimemapEntry | null {
+  protected _getClosestMemento(timemap: ParsedTimemapEntry[], acceptDatetime: string | Date, unsorted?: boolean): ParsedTimemapEntry | null {
     // NOTE: assuming that the interval is always specified as [start_date, end_date]
     // empty timemap can't give any mementos
     if (timemap.length === 0)
       return null;
 
     // convert accept datetime to timestamp
-    acceptDatetime = toDate(acceptDatetime).getTime();
+    const acceptTimestamp = toDate(acceptDatetime).getTime();
 
     // If accept datetime is invalid, exit
-    if (isNaN(acceptDatetime)) return null;
+    if (isNaN(acceptTimestamp)) return null;
     // Sort timemap first if it is not sorted
     if (unsorted) sortTimemap(timemap);
 
     // if the accept_datetime is less than the first memento, return first memento
     let firstMemento = timemap[0],
         firstMementoDatetime = toDate(firstMemento.interval[0]).getTime();
-    if (acceptDatetime <= firstMementoDatetime) return firstMemento;
+    if (acceptTimestamp <= firstMementoDatetime) return firstMemento;
 
     // return the latest memento if the accept datetime is after it
     let lastMemento = timemap[timemap.length - 1],
         lastMementoDatetime = toDate(lastMemento.interval[1]).getTime();
-    if (acceptDatetime >= lastMementoDatetime) return lastMemento;
+    if (acceptTimestamp >= lastMementoDatetime) return lastMemento;
 
     // check if the accept datetime falls within any intervals defined in the data sources.
     for (let i = 0, memento; memento = timemap[i]; i++) {
       let startTime = memento.interval[0].getTime(),
           endTime   = memento.interval[1].getTime();
       if (isFinite(startTime) && isFinite(endTime)) {
-        if (startTime > acceptDatetime) return timemap[i - 1];
-        if (startTime <= acceptDatetime && endTime >= acceptDatetime) return memento;
+        if (startTime > acceptTimestamp) return timemap[i - 1];
+        if (startTime <= acceptTimestamp && endTime >= acceptTimestamp) return memento;
       }
     }
     return null;

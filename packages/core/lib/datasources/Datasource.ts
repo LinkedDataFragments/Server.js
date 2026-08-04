@@ -61,9 +61,9 @@ class Datasource extends EventEmitter {
     this.dataFactory = options.dataFactory!;
     if (options.graph) {
       this._graph = this.dataFactory.namedNode(options.graph);
-      this._queryGraphReplacements = Object.create(null);
-      this._queryGraphReplacements![''] = 'urn:ldf:emptyGraph';
-      this._queryGraphReplacements![options.graph] = '';
+      this._queryGraphReplacements = Object.create(null) as Record<string, string>;
+      this._queryGraphReplacements[''] = 'urn:ldf:emptyGraph';
+      this._queryGraphReplacements[options.graph] = '';
     }
     this._supportsQuads = 'quads' in options ? options.quads! : true;
 

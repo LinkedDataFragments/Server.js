@@ -24,7 +24,7 @@ class DeferenceController extends Controller {
 
   // Dereferences a URL by redirecting to its subject fragment of a certain data source
   protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
-    let match = this._matcher.exec(request.url!), datasource: Datasource | null | undefined;
+    let match = this._matcher.exec(request.url!), datasource: Datasource | null;
     if (datasource = match && this._paths[match[1]]) {
       let entity = url.format(_.defaults({
         pathname: datasource.path,

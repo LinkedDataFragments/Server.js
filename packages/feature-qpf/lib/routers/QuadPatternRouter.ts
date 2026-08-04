@@ -2,7 +2,7 @@
 /** A QuadPatternRouter routes basic quad patterns */
 
 import { stringToTerm } from 'rdf-string';
-import type { DataFactory } from 'rdf-js';
+import type { DataFactory, Term } from 'rdf-js';
 import type { Query, RouterRequest } from '@ldf/core';
 
 let iriMatcher = /^(<?)([^_?$"<>][^"<>]*)>?$/;
@@ -32,7 +32,7 @@ class QuadPatternRouter {
   // Extracts triple or quad pattern parameters from the request and add them to the query
   extractQueryParams(request: RouterRequest, query: Query): void {
     let queryString = (request.url && request.url.query)!, match,
-        hasTriplePattern: any = false, hasQuadPattern: any = false;
+        hasTriplePattern: Term | false = false, hasQuadPattern: string | false = false;
 
     // Try to extract a subject IRI
     if (typeof queryString.subject === 'string' && (match = iriMatcher.exec(queryString.subject)))
