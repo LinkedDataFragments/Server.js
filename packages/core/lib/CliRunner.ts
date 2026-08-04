@@ -133,4 +133,4 @@ function runCustom(
   }
 }
 
-export = { runCli: runCli, runCustom: runCustom };
+module.exports = { runCli: runCli, runCustom: runCustom };
