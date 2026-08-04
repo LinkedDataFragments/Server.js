@@ -8,7 +8,7 @@ import type { RenderDone, ViewSettings } from '@ldf/core';
 
 // Creates a new SummaryRdfView
 class SummaryRdfView extends RdfView {
-  constructor(settings?: ViewSettings) {
+  public constructor(settings?: ViewSettings) {
     super('Summary', settings);
   }
 

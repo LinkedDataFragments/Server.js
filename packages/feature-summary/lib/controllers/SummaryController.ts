@@ -41,7 +41,7 @@ class SummaryController extends Controller {
     options = options || {};
     super(options);
     // Settings for data summaries
-    let summaries = options.summaries || {};
+    const summaries = options.summaries || {};
     this._enabled = summaries.dir || summaries.path;
     this._summariesFolder = summaries.dir || path.join(__dirname, '../../summaries');
     // Set up path matching
@@ -55,10 +55,10 @@ class SummaryController extends Controller {
 
     let summaryMatch = this._matcher && this._matcher.exec(request.url!), datasource;
     if (datasource = summaryMatch && summaryMatch[1]) {
-      let summaryFile = path.join(this._summariesFolder, datasource + '.ttl');
+      const summaryFile = path.join(this._summariesFolder, datasource + '.ttl');
 
       // Read summary triples from file
-      let streamParser = new StreamParser({ blankNodePrefix: '', baseIRI: this._baseUrl.pathname as string }),
+      const streamParser = new StreamParser({ blankNodePrefix: '', baseIRI: this._baseUrl.pathname as string }),
           inputStream = fs.createReadStream(summaryFile);
 
       // If the summary cannot be read, invoke the next controller without error
@@ -69,7 +69,7 @@ class SummaryController extends Controller {
       response.setHeader('Cache-Control', 'public,max-age=604800'); // 14 days
 
       // Render the summary
-      let view = this._negotiateView('Summary', request, response);
+      const view = this._negotiateView('Summary', request, response);
       view.render({ prefixes: this._prefixes, results: streamParser }, request, response);
     }
     else
