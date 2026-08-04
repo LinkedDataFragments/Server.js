@@ -84,7 +84,7 @@ class WebIDControllerExtension extends Controller {
       if (error)
         callback('Cannot parse WebID: ' + String(error));
       else if (triple) {
-        switch (triple.predicate as any) {
+        switch (triple.predicate as unknown) {
         case CERT_NS + 'modulus':
           // Add modulus
           const literalValue = triple.object.value;
