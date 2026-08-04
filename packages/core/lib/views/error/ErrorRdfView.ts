@@ -19,4 +19,4 @@ class ErrorRdfView extends RdfView {
 }
 
 
-export = ErrorRdfView;
+module.exports = ErrorRdfView;

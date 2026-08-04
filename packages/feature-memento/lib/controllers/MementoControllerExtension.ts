@@ -55,4 +55,4 @@ class MementoControllerExtension extends Controller {
   }
 }
 
-export = MementoControllerExtension;
+module.exports = MementoControllerExtension;

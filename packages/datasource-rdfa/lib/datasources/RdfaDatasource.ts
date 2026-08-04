@@ -26,4 +26,4 @@ class RdfaDatasource extends MemoryDatasource {
   }
 }
 
-export = RdfaDatasource;
+module.exports = RdfaDatasource;

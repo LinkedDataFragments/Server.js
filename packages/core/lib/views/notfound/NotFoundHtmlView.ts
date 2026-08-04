@@ -16,4 +16,4 @@ class NotFoundHtmlView extends HtmlView {
   }
 }
 
-export = NotFoundHtmlView;
+module.exports = NotFoundHtmlView;

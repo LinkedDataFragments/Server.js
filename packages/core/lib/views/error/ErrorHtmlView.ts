@@ -16,4 +16,4 @@ class ErrorHtmlView extends HtmlView {
   }
 }
 
-export = ErrorHtmlView;
+module.exports = ErrorHtmlView;

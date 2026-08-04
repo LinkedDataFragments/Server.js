@@ -32,4 +32,4 @@ class SummaryHtmlViewExtension extends HtmlView {
 }
 
 
-export = SummaryHtmlViewExtension;
+module.exports = SummaryHtmlViewExtension;

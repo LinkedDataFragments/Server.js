@@ -154,4 +154,4 @@ class WebIDControllerExtension extends Controller {
   }
 }
 
-export = WebIDControllerExtension;
+module.exports = WebIDControllerExtension;

@@ -27,4 +27,4 @@ class PageRouter {
   }
 }
 
-export = PageRouter;
+module.exports = PageRouter;

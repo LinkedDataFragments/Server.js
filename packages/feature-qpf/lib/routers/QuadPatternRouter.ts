@@ -78,4 +78,4 @@ class QuadPatternRouter {
   }
 }
 
-export = QuadPatternRouter;
+module.exports = QuadPatternRouter;

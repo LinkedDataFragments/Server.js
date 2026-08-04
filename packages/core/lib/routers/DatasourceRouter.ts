@@ -21,4 +21,4 @@ class DatasourceRouter {
   }
 }
 
-export = DatasourceRouter;
+module.exports = DatasourceRouter;

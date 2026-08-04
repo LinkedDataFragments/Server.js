@@ -148,4 +148,4 @@ class QuadPatternFragmentsController extends Controller {
   }
 }
 
-export = QuadPatternFragmentsController;
+module.exports = QuadPatternFragmentsController;

@@ -42,4 +42,4 @@ class QuadPatternFragmentsHtmlView extends HtmlView {
   }
 }
 
-export = QuadPatternFragmentsHtmlView;
+module.exports = QuadPatternFragmentsHtmlView;

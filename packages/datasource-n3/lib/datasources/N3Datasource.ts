@@ -25,4 +25,4 @@ class N3Datasource extends MemoryDatasource {
   }
 }
 
-export = N3Datasource;
+module.exports = N3Datasource;

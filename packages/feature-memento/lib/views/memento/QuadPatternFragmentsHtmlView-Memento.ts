@@ -33,4 +33,4 @@ class MementoHtmlViewExtension extends HtmlView {
   }
 }
 
-export = MementoHtmlViewExtension;
+module.exports = MementoHtmlViewExtension;

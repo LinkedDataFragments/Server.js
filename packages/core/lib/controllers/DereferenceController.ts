@@ -38,4 +38,4 @@ class DeferenceController extends Controller {
   }
 }
 
-export = DeferenceController;
+module.exports = DeferenceController;

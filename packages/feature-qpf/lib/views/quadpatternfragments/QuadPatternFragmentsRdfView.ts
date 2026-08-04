@@ -124,4 +124,4 @@ class QuadPatternFragmentsRdfView extends RdfView {
   }
 }
 
-export = QuadPatternFragmentsRdfView;
+module.exports = QuadPatternFragmentsRdfView;

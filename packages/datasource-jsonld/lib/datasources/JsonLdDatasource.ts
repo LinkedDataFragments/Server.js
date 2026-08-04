@@ -25,4 +25,4 @@ class JsonLdDatasource extends MemoryDatasource {
   }
 }
 
-export = JsonLdDatasource;
+module.exports = JsonLdDatasource;

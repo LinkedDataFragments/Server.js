@@ -15,4 +15,4 @@ class EmptyDatasource extends MemoryDatasource {
   protected override _getAllQuads(addQuad: (quad: Quad) => void, done: (error?: Error) => void): void { done(); }
 }
 
-export = EmptyDatasource;
+module.exports = EmptyDatasource;

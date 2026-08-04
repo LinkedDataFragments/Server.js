@@ -220,4 +220,4 @@ class CompositeDatasource extends Datasource {
     }
   }
 }
-export = CompositeDatasource;
+module.exports = CompositeDatasource;

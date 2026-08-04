@@ -19,4 +19,4 @@ class NotFoundRdfView extends RdfView {
 }
 
 
-export = NotFoundRdfView;
+module.exports = NotFoundRdfView;

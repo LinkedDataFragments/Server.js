@@ -31,4 +31,4 @@ class NotFoundController extends Controller {
   }
 }
 
-export = NotFoundController;
+module.exports = NotFoundController;

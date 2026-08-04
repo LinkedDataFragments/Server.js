@@ -21,4 +21,4 @@ class SummaryRdfView extends RdfView {
   }
 }
 
-export = SummaryRdfView;
+module.exports = SummaryRdfView;

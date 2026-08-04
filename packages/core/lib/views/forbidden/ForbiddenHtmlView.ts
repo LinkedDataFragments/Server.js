@@ -16,4 +16,4 @@ class ForbiddenHtmlView extends HtmlView {
   }
 }
 
-export = ForbiddenHtmlView;
+module.exports = ForbiddenHtmlView;

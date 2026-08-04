@@ -69,4 +69,4 @@ class AssetsController extends Controller {
   }
 }
 
-export = AssetsController;
+module.exports = AssetsController;

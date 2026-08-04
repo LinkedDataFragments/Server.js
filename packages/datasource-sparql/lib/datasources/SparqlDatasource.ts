@@ -214,4 +214,4 @@ class SparqlDatasource extends Datasource {
   }
 }
 
-export = SparqlDatasource;
+module.exports = SparqlDatasource;

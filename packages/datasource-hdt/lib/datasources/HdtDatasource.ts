@@ -74,4 +74,4 @@ class HdtDatasource extends Datasource {
 }
 
 
-export = HdtDatasource;
+module.exports = HdtDatasource;
