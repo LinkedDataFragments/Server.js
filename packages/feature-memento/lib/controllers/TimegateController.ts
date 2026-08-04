@@ -164,37 +164,37 @@ class TimegateController extends Controller {
       ];
       get_closest_memento(timemap, "2011-10-20T12:22:24Z", false);
   */
-  protected _getClosestMemento(timemap: ParsedTimemapEntry[], acceptDatetime: string | Date, unsorted?: boolean): ParsedTimemapEntry | null {
+  protected _getClosestMemento(timemap: ParsedTimemapEntry[], acceptDatetime: string | Date | number, unsorted?: boolean): ParsedTimemapEntry | null {
     // NOTE: assuming that the interval is always specified as [start_date, end_date]
     // empty timemap can't give any mementos
     if (timemap.length === 0)
       return null;
 
     // convert accept datetime to timestamp
-    const acceptTimestamp = toDate(acceptDatetime).getTime();
+    acceptDatetime = toDate(acceptDatetime).getTime();
 
     // If accept datetime is invalid, exit
-    if (isNaN(acceptTimestamp)) return null;
+    if (isNaN(acceptDatetime)) return null;
     // Sort timemap first if it is not sorted
     if (unsorted) sortTimemap(timemap);
 
     // if the accept_datetime is less than the first memento, return first memento
     let firstMemento = timemap[0],
         firstMementoDatetime = toDate(firstMemento.interval[0]).getTime();
-    if (acceptTimestamp <= firstMementoDatetime) return firstMemento;
+    if (acceptDatetime <= firstMementoDatetime) return firstMemento;
 
     // return the latest memento if the accept datetime is after it
     let lastMemento = timemap[timemap.length - 1],
         lastMementoDatetime = toDate(lastMemento.interval[1]).getTime();
-    if (acceptTimestamp >= lastMementoDatetime) return lastMemento;
+    if (acceptDatetime >= lastMementoDatetime) return lastMemento;
 
     // check if the accept datetime falls within any intervals defined in the data sources.
     for (let i = 0, memento; memento = timemap[i]; i++) {
       let startTime = memento.interval[0].getTime(),
           endTime   = memento.interval[1].getTime();
       if (isFinite(startTime) && isFinite(endTime)) {
-        if (startTime > acceptTimestamp) return timemap[i - 1];
-        if (startTime <= acceptTimestamp && endTime >= acceptTimestamp) return memento;
+        if (startTime > acceptDatetime) return timemap[i - 1];
+        if (startTime <= acceptDatetime && endTime >= acceptDatetime) return memento;
       }
     }
     return null;
@@ -210,8 +210,8 @@ function sortTimemap(timemap: ParsedTimemapEntry[]): ParsedTimemapEntry[] {
 }
 
 // Convert the value to a date
-function toDate(value: string | string[] | Date | undefined): Date {
-  return typeof value === 'string' ? new Date(value) : (value || new Date()) as Date;
+function toDate(value: string | number | string[] | Date | undefined): Date {
+  return typeof value === 'string' || typeof value === 'number' ? new Date(value) : (value || new Date()) as Date;
 }
 
 
