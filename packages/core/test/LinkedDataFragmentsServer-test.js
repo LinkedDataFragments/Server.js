@@ -1,5 +1,5 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
-let LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer');
+let LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer').LinkedDataFragmentsServer; // temporary
 
 let request = require('supertest');
 

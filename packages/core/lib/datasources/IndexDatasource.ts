@@ -2,7 +2,7 @@
 /* An IndexDatasource is a datasource that lists other data sources. */
 
 import type { Quad } from 'rdf-js';
-import MemoryDatasource = require('./MemoryDatasource');
+import { MemoryDatasource } from './MemoryDatasource';
 import type { DatasourceOptions, DatasourceRegistry } from '../types';
 
 let rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -11,7 +11,7 @@ let rdf  = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     voID = 'http://rdfs.org/ns/void#';
 
 // Creates a new IndexDatasource
-class IndexDatasource extends MemoryDatasource {
+export class IndexDatasource extends MemoryDatasource {
   role: string;
   protected _datasources?: DatasourceRegistry;
 
@@ -39,4 +39,3 @@ class IndexDatasource extends MemoryDatasource {
   }
 }
 
-export = IndexDatasource;

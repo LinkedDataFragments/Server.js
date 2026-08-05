@@ -1,7 +1,7 @@
 /*! @license MIT ©2014-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* A SparqlDatasource provides queryable access to a SPARQL endpoint. */
 
-import Datasource = require('@ldf/core/lib/datasources/Datasource');
+import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import { SparqlJsonParser } from 'sparqljson-parse';
 import LRU = require('lru-cache');
 import type { IBindings } from 'sparqljson-parse';
@@ -25,7 +25,7 @@ let INVALID_JSON_RESPONSE = 'The endpoint returned an invalid SPARQL results JSO
 const xsd  = 'http://www.w3.org/2001/XMLSchema#';
 
 // Creates a new SparqlDatasource
-class SparqlDatasource extends Datasource {
+export class SparqlDatasource extends Datasource {
   protected _countCache: LRU<string, number>;
   protected _resolvingCountQueries: Record<string, boolean>;
   protected _sparqlJsonParser: SparqlJsonParser;
@@ -214,4 +214,3 @@ class SparqlDatasource extends Datasource {
   }
 }
 
-module.exports = SparqlDatasource;

@@ -1,18 +1,16 @@
 /*! @license MIT ©2016 Miel Vander Sande, Ghent University - imec */
 /* A MementoControllerExtension extends Triple Pattern Fragments responses with Memento headers. */
 
-import Controller = require('@ldf/core/lib/controllers/Controller');
-import TimegateController = require('./TimegateController');
+import { Controller } from '@ldf/core/lib/controllers/Controller';
+import { TimegateController } from './TimegateController';
+import type { InvertedTimegateEntry, TimegateControllerOptions, MementoRequestSettings } from './TimegateController';
 import * as url from 'url';
 import type { LdfRequest, LdfResponse, ViewSettings } from '@ldf/core';
 
-type InvertedTimegateEntry = TimegateController.InvertedTimegateEntry;
-type TimegateControllerOptions = TimegateController.TimegateControllerOptions;
-
-type MementoViewSettings = ViewSettings & TimegateController.MementoRequestSettings;
+type MementoViewSettings = ViewSettings & MementoRequestSettings;
 
 // Creates a new MementoControllerExtension
-class MementoControllerExtension extends Controller {
+export class MementoControllerExtension extends Controller {
   protected _invertedTimegateMap: Record<string, InvertedTimegateEntry>;
   protected _timegateBaseUrl: string;
 
@@ -55,4 +53,3 @@ class MementoControllerExtension extends Controller {
   }
 }
 
-module.exports = MementoControllerExtension;

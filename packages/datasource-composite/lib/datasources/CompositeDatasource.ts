@@ -1,7 +1,7 @@
 /*! @license MIT ©2016 Ruben Taelman, Ghent University - imec */
 /* A CompositeDatasource delegates queries to an consecutive list of datasources. */
 
-import Datasource = require('@ldf/core/lib/datasources/Datasource');
+import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import LRU = require('lru-cache');
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
@@ -12,7 +12,7 @@ interface CompositeDatasourceOptions extends DatasourceOptions {
 }
 
 // Creates a new CompositeDatasource
-class CompositeDatasource extends Datasource {
+export class CompositeDatasource extends Datasource {
   protected _datasources: DatasourceRegistry;
   protected _datasourceNames: string[];
   protected _countCache: LRU<string, number>;
@@ -220,4 +220,3 @@ class CompositeDatasource extends Datasource {
     }
   }
 }
-module.exports = CompositeDatasource;

@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let AssetsController = require('../../lib/controllers/AssetsController');
+let AssetsController = require('../../lib/controllers/AssetsController').AssetsController; // temporary
 
 let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),

@@ -1,5 +1,5 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
-const Datasource = require('../../lib/datasources/Datasource');
+const Datasource = require('../../lib/datasources/Datasource').Datasource; // temporary
 
 const EventEmitter = require('events'),
     fs = require('fs'),

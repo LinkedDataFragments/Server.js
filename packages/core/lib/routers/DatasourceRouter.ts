@@ -1,11 +1,11 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* A DatasourceRouter routes URLs to data sources. */
 
-import UrlData = require('../UrlData');
+import { UrlData } from '../UrlData';
 import type { Query, RouterRequest } from '../types';
 
 // Creates a new DatasourceRouter
-class DatasourceRouter {
+export class DatasourceRouter {
   protected _baseLength: number;
 
   constructor(options?: { urlData?: UrlData }) {
@@ -21,4 +21,3 @@ class DatasourceRouter {
   }
 }
 
-module.exports = DatasourceRouter;

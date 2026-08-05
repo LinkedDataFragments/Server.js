@@ -24,7 +24,7 @@ interface ParserConstructorInternals {
   _resetBlankNodePrefix(): void;
 }
 
-class N3ParserExtended<Q extends BaseQuad = Quad> extends N3Parser<Q> {
+export class N3ParserExtended<Q extends BaseQuad = Quad> extends N3Parser<Q> {
   get prefixMap(): Record<string, string> {
     return (this as unknown as ParserPrefixInternals)._prefixes;
   }
@@ -40,5 +40,3 @@ class N3ParserExtended<Q extends BaseQuad = Quad> extends N3Parser<Q> {
     (N3Parser as unknown as ParserConstructorInternals)._resetBlankNodePrefix();
   }
 }
-
-export = N3ParserExtended;

@@ -1,63 +1,57 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* An TimegateController responds to timegate requests */
 
-import Controller = require('@ldf/core/lib/controllers/Controller');
+import { Controller } from '@ldf/core/lib/controllers/Controller';
 import * as _ from 'lodash';
 import * as url from 'url';
-import Util = require('@ldf/core/lib/Util');
+import * as Util from '@ldf/core/lib/Util';
 import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core';
-import type Datasource = require('@ldf/core/lib/datasources/Datasource');
-import type UrlData = require('@ldf/core/lib/UrlData');
+import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
+import type { UrlData } from '@ldf/core/lib/UrlData';
 
-namespace TimegateController {
-  export interface MementoConfig {
-    datasource: Datasource;
-    initial: string | Date;
-    final: string | Date;
-    originalBaseURL?: string;
-  }
-
-  export interface TimegatesConfig {
-    baseUrl?: string;
-    baseURL?: string;
-    mementos?: Record<string, MementoConfig[]>;
-  }
-
-  export interface TimegateControllerOptions extends ControllerOptions {
-    timegates?: TimegatesConfig;
-  }
-
-  export interface ParsedTimemapEntry {
-    datasource: Datasource;
-    datasourceId?: string;
-    interval: [Date, Date];
-    original?: string;
-  }
-
-  export interface InvertedTimegateEntry {
-    memento: string;
-    original: string;
-    interval: [Date, Date];
-  }
-
-  export interface DatasourceRef extends Datasource {
-    timegate?: string | boolean;
-  }
-
-  // The view-settings fields MementoControllerExtension and its view
-  // extension read off the request's `query`/`datasource` context.
-  export interface MementoRequestSettings {
-    query: Query;
-    datasource: DatasourceRef;
-  }
+export interface MementoConfig {
+  datasource: Datasource;
+  initial: string | Date;
+  final: string | Date;
+  originalBaseURL?: string;
 }
-type MementoConfig = TimegateController.MementoConfig;
-type TimegateControllerOptions = TimegateController.TimegateControllerOptions;
-type ParsedTimemapEntry = TimegateController.ParsedTimemapEntry;
-type InvertedTimegateEntry = TimegateController.InvertedTimegateEntry;
+
+export interface TimegatesConfig {
+  baseUrl?: string;
+  baseURL?: string;
+  mementos?: Record<string, MementoConfig[]>;
+}
+
+export interface TimegateControllerOptions extends ControllerOptions {
+  timegates?: TimegatesConfig;
+}
+
+export interface ParsedTimemapEntry {
+  datasource: Datasource;
+  datasourceId?: string;
+  interval: [Date, Date];
+  original?: string;
+}
+
+export interface InvertedTimegateEntry {
+  memento: string;
+  original: string;
+  interval: [Date, Date];
+}
+
+export interface DatasourceRef extends Datasource {
+  timegate?: string | boolean;
+}
+
+// The view-settings fields MementoControllerExtension and its view
+// extension read off the request's `query`/`datasource` context.
+export interface MementoRequestSettings {
+  query: Query;
+  datasource: DatasourceRef;
+}
 
 // Creates a new TimegateController
-class TimegateController extends Controller {
+export class TimegateController extends Controller {
   protected _timemaps: Record<string, ParsedTimemapEntry[]>;
   protected _timegatePath: string;
   protected _matcher: RegExp;
@@ -215,4 +209,3 @@ function toDate(value: string | number | string[] | Date | undefined): Date {
 }
 
 
-export = TimegateController;

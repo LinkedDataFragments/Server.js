@@ -3,47 +3,77 @@
 
 import type * as Types from './lib/types';
 
+import { AssetsController } from './lib/controllers/AssetsController';
+import { Controller } from './lib/controllers/Controller';
+import { DeferenceController as DereferenceController } from './lib/controllers/DereferenceController';
+import { ErrorController } from './lib/controllers/ErrorController';
+import { NotFoundController } from './lib/controllers/NotFoundController';
+
+import { Datasource } from './lib/datasources/Datasource';
+import { EmptyDatasource } from './lib/datasources/EmptyDatasource';
+import { IndexDatasource } from './lib/datasources/IndexDatasource';
+import { MemoryDatasource } from './lib/datasources/MemoryDatasource';
+
+import { DatasourceRouter } from './lib/routers/DatasourceRouter';
+import { PageRouter } from './lib/routers/PageRouter';
+
+import { ErrorHtmlView } from './lib/views/error/ErrorHtmlView';
+import { ErrorRdfView } from './lib/views/error/ErrorRdfView';
+import { ForbiddenHtmlView } from './lib/views/forbidden/ForbiddenHtmlView';
+import { NotFoundHtmlView } from './lib/views/notfound/NotFoundHtmlView';
+import { NotFoundRdfView } from './lib/views/notfound/NotFoundRdfView';
+import { HtmlView } from './lib/views/HtmlView';
+import { RdfView } from './lib/views/RdfView';
+import { View } from './lib/views/View';
+import { ViewCollection } from './lib/views/ViewCollection';
+
+import { runCli, runCustom } from './lib/CliRunner';
+import { LinkedDataFragmentsServer } from './lib/LinkedDataFragmentsServer';
+import { LinkedDataFragmentsServerWorker } from './lib/LinkedDataFragmentsServerWorker';
+import { UrlData } from './lib/UrlData';
+import * as Util from './lib/Util';
+
 const Core = {
   controllers: {
-    AssetsController: require('./lib/controllers/AssetsController'),
-    Controller: require('./lib/controllers/Controller'),
-    DereferenceController: require('./lib/controllers/DereferenceController'),
-    ErrorController: require('./lib/controllers/ErrorController'),
-    NotFoundController: require('./lib/controllers/NotFoundController'),
+    AssetsController,
+    Controller,
+    DereferenceController,
+    ErrorController,
+    NotFoundController,
   },
   datasources: {
-    Datasource: require('./lib/datasources/Datasource'),
-    EmptyDatasource: require('./lib/datasources/EmptyDatasource'),
-    IndexDatasource: require('./lib/datasources/IndexDatasource'),
-    MemoryDatasource: require('./lib/datasources/MemoryDatasource'),
+    Datasource,
+    EmptyDatasource,
+    IndexDatasource,
+    MemoryDatasource,
   },
   routers: {
-    DatasourceRouter: require('./lib/routers/DatasourceRouter'),
-    PageRouter: require('./lib/routers/PageRouter'),
+    DatasourceRouter,
+    PageRouter,
   },
   views: {
     error: {
-      ErrorHtmlView: require('./lib/views/error/ErrorHtmlView'),
-      ErrorRdfView: require('./lib/views/error/ErrorRdfView'),
+      ErrorHtmlView,
+      ErrorRdfView,
     },
     forbidden: {
-      ForbiddenHtmlView: require('./lib/views/forbidden/ForbiddenHtmlView'),
+      ForbiddenHtmlView,
     },
     notfound: {
-      NotFoundHtmlView: require('./lib/views/notfound/NotFoundHtmlView'),
-      NotFoundRdfView: require('./lib/views/notfound/NotFoundRdfView'),
+      NotFoundHtmlView,
+      NotFoundRdfView,
     },
-    HtmlView: require('./lib/views/HtmlView'),
-    RdfView: require('./lib/views/RdfView'),
-    View: require('./lib/views/View'),
-    ViewCollection: require('./lib/views/ViewCollection'),
+    HtmlView,
+    RdfView,
+    View,
+    ViewCollection,
   },
-  runCli: require('./lib/CliRunner').runCli,
-  runCustom: require('./lib/CliRunner').runCustom,
-  LinkedDataFragmentsServer: require('./lib/LinkedDataFragmentsServer'),
-  LinkedDataFragmentsServerWorker: require('./lib/LinkedDataFragmentsServerWorker'),
-  UrlData: require('./lib/UrlData'),
-  Util: require('./lib/Util'),
+  runCli,
+  runCustom,
+  LinkedDataFragmentsServer,
+  LinkedDataFragmentsServerWorker,
+  UrlData,
+  Util,
 };
 
 // Re-exports this package's shared type definitions, so consumers can pull

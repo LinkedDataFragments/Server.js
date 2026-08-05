@@ -1,7 +1,7 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* An RdfaDatasource fetches data from a JSON-LD document. */
 
-import MemoryDatasource = require('@ldf/core/lib/datasources/MemoryDatasource');
+import { MemoryDatasource } from '@ldf/core/lib/datasources/MemoryDatasource';
 import { RdfaParser } from 'rdfa-streaming-parser';
 import type { Quad } from 'rdf-js';
 import type { DatasourceOptions } from '@ldf/core';
@@ -9,7 +9,7 @@ import type { DatasourceOptions } from '@ldf/core';
 let ACCEPT = 'text/html;q=1.0,application/xhtml+xml;q=0.7';
 
 // Creates a new RdfaDatasource
-class RdfaDatasource extends MemoryDatasource {
+export class RdfaDatasource extends MemoryDatasource {
   constructor(options: DatasourceOptions) {
     super(options);
     this._url = options && (options.url || options.file);
@@ -26,4 +26,3 @@ class RdfaDatasource extends MemoryDatasource {
   }
 }
 
-module.exports = RdfaDatasource;

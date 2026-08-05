@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A NotFoundController responds to requests that cannot be resolved */
 
-import Controller = require('./Controller');
-import Util = require('../Util');
+import { Controller } from './Controller';
+import * as Util from '../Util';
 import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
 
 // Creates a new NotFoundController
-class NotFoundController extends Controller {
+export class NotFoundController extends Controller {
   constructor(options?: ControllerOptions) {
     super(options);
     this._last = true;
@@ -31,4 +31,3 @@ class NotFoundController extends Controller {
   }
 }
 
-module.exports = NotFoundController;

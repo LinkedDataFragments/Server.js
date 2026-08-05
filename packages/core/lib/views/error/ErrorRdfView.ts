@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An ErrorRdfView represents a 500 response in RDF. */
 
-import RdfView = require('../RdfView');
+import { RdfView } from '../RdfView';
 import type { Quad } from 'rdf-js';
 import type { RenderDone, ViewSettings } from '../../types';
 
 // Creates a new ErrorRdfView
-class ErrorRdfView extends RdfView {
+export class ErrorRdfView extends RdfView {
   constructor(settings?: ViewSettings) {
     super('Error', settings);
   }
@@ -19,4 +19,3 @@ class ErrorRdfView extends RdfView {
 }
 
 
-module.exports = ErrorRdfView;

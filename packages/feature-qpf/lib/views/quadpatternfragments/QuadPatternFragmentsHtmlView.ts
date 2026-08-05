@@ -1,19 +1,19 @@
 /*! @license MIT ©2015-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* A QuadPatternFragmentsRdfView represents a TPF or QPF in HTML. */
 
-import HtmlView = require('@ldf/core/lib/views/HtmlView');
+import { HtmlView } from '@ldf/core/lib/views/HtmlView';
 import { join } from 'path';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core';
-import type IndexDatasource = require('@ldf/core/lib/datasources/IndexDatasource');
+import type { IndexDatasource } from '@ldf/core/lib/datasources/IndexDatasource';
 
 interface QuadPatternFragmentsViewSettings extends ViewSettings {
   datasource: Partial<IndexDatasource>;
 }
 
 // Creates a new QuadPatternFragmentsHtmlView
-class QuadPatternFragmentsHtmlView extends HtmlView {
+export class QuadPatternFragmentsHtmlView extends HtmlView {
   viewDirectory: string;
 
   constructor(settings?: ViewSettings) {
@@ -42,4 +42,3 @@ class QuadPatternFragmentsHtmlView extends HtmlView {
   }
 }
 
-module.exports = QuadPatternFragmentsHtmlView;

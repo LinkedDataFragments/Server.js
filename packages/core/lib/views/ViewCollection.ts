@@ -7,8 +7,8 @@
  `getViews` returns all views with a given name.
 */
 
-import Util = require('../Util');
-import type View = require('./View');
+import * as Util from '../Util';
+import type { View } from './View';
 import type { LdfRequest } from '../types';
 
 interface ViewMatch {
@@ -30,7 +30,7 @@ const negotiate = require('negotiate') as Negotiate;
 let ViewCollectionError = Util.createErrorType('ViewCollectionError');
 
 // Creates a new ViewCollection
-class ViewCollection {
+export class ViewCollection {
   protected _views: Record<string, View[]>;
   protected _viewMatchers: Record<string, ViewMatch[]>;
 
@@ -79,4 +79,3 @@ class ViewCollection {
 }
 ViewCollection.ViewCollectionError = ViewCollectionError;
 
-export = ViewCollection;

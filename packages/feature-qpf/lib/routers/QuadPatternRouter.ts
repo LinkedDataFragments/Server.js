@@ -20,7 +20,7 @@ interface QuadPatternRouterConfig {
 }
 
 // Creates a new QuadPatternRouter
-class QuadPatternRouter {
+export class QuadPatternRouter {
   protected _prefixes: Record<string, string>;
   dataFactory?: DataFactory;
 
@@ -78,4 +78,3 @@ class QuadPatternRouter {
   }
 }
 
-module.exports = QuadPatternRouter;

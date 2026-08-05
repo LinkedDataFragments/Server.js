@@ -1,14 +1,18 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* Exports of the components of this package */
 
+import { TimegateController } from './lib/controllers/TimegateController';
+import { MementoControllerExtension } from './lib/controllers/MementoControllerExtension';
+import { MementoHtmlViewExtension } from './lib/views/memento/QuadPatternFragmentsHtmlView-Memento';
+
 module.exports = {
   controllers: {
-    TimegateController: require('./lib/controllers/TimegateController'),
-    MementoControllerExtension: require('./lib/controllers/MementoControllerExtension'),
+    TimegateController,
+    MementoControllerExtension,
   },
   views: {
     memento: {
-      'QuadPatternFragmentsHtmlView-Memento': require('./lib/views/memento/QuadPatternFragmentsHtmlView-Memento'),
+      'QuadPatternFragmentsHtmlView-Memento': MementoHtmlViewExtension,
     },
   },
 };

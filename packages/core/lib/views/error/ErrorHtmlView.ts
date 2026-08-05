@@ -1,11 +1,11 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An ErrorRdfView represents a 500 response in HTML. */
 
-import HtmlView = require('../HtmlView');
+import { HtmlView } from '../HtmlView';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../../types';
 
 // Creates a new ErrorHtmlView
-class ErrorHtmlView extends HtmlView {
+export class ErrorHtmlView extends HtmlView {
   constructor(settings?: ViewSettings) {
     super('Error', settings);
   }
@@ -16,4 +16,3 @@ class ErrorHtmlView extends HtmlView {
   }
 }
 
-module.exports = ErrorHtmlView;

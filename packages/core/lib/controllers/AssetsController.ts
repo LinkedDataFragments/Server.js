@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An AssetsController responds to requests for assets */
 
-import Controller = require('./Controller');
+import { Controller } from './Controller';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as mime from 'mime';
-import Util = require('../Util');
-import UrlData = require('../UrlData');
+import * as Util from '../Util';
+import { UrlData } from '../UrlData';
 import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
 
 interface Asset {
@@ -15,7 +15,7 @@ interface Asset {
 }
 
 // Creates a new AssetsController
-class AssetsController extends Controller {
+export class AssetsController extends Controller {
   protected _matcher: RegExp;
   protected _assets: Record<string, Asset>;
 
@@ -69,4 +69,3 @@ class AssetsController extends Controller {
   }
 }
 
-module.exports = AssetsController;

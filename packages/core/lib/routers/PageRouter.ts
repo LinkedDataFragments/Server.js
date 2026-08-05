@@ -4,7 +4,7 @@
 import type { Query, RouterRequest } from '../types';
 
 // Creates a new PageRouter with the given page size, which defaults to 100.
-class PageRouter {
+export class PageRouter {
   pageSize: number;
 
   constructor(config?: { pageSize?: number }) {
@@ -27,4 +27,3 @@ class PageRouter {
   }
 }
 
-module.exports = PageRouter;

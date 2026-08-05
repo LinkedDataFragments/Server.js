@@ -3,7 +3,7 @@
 
 import { join } from 'path';
 import type { DataFactory } from 'rdf-js';
-import ViewCollection = require('./ViewCollection');
+import { ViewCollection } from './ViewCollection';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../types';
 
 interface ContentTypeDescriptor {
@@ -13,7 +13,7 @@ interface ContentTypeDescriptor {
 }
 
 // Creates a view with the given name
-class View {
+export class View {
   name: string;
   supportedContentTypes!: ContentTypeDescriptor[];
   dataFactory?: DataFactory;
@@ -113,4 +113,3 @@ class View {
 
 
 
-export = View;

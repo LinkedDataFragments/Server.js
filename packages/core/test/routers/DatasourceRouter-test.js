@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let DatasourceRouter = require('../../lib/routers/DatasourceRouter');
+let DatasourceRouter = require('../../lib/routers/DatasourceRouter').DatasourceRouter; // temporary
 
 describe('DatasourceRouter', () => {
   describe('The DatasourceRouter module', () => {

@@ -1,15 +1,20 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* Exports of the components of this package */
 
+import { SummaryController } from './lib/controllers/SummaryController';
+import { SummaryHtmlViewExtension } from './lib/views/summary/QuadPatternFragmentsHtmlView-Summary';
+import { SummaryRdfViewExtension } from './lib/views/summary/QuadPatternFragmentsRdfView-Summary';
+import { SummaryRdfView } from './lib/views/summary/SummaryRdfView';
+
 module.exports = {
   controllers: {
-    SummaryController: require('./lib/controllers/SummaryController'),
+    SummaryController,
   },
   views: {
     summary: {
-      'QuadPatternFragmentsHtmlView-Summary': require('./lib/views/summary/QuadPatternFragmentsHtmlView-Summary'),
-      'QuadPatternFragmentsRdfView-Summary': require('./lib/views/summary/QuadPatternFragmentsRdfView-Summary'),
-      'SummaryRdfView': require('./lib/views/summary/SummaryRdfView'),
+      'QuadPatternFragmentsHtmlView-Summary': SummaryHtmlViewExtension,
+      'QuadPatternFragmentsRdfView-Summary': SummaryRdfViewExtension,
+      'SummaryRdfView': SummaryRdfView,
     },
   },
 };

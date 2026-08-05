@@ -1,13 +1,13 @@
 /*! @license MIT ©2015-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /* A QuadPatternFragmentsRdfView represents a Quad Pattern Fragment in RDF. */
 
-import RdfView = require('@ldf/core/lib/views/RdfView');
+import { RdfView } from '@ldf/core/lib/views/RdfView';
 import { stringQuadToQuad } from 'rdf-string';
 import type { IStringQuad } from 'rdf-string';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
 import type { Query, RenderDone, ViewSettings } from '@ldf/core';
-import type Datasource = require('@ldf/core/lib/datasources/Datasource');
+import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 
 let dcTerms = 'http://purl.org/dc/terms/',
     rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -27,7 +27,7 @@ interface FragmentInfo {
 type DatasourceInfo = Datasource & { index: string; templateUrl: string; supportsQuads: boolean };
 
 // Creates a new QuadPatternFragmentsRdfView
-class QuadPatternFragmentsRdfView extends RdfView {
+export class QuadPatternFragmentsRdfView extends RdfView {
   constructor(settings?: ViewSettings) {
     super((settings || {}).viewNameOverride || 'QuadPatternFragments', settings);
   }
@@ -124,4 +124,3 @@ class QuadPatternFragmentsRdfView extends RdfView {
   }
 }
 
-module.exports = QuadPatternFragmentsRdfView;

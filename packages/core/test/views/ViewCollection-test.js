@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let ViewCollection = require('../../lib/views/ViewCollection');
+let ViewCollection = require('../../lib/views/ViewCollection').ViewCollection; // temporary
 
-let View = require('../../lib/views/View');
+let View = require('../../lib/views/View').View; // temporary
 
 describe('ViewCollection', () => {
   describe('The ViewCollection module', () => {

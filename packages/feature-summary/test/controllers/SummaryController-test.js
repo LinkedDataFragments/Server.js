@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let SummaryController = require('../../lib/controllers/SummaryController');
+let SummaryController = require('../../lib/controllers/SummaryController').SummaryController; // temporary
 
 let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
     fs = require('fs'),
     path = require('path');
 
-let SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js');
+let SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js').SummaryRdfView; // temporary
 
 describe('SummaryController', () => {
   describe('The SummaryController module', () => {

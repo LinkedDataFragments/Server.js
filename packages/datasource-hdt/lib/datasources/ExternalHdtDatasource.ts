@@ -1,10 +1,10 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* An ExternalHdtDatasource uses an external process to query an HDT document. */
 
-import Datasource = require('@ldf/core/lib/datasources/Datasource');
+import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import * as fs from 'fs';
 import * as path from 'path';
-import N3Parser = require('@ldf/core/lib/N3ParserExtended');
+import { N3ParserExtended as N3Parser } from '@ldf/core/lib/N3ParserExtended';
 import { spawn } from 'child_process';
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
@@ -17,7 +17,7 @@ interface ExternalHdtDatasourceOptions extends DatasourceOptions {
 }
 
 // Creates a new ExternalHdtDatasource
-class ExternalHdtDatasource extends Datasource {
+export class ExternalHdtDatasource extends Datasource {
   protected _options: ExternalHdtDatasourceOptions;
   protected _hdtFile: string;
 
@@ -90,4 +90,3 @@ class ExternalHdtDatasource extends Datasource {
   }
 }
 
-export = ExternalHdtDatasource;

@@ -1,15 +1,15 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A DeferenceController responds to dereferencing requests */
 
-import Controller = require('./Controller');
+import { Controller } from './Controller';
 import * as url from 'url';
 import * as _ from 'lodash';
-import Util = require('../Util');
+import * as Util from '../Util';
 import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
-import type Datasource = require('../datasources/Datasource');
+import type { Datasource } from '../datasources/Datasource';
 
 // Creates a new DeferenceController
-class DeferenceController extends Controller {
+export class DeferenceController extends Controller {
   protected _paths: Record<string, Datasource>;
   protected _matcher: RegExp;
 
@@ -38,4 +38,3 @@ class DeferenceController extends Controller {
   }
 }
 
-module.exports = DeferenceController;

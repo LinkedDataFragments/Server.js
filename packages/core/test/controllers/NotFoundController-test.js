@@ -1,12 +1,13 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let NotFoundController = require('../../lib/controllers/NotFoundController');
+let NotFoundController = require('../../lib/controllers/NotFoundController').NotFoundController; // temporary
 
 let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
     dataFactory = require('n3').DataFactory;
 
-let NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView.js'),
-    NotFoundRdfView = require('../../lib/views/notfound/NotFoundRdfView.js');
+// temporary
+let NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView.js').NotFoundHtmlView,
+    NotFoundRdfView = require('../../lib/views/notfound/NotFoundRdfView.js').NotFoundRdfView;
 
 describe('NotFoundController', () => {
   describe('The NotFoundController module', () => {

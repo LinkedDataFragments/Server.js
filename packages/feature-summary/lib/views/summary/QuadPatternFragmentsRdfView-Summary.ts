@@ -1,17 +1,17 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* A SummaryRdfViewExtension extends the Quad Pattern Fragments RDF view with a summary link. */
 
-import RdfView = require('@ldf/core/lib/views/RdfView');
+import { RdfView } from '@ldf/core/lib/views/RdfView';
 import type { Quad } from 'rdf-js';
 import type { RenderDone, ViewSettings } from '@ldf/core';
-import type SummaryController = require('../../controllers/SummaryController');
+import type { SummaryRenderSettings } from '../../controllers/SummaryController';
 
-type SummaryViewSettings = ViewSettings & SummaryController.SummaryRenderSettings;
+type SummaryViewSettings = ViewSettings & SummaryRenderSettings;
 
 const ds = 'http://semweb.mmlab.be/ns/datasummaries#';
 
 // Creates a new SummaryRdfViewExtension
-class SummaryRdfViewExtension extends RdfView {
+export class SummaryRdfViewExtension extends RdfView {
   public constructor(settings?: ViewSettings) {
     super('QuadPatternFragments:After', settings);
   }
@@ -34,4 +34,3 @@ class SummaryRdfViewExtension extends RdfView {
   }
 }
 
-module.exports = SummaryRdfViewExtension;

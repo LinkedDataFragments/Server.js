@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2018 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 /** A QuadPatternFragmentsController responds to requests for TPFs and QPFs */
 
-import Controller = require('@ldf/core/lib/controllers/Controller');
+import { Controller } from '@ldf/core/lib/controllers/Controller';
 import * as url from 'url';
 import * as _ from 'lodash';
 import type { ParsedUrlQuery } from 'querystring';
 import type { ControllerOptions, LdfRequest, LdfResponse, Query, RouterRequest, ViewSettings } from '@ldf/core';
-import type Datasource = require('@ldf/core/lib/datasources/Datasource');
+import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 
 interface Router {
   extractQueryParams(request: RouterRequest, query: Query): void;
@@ -18,7 +18,7 @@ interface QuadPatternFragmentsControllerOptions extends ControllerOptions {
 }
 
 // Creates a new QuadPatternFragmentsController
-class QuadPatternFragmentsController extends Controller {
+export class QuadPatternFragmentsController extends Controller {
   viewName: string;
   protected _routers: Router[];
   protected _extensions: Controller[];
@@ -148,4 +148,3 @@ class QuadPatternFragmentsController extends Controller {
   }
 }
 
-module.exports = QuadPatternFragmentsController;

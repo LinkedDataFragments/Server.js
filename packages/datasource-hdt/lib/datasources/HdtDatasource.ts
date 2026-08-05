@@ -1,9 +1,9 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* An HdtDatasource loads and queries an HDT document in-process. */
 
-import Datasource = require('@ldf/core/lib/datasources/Datasource');
+import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import * as hdt from 'hdt';
-import ExternalHdtDatasource = require('./ExternalHdtDatasource');
+import { ExternalHdtDatasource } from './ExternalHdtDatasource';
 import type { Quad } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, Pushable, Query } from '@ldf/core';
@@ -13,7 +13,7 @@ interface HdtDatasourceOptions extends DatasourceOptions {
 }
 
 // Creates a new HdtDatasource
-class HdtDatasource extends Datasource {
+export class HdtDatasource extends Datasource {
   protected _hdtFile!: string;
   protected _hdtDocument?: hdt.Document;
 
@@ -74,4 +74,3 @@ class HdtDatasource extends Datasource {
 }
 
 
-module.exports = HdtDatasource;

@@ -5,10 +5,10 @@ import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import Util = require('./Util');
-import ErrorController = require('./controllers/ErrorController');
-import UrlData = require('./UrlData');
-import type Controller = require('./controllers/Controller');
+import * as Util from './Util';
+import { ErrorController } from './controllers/ErrorController';
+import { UrlData } from './UrlData';
+import type { Controller } from './controllers/Controller';
 import type { ControllerOptions, LdfRequest, LdfResponse } from './types';
 
 interface LinkedDataFragmentsServerOptions extends ControllerOptions {
@@ -20,173 +20,156 @@ interface LinkedDataFragmentsServerOptions extends ControllerOptions {
   response?: { headers?: Record<string, string> };
 }
 
-namespace LinkedDataFragmentsServer {
-  // The augmented server instance actually returned by `new LinkedDataFragmentsServer(...)`.
-  // Modeled on http.Server rather than https.Server: the constructor below assigns either
-  // one to `server`, and this file only relies on the http.Server-shaped surface (the
-  // 'request' event, .listen(), etc.), which https.Server duck-types identically despite
-  // not nominally extending http.Server in Node's own types — hence the net.Server-mediated
-  // cast for both branches below, rather than a direct one.
-  export interface LdfHttpServer extends http.Server {
-    _sockets: Record<string, import('net').Socket>;
-    _log: (...args: any[]) => void;
-    _accesslogger: (request: LdfRequest, response: LdfResponse) => void;
-    _controllers: Controller[];
-    _errorController: ErrorController;
-    _defaultHeaders: Record<string, string>;
-    _processRequest(request: LdfRequest, response: LdfResponse): void;
-    _reportError(request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void;
-    stop(): void;
-  }
-}
-type LdfHttpServer = LinkedDataFragmentsServer.LdfHttpServer;
-
-interface LinkedDataFragmentsServerConstructor {
-  new (options: LinkedDataFragmentsServerOptions): LdfHttpServer;
+// The augmented server instance actually returned by `LinkedDataFragmentsServer(...)`.
+// Modeled on http.Server rather than https.Server: the constructor below assigns either
+// one to `server`, and this file only relies on the http.Server-shaped surface (the
+// 'request' event, .listen(), etc.), which https.Server duck-types identically despite
+// not nominally extending http.Server in Node's own types — hence the net.Server-mediated
+// cast for both branches below, rather than a direct one.
+export interface LdfHttpServer extends http.Server {
+  _sockets: Record<string, import('net').Socket>;
+  _log: (...args: any[]) => void;
+  _accesslogger: (request: LdfRequest, response: LdfResponse) => void;
+  _controllers: Controller[];
+  _errorController: ErrorController;
+  _defaultHeaders: Record<string, string>;
+  _processRequest(request: LdfRequest, response: LdfResponse): void;
+  _reportError(request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void;
+  stop(): void;
 }
 
-// Creates a new LinkedDataFragmentsServer
-//
-// NOTE: the methods below are intentionally attached via `.prototype.x = function` rather than
-// as class-body methods: class-body methods are non-enumerable, which would break the
-// `for (let member in LinkedDataFragmentsServer.prototype)` copy loop the constructor relies on
-// to transplant them onto the actual http(s).Server instance it returns. The `declare` members
-// below give the prototype a real type for that assignment without emitting any code of their own.
-class LinkedDataFragmentsServer {
-  declare _processRequest: LdfHttpServer['_processRequest'];
-  declare _reportError: LdfHttpServer['_reportError'];
-  declare stop: LdfHttpServer['stop'];
+// Methods attached to every server instance created by LinkedDataFragmentsServer()
+const serverMethods = {
+  // Handles an incoming HTTP request
+  _processRequest(this: LdfHttpServer, request: LdfRequest, response: LdfResponse): void {
+    // Add default response headers
+    for (let header in this._defaultHeaders)
+      response.setHeader(header, this._defaultHeaders[header]);
 
-  constructor(options: LinkedDataFragmentsServerOptions) {
-    // Create the HTTP(S) server
-    let server: LdfHttpServer, sockets = 0;
-    let urlData = options && options.urlData ? options.urlData : new UrlData();
-    switch (urlData.protocol) {
-    case 'http':
-      server = http.createServer() as import('net').Server as LdfHttpServer;
+    // Verify an allowed HTTP method was used
+    switch (request.method) {
+    // Allow GET requests
+    case 'GET':
       break;
-    case 'https':
-      const ssl = options.ssl || {}, authentication = options.authentication || {};
-      // WebID authentication requires a client certificate
-      if (authentication.webid)
-        ssl.requestCert = ssl.rejectUnauthorized = true;
-      server = https.createServer({ ...ssl, ..._.mapValues(ssl.keys, readHttpsOption) }) as import('net').Server as LdfHttpServer;
+    // Don't write a body with HEAD and OPTIONS
+    case 'HEAD':
+    case 'OPTIONS':
+      response.write = function (chunk: any, encoding?: any, callback?: any): boolean { return true; };
+      response.end = response.end.bind(response, '', '' as BufferEncoding);
       break;
+    // Reject all other methods
     default:
-      throw new Error('The configured protocol ' + urlData.protocol + ' is invalid.');
-    }
-
-    // Copy over members
-    for (let member in LinkedDataFragmentsServer.prototype)
-      (server as LdfHttpServer & Record<string, unknown>)[member] = (LinkedDataFragmentsServer.prototype as LinkedDataFragmentsServer & Record<string, unknown>)[member];
-
-    // Assign settings
-    server._sockets = {};
-    server._log = options.log || _.noop;
-    server._accesslogger = options.accesslogger || _.noop;
-    server._controllers = options.controllers || [];
-    server._errorController = new ErrorController(options);
-    server._defaultHeaders = options.response && options.response.headers || {};
-
-    // Attach event listeners
-    server.on('error', (error) => { server._reportError(error); });
-    server.on('request', (request: LdfRequest, response: LdfResponse) => {
-      server._accesslogger(request, response);
-      try { server._processRequest(request, response); }
-      catch (error) { server._reportError(request, response, Util.toError(error)); }
-    });
-    server.on('connection', (socket) => {
-      let socketId = sockets++;
-      server._sockets[socketId] = socket;
-      socket.on('close', () => { delete server._sockets[socketId]; });
-    });
-    return server;
-  }
-}
-
-// Handles an incoming HTTP request
-LinkedDataFragmentsServer.prototype._processRequest = function (this: LdfHttpServer, request: LdfRequest, response: LdfResponse): void {
-  // Add default response headers
-  for (let header in this._defaultHeaders)
-    response.setHeader(header, this._defaultHeaders[header]);
-
-  // Verify an allowed HTTP method was used
-  switch (request.method) {
-  // Allow GET requests
-  case 'GET':
-    break;
-  // Don't write a body with HEAD and OPTIONS
-  case 'HEAD':
-  case 'OPTIONS':
-    response.write = function (chunk: any, encoding?: any, callback?: any): boolean { return true; };
-    response.end = response.end.bind(response, '', '' as BufferEncoding);
-    break;
-  // Reject all other methods
-  default:
-    response.writeHead(405, { 'Content-Type': Util.MIME_PLAINTEXT });
-    response.end('The HTTP method "' + (request.method as string) + '" is not allowed; try "GET" instead.');
-    return;
-  }
-
-  // Try each of the controllers in order
-  let self = this, controllerId = 0;
-  function nextController(error?: Error) {
-    // Error if the previous controller failed
-    if (error)
-      response.emit('error', error);
-    // Error if no controller left
-    else if (controllerId >= self._controllers.length)
-      response.emit('error', new Error('No controller for ' + (request.url as string)));
-    // Otherwise, try the next controller
-    else {
-      let controller = self._controllers[controllerId++], next = _.once(nextController);
-      try { controller.handleRequest(request, response, next); }
-      catch (error) { next(Util.toError(error)); }
-    }
-  }
-  response.on('error', (error) => { self._reportError(request, response, error); });
-  nextController();
-};
-
-// Serves an application error
-LinkedDataFragmentsServer.prototype._reportError = function (this: LdfHttpServer, request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void {
-  // If no request or response is available, the server failed outside of a request; don't recover
-  if (!response) {
-    error = Util.toError(request);
-    response = request = undefined;
-    this._log('Fatal error, exiting process\n', error.stack);
-    return process.exit(-1);
-  }
-
-  // Log the error
-  this._log(error!.stack);
-
-  // Try to report the error in the response
-  try {
-    // Ensure errors are not handled recursively, and don't modify an already started response
-    if (response.error || response.headersSent) {
-      response.end();
+      response.writeHead(405, { 'Content-Type': Util.MIME_PLAINTEXT });
+      response.end('The HTTP method "' + (request.method as string) + '" is not allowed; try "GET" instead.');
       return;
     }
-    response.error = error;
-    this._errorController.handleRequest(request as LdfRequest, response, _.noop);
+
+    // Try each of the controllers in order
+    let self = this, controllerId = 0;
+    function nextController(error?: Error) {
+      // Error if the previous controller failed
+      if (error)
+        response.emit('error', error);
+      // Error if no controller left
+      else if (controllerId >= self._controllers.length)
+        response.emit('error', new Error('No controller for ' + (request.url as string)));
+      // Otherwise, try the next controller
+      else {
+        let controller = self._controllers[controllerId++], next = _.once(nextController);
+        try { controller.handleRequest(request, response, next); }
+        catch (error) { next(Util.toError(error)); }
+      }
+    }
+    response.on('error', (error) => { self._reportError(request, response, error); });
+    nextController();
+  },
+
+  // Serves an application error
+  _reportError(this: LdfHttpServer, request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void {
+    // If no request or response is available, the server failed outside of a request; don't recover
+    if (!response) {
+      error = Util.toError(request);
+      response = request = undefined;
+      this._log('Fatal error, exiting process\n', error.stack);
+      return process.exit(-1);
+    }
+
+    // Log the error
+    this._log(error!.stack);
+
+    // Try to report the error in the response
+    try {
+      // Ensure errors are not handled recursively, and don't modify an already started response
+      if (response.error || response.headersSent) {
+        response.end();
+        return;
+      }
+      response.error = error;
+      this._errorController.handleRequest(request as LdfRequest, response, _.noop);
+    }
+    catch (responseError) { this._log(Util.toError(responseError).stack); }
+  },
+
+  // Stops the server
+  stop(this: LdfHttpServer): void {
+    // Don't accept new connections, and close existing ones
+    this.close();
+    for (let id in this._sockets)
+      this._sockets[id].destroy();
+
+    // Close all controllers
+    this._controllers.forEach(function (this: LdfHttpServer, controller: Controller) {
+      try { controller.close && controller.close(); }
+      catch (error) { this._log(error); }
+    }, this);
+  },
+};
+
+// Creates a new LinkedDataFragmentsServer
+export function LinkedDataFragmentsServer(options: LinkedDataFragmentsServerOptions): LdfHttpServer {
+  // Create the HTTP(S) server
+  let server: LdfHttpServer, sockets = 0;
+  let urlData = options && options.urlData ? options.urlData : new UrlData();
+  switch (urlData.protocol) {
+  case 'http':
+    server = http.createServer() as import('net').Server as LdfHttpServer;
+    break;
+  case 'https':
+    const ssl = options.ssl || {}, authentication = options.authentication || {};
+    // WebID authentication requires a client certificate
+    if (authentication.webid)
+      ssl.requestCert = ssl.rejectUnauthorized = true;
+    server = https.createServer({ ...ssl, ..._.mapValues(ssl.keys, readHttpsOption) }) as import('net').Server as LdfHttpServer;
+    break;
+  default:
+    throw new Error('The configured protocol ' + urlData.protocol + ' is invalid.');
   }
-  catch (responseError) { this._log(Util.toError(responseError).stack); }
-};
 
-// Stops the server
-LinkedDataFragmentsServer.prototype.stop = function (this: LdfHttpServer): void {
-  // Don't accept new connections, and close existing ones
-  this.close();
-  for (let id in this._sockets)
-    this._sockets[id].destroy();
+  // Assign settings
+  server._sockets = {};
+  server._log = options.log || _.noop;
+  server._accesslogger = options.accesslogger || _.noop;
+  server._controllers = options.controllers || [];
+  server._errorController = new ErrorController(options);
+  server._defaultHeaders = options.response && options.response.headers || {};
+  server._processRequest = serverMethods._processRequest;
+  server._reportError = serverMethods._reportError;
+  server.stop = serverMethods.stop;
 
-  // Close all controllers
-  this._controllers.forEach(function (this: LdfHttpServer, controller: Controller) {
-    try { controller.close && controller.close(); }
-    catch (error) { this._log(error); }
-  }, this);
-};
+  // Attach event listeners
+  server.on('error', (error) => { server._reportError(error); });
+  server.on('request', (request: LdfRequest, response: LdfResponse) => {
+    server._accesslogger(request, response);
+    try { server._processRequest(request, response); }
+    catch (error) { server._reportError(request, response, Util.toError(error)); }
+  });
+  server.on('connection', (socket) => {
+    let socketId = sockets++;
+    server._sockets[socketId] = socket;
+    socket.on('close', () => { delete server._sockets[socketId]; });
+  });
+  return server;
+}
 
 // Reads the value of an option for the https module
 function readHttpsOption(value: unknown): unknown {
@@ -200,5 +183,3 @@ function readHttpsOption(value: unknown): unknown {
   else
     return value;
 }
-
-export = LinkedDataFragmentsServer as LinkedDataFragmentsServerConstructor;

@@ -1,6 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let Controller = require('../../lib/controllers/Controller'),
-    UrlData = require('../../lib/UrlData');
+// temporary
+let Controller = require('../../lib/controllers/Controller').Controller,
+    UrlData = require('../../lib/UrlData').UrlData;
 
 let http = require('http'),
     request = require('supertest'),

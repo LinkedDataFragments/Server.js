@@ -1,13 +1,13 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* A SummaryRdfView represents a data summary in RDF. */
 
-import RdfView = require('@ldf/core/lib/views/RdfView');
+import { RdfView } from '@ldf/core/lib/views/RdfView';
 import type { StreamParser } from 'n3';
 import type { Quad } from 'rdf-js';
 import type { RenderDone, ViewSettings } from '@ldf/core';
 
 // Creates a new SummaryRdfView
-class SummaryRdfView extends RdfView {
+export class SummaryRdfView extends RdfView {
   public constructor(settings?: ViewSettings) {
     super('Summary', settings);
   }
@@ -21,4 +21,3 @@ class SummaryRdfView extends RdfView {
   }
 }
 
-module.exports = SummaryRdfView;

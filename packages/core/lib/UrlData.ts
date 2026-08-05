@@ -8,7 +8,7 @@ interface UrlDataOptions {
 }
 
 // Creates a new UrlData
-class UrlData {
+export class UrlData {
   baseURL: string;
   baseURLRoot: string;
   baseURLPath: string;
@@ -36,4 +36,3 @@ class UrlData {
   }
 }
 
-export = UrlData;

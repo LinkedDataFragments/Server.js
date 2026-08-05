@@ -10,19 +10,19 @@ import type { ConfigRegistry, IComponentsManagerBuilderOptions } from 'component
 // esModuleInterop:false, so the value is pulled in untyped and annotated
 // explicitly against the real `Cluster` interface instead.
 const cluster: Cluster = require('cluster');
-import LinkedDataFragmentsServerWorker = require('./LinkedDataFragmentsServerWorker');
+import { LinkedDataFragmentsServerWorker } from './LinkedDataFragmentsServerWorker';
 import type { WorkerConfig } from './types';
 
 type Writable = { write(chunk: string): void };
 
 // Run function for starting the server from the command line
-function runCli(moduleRootPath: string): void {
+export function runCli(moduleRootPath: string): void {
   let argv = process.argv.slice(2);
   runCustom(argv, process.stdin, process.stdout, process.stderr, null, { mainModulePath: moduleRootPath });
 }
 
 // Generic run function for starting the server from a given config
-function runCustom(
+export function runCustom(
   args: string[],
   stdin: NodeJS.ReadableStream,
   stdout: Writable,
@@ -133,4 +133,3 @@ function runCustom(
   }
 }
 
-module.exports = { runCli: runCli, runCustom: runCustom };

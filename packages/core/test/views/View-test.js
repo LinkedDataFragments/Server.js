@@ -1,5 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let View = require('../../lib/views/View'),
+// temporary
+let View = require('../../lib/views/View').View,
     resolve = require('path').resolve;
 
 describe('View', () => {

@@ -6,12 +6,12 @@ import { EventEmitter } from 'events';
 import { AsyncIterator, BufferedIterator, empty } from 'asynciterator';
 import { stringToTerm } from 'rdf-string';
 import type { DataFactory, Quad, Quad_Graph } from 'rdf-js';
-import UrlData = require('../UrlData');
+import { UrlData } from '../UrlData';
 import type { DatasourceOptions, Query } from '../types';
 import type { CoreOptions, RequestAPI, RequiredUriUrl, Request as RequestT } from 'request';
 
 // Creates a new Datasource
-class Datasource extends EventEmitter {
+export class Datasource extends EventEmitter {
   urlData: UrlData;
   title?: string;
   id?: string;
@@ -238,4 +238,3 @@ class Datasource extends EventEmitter {
 }
 
 
-export = Datasource;

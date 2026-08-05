@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An ErrorController responds to requests that caused an error */
 
-import Controller = require('./Controller');
-import Util = require('../Util');
+import { Controller } from './Controller';
+import * as Util from '../Util';
 import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
 
 // Creates a new ErrorController
-class ErrorController extends Controller {
+export class ErrorController extends Controller {
   constructor(options?: ControllerOptions) {
     super(options);
   }
@@ -28,4 +28,3 @@ class ErrorController extends Controller {
   }
 }
 
-export = ErrorController;

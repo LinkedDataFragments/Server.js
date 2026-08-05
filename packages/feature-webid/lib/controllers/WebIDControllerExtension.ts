@@ -5,10 +5,10 @@ import * as http from 'http';
 import { TLSSocket } from 'tls';
 import type { Socket } from 'net';
 import parseCacheControl = require('parse-cache-control');
-import N3Parser = require('@ldf/core/lib/N3ParserExtended');
-import Controller = require('@ldf/core/lib/controllers/Controller');
-import UrlData = require('@ldf/core/lib/UrlData');
-import Util = require('@ldf/core/lib/Util');
+import { N3ParserExtended as N3Parser } from '@ldf/core/lib/N3ParserExtended';
+import { Controller } from '@ldf/core/lib/controllers/Controller';
+import { UrlData } from '@ldf/core/lib/UrlData';
+import * as Util from '@ldf/core/lib/Util';
 import LRU = require('lru-cache');
 import type { Quad as N3Quad, Prefixes as N3Prefixes } from 'n3';
 import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core';
@@ -32,7 +32,7 @@ function assertTlsSocket(socket: Socket): asserts socket is TLSSocket {
 }
 
 // Creates a new WebIDControllerExtensionsl
-class WebIDControllerExtension extends Controller {
+export class WebIDControllerExtension extends Controller {
   protected _cache: LRU<string, CachedId>;
   protected _protocol?: string;
 
@@ -118,7 +118,7 @@ class WebIDControllerExtension extends Controller {
         parser.parse(res, parseTriple);
 
         res.on('end', () => {
-          let cacheControl = parseCacheControl(res.headers['Cache-Control'] as string || '');
+          let cacheControl = parseCacheControl((res.headers['Cache-Control'] as string | undefined) || '');
           this._cache.set(webID, id, cacheControl && cacheControl['max-age'] || 0);
           verify(id.modulus, id.exponent);
         });
@@ -149,9 +149,8 @@ class WebIDControllerExtension extends Controller {
     response.writeHead(401, {
       'Content-Type': Util.MIME_PLAINTEXT,
     });
-    let forbidden = typeof options === 'function' ? {} : options;
+    const forbidden = typeof options === 'function' ? {} : options;
     response.end('Access to ' + String(request.url) + ' is not allowed, verification for WebID ' + (forbidden.webID || '') + ' failed. Reason: ' + (forbidden.reason || ''));
   }
 }
 
-module.exports = WebIDControllerExtension;

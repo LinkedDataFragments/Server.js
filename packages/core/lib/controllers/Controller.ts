@@ -4,12 +4,11 @@
 import * as url from 'url';
 import type { Url, UrlObject } from 'url';
 import * as _ from 'lodash';
-import ViewCollection = require('../views/ViewCollection');
-import UrlData = require('../UrlData');
-import Util = require('../Util');
-import type { ControllerOptions, LdfRequest, LdfResponse, ViewSettings } from '../types';
-import type { DatasourceRegistry } from '../types';
-import type View = require('../views/View');
+import { ViewCollection } from '../views/ViewCollection';
+import { UrlData } from '../UrlData';
+import * as Util from '../Util';
+import type { ControllerOptions, DatasourceRegistry, LdfRequest, LdfResponse, ViewSettings } from '../types';
+import type { View } from '../views/View';
 
 interface ForwardedElement {
   by?: string;
@@ -28,7 +27,7 @@ function isViewCollection(views: View[] | ViewCollection | undefined): views is 
 }
 
 // Creates a new Controller
-class Controller {
+export class Controller {
   _first?: boolean;
   _last?: boolean;
   protected _prefixes: Record<string, string>;
@@ -131,4 +130,3 @@ class Controller {
   close(): void { }
 }
 
-export = Controller;

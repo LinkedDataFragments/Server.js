@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A NotFoundRdfView represents a 404 response in RDF. */
 
-import RdfView = require('../RdfView');
+import { RdfView } from '../RdfView';
 import type { Quad } from 'rdf-js';
 import type { RenderDone, ViewSettings } from '../../types';
 
 // Creates a new NotFoundRdfView
-class NotFoundRdfView extends RdfView {
+export class NotFoundRdfView extends RdfView {
   constructor(settings?: ViewSettings) {
     super('NotFound', settings);
   }
@@ -19,4 +19,3 @@ class NotFoundRdfView extends RdfView {
 }
 
 
-module.exports = NotFoundRdfView;

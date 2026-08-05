@@ -1,37 +1,34 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 /* An SummaryController responds to requests for summaries */
 
-import Controller = require('@ldf/core/lib/controllers/Controller');
+import { Controller } from '@ldf/core/lib/controllers/Controller';
 import * as fs from 'fs';
 import * as path from 'path';
 import { StreamParser } from 'n3';
-import Util = require('@ldf/core/lib/Util');
+import * as Util from '@ldf/core/lib/Util';
 import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core';
-import type Datasource = require('@ldf/core/lib/datasources/Datasource');
+import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 
-namespace SummaryController {
-  export interface SummariesConfig {
-    dir?: string;
-    path?: string;
-  }
-
-  // The view-settings fields the summary view extensions read off the
-  // request's context; the HTML view doesn't need `datasource`.
-  export interface SummaryRenderSettings {
-    summaries?: SummariesConfig;
-    datasource: Datasource;
-    query: Query;
-    baseURL?: string;
-  }
+export interface SummariesConfig {
+  dir?: string;
+  path?: string;
 }
-type SummariesConfig = SummaryController.SummariesConfig;
+
+// The view-settings fields the summary view extensions read off the
+// request's context; the HTML view doesn't need `datasource`.
+export interface SummaryRenderSettings {
+  summaries?: SummariesConfig;
+  datasource: Datasource;
+  query: Query;
+  baseURL?: string;
+}
 
 interface SummaryControllerOptions extends ControllerOptions {
   summaries?: SummariesConfig;
 }
 
 // Creates a new SummaryController
-class SummaryController extends Controller {
+export class SummaryController extends Controller {
   protected _enabled?: string;
   protected _summariesFolder: string;
   protected _summariesPath: string;
@@ -77,4 +74,3 @@ class SummaryController extends Controller {
   }
 }
 
-export = SummaryController;

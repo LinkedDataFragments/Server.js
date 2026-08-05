@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* HtmlView is a base class for views that generate HTML responses. */
 
-import View = require('./View');
+import { View } from './View';
 import q = require('q');
 import * as path from 'path';
 import * as _ from 'lodash';
 import * as RdfString from 'rdf-string';
-import UrlData = require('../UrlData');
+import { UrlData } from '../UrlData';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../types';
 
 interface Qejs {
@@ -16,7 +16,7 @@ interface Qejs {
 const qejs = require('qejs') as Qejs;
 
 // Creates a new HTML view with the given name and settings
-class HtmlView extends View {
+export class HtmlView extends View {
   constructor(viewName?: string, settings?: ViewSettings) {
     settings = settings || {};
     settings.urlData = settings.urlData || new UrlData();
@@ -31,7 +31,7 @@ class HtmlView extends View {
   // Renders the template with the given name to the response
   protected _renderTemplate(templateName: string, options: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // Initialize all view extensions
-    let extensions: Record<string, any> = options.extensions || (options.extensions = {}), self = this;
+    let extensions: Record<string, unknown> = options.extensions || (options.extensions = {}), self = this;
     for (let extension in extensions) {
       if (!extensions[extension])
         extensions[extension] = this._renderViewExtensionContents(extension, options, request, response);
@@ -63,4 +63,3 @@ class HtmlView extends View {
   }
 }
 
-export = HtmlView;

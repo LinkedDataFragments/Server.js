@@ -4,11 +4,11 @@
 import { Store as N3Store } from 'n3';
 import type { BufferedIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
-import Datasource = require('./Datasource');
+import { Datasource } from './Datasource';
 import type { DatasourceOptions, Pushable, Query } from '../types';
 
 // Creates a new MemoryDatasource
-class MemoryDatasource extends Datasource {
+export class MemoryDatasource extends Datasource {
   protected _url?: string;
   protected _quadStore!: N3Store;
 
@@ -53,4 +53,3 @@ class MemoryDatasource extends Datasource {
   }
 }
 
-export = MemoryDatasource;

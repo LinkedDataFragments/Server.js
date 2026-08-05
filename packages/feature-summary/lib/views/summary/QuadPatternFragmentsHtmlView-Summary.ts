@@ -1,15 +1,15 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* A SummaryHtmlViewExtension extends the Quad Pattern Fragments RDF view with a summary link. */
 
-import HtmlView = require('@ldf/core/lib/views/HtmlView');
+import { HtmlView } from '@ldf/core/lib/views/HtmlView';
 import * as path from 'path';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core';
-import type SummaryController = require('../../controllers/SummaryController');
+import type { SummaryRenderSettings } from '../../controllers/SummaryController';
 
-type SummaryViewSettings = ViewSettings & Omit<SummaryController.SummaryRenderSettings, 'datasource'>;
+type SummaryViewSettings = ViewSettings & Omit<SummaryRenderSettings, 'datasource'>;
 
 // Creates a new SummaryHtmlViewExtension
-class SummaryHtmlViewExtension extends HtmlView {
+export class SummaryHtmlViewExtension extends HtmlView {
   public constructor(settings?: ViewSettings) {
     super('QuadPatternFragments:Before', settings);
   }
@@ -32,4 +32,3 @@ class SummaryHtmlViewExtension extends HtmlView {
 }
 
 
-module.exports = SummaryHtmlViewExtension;

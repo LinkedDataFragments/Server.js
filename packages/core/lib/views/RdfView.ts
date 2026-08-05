@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* HtmlView is a base class for views that generate RDF responses. */
 
-import View = require('./View');
+import { View } from './View';
 import * as N3 from 'n3';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import * as _ from 'lodash';
@@ -35,7 +35,7 @@ function isRdfViewExtension(extension: View): extension is RdfViewExtension {
 }
 
 // Creates a new RDF view with the given name and settings
-class RdfView extends View {
+export class RdfView extends View {
   // Every RdfView subclass generates quads, so unlike the base View (where a
   // dataFactory is optional), one is a required dependency here.
   declare dataFactory: DataFactory;
@@ -151,4 +151,3 @@ class RdfView extends View {
   }
 }
 
-export = RdfView;

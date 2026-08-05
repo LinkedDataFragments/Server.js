@@ -6,11 +6,11 @@ import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'http'
 import type { ParsedUrlQuery } from 'querystring';
 import type { UrlObject } from 'url';
 import type { BufferedIterator } from 'asynciterator';
-import type Datasource = require('./datasources/Datasource');
-import type UrlData = require('./UrlData');
-import type View = require('./views/View');
-import type ViewCollection = require('./views/ViewCollection');
-import type Controller = require('./controllers/Controller');
+import type { Datasource } from './datasources/Datasource';
+import type { UrlData } from './UrlData';
+import type { View } from './views/View';
+import type { ViewCollection } from './views/ViewCollection';
+import type { Controller } from './controllers/Controller';
 
 // Features a query can require a datasource to support — datasource
 // subclasses declare their own supportedFeatureList (see Datasource's

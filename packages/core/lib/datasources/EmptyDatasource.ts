@@ -2,11 +2,11 @@
 /* An empty data source doesn't contain any quads. */
 
 import type { Quad } from 'rdf-js';
-import MemoryDatasource = require('./MemoryDatasource');
+import { MemoryDatasource } from './MemoryDatasource';
 import type { DatasourceOptions } from '../types';
 
 // Creates a new EmptyDatasource
-class EmptyDatasource extends MemoryDatasource {
+export class EmptyDatasource extends MemoryDatasource {
   constructor(options: DatasourceOptions) {
     super(options);
   }
@@ -15,4 +15,3 @@ class EmptyDatasource extends MemoryDatasource {
   protected override _getAllQuads(addQuad: (quad: Quad) => void, done: (error?: Error) => void): void { done(); }
 }
 
-module.exports = EmptyDatasource;

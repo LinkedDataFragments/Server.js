@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let DereferenceController = require('../../lib/controllers/DereferenceController');
+let DereferenceController = require('../../lib/controllers/DereferenceController').DeferenceController; // temporary
 
 let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer');
