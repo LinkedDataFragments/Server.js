@@ -1,5 +1,5 @@
 /*! @license MIT ©2016 Miel Vander Sande, Ghent University - imec */
-let MementoControllerExtension = require('../../lib/controllers/MementoControllerExtension').MementoControllerExtension; // temporary
+let MementoControllerExtension = require('../../lib/controllers/MementoControllerExtension').MementoControllerExtension; // changed to make tests pass, will be revised in follow up pr
 
 let Controller = require('@ldf/core').controllers.Controller,
     UrlData = require('@ldf/core').UrlData,

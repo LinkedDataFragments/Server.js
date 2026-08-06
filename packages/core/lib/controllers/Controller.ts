@@ -19,9 +19,7 @@ interface ForwardedElement {
 // forwarded-parse ships no types of its own and has no @types package.
 const parseForwarded = require('forwarded-parse') as (header: string) => ForwardedElement[];
 
-// Duck-types (rather than `instanceof`s) a ViewCollection, matching the
-// original check's semantics exactly — some callers pass ViewCollection-like
-// objects (e.g. test doubles) that aren't literal ViewCollection instances.
+// Duck-types a ViewCollection, matching the original check's semantics
 function isViewCollection(views: View[] | ViewCollection | undefined): views is ViewCollection {
   return !!(views as ViewCollection | undefined)?.matchView;
 }
@@ -57,9 +55,8 @@ export class Controller {
     // containing the parsed request URL, resolved against the base URL
     if (!request.parsedUrl) {
       // Keep the request's path and query, but take over all other defined baseURL properties
-      // _baseUrl's value type is a single union shared across all its keys (a lodash
-      // mapValues limitation — see its declaration), so it doesn't line up field-by-field
-      // with UrlObject even though every value it can actually hold does.
+      // _baseUrl is cast below since lodash's mapValues collapses its value type to a
+      // single union, which doesn't line up field-by-field with UrlObject.
       request.parsedUrl = _.defaults(_.pick(url.parse(request.url!, true), 'path', 'pathname', 'query'),
         this._getForwarded(request),
         this._getXForwardHeaders(request),

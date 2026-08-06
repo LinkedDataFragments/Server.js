@@ -1,5 +1,5 @@
 /*! @license MIT ©2016 Miel Vander Sande, Ghent University - imec */
-let WebIDControllerExtension = require('../../lib/controllers/WebIDControllerExtension').WebIDControllerExtension; // temporary
+let WebIDControllerExtension = require('../../lib/controllers/WebIDControllerExtension').WebIDControllerExtension; // changed to make tests pass, will be revised in follow up pr
 
 let Controller = require('@ldf/core').controllers.Controller,
     UrlData = require('@ldf/core').UrlData;

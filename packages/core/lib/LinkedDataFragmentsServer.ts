@@ -72,7 +72,7 @@ const serverMethods = {
         response.emit('error', error);
       // Error if no controller left
       else if (controllerId >= self._controllers.length)
-        response.emit('error', new Error('No controller for ' + (request.url as string)));
+        response.emit('error', new Error('No controller for ' + String(request.url)));
       // Otherwise, try the next controller
       else {
         let controller = self._controllers[controllerId++], next = _.once(nextController);

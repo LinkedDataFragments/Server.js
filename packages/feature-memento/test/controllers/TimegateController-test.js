@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
-let TimegateController = require('../../lib/controllers/TimegateController').TimegateController; // temporary
+let TimegateController = require('../../lib/controllers/TimegateController').TimegateController; // changed to make tests pass, will be revised in follow up pr
 
 let Controller = require('@ldf/core').controllers.Controller,
     UrlData = require('@ldf/core').UrlData,

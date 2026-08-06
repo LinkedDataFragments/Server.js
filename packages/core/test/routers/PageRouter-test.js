@@ -1,5 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let PageRouter = require('../../lib/routers/PageRouter').PageRouter; // temporary
+let PageRouter = require('../../lib/routers/PageRouter').PageRouter; // changed to make tests pass, will be revised in follow up pr
 
 describe('PageRouter', () => {
   describe('The PageRouter module', () => {
