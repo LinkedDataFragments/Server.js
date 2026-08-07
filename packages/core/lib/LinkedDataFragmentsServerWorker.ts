@@ -63,8 +63,7 @@ export class LinkedDataFragmentsServerWorker {
     let config = this._config;
     if (port)
       config.port = port;
-    // eslint-disable-next-line new-cap -- factory function, not a constructor, despite the PascalCase name
-    let server = LinkedDataFragmentsServer(config);
+    let server = new LinkedDataFragmentsServer(config);
 
     // Start the server when all data sources are ready
     let pending = Object.keys(config.datasources).length;

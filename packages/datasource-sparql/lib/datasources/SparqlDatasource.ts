@@ -64,11 +64,11 @@ export class SparqlDatasource extends Datasource {
       .on('data', (data: string) => { json += data; })
       .on('error', emitError)
       .on('end', () => {
-        let response: { results: { bindings: any[] } };
+        let response: { results: { bindings: unknown[] } };
         try { response = JSON.parse(json); }
         catch (e) { return emitError({ message: INVALID_JSON_RESPONSE }); }
 
-        response.results.bindings.forEach((rawBinding: any) => {
+        response.results.bindings.forEach((rawBinding) => {
           const binding: IBindings = this._sparqlJsonParser.parseJsonBindings(rawBinding);
           let triple = this.dataFactory.quad(
             (binding.s || query.subject) as Quad_Subject,

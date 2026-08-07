@@ -126,7 +126,14 @@ const serverMethods = {
 };
 
 // Creates a new LinkedDataFragmentsServer
-export function LinkedDataFragmentsServer(options: LinkedDataFragmentsServerOptions): LdfHttpServer {
+export interface LinkedDataFragmentsServerFn {
+  (options: LinkedDataFragmentsServerOptions): LdfHttpServer;
+  new (options: LinkedDataFragmentsServerOptions): LdfHttpServer;
+}
+
+export const LinkedDataFragmentsServer = createServer as LinkedDataFragmentsServerFn;
+
+function createServer(options: LinkedDataFragmentsServerOptions): LdfHttpServer {
   // Create the HTTP(S) server
   let server: LdfHttpServer, sockets = 0;
   let urlData = options && options.urlData ? options.urlData : new UrlData();
