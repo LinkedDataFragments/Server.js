@@ -9,8 +9,8 @@ export class PageRouter {
 
   constructor(config?: { pageSize?: number }) {
     config = config || {};
-    let pageSize = Number(config.pageSize);
-    this.pageSize = isFinite(pageSize) && pageSize > 1 ? ~~pageSize : 100;
+    let pageSize = config.pageSize;
+    this.pageSize = pageSize !== undefined && isFinite(pageSize) && pageSize > 1 ? ~~pageSize : 100;
   }
 
   // Extracts a page parameter from the request and adds it to the query

@@ -12,9 +12,11 @@ import type { View } from './views/View';
 import type { ViewCollection } from './views/ViewCollection';
 import type { Controller } from './controllers/Controller';
 
-// Features a query can require a datasource to support — datasource
-// subclasses declare their own supportedFeatureList (see Datasource's
-// constructor), so this isn't a closed set.
+/**
+ * Features a query can require a datasource to support — datasource
+ * subclasses declare their own supportedFeatureList (see Datasource's
+ * constructor), so this isn't a closed set.
+ */
 export interface QueryFeatures {
   datasource?: boolean;
   limit?: boolean;

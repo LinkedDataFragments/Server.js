@@ -69,10 +69,10 @@ export class RdfView extends View {
   }
 
   // Renders the specified view extension
-  protected override _renderViewExtension(extension: View, options: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
+  protected override _renderViewExtension(extension: View, options: ViewSettings & { writer: RdfWriter }, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // only view extensions that generate triples are supported
     if (isRdfViewExtension(extension))
-      extension._generateRdf(options, (options.writer as RdfWriter).data, (options.writer as RdfWriter).meta, done);
+      extension._generateRdf(options, options.writer.data, options.writer.meta, done);
   }
 
   // Adds details about the datasources

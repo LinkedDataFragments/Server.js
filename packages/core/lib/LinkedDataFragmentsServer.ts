@@ -14,7 +14,7 @@ import type { ControllerOptions, LdfRequest, LdfResponse } from './types';
 interface LinkedDataFragmentsServerOptions extends ControllerOptions {
   ssl?: https.ServerOptions & { keys?: any };
   authentication?: { webid?: boolean };
-  log?: (...args: any[]) => void;
+  log?: (...args: unknown[]) => void;
   accesslogger?: (request: LdfRequest, response: LdfResponse) => void;
   controllers?: Controller[];
   response?: { headers?: Record<string, string> };
@@ -28,7 +28,7 @@ interface LinkedDataFragmentsServerOptions extends ControllerOptions {
 // cast for both branches below, rather than a direct one.
 export interface LdfHttpServer extends http.Server {
   _sockets: Record<string, import('net').Socket>;
-  _log: (...args: any[]) => void;
+  _log: (...args: unknown[]) => void;
   _accesslogger: (request: LdfRequest, response: LdfResponse) => void;
   _controllers: Controller[];
   _errorController: ErrorController;

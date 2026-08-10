@@ -19,15 +19,16 @@ export class View {
   dataFactory?: DataFactory;
 
   protected _supportedContentTypeMatcher!: Record<string, boolean>;
-  protected _defaults: ViewSettings;
+  // Once construction is done, views has always been normalized to a real ViewCollection
+  protected _defaults: ViewSettings & { views?: ViewCollection };
 
   constructor(viewName?: string, contentTypes?: string, defaults?: ViewSettings) {
     this.name = viewName || '';
     this._parseContentTypes(contentTypes);
-    this._defaults = defaults || {};
+    this._defaults = (defaults || {}) as ViewSettings & { views?: ViewCollection };
     this.dataFactory = this._defaults.dataFactory;
-    if (this._defaults.views)
-      this._defaults.views = new ViewCollection(defaults!.views as View[]);
+    if (defaults?.views)
+      this._defaults.views = new ViewCollection(defaults.views as View[]);
   }
 
   // Parses a string of content types into an array of objects
@@ -79,7 +80,7 @@ export class View {
 
   // Gets extensions with the given name for this view
   protected _getViewExtensions(name: string, contentType?: string): View[] {
-    let extensions: View[] = this._defaults.views ? (this._defaults.views as ViewCollection).getViews(this.name + ':' + name) : [];
+    let extensions: View[] = this._defaults.views ? this._defaults.views.getViews(this.name + ':' + name) : [];
     if (extensions.length) {
       extensions = extensions.filter((extension) => {
         return extension.supportsContentType(contentType!);

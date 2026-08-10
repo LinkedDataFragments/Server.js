@@ -2,7 +2,6 @@
 /* A MemoryDatasource queries a set of in-memory quads. */
 
 import { Store as N3Store } from 'n3';
-import type { BufferedIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
 import { Datasource } from './Datasource';
 import type { DatasourceOptions, Pushable, Query } from '../types';
@@ -41,14 +40,14 @@ export class MemoryDatasource extends Datasource {
   }
 
   // Writes the results of the query to the given quad stream
-  protected override _executeQuery(query: Query, destination: BufferedIterator<Quad>): void {
+  protected override _executeQuery(query: Query, destination: Pushable<Quad>): void {
     let offset = query.offset || 0, limit = query.limit || Infinity,
         quads = this._quadStore.getQuads(query.subject ?? null, query.predicate ?? null, query.object ?? null, query.graph ?? null);
     // Send the metadata
     destination.setProperty('metadata', { totalCount: quads.length, hasExactCount: true });
     // Send the requested subset of quads
     for (let i = offset, l = Math.min(offset + limit, quads.length); i < l; i++)
-      (destination as Pushable<Quad>)._push(quads[i]);
+      destination._push(quads[i]);
     destination.close();
   }
 }

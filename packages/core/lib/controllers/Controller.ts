@@ -16,15 +16,15 @@ interface ForwardedElement {
   host?: string;
   proto?: string;
 }
-// forwarded-parse ships no types of its own and has no @types package.
+// TODO: installed forwarded-parse (2.1.0) ships no types. Bump and re-evaluate whether to keep this cast.
 const parseForwarded = require('forwarded-parse') as (header: string) => ForwardedElement[];
 
-// Duck-types a ViewCollection, matching the original check's semantics
+// Type guard for ViewCollection, duck-typed to match the original check's semantics
 function isViewCollection(views: View[] | ViewCollection | undefined): views is ViewCollection {
   return !!(views as ViewCollection | undefined)?.matchView;
 }
 
-// Creates a new Controller
+/** Base class for HTTP request handlers */
 export class Controller {
   _first?: boolean;
   _last?: boolean;
@@ -33,6 +33,7 @@ export class Controller {
   protected _views: ViewCollection;
   protected _baseUrl: Record<keyof Url, string | boolean | undefined>;
 
+  /** Creates a new Controller */
   constructor(options?: ControllerOptions) {
     options = options || {};
     this._prefixes = options.prefixes || {};
@@ -49,7 +50,10 @@ export class Controller {
     });
   }
 
-  // Tries to process the HTTP request
+  /**
+   * Tries to process the HTTP request
+   * @param next - Called when the request could not be handled by this controller
+   */
   handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
     // Add a `parsedUrl` field to `request`,
     // containing the parsed request URL, resolved against the base URL
@@ -79,7 +83,7 @@ export class Controller {
     }
   }
 
-  // Get host and protocol from HTTP's Forwarded header
+  /** Get host and protocol from HTTP's Forwarded header */
   protected _getForwarded(request: LdfRequest): { protocol?: string; host?: string } {
     if (!request.headers.forwarded)
       return {};
@@ -93,7 +97,7 @@ export class Controller {
     catch (error) { return {}; }
   }
 
-  // Get host and protocol from HTTP's X-Forwarded-* headers
+  /** Get host and protocol from HTTP's X-Forwarded-* headers */
   protected _getXForwardHeaders(request: LdfRequest): { protocol?: string; host?: string | string[] } {
     return {
       protocol: request.headers['x-forwarded-proto'] ? (request.headers['x-forwarded-proto'] as string) + ':' : undefined,
@@ -101,18 +105,18 @@ export class Controller {
     };
   }
 
-  // Tries to process the HTTP request in an implementation-specific way
+  /** Tries to process the HTTP request in an implementation-specific way */
   protected _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
     next();
   }
 
-  // Serves an error indicating content negotiation failure
+  /** Serves an error indicating content negotiation failure */
   protected _handleNotAcceptable(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     response.writeHead(406, { 'Content-Type': Util.MIME_PLAINTEXT });
     response.end('No suitable content type found.\n');
   }
 
-  // Finds an appropriate view using content negotiation
+  /** Finds an appropriate view using content negotiation */
   protected _negotiateView(viewName: string, request: LdfRequest, response: LdfResponse) {
     // Indicate that the response is content-negotiated
     let vary = response.getHeader('Vary');
@@ -123,7 +127,7 @@ export class Controller {
     return viewMatch.view;
   }
 
-  // Cleans resources used by the controller
+  /** Cleans resources used by the controller */
   close(): void { }
 }
 
