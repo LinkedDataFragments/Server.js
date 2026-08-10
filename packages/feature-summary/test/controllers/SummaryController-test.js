@@ -8,6 +8,8 @@ let request = require('supertest'),
 
 let SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js').SummaryRdfView; // changed to make tests pass, will be revised in follow up pr
 
+let dataFactory = require('n3').DataFactory;
+
 describe('SummaryController', () => {
   describe('The SummaryController module', () => {
     it('should be a function', () => {
@@ -27,7 +29,7 @@ describe('SummaryController', () => {
     let controller, client;
     before(() => {
       controller = new SummaryController({
-        views: [new SummaryRdfView()],
+        views: [new SummaryRdfView({ dataFactory })],
         summaries: { dir: path.join(__dirname, '/../../../../test/assets') },
         prefixes: {
           ds: 'http://semweb.mmlab.be/ns/datasummaries#',

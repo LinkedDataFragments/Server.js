@@ -7,7 +7,8 @@ let request = require('supertest'),
 
 let QuadPatternFragmentsHtmlView = require('../../').views.quadpatternfragments.QuadPatternFragmentsHtmlView,
     QuadPatternFragmentsRdfView  = require('../../').views.quadpatternfragments.QuadPatternFragmentsRdfView,
-    UrlData                      = require('@ldf/core').UrlData;
+    UrlData                      = require('@ldf/core').UrlData,
+    dataFactory                  = require('n3').DataFactory;
 
 describe('QuadPatternFragmentsController', () => {
   describe('The QuadPatternFragmentsController module', () => {
@@ -40,7 +41,7 @@ describe('QuadPatternFragmentsController', () => {
         supportedFeatures: { quadPattern: true },
       };
       datasources = { 'my-datasource': datasource };
-      view = new QuadPatternFragmentsRdfView(),
+      view = new QuadPatternFragmentsRdfView({ dataFactory }),
       sinon.spy(view, 'render');
       prefixes = { a: 'a' };
       controller = new QuadPatternFragmentsController({
@@ -186,7 +187,7 @@ describe('QuadPatternFragmentsController', () => {
         },
       };
       htmlView = new QuadPatternFragmentsHtmlView();
-      rdfView = new QuadPatternFragmentsRdfView();
+      rdfView = new QuadPatternFragmentsRdfView({ dataFactory });
       sinon.spy(htmlView, 'render');
       sinon.spy(rdfView, 'render');
       controller = new QuadPatternFragmentsController({
@@ -384,7 +385,7 @@ describe('QuadPatternFragmentsController', () => {
         select: sinon.stub().throws(error),
         supportedFeatures: { triplePattern: true },
       };
-      view = new QuadPatternFragmentsRdfView(),
+      view = new QuadPatternFragmentsRdfView({ dataFactory }),
       controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
@@ -423,7 +424,7 @@ describe('QuadPatternFragmentsController', () => {
         select: function (query, callback) { setImmediate(callback.bind(null, error)); },
         supportedFeatures: { triplePattern: true },
       };
-      view = new QuadPatternFragmentsRdfView(),
+      view = new QuadPatternFragmentsRdfView({ dataFactory }),
       view.render = sinon.stub(); // avoid writing a partial body
       controller = new QuadPatternFragmentsController({
         routers: [router],

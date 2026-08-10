@@ -3,7 +3,7 @@
 
 import { RdfView } from '@ldf/core/lib/views/RdfView';
 import type { Quad } from 'rdf-js';
-import type { RenderDone, ViewSettings } from '@ldf/core';
+import type { RdfViewSettings, RenderDone, ViewSettings } from '@ldf/core';
 import type { SummaryRenderSettings } from '../../controllers/SummaryController';
 
 type SummaryViewSettings = ViewSettings & SummaryRenderSettings;
@@ -12,7 +12,7 @@ const ds = 'http://semweb.mmlab.be/ns/datasummaries#';
 
 // Creates a new SummaryRdfViewExtension
 export class SummaryRdfViewExtension extends RdfView {
-  public constructor(settings?: ViewSettings) {
+  public constructor(settings: RdfViewSettings) {
     super('QuadPatternFragments:After', settings);
   }
 

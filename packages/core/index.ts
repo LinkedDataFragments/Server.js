@@ -90,6 +90,7 @@ namespace Core {
   export type RouterRequest = Types.RouterRequest;
   export type ControllerOptions = Types.ControllerOptions;
   export type ViewSettings = Types.ViewSettings;
+  export type RdfViewSettings = Types.RdfViewSettings;
   export type WorkerConfig = Types.WorkerConfig;
 }
 

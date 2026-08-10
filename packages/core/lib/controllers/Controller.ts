@@ -7,13 +7,22 @@ import * as _ from 'lodash';
 import { ViewCollection } from '../views/ViewCollection';
 import { UrlData } from '../UrlData';
 import * as Util from '../Util';
-import type { ControllerOptions, DatasourceRegistry, LdfRequest, LdfResponse, ViewSettings } from '../types';
+import type { ControllerOptions, DatasourceRegistry, LdfRequest, LdfResponse, NonEmptyArray, ViewSettings } from '../types';
 import type { View } from '../views/View';
 
+// A single element of the HTTP Forwarded header (RFC 7239)
 interface ForwardedElement {
+
+  /** The interface where the request came in to the proxy server */
   by?: string;
+
+  /** The client that initiated the request */
   for?: string;
+
+  /** The Host request header field as received by the proxy */
   host?: string;
+
+  /** The protocol used to make the request */
   proto?: string;
 }
 // TODO: installed forwarded-parse (2.1.0) ships no types. Bump and re-evaluate whether to keep this cast.
@@ -24,7 +33,11 @@ function isViewCollection(views: View[] | ViewCollection | undefined): views is 
   return !!(views as ViewCollection | undefined)?.matchView;
 }
 
-/** Base class for HTTP request handlers */
+/**
+ * Base class for HTTP request handlers.
+ * Controllers are chained: each instance's `handleRequest` either handles the
+ * request itself or calls `next` to hand it off to the next controller in the chain.
+ */
 export class Controller {
   _first?: boolean;
   _last?: boolean;
@@ -33,7 +46,10 @@ export class Controller {
   protected _views: ViewCollection;
   protected _baseUrl: Record<keyof Url, string | boolean | undefined>;
 
-  /** Creates a new Controller */
+  /**
+   * Creates a new Controller
+   * @param options - Prefixes, datasources, views, and base URL data shared by the controller chain
+   */
   constructor(options?: ControllerOptions) {
     options = options || {};
     this._prefixes = options.prefixes || {};
@@ -51,8 +67,14 @@ export class Controller {
   }
 
   /**
-   * Tries to process the HTTP request
-   * @param next - Called when the request could not be handled by this controller
+   * Tries to process the HTTP request.
+   * Resolves `request.parsedUrl` against the base URL and any proxy-forwarded
+   * headers if not already set, then delegates to `_handleRequest`. If that
+   * throws or a suitable view can't be found, reports a 406 response instead.
+   * @param request - The incoming HTTP request
+   * @param response - The HTTP response to write to
+   * @param next - Called when the request could not be handled by this controller, with an error if one occurred
+   * @param settings - Additional view-rendering settings to pass through
    */
   handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
     // Add a `parsedUrl` field to `request`,
@@ -83,12 +105,15 @@ export class Controller {
     }
   }
 
-  /** Get host and protocol from HTTP's Forwarded header */
+  /**
+   * Gets the host and protocol from HTTP's Forwarded header (RFC 7239), if present.
+   * Returns an empty object if the header is missing or fails to parse.
+   */
   protected _getForwarded(request: LdfRequest): { protocol?: string; host?: string } {
     if (!request.headers.forwarded)
       return {};
     try {
-      let forwarded: { proto?: string; host?: string } = _.defaults.apply(this, parseForwarded(request.headers.forwarded) as [ForwardedElement, ...ForwardedElement[]]);
+      let forwarded: { proto?: string; host?: string } = _.defaults.apply(this, parseForwarded(request.headers.forwarded) as NonEmptyArray<ForwardedElement>);
       return {
         protocol: forwarded.proto ? forwarded.proto + ':' : undefined,
         host: forwarded.host,
@@ -97,7 +122,10 @@ export class Controller {
     catch (error) { return {}; }
   }
 
-  /** Get host and protocol from HTTP's X-Forwarded-* headers */
+  /**
+   * Gets the host and protocol from HTTP's non-standard X-Forwarded-Proto/X-Forwarded-Host
+   * headers, as an alternative to the standardized Forwarded header.
+   */
   protected _getXForwardHeaders(request: LdfRequest): { protocol?: string; host?: string | string[] } {
     return {
       protocol: request.headers['x-forwarded-proto'] ? (request.headers['x-forwarded-proto'] as string) + ':' : undefined,
@@ -105,18 +133,25 @@ export class Controller {
     };
   }
 
-  /** Tries to process the HTTP request in an implementation-specific way */
+  /**
+   * Tries to process the HTTP request in an implementation-specific way.
+   * The base implementation just hands off to `next`; subclasses override this
+   * to actually handle requests, calling `next` themselves when they don't apply.
+   */
   protected _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
     next();
   }
 
-  /** Serves an error indicating content negotiation failure */
+  /** Serves a 406 Not Acceptable response, indicating no view could satisfy content negotiation */
   protected _handleNotAcceptable(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     response.writeHead(406, { 'Content-Type': Util.MIME_PLAINTEXT });
     response.end('No suitable content type found.\n');
   }
 
-  /** Finds an appropriate view using content negotiation */
+  /**
+   * Finds an appropriate view using content negotiation, sets the response's
+   * Vary and Content-Type headers accordingly, and returns the matched view.
+   */
   protected _negotiateView(viewName: string, request: LdfRequest, response: LdfResponse) {
     // Indicate that the response is content-negotiated
     let vary = response.getHeader('Vary');
@@ -127,7 +162,7 @@ export class Controller {
     return viewMatch.view;
   }
 
-  /** Cleans resources used by the controller */
+  /** Cleans up resources used by the controller. The base implementation is a no-op; subclasses override as needed. */
   close(): void { }
 }
 

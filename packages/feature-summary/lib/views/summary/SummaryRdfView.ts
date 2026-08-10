@@ -4,11 +4,11 @@
 import { RdfView } from '@ldf/core/lib/views/RdfView';
 import type { StreamParser } from 'n3';
 import type { Quad } from 'rdf-js';
-import type { RenderDone, ViewSettings } from '@ldf/core';
+import type { RdfViewSettings, RenderDone, ViewSettings } from '@ldf/core';
 
 // Creates a new SummaryRdfView
 export class SummaryRdfView extends RdfView {
-  public constructor(settings?: ViewSettings) {
+  public constructor(settings: RdfViewSettings) {
     super('Summary', settings);
   }
 

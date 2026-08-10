@@ -6,7 +6,7 @@ import * as N3 from 'n3';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import * as _ from 'lodash';
 import type { DataFactory, Quad } from 'rdf-js';
-import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../types';
+import type { LdfRequest, LdfResponse, RdfViewSettings, RenderDone, ViewSettings } from '../types';
 
 let dcTerms = 'http://purl.org/dc/terms/',
     rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -36,12 +36,11 @@ function isRdfViewExtension(extension: View): extension is RdfViewExtension {
 
 // Creates a new RDF view with the given name and settings
 export class RdfView extends View {
-  // Every RdfView subclass generates quads, so unlike the base View (where a
-  // dataFactory is optional), one is a required dependency here.
-  declare dataFactory: DataFactory;
+  public override dataFactory: DataFactory;
 
-  constructor(viewName?: string, settings?: ViewSettings) {
+  constructor(viewName: string, settings: RdfViewSettings) {
     super(viewName, contentTypes, settings);
+    this.dataFactory = settings.dataFactory;
   }
 
   // Renders the view with the given settings to the response

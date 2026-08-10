@@ -46,6 +46,8 @@ export type DatasourceRegistry = Record<string, Datasource>;
 
 export type Pushable<T> = BufferedIterator<T> & { _push(item: T): void };
 
+export type NonEmptyArray<T> = [T, ...T[]];
+
 // Options accepted by the Datasource base class constructor
 export interface DatasourceOptions {
   urlData?: UrlData;
@@ -115,6 +117,9 @@ export interface ViewSettings {
   viewPathBase?: string;
   [key: string]: any;
 }
+
+// ViewSettings with dataFactory guaranteed present, as required by RdfView and its subclasses
+export type RdfViewSettings = ViewSettings & { dataFactory: DataFactory };
 
 // Configuration consumed by LinkedDataFragmentsServerWorker
 export interface WorkerConfig extends ControllerOptions {

@@ -6,7 +6,7 @@ import { stringQuadToQuad } from 'rdf-string';
 import type { IStringQuad } from 'rdf-string';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
-import type { Query, RenderDone, ViewSettings } from '@ldf/core';
+import type { Query, RdfViewSettings, RenderDone, ViewSettings } from '@ldf/core';
 import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 
 let dcTerms = 'http://purl.org/dc/terms/',
@@ -28,8 +28,8 @@ type DatasourceInfo = Datasource & { index: string; templateUrl: string; support
 
 // Creates a new QuadPatternFragmentsRdfView
 export class QuadPatternFragmentsRdfView extends RdfView {
-  constructor(settings?: ViewSettings) {
-    super((settings || {}).viewNameOverride || 'QuadPatternFragments', settings);
+  constructor(settings: RdfViewSettings) {
+    super(settings.viewNameOverride || 'QuadPatternFragments', settings);
   }
 
   // Generates quads by sending them to the data and/or metadata callbacks

@@ -3,11 +3,11 @@
 
 import { RdfView } from '../RdfView';
 import type { Quad } from 'rdf-js';
-import type { RenderDone, ViewSettings } from '../../types';
+import type { RdfViewSettings, RenderDone, ViewSettings } from '../../types';
 
 // Creates a new NotFoundRdfView
 export class NotFoundRdfView extends RdfView {
-  constructor(settings?: ViewSettings) {
+  constructor(settings: RdfViewSettings) {
     super('NotFound', settings);
   }
 
