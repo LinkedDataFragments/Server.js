@@ -41,7 +41,7 @@ export class Controller {
       // If the path does not start with a slash, add one.
       datasources[key.replace(/^(?!\/)/, '/')] = value;
       return datasources;
-    }, {} satisfies DatasourceRegistry);
+    }, {} as DatasourceRegistry);
     this._views = isViewCollection(options.views) ? options.views : new ViewCollection(options.views);
 
     // Set up base URL (if we're behind a proxy, this allows reconstructing the actual request URL)
@@ -65,7 +65,7 @@ export class Controller {
         this._getForwarded(request),
         this._getXForwardHeaders(request),
         this._baseUrl,
-        { protocol: 'http:', host: request.headers.host }) satisfies UrlObject;
+        { protocol: 'http:', host: request.headers.host }) as UrlObject;
     }
 
     // Try to handle the request
@@ -88,7 +88,7 @@ export class Controller {
     if (!request.headers.forwarded)
       return {};
     try {
-      let forwarded: { proto?: string; host?: string } = _.defaults.apply(this, parseForwarded(request.headers.forwarded) as NonEmptyArray<ForwardedElement>);
+      let forwarded: { proto?: string; host?: string } = _.defaults.apply(this, parseForwarded(request.headers.forwarded) as [ForwardedElement, ...ForwardedElement[]]);
       return {
         protocol: forwarded.proto ? forwarded.proto + ':' : undefined,
         host: forwarded.host,

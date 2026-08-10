@@ -12,7 +12,7 @@ import type { Controller } from './controllers/Controller';
 import type { ControllerOptions, LdfRequest, LdfResponse } from './types';
 
 interface LinkedDataFragmentsServerOptions extends ControllerOptions {
-  ssl?: https.ServerOptions & { keys?: unknown };
+  ssl?: https.ServerOptions & { keys?: any };
   authentication?: { webid?: boolean };
   log?: (...args: unknown[]) => void;
   accesslogger?: (request: LdfRequest, response: LdfResponse) => void;
