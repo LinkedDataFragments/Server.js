@@ -31,26 +31,34 @@ interface ErrorTypeFn {
 export function createErrorType(name: string, init?: ErrorInit): ErrorTypeConstructor;
 export function createErrorType(BaseError: ErrorConstructor, name: string, init?: ErrorInit): ErrorTypeConstructor;
 export function createErrorType(
-  BaseError: ErrorConstructor | string,
-  name?: string | ErrorInit,
-  init?: ErrorInit,
+  baseErrorOrName: ErrorConstructor | string,
+  nameOrInit?: string | ErrorInit,
+  maybeInit?: ErrorInit,
 ): ErrorTypeConstructor {
-  if (typeof BaseError !== 'function') {
-    init = name as ErrorInit;
-    name = BaseError;
+  let BaseError: ErrorConstructor;
+  let name: string;
+  let init: ErrorInit | undefined;
+  if (typeof baseErrorOrName === 'string') {
     BaseError = Error;
+    name = baseErrorOrName;
+    init = nameOrInit as ErrorInit | undefined;
   }
-  const errorName = name as string;
+  else {
+    BaseError = baseErrorOrName;
+    name = nameOrInit as string;
+    init = maybeInit;
+  }
+
   function ErrorType(this: Error, message?: string, ...rest: any[]) {
     const error: Error = this instanceof ErrorType ? this : new (ErrorType as ErrorTypeFn)(message, ...rest);
-    error.name = errorName;
+    error.name = name;
     error.message = message || '';
     Error.captureStackTrace(error, error.constructor);
     init && init.apply(error, [message, ...rest]);
     return error;
   }
   ErrorType.prototype = new BaseError();
-  ErrorType.prototype.name = errorName;
+  ErrorType.prototype.name = name;
   ErrorType.prototype.constructor = ErrorType;
   return ErrorType as ErrorTypeFn;
 }
