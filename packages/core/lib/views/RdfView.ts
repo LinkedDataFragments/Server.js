@@ -30,18 +30,17 @@ interface RdfWriter {
 interface RdfViewExtension extends View {
   _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void;
 }
-function isRdfViewExtension(extension: View): extension is RdfViewExtension {
+function isRdfViewExtension(extension: View): extension is RdfView {
   return !!(extension as Partial<RdfViewExtension>)._generateRdf;
 }
 
 // Creates a new RDF view with the given name and settings
 export class RdfView extends View {
-  // Every RdfView subclass generates quads, so unlike the base View (where a
-  // dataFactory is optional), one is a required dependency here.
-  declare dataFactory: DataFactory;
+  public override dataFactory: DataFactory;
 
-  constructor(viewName?: string, settings?: ViewSettings) {
+constructor(viewName: string, settings: ViewSettings & { dataFactory: DataFactory }) {
     super(viewName, contentTypes, settings);
+    this.dataFactory = settings.dataFactor;
   }
 
   // Renders the view with the given settings to the response

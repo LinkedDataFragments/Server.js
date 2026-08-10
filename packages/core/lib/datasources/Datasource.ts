@@ -24,7 +24,7 @@ export class Datasource extends EventEmitter {
   licenseUrl?: string;
   copyright?: string;
   homepage?: string;
-  dataFactory!: DataFactory;
+  dataFactory: DataFactory;
   initialized: boolean;
   supportedFeatures: Record<string, boolean>;
 
@@ -61,7 +61,7 @@ export class Datasource extends EventEmitter {
     this.dataFactory = options.dataFactory!;
     if (options.graph) {
       this._graph = this.dataFactory.namedNode(options.graph);
-      this._queryGraphReplacements = Object.create(null) as Record<string, string>;
+      this._queryGraphReplacements = Object.create(null);
       this._queryGraphReplacements[''] = 'urn:ldf:emptyGraph';
       this._queryGraphReplacements[options.graph] = '';
     }
@@ -195,7 +195,7 @@ export class Datasource extends EventEmitter {
   }
 
   // Retrieves a stream through HTTP or the local file system
-  protected _fetch(options: { url: string; [key: string]: any }): EventEmitter {
+  protected _fetch(options: { url: string; [key: string]: unknown }): EventEmitter {
     let stream: EventEmitter,
         url = options.url, protocolMatch = /^(?:([a-z]+):)?/.exec(url)!;
     switch (protocolMatch[1] || 'file') {
