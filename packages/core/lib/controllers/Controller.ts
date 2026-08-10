@@ -41,7 +41,7 @@ export class Controller {
       // If the path does not start with a slash, add one.
       datasources[key.replace(/^(?!\/)/, '/')] = value;
       return datasources;
-    }, {} as DatasourceRegistry);
+    }, {} satisfies DatasourceRegistry);
     this._views = isViewCollection(options.views) ? options.views : new ViewCollection(options.views);
 
     // Set up base URL (if we're behind a proxy, this allows reconstructing the actual request URL)
