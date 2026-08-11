@@ -7,7 +7,6 @@ import * as path from 'path';
 import { N3ParserExtended as N3Parser } from '@ldf/core/lib/N3ParserExtended';
 import { spawn } from 'child_process';
 import type { Quad } from 'rdf-js';
-import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, Pushable, Query } from '@ldf/core';
 
 let hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
@@ -43,7 +42,7 @@ export class ExternalHdtDatasource extends Datasource {
   }
 
   // Writes the results of the query to the given quad stream
-  protected override _executeQuery(query: Query, destination: BufferedIterator<Quad>): void {
+  protected override _executeQuery(query: Query, destination: Pushable<Quad>): void {
     // Only the default graph has results
     if (query.graph && query.graph.termType !== 'DefaultGraph') {
       destination.setProperty('metadata', { totalCount: 0, hasExactCount: true });
@@ -66,7 +65,7 @@ export class ExternalHdtDatasource extends Datasource {
       if (error)
         destination.emit('error', new Error('Invalid query result: ' + error.message));
       else if (triple)
-        tripleCount++, (destination as Pushable<Quad>)._push(triple);
+        tripleCount++, destination._push(triple);
       else {
         // Ensure the estimated total count is as least as large as the number of triples
         if (tripleCount && estimatedTotalCount < offset + tripleCount)
@@ -75,10 +74,13 @@ export class ExternalHdtDatasource extends Datasource {
         destination.close();
       }
     });
+    // prefixMap is N3ParserExtended's typed view of n3's internal _prefixes (same object)
     parser.prefixMap._ = '_:'; // Ensure blank nodes are named consistently
 
     // Extract the estimated number of total matches from the first (comment) line
     hdt.stdout.once('data', (header: string) => {
+      // Surfaced as a TypeScript error: parseInt requires a string, but header.match()
+      // returns RegExpMatchArray | null, so the match is extracted explicitly here
       estimatedTotalCount = parseInt(header.match(/\d+/)?.[0] ?? '', 10) || 0;
       hasExactCount = header.indexOf('estimated') < 0;
     });

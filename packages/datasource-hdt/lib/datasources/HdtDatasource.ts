@@ -5,7 +5,6 @@ import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import * as hdt from 'hdt';
 import { ExternalHdtDatasource } from './ExternalHdtDatasource';
 import type { Quad } from 'rdf-js';
-import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, Pushable, Query } from '@ldf/core';
 
 interface HdtDatasourceOptions extends DatasourceOptions {
@@ -14,7 +13,7 @@ interface HdtDatasourceOptions extends DatasourceOptions {
 
 // Creates a new HdtDatasource
 export class HdtDatasource extends Datasource {
-  protected _hdtFile!: string;
+  protected _hdtFile: string;
   protected _hdtDocument?: hdt.Document;
 
   constructor(options: HdtDatasourceOptions) {
@@ -22,10 +21,10 @@ export class HdtDatasource extends Datasource {
     super(options, supportedFeatureList);
 
     options = options || {};
+    this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
     // Switch to external HDT datasource if the `external` flag is set
     if (options.external)
       return new ExternalHdtDatasource(options) as unknown as HdtDatasource;
-    this._hdtFile = (options.file || '').replace(/^file:\/\//, '');
   }
 
   // Loads the HDT datasource
@@ -34,7 +33,7 @@ export class HdtDatasource extends Datasource {
   }
 
   // Writes the results of the query to the given quad stream
-  protected override _executeQuery(query: Query, destination: BufferedIterator<Quad>): void {
+  protected override _executeQuery(query: Query, destination: Pushable<Quad>): void {
     // Only the default graph has results
     if (query.graph && query.graph.termType !== 'DefaultGraph') {
       destination.setProperty('metadata', { totalCount: 0, hasExactCount: true });
@@ -54,7 +53,7 @@ export class HdtDatasource extends Datasource {
         destination.setProperty('metadata', { totalCount: estimatedTotalCount, hasExactCount: hasExactCount });
         // Add the triples to the output
         for (let i = 0; i < tripleCount; i++)
-          (destination as Pushable<Quad>)._push(triples[i]);
+          destination._push(triples[i]);
         destination.close();
       },
       (error) => { destination.emit('error', error); });
