@@ -38,92 +38,97 @@ export interface LdfHttpServer extends http.Server {
   stop(): void;
 }
 
-// Methods attached to every server instance created by LinkedDataFragmentsServer()
-const serverMethods = {
-  // Handles an incoming HTTP request
-  _processRequest(this: LdfHttpServer, request: LdfRequest, response: LdfResponse): void {
-    // Add default response headers
-    for (let header in this._defaultHeaders)
-      response.setHeader(header, this._defaultHeaders[header]);
+// Methods attached to every server instance created by LinkedDataFragmentsServer().
+// `this` is the LdfHttpServer instance at the call site (server._processRequest(...) etc.),
+// same as the original prototype methods this replaces — disabled below since ESLint's
+// no-invalid-this only recognizes object/class methods as valid `this` contexts, not
+// standalone functions, even though the binding is identical either way.
+/* eslint-disable no-invalid-this */
 
-    // Verify an allowed HTTP method was used
-    switch (request.method) {
-    // Allow GET requests
-    case 'GET':
-      break;
-    // Don't write a body with HEAD and OPTIONS
-    case 'HEAD':
-    case 'OPTIONS':
-      response.write = function (chunk: any, encoding?: any, callback?: any): boolean { return true; };
-      response.end = response.end.bind(response, '', '' as BufferEncoding);
-      break;
-    // Reject all other methods
-    default:
-      response.writeHead(405, { 'Content-Type': Util.MIME_PLAINTEXT });
-      response.end('The HTTP method "' + (request.method as string) + '" is not allowed; try "GET" instead.');
+// Handles an incoming HTTP request
+function _processRequest(this: LdfHttpServer, request: LdfRequest, response: LdfResponse): void {
+  // Add default response headers
+  for (let header in this._defaultHeaders)
+    response.setHeader(header, this._defaultHeaders[header]);
+
+  // Verify an allowed HTTP method was used
+  switch (request.method) {
+  // Allow GET requests
+  case 'GET':
+    break;
+  // Don't write a body with HEAD and OPTIONS
+  case 'HEAD':
+  case 'OPTIONS':
+    response.write = function (chunk: any, encoding?: any, callback?: any): boolean { return true; };
+    response.end = response.end.bind(response, '', '' as BufferEncoding);
+    break;
+  // Reject all other methods
+  default:
+    response.writeHead(405, { 'Content-Type': Util.MIME_PLAINTEXT });
+    response.end('The HTTP method "' + (request.method as string) + '" is not allowed; try "GET" instead.');
+    return;
+  }
+
+  // Try each of the controllers in order
+  let self = this, controllerId = 0;
+  function nextController(error?: Error) {
+    // Error if the previous controller failed
+    if (error)
+      response.emit('error', error);
+    // Error if no controller left
+    else if (controllerId >= self._controllers.length)
+      response.emit('error', new Error('No controller for ' + String(request.url)));
+    // Otherwise, try the next controller
+    else {
+      let controller = self._controllers[controllerId++], next = _.once(nextController);
+      try { controller.handleRequest(request, response, next); }
+      catch (error) { next(Util.toError(error)); }
+    }
+  }
+  response.on('error', (error) => { self._reportError(request, response, error); });
+  nextController();
+}
+
+// Serves an application error
+function _reportError(this: LdfHttpServer, request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void {
+  // If no request or response is available, the server failed outside of a request; don't recover
+  if (!response) {
+    error = Util.toError(request);
+    response = request = undefined;
+    this._log('Fatal error, exiting process\n', error.stack);
+    return process.exit(-1);
+  }
+
+  // Log the error
+  this._log(error!.stack);
+
+  // Try to report the error in the response
+  try {
+    // Ensure errors are not handled recursively, and don't modify an already started response
+    if (response.error || response.headersSent) {
+      response.end();
       return;
     }
+    response.error = error;
+    this._errorController.handleRequest(request as LdfRequest, response, _.noop);
+  }
+  catch (responseError) { this._log(Util.toError(responseError).stack); }
+}
 
-    // Try each of the controllers in order
-    let self = this, controllerId = 0;
-    function nextController(error?: Error) {
-      // Error if the previous controller failed
-      if (error)
-        response.emit('error', error);
-      // Error if no controller left
-      else if (controllerId >= self._controllers.length)
-        response.emit('error', new Error('No controller for ' + String(request.url)));
-      // Otherwise, try the next controller
-      else {
-        let controller = self._controllers[controllerId++], next = _.once(nextController);
-        try { controller.handleRequest(request, response, next); }
-        catch (error) { next(Util.toError(error)); }
-      }
-    }
-    response.on('error', (error) => { self._reportError(request, response, error); });
-    nextController();
-  },
+// Stops the server
+function stop(this: LdfHttpServer): void {
+  // Don't accept new connections, and close existing ones
+  this.close();
+  for (let id in this._sockets)
+    this._sockets[id].destroy();
 
-  // Serves an application error
-  _reportError(this: LdfHttpServer, request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void {
-    // If no request or response is available, the server failed outside of a request; don't recover
-    if (!response) {
-      error = Util.toError(request);
-      response = request = undefined;
-      this._log('Fatal error, exiting process\n', error.stack);
-      return process.exit(-1);
-    }
-
-    // Log the error
-    this._log(error!.stack);
-
-    // Try to report the error in the response
-    try {
-      // Ensure errors are not handled recursively, and don't modify an already started response
-      if (response.error || response.headersSent) {
-        response.end();
-        return;
-      }
-      response.error = error;
-      this._errorController.handleRequest(request as LdfRequest, response, _.noop);
-    }
-    catch (responseError) { this._log(Util.toError(responseError).stack); }
-  },
-
-  // Stops the server
-  stop(this: LdfHttpServer): void {
-    // Don't accept new connections, and close existing ones
-    this.close();
-    for (let id in this._sockets)
-      this._sockets[id].destroy();
-
-    // Close all controllers
-    this._controllers.forEach(function (this: LdfHttpServer, controller: Controller) {
-      try { controller.close && controller.close(); }
-      catch (error) { this._log(error); }
-    }, this);
-  },
-};
+  // Close all controllers
+  this._controllers.forEach(function (this: LdfHttpServer, controller: Controller) {
+    try { controller.close && controller.close(); }
+    catch (error) { this._log(error); }
+  }, this);
+}
+/* eslint-enable no-invalid-this */
 
 // Creates a new LinkedDataFragmentsServer
 export interface LinkedDataFragmentsServerFn {
@@ -159,9 +164,9 @@ function createServer(options: LinkedDataFragmentsServerOptions): LdfHttpServer 
   server._controllers = options.controllers || [];
   server._errorController = new ErrorController(options);
   server._defaultHeaders = options.response && options.response.headers || {};
-  server._processRequest = serverMethods._processRequest;
-  server._reportError = serverMethods._reportError;
-  server.stop = serverMethods.stop;
+  server._processRequest = _processRequest;
+  server._reportError = _reportError;
+  server.stop = stop;
 
   // Attach event listeners
   server.on('error', (error) => { server._reportError(error); });
