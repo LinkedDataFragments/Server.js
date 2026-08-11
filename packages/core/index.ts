@@ -3,29 +3,10 @@
 
 import type * as Types from './lib/types';
 
-import { AssetsController } from './lib/controllers/AssetsController';
-import { Controller } from './lib/controllers/Controller';
-import { DeferenceController as DereferenceController } from './lib/controllers/DereferenceController';
-import { ErrorController } from './lib/controllers/ErrorController';
-import { NotFoundController } from './lib/controllers/NotFoundController';
-
-import { Datasource } from './lib/datasources/Datasource';
-import { EmptyDatasource } from './lib/datasources/EmptyDatasource';
-import { IndexDatasource } from './lib/datasources/IndexDatasource';
-import { MemoryDatasource } from './lib/datasources/MemoryDatasource';
-
-import { DatasourceRouter } from './lib/routers/DatasourceRouter';
-import { PageRouter } from './lib/routers/PageRouter';
-
-import { ErrorHtmlView } from './lib/views/error/ErrorHtmlView';
-import { ErrorRdfView } from './lib/views/error/ErrorRdfView';
-import { ForbiddenHtmlView } from './lib/views/forbidden/ForbiddenHtmlView';
-import { NotFoundHtmlView } from './lib/views/notfound/NotFoundHtmlView';
-import { NotFoundRdfView } from './lib/views/notfound/NotFoundRdfView';
-import { HtmlView } from './lib/views/HtmlView';
-import { RdfView } from './lib/views/RdfView';
-import { View } from './lib/views/View';
-import { ViewCollection } from './lib/views/ViewCollection';
+import * as controllers from './lib/controllers';
+import * as datasources from './lib/datasources';
+import * as routers from './lib/routers';
+import * as views from './lib/views';
 
 import { runCli, runCustom } from './lib/CliRunner';
 import { LinkedDataFragmentsServer } from './lib/LinkedDataFragmentsServer';
@@ -34,40 +15,10 @@ import { UrlData } from './lib/UrlData';
 import * as Util from './lib/Util';
 
 const Core = {
-  controllers: {
-    AssetsController,
-    Controller,
-    DereferenceController,
-    ErrorController,
-    NotFoundController,
-  },
-  datasources: {
-    Datasource,
-    EmptyDatasource,
-    IndexDatasource,
-    MemoryDatasource,
-  },
-  routers: {
-    DatasourceRouter,
-    PageRouter,
-  },
-  views: {
-    error: {
-      ErrorHtmlView,
-      ErrorRdfView,
-    },
-    forbidden: {
-      ForbiddenHtmlView,
-    },
-    notfound: {
-      NotFoundHtmlView,
-      NotFoundRdfView,
-    },
-    HtmlView,
-    RdfView,
-    View,
-    ViewCollection,
-  },
+  controllers,
+  datasources,
+  routers,
+  views,
   runCli,
   runCustom,
   LinkedDataFragmentsServer,

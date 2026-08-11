@@ -162,7 +162,7 @@ export class Controller {
     return viewMatch.view;
   }
 
-  /** Cleans up resources used by the controller. The base implementation is a no-op; subclasses override as needed. */
+  /** Cleans up resources used by the controller. */
   close(): void { }
 }
 
