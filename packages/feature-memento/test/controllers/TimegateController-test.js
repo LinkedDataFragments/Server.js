@@ -97,6 +97,25 @@ describe('TimegateController', () => {
       }, urlData);
       inverted.ds1.original.should.equal('http://example.org/resource');
     });
+
+    it('should fall back to a bare / when the given urlData has no base URL', () => {
+      let datasource = { id: 'ds1', path: '/ds1/' };
+      let inverted = TimegateController.parseInvertedTimegateMap({
+        resource: [{ datasource, initial: '2020-01-01T00:00:00Z', final: '2020-06-01T00:00:00Z' }],
+      }, {});
+      inverted.ds1.original.should.equal('/resource');
+    });
+
+    it('should use the configured original URL when given', () => {
+      let datasource = { id: 'ds1', path: '/ds1/' };
+      let inverted = TimegateController.parseInvertedTimegateMap({
+        resource: [{
+          datasource, initial: '2020-01-01T00:00:00Z', final: '2020-06-01T00:00:00Z',
+          originalBaseURL: 'http://original.example.org/',
+        }],
+      }, urlData);
+      inverted.ds1.original.should.equal('http://original.example.org/');
+    });
   });
 
   describe('_getClosestMemento', () => {
@@ -128,6 +147,36 @@ describe('TimegateController', () => {
 
     it('should return the previous memento when the date falls in a gap between intervals', () => {
       controller._getClosestMemento(timemap, new Date('2020-02-15T00:00:00Z')).datasourceId.should.equal('a');
+    });
+
+    it('should return null for an invalid accept-datetime', () => {
+      expect(controller._getClosestMemento(timemap, 'not-a-date')).to.equal(null);
+    });
+
+    it('should sort an unsorted timemap when told to', () => {
+      let unsorted = [timemap[2], timemap[0], timemap[1]];
+      controller._getClosestMemento(unsorted, new Date('2020-03-15T00:00:00Z'), true).datasourceId.should.equal('b');
+    });
+
+    it('should skip mementos with a non-finite interval when scanning for a match', () => {
+      let invalidEntry = { datasource: { id: 'invalid', path: '/invalid/' }, datasourceId: 'invalid', interval: [new Date('not-a-date'), new Date('not-a-date')] };
+      let withInvalid = [
+        entry('a', '2020-01-01T00:00:00Z', '2020-02-01T00:00:00Z'),
+        invalidEntry,
+        entry('c', '2020-05-01T00:00:00Z', '2020-06-01T00:00:00Z'),
+        entry('d', '2020-07-01T00:00:00Z', '2020-08-01T00:00:00Z'),
+      ];
+      // The invalid entry is skipped by the isFinite check, so it's never matched
+      // directly — it only resurfaces as the "previous" entry once 'c' is reached.
+      controller._getClosestMemento(withInvalid, new Date('2020-03-15T00:00:00Z')).should.equal(invalidEntry);
+    });
+
+    it('should return null when no memento in the timemap has a finite interval', () => {
+      let allInvalid = [
+        { datasource: { id: 'x' }, datasourceId: 'x', interval: [new Date('not-a-date'), new Date('not-a-date')] },
+        { datasource: { id: 'y' }, datasourceId: 'y', interval: [new Date('not-a-date'), new Date('not-a-date')] },
+      ];
+      expect(controller._getClosestMemento(allInvalid, new Date('2020-03-15T00:00:00Z'))).to.equal(null);
     });
   });
 
@@ -173,6 +222,48 @@ describe('TimegateController', () => {
         res.headers.link.should.contain('rel="memento"');
         res.headers.link.should.contain('rel="original"');
         done();
+      });
+    });
+
+    describe('for a configured timegate with no mementos', () => {
+      let emptyController, emptyClient;
+      before(() => {
+        emptyController = new TimegateController({
+          timegates: { mementos: { resource: [] } },
+        });
+        emptyClient = request.agent(new DummyServer(emptyController));
+      });
+
+      it('should hand over to the next controller instead of redirecting', (done) => {
+        emptyClient.get('/timegate/resource').end(() => {
+          emptyController.next.should.have.been.calledOnce;
+          done();
+        });
+      });
+    });
+
+    describe('for a timegate whose timemap carries a custom original base URL', () => {
+      let customController, customClient;
+      before(() => {
+        let datasource = { id: 'ds1', path: '/ds1/' };
+        customController = new TimegateController({
+          timegates: {
+            mementos: {
+              resource: [{
+                datasource, initial: '2020-01-01T00:00:00Z', final: '2020-06-01T00:00:00Z',
+                originalBaseURL: 'http://original.example.org/custom-path',
+              }],
+            },
+          },
+        });
+        customClient = request.agent(new DummyServer(customController));
+      });
+
+      it('should build the original link from the custom base URL', (done) => {
+        customClient.get('/timegate/resource?foo=bar').end((error, res) => {
+          res.headers.link.should.contain('<http://original.example.org/custom-path?foo=bar>;rel="original"');
+          done();
+        });
       });
     });
   });

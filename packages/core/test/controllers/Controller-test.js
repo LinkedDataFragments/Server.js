@@ -97,6 +97,20 @@ describe('Controller', () => {
         controller.next.should.have.been.calledOnce;
       });
     });
+
+    describe('receiving a request with a malformed Forwarded header', () => {
+      before((done) => {
+        client
+          .get('/path?a=b')
+          .set('Forwarded', 'proto="unterminated')
+          .end(done);
+      });
+
+      it('should fall back to the request\'s own information', () => {
+        let request = controller._handleRequest.getCall(controller._handleRequest.callCount - 1).args[0];
+        request.parsedUrl.should.have.property('protocol', 'http:');
+      });
+    });
   });
 
   describe('A Controller instance without baseURL using X-Forwarded-* headers', () => {

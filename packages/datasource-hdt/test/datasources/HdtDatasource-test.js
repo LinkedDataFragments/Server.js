@@ -2,6 +2,7 @@
 let HdtDatasource = require('../../').datasources.HdtDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
+    ExternalHdtDatasource = require('../../lib/datasources/ExternalHdtDatasource').ExternalHdtDatasource,
     UrlData = require('@ldf/core').UrlData,
     path = require('path'),
     dataFactory = require('n3').DataFactory,
@@ -28,6 +29,75 @@ describe('HdtDatasource', () => {
       instance.initialize();
       instance.should.be.an.instanceof(Datasource);
       instance.close(done);
+    });
+
+    it('should not throw when constructed without options', () => {
+      (function () {
+        // eslint-disable-next-line no-new
+        new HdtDatasource();
+      }).should.not.throw();
+    });
+
+    it('should return an ExternalHdtDatasource when the external option is set', () => {
+      new HdtDatasource({ dataFactory, file: exampleHdtFile, external: true })
+        .should.be.an.instanceof(ExternalHdtDatasource);
+    });
+
+    it('should do nothing when closed a second time', (done) => {
+      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
+      instance.initialize();
+      instance.on('initialized', () => {
+        instance.close(() => {
+          (function () { instance.close(); }).should.not.throw();
+          done();
+        });
+      });
+    });
+  });
+
+  describe('_executeQuery', () => {
+    it('should round the estimated total count up when it underestimates the offset and page', (done) => {
+      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
+      instance._hdtDocument = {
+        searchTriples: () => Promise.resolve({ triples: [{}, {}], totalCount: 5, hasExactCount: false }),
+      };
+      let destination = {
+        setProperty: sinon.spy(),
+        _push: sinon.spy(),
+        close: () => {
+          destination.setProperty.should.have.been.calledWith('metadata', { totalCount: 6, hasExactCount: false });
+          done();
+        },
+      };
+      instance._executeQuery({ offset: 4, limit: 10 }, destination);
+    });
+
+    it('should double the returned triple count when it fills the whole page', (done) => {
+      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
+      instance._hdtDocument = {
+        searchTriples: () => Promise.resolve({ triples: [{}, {}], totalCount: 1, hasExactCount: false }),
+      };
+      let destination = {
+        setProperty: sinon.spy(),
+        _push: sinon.spy(),
+        close: () => {
+          destination.setProperty.should.have.been.calledWith('metadata', { totalCount: 8, hasExactCount: false });
+          done();
+        },
+      };
+      instance._executeQuery({ offset: 4, limit: 1 }, destination);
+    });
+
+    it('should emit an error when the underlying HDT search fails', (done) => {
+      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
+      let error = new Error('search failed');
+      instance._hdtDocument = { searchTriples: () => Promise.reject(error) };
+      let destination = { setProperty: () => {}, emit: (event, err) => {
+        event.should.equal('error');
+        err.should.equal(error);
+        done();
+      } };
+      instance._executeQuery({}, destination);
     });
   });
 

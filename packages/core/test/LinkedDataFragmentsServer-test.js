@@ -1,7 +1,14 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 let LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer').LinkedDataFragmentsServer; // changed to make tests pass, will be revised in follow up pr
 
-let request = require('supertest');
+let request = require('supertest'),
+    UrlData = require('../lib/UrlData').UrlData,
+    net = require('net'),
+    path = require('path'),
+    fs = require('fs');
+
+let testCertFile = path.join(__dirname, '../../../test/assets/test-cert.pem'),
+    testKeyFile = path.join(__dirname, '../../../test/assets/test-key.pem');
 
 describe('LinkedDataFragmentsServer', () => {
   describe('A LinkedDataFragmentsServer instance with one controller', () => {
@@ -194,6 +201,130 @@ describe('LinkedDataFragmentsServer', () => {
         response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
         response.should.have.property('text', 'Application error: error message B\n');
       }).end(done);
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance with the https protocol', () => {
+    it('should create an https server', () => {
+      let server = new LinkedDataFragmentsServer({
+        urlData: new UrlData({ protocol: 'https' }),
+        ssl: { keys: { cert: testCertFile, key: testKeyFile } },
+        log: sinon.stub(),
+      });
+      server.should.be.an.instanceof(require('https').Server);
+    });
+
+    it('should accept an array of key material values', () => {
+      let server = new LinkedDataFragmentsServer({
+        urlData: new UrlData({ protocol: 'https' }),
+        ssl: { keys: { cert: [testCertFile], key: testKeyFile } },
+        log: sinon.stub(),
+      });
+      server.should.be.an.instanceof(require('https').Server);
+    });
+
+    it('should require a client certificate when WebID authentication is enabled', () => {
+      let server = new LinkedDataFragmentsServer({
+        urlData: new UrlData({ protocol: 'https' }),
+        ssl: { keys: { cert: testCertFile, key: testKeyFile } },
+        authentication: { webid: true },
+        log: sinon.stub(),
+      });
+      server.should.be.an.instanceof(require('https').Server);
+    });
+
+    it('should accept literal key material that is not a file path', () => {
+      let server = new LinkedDataFragmentsServer({
+        urlData: new UrlData({ protocol: 'https' }),
+        ssl: { keys: { cert: fs.readFileSync(testCertFile, 'utf8'), key: fs.readFileSync(testKeyFile, 'utf8') } },
+        log: sinon.stub(),
+      });
+      server.should.be.an.instanceof(require('https').Server);
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance with an invalid protocol', () => {
+    it('should throw', () => {
+      (function () {
+        // eslint-disable-next-line no-new
+        new LinkedDataFragmentsServer({ urlData: new UrlData({ protocol: 'ftp' }), log: sinon.stub() });
+      }).should.throw('The configured protocol ftp is invalid.');
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance handling a request that fails outside of a controller', () => {
+    it('should report the error', (done) => {
+      let server = new LinkedDataFragmentsServer({
+        controllers: [], protocol: 'http', log: sinon.stub(),
+        response: { headers: { 'Bad-Header': 'invalid\r\nvalue' } },
+      });
+      request.agent(server).get('/').expect((response) => {
+        response.should.have.property('statusCode', 500);
+      }).end(done);
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance reporting a fatal error', () => {
+    it('should log the error and exit the process', () => {
+      let exitStub = sinon.stub(process, 'exit'), logSpy = sinon.spy();
+      let server = new LinkedDataFragmentsServer({ controllers: [], protocol: 'http', log: logSpy });
+      let error = new Error('fatal error');
+      server.emit('error', error);
+      logSpy.should.have.been.calledWith('Fatal error, exiting process\n', error.stack);
+      exitStub.should.have.been.calledWith(-1);
+      exitStub.restore();
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance reporting an error on an already-handled response', () => {
+    it('should end the response without reporting the error again', () => {
+      let server = new LinkedDataFragmentsServer({ controllers: [], protocol: 'http', log: sinon.stub() });
+      let endSpy = sinon.spy();
+      let response = { headersSent: true, end: endSpy, setHeader: sinon.stub() };
+      server._reportError({}, response, new Error('already handled'));
+      endSpy.should.have.been.calledOnce;
+    });
+  });
+
+  describe('A LinkedDataFragmentsServer instance whose error controller itself fails', () => {
+    it('should log the secondary error', () => {
+      let logSpy = sinon.spy();
+      let server = new LinkedDataFragmentsServer({ controllers: [], protocol: 'http', log: logSpy });
+      server._errorController.handleRequest = () => { throw new Error('error controller failed'); };
+      let response = { headersSent: false, setHeader: sinon.stub() };
+      server._reportError({}, response, new Error('original error'));
+      logSpy.should.have.been.calledTwice;
+      logSpy.secondCall.args[0].should.contain('error controller failed');
+    });
+  });
+
+  describe('Stopping a LinkedDataFragmentsServer instance', () => {
+    it('should destroy open sockets', (done) => {
+      let server = new LinkedDataFragmentsServer({ controllers: [], protocol: 'http', log: sinon.stub() });
+      server.listen(0, () => {
+        let socket = net.connect(server.address().port, () => {
+          setImmediate(() => {
+            server.stop();
+            socket.on('close', () => done());
+          });
+        });
+      });
+    });
+
+    it('should close all controllers', () => {
+      let closeSpy = sinon.spy();
+      let controller = { handleRequest: sinon.spy(), close: closeSpy };
+      let server = new LinkedDataFragmentsServer({ controllers: [controller], protocol: 'http', log: sinon.stub() });
+      server.stop();
+      closeSpy.should.have.been.calledOnce;
+    });
+
+    it('should tolerate a controller whose close() throws', () => {
+      let logSpy = sinon.spy();
+      let controller = { handleRequest: sinon.spy(), close: () => { throw new Error('close failed'); } };
+      let server = new LinkedDataFragmentsServer({ controllers: [controller], protocol: 'http', log: logSpy });
+      (function () { server.stop(); }).should.not.throw();
+      logSpy.should.have.been.calledWith(sinon.match.instanceOf(Error));
     });
   });
 });

@@ -101,6 +101,36 @@ describe('Datasource', () => {
           done(error);
         });
       });
+
+      it('fetches an http(s) resource via the configured request function', (done) => {
+        let fakeRequest = sinon.spy(() => {
+          let stream = new EventEmitter();
+          setImmediate(() => {
+            stream.emit('response', { statusCode: 200 });
+            stream.emit('end');
+          });
+          return stream;
+        });
+        let httpDatasource = new Datasource({ dataFactory, request: fakeRequest });
+        let result = httpDatasource._fetch({ url: 'http://example.org/resource' });
+        fakeRequest.should.have.been.calledOnce;
+        result.on('end', done);
+        result.on('error', done);
+      });
+
+      it('emits an error for an http(s) response with a non-success status code', (done) => {
+        function fakeRequest() {
+          let stream = new EventEmitter();
+          setImmediate(() => { stream.emit('response', { statusCode: 404 }); });
+          return stream;
+        }
+        let httpDatasource = new Datasource({ dataFactory, request: fakeRequest });
+        let result = httpDatasource._fetch({ url: 'https://example.org/missing' });
+        result.on('error', (error) => {
+          error.message.should.contain('returned 404');
+          done();
+        });
+      });
     });
 
     describe('when closed without a callback', () => {
@@ -113,6 +143,29 @@ describe('Datasource', () => {
       it('should invoke the callback', (done) => {
         datasource.close(done);
       });
+    });
+  });
+
+  describe('A disabled Datasource instance', () => {
+    let datasource = new Datasource({ dataFactory, enabled: false });
+
+    it('should also be hidden', () => {
+      datasource.hide.should.be.true;
+    });
+
+    it('should initialize immediately without becoming queryable', (done) => {
+      datasource.on('initialized', () => {
+        datasource.initialized.should.be.true;
+        done();
+      });
+      datasource.initialize();
+    });
+  });
+
+  describe('A Datasource instance without quad support', () => {
+    it('should not indicate support for the quadPattern feature', () => {
+      let datasource = new Datasource({ dataFactory, quads: false }, ['quadPattern', 'triplePattern']);
+      datasource.supportedFeatures.should.deep.equal({ triplePattern: true });
     });
   });
 

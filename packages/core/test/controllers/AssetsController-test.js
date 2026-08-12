@@ -3,6 +3,7 @@ let AssetsController = require('../../lib/controllers/AssetsController').AssetsC
 
 let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
+    UrlData = require('../../lib/UrlData').UrlData,
     fs = require('fs'),
     path = require('path');
 
@@ -14,6 +15,13 @@ describe('AssetsController', () => {
 
     it('should be an AssetsController constructor', () => {
       new AssetsController().should.be.an.instanceof(AssetsController);
+    });
+
+    it('should use the assets path from a given urlData', (done) => {
+      let controller = new AssetsController({ urlData: new UrlData({ assetsPath: '/static/' }) });
+      request.agent(new DummyServer(controller)).get('/static/images/logo').expect((response) => {
+        response.should.have.property('statusCode', 200);
+      }).end(done);
     });
   });
 
