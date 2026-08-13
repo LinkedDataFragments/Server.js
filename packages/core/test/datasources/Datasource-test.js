@@ -415,6 +415,24 @@ describe('Datasource', () => {
       });
       expect(datasource._executeQuery.args[0][0].graph).toEqual(dataFactory.blankNode('b1'));
     });
+
+    it('should translate a subject IRI matching the blank node prefix into a blank node in the query', () => {
+      datasource.select({
+        subject: dataFactory.namedNode(urlData.blankNodePrefix + 'b1'),
+        features: {},
+      });
+      let lastQuery = datasource._executeQuery.args[datasource._executeQuery.callCount - 1][0];
+      expect(lastQuery.subject).toEqual(dataFactory.blankNode('b1'));
+    });
+
+    it('should translate an object IRI matching the blank node prefix into a blank node in the query', () => {
+      datasource.select({
+        object: dataFactory.namedNode(urlData.blankNodePrefix + 'b1'),
+        features: {},
+      });
+      let lastQuery = datasource._executeQuery.args[datasource._executeQuery.callCount - 1][0];
+      expect(lastQuery.object).toEqual(dataFactory.blankNode('b1'));
+    });
   });
 
   describe('A Datasource instance without quad support', () => {
@@ -450,5 +468,37 @@ describe('Datasource', () => {
         done();
       });
     }));
+  });
+
+  describe('A Datasource instance returning blank-node subjects and objects', () => {
+    let urlData = new UrlData({ baseURL: 'http://example.org/' });
+    let datasource = new Datasource({ dataFactory, urlData });
+    datasource.initialize();
+    datasource._executeQuery = sinon.spy((query, destination) => {
+      destination._push(dataFactory.quad(
+        dataFactory.blankNode('s1'), dataFactory.namedNode('p'), dataFactory.blankNode('o1')));
+      destination.close();
+    });
+
+    it('should translate blank-node subjects and objects in the result into their well-known IRIs', () => new Promise((done) => {
+      let result = datasource.select({ features: {} }), quads = [];
+      result.on('data', (q) => { quads.push(q); });
+      result.on('end', () => {
+        expect(quads).toHaveLength(1);
+        expect(quads[0].subject).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 's1'));
+        expect(quads[0].object).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 'o1'));
+        done();
+      });
+    }));
+  });
+
+  describe('A Datasource instance queried without an onError callback', () => {
+    it('should not attach an error listener', () => {
+      let datasource = new Datasource({ dataFactory });
+      datasource.initialize();
+      datasource._executeQuery = sinon.stub();
+
+      expect(() => { datasource.select({ features: {} }); }).not.toThrow();
+    });
   });
 });

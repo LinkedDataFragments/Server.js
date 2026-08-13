@@ -151,6 +151,18 @@ describe('QuadPatternFragmentsController', () => {
       });
     });
 
+    describe('receiving a request for page 2 or later of a fragment', () => {
+      beforeAll(() => new Promise((done) => {
+        resetAll();
+        client.get('/my-datasource?a=b&page=3').end(done);
+      }));
+
+      it('should include a previousPageUrl', () => {
+        let settings = view.render.getCall(view.render.callCount - 1).args[0];
+        expect(settings.fragment.previousPageUrl).toBe('https://example.org/my-datasource?a=b&page=2');
+      });
+    });
+
     describe('receiving a request for an unsupported fragment', () => {
       beforeAll(() => new Promise((done) => {
         resetAll();
@@ -535,6 +547,82 @@ describe('QuadPatternFragmentsController', () => {
         expect(view.render.calledOnce).toBe(true);
       });
     });
+  });
+
+  describe('_createPatternString', () => {
+    let controller = new QuadPatternFragmentsController();
+
+    it('should use variables when no query terms are given', () => {
+      expect(controller._createPatternString({}, false)).toBe('{ ?s ?p ?o. }');
+    });
+
+    it('should serialize bound subject and predicate IRIs', () => {
+      let query = { subject: dataFactory.namedNode('http://ex.org/s'), predicate: dataFactory.namedNode('http://ex.org/p') };
+      expect(controller._createPatternString(query, false)).toBe('{ <http://ex.org/s> <http://ex.org/p> ?o. }');
+    });
+
+    it('should serialize a bound object IRI', () => {
+      let query = { object: dataFactory.namedNode('http://ex.org/o') };
+      expect(controller._createPatternString(query, false)).toBe('{ ?s ?p <http://ex.org/o> . }');
+    });
+
+    it('should serialize a bound object literal', () => {
+      let query = { object: dataFactory.literal('a literal') };
+      expect(controller._createPatternString(query, false)).toBe('{ ?s ?p a literal. }');
+    });
+
+    it('should not serialize a graph when quads are not supported', () => {
+      let query = { graph: dataFactory.namedNode('http://ex.org/g') };
+      expect(controller._createPatternString(query, false)).toBe('{ ?s ?p ?o. }');
+    });
+
+    it('should serialize the default graph when quads are supported', () => {
+      let query = { graph: dataFactory.defaultGraph() };
+      expect(controller._createPatternString(query, true)).toBe('{ ?s ?p ?o @default. }');
+    });
+
+    it('should serialize a bound graph IRI when quads are supported', () => {
+      let query = { graph: dataFactory.namedNode('http://ex.org/g') };
+      expect(controller._createPatternString(query, true)).toBe('{ ?s ?p ?o <http://ex.org/g>. }');
+    });
+
+    it('should use a variable graph when quads are supported but none is given', () => {
+      expect(controller._createPatternString({}, true)).toBe('{ ?s ?p ?o ?g. }');
+    });
+  });
+
+  describe('when an extension errors without a stack trace', () => {
+    it('should log the error message instead of a stack trace', () => new Promise((done) => {
+      let router = {
+        extractQueryParams: sinon.spy((request, query) => {
+          query.features.datasource = true;
+          query.datasource = '/my-datasource';
+        }),
+      };
+      let datasource = {
+        supportsQuery: sinon.stub().returns(true),
+        select: sinon.stub().returns({}),
+        supportedFeatures: { triplePattern: true },
+      };
+      let view = new QuadPatternFragmentsRdfView({ dataFactory });
+      view.render = sinon.spy((settings, request, response) => response.end());
+      let error = { message: 'no stack here' }; // a thrown value without a real .stack
+      let extension = { handleRequest: sinon.spy((request, response, next) => next(error)) };
+      let controller = new QuadPatternFragmentsController({
+        routers: [router],
+        views: [view],
+        datasources: { '/my-datasource': datasource },
+        extensions: [extension],
+      });
+      let client = request.agent(new DummyServer(controller));
+      let stderrWrite = sinon.stub(process.stderr, 'write');
+
+      client.get('/my-datasource?a=b&c=d').end(() => {
+        expect(stderrWrite.calledWith(sinon.match(String(error)))).toBe(true);
+        stderrWrite.restore();
+        done();
+      });
+    }));
   });
 
   describe('close', () => {
