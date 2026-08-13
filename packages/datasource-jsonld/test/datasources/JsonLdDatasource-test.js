@@ -1,4 +1,6 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 let JsonLdDatasource = require('../../').datasources.JsonLdDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -10,26 +12,29 @@ let exampleJsonLdUrl = 'file://' + path.join(__dirname, '../../../../test/assets
 describe('JsonLdDatasource', () => {
   describe('The JsonLdDatasource module', () => {
     it('should be a function', () => {
-      JsonLdDatasource.should.be.a('function');
+      expect(typeof JsonLdDatasource).toBe('function');
     });
 
-    it('should be a JsonLdDatasource constructor', (done) => {
+    it('should be a JsonLdDatasource constructor', () => new Promise((done) => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
-      instance.should.be.an.instanceof(JsonLdDatasource);
+      expect(instance).toBeInstanceOf(JsonLdDatasource);
       instance.close(done);
-    });
+    }));
 
-    it('should create Datasource objects', (done) => {
+    it('should create Datasource objects', () => new Promise((done) => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
-      instance.should.be.an.instanceof(Datasource);
+      expect(instance).toBeInstanceOf(Datasource);
       instance.close(done);
-    });
+    }));
   });
 
   describe('A JsonLdDatasource instance for an example JsonLd file', () => {
     let datasource = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
-    datasource.initialize();
-    after((done) => { datasource.close(done); });
+    beforeAll(() => new Promise((done) => {
+      datasource.initialize();
+      datasource.on('initialized', done);
+    }));
+    afterAll(() => new Promise((done) => { datasource.close(done); }));
 
     itShouldExecute(datasource,
       'the empty query',
@@ -91,19 +96,19 @@ describe('JsonLdDatasource', () => {
 function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount;
-    before((done) => {
+    beforeAll(() => new Promise((done) => {
       let result = datasource.select(query);
       result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       result.on('data', (triple) => { resultsCount++; });
       result.on('end', done);
-    });
+    }));
 
     it('should return the expected number of triples', () => {
-      expect(resultsCount).to.equal(expectedResultsCount);
+      expect(resultsCount).toBe(expectedResultsCount);
     });
 
     it('should emit the expected total number of triples', () => {
-      expect(totalCount).to.equal(expectedTotalCount);
+      expect(totalCount).toBe(expectedTotalCount);
     });
   });
 }

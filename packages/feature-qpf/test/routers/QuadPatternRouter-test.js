@@ -1,15 +1,18 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect } from 'vitest';
+import { extractQueryParams } from '../../../../test/test-helpers';
 let QuadPatternRouter = require('../../').routers.QuadPatternRouter;
 const dataFactory = require('n3').DataFactory;
 
 describe('QuadPatternRouter', () => {
   describe('The QuadPatternRouter module', () => {
     it('should be a function', () => {
-      QuadPatternRouter.should.be.a('function');
+      expect(typeof QuadPatternRouter).toBe('function');
     });
 
     it('should be a QuadPatternRouter constructor', () => {
-      new QuadPatternRouter({}).should.be.an.instanceof(QuadPatternRouter);
+      expect(new QuadPatternRouter({})).toBeInstanceOf(QuadPatternRouter);
     });
   });
 
@@ -223,7 +226,7 @@ describe('QuadPatternRouter', () => {
             { a: 1, features: { quadPattern: true }, graph: dataFactory.defaultGraph() },
           ],
         ]
-          .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -465,7 +468,7 @@ describe('QuadPatternRouter', () => {
             { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('foo:bar') },
           ],
         ]
-          .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });

@@ -1,4 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect, beforeAll } from 'vitest';
 let SummaryController = require('../../lib/controllers/SummaryController').SummaryController; // changed to make tests pass, will be revised in follow up pr
 
 let request = require('supertest'),
@@ -13,21 +15,21 @@ let dataFactory = require('n3').DataFactory;
 describe('SummaryController', () => {
   describe('The SummaryController module', () => {
     it('should be a function', () => {
-      SummaryController.should.be.a('function');
+      expect(typeof SummaryController).toBe('function');
     });
 
     it('should be an SummaryController constructor', () => {
-      new SummaryController().should.be.an.instanceof(SummaryController);
+      expect(new SummaryController()).toBeInstanceOf(SummaryController);
     });
 
     it('should create new SummaryController objects', () => {
-      new SummaryController().should.be.an.instanceof(SummaryController);
+      expect(new SummaryController()).toBeInstanceOf(SummaryController);
     });
   });
 
   describe('An SummaryController instance', () => {
     let controller, client;
-    before(() => {
+    beforeAll(() => {
       controller = new SummaryController({
         views: [new SummaryRdfView({ dataFactory })],
         summaries: { dir: path.join(__dirname, '/../../../../test/assets') },
@@ -39,49 +41,49 @@ describe('SummaryController', () => {
       client = request.agent(new DummyServer(controller));
     });
 
-    it('should correctly serve summary in Turtle', (done) => {
+    it('should correctly serve summary in Turtle', () => new Promise((done) => {
       client.get('/summaries/summary').set('Accept', 'text/turtle').expect((response) => {
         let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
-        controller.next.should.not.have.been.called;
-        response.should.have.property('statusCode', 200);
-        response.headers.should.have.property('content-type', 'text/turtle;charset=utf-8');
-        response.headers.should.have.property('cache-control', 'public,max-age=604800');
-        response.text.should.equal(summary);
+        expect(controller.next.called).toBe(false);
+        expect(response).toHaveProperty('statusCode', 200);
+        expect(response.headers).toHaveProperty('content-type', 'text/turtle;charset=utf-8');
+        expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
+        expect(response.text).toBe(summary);
       }).end(done);
-    });
+    }));
 
-    it('should correctly serve summary in Trig', (done) => {
+    it('should correctly serve summary in Trig', () => new Promise((done) => {
       client.get('/summaries/summary').expect((response) => {
         let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
-        controller.next.should.not.have.been.called;
-        response.should.have.property('statusCode', 200);
-        response.headers.should.have.property('content-type', 'application/trig;charset=utf-8');
-        response.headers.should.have.property('cache-control', 'public,max-age=604800');
-        response.text.should.equal(summary);
+        expect(controller.next.called).toBe(false);
+        expect(response).toHaveProperty('statusCode', 200);
+        expect(response.headers).toHaveProperty('content-type', 'application/trig;charset=utf-8');
+        expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
+        expect(response.text).toBe(summary);
       }).end(done);
-    });
+    }));
 
-    it('should correctly serve summary in ntriples', (done) => {
+    it('should correctly serve summary in ntriples', () => new Promise((done) => {
       client.get('/summaries/summary').set('Accept', 'application/n-triples').expect((response) => {
         let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
-        controller.next.should.not.have.been.called;
-        response.should.have.property('statusCode', 200);
-        response.headers.should.have.property('content-type', 'application/n-triples;charset=utf-8');
-        response.headers.should.have.property('cache-control', 'public,max-age=604800');
-        response.text.should.equal(summary);
+        expect(controller.next.called).toBe(false);
+        expect(response).toHaveProperty('statusCode', 200);
+        expect(response.headers).toHaveProperty('content-type', 'application/n-triples;charset=utf-8');
+        expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
+        expect(response.text).toBe(summary);
       }).end(done);
-    });
+    }));
 
-    it('should hand over to the next controller if no summary with that name is found', (done) => {
+    it('should hand over to the next controller if no summary with that name is found', () => new Promise((done) => {
       client.get('/summaries/unknown').expect((response) => {
-        controller.next.should.have.been.calledOnce;
+        expect(controller.next.calledOnce).toBe(true);
       }).end(done);
-    });
+    }));
 
-    it('should hand over to the next controller for non-summary paths', (done) => {
+    it('should hand over to the next controller for non-summary paths', () => new Promise((done) => {
       client.get('/other').expect((response) => {
-        controller.next.should.have.been.calledOnce;
+        expect(controller.next.calledOnce).toBe(true);
       }).end(done);
-    });
+    }));
   });
 });

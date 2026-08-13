@@ -1,4 +1,8 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect, beforeAll } from 'vitest';
+const sinon = require('sinon');
+import { createStreamCapture } from '../../../../../test/test-helpers';
 let QuadPatternFragmentsRdfView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsRdfView;
 
 let _ = require('lodash'),
@@ -12,11 +16,11 @@ const dataFactory = N3.DataFactory;
 describe('QuadPatternFragmentsRdfView', () => {
   describe('The QuadPatternFragmentsRdfView module', () => {
     it('should be a function', () => {
-      QuadPatternFragmentsRdfView.should.be.a('function');
+      expect(typeof QuadPatternFragmentsRdfView).toBe('function');
     });
 
     it('should be a QuadPatternFragmentsRdfView constructor', () => {
-      new QuadPatternFragmentsRdfView({ dataFactory }).should.be.an.instanceof(QuadPatternFragmentsRdfView);
+      expect(new QuadPatternFragmentsRdfView({ dataFactory })).toBeInstanceOf(QuadPatternFragmentsRdfView);
     });
   });
 
@@ -67,16 +71,16 @@ describe('QuadPatternFragmentsRdfView', () => {
 
         describe('with an empty triple stream', () => {
           let results = AsyncIterator.empty();
-          let response = test.createStreamCapture();
-          before((done) => {
+          let response = createStreamCapture();
+          beforeAll(() => new Promise((done) => {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
             results.setProperty('metadata', { totalCount: 1234 });
-          });
+          }));
 
           it('should only write data source metadata', () => {
-            response.buffer.should.equal(readAsset('empty-fragment'));
+            expect(response.buffer).toBe(readAsset('empty-fragment'));
           });
         });
 
@@ -86,17 +90,17 @@ describe('QuadPatternFragmentsRdfView', () => {
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
-          let response = test.createStreamCapture();
-          before((done) => {
+          let response = createStreamCapture();
+          beforeAll(() => new Promise((done) => {
             settings.results = new AsyncIterator.TransformIterator();
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
             settings.results.setProperty('metadata', { totalCount: 1234 });
             settings.results.source = results;
-          });
+          }));
 
           it('should write data and metadata', () => {
-            response.buffer.should.equal(readAsset('basic-fragment'));
+            expect(response.buffer).toBe(readAsset('basic-fragment'));
           });
         });
 
@@ -106,18 +110,18 @@ describe('QuadPatternFragmentsRdfView', () => {
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
-          let response = test.createStreamCapture();
-          before((done) => {
+          let response = createStreamCapture();
+          beforeAll(() => new Promise((done) => {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
             setImmediate(() => {
               results.setProperty('metadata', { totalCount: 1234 });
             });
-          });
+          }));
 
           it('should write data and metadata', () => {
-            response.buffer.should.equal(readAsset('basic-fragment-metadata-last'));
+            expect(response.buffer).toBe(readAsset('basic-fragment-metadata-last'));
           });
         });
 
@@ -133,24 +137,24 @@ describe('QuadPatternFragmentsRdfView', () => {
             },
             query: { limit: 100 },
           };
-          let response = test.createStreamCapture();
-          before((done) => {
+          let response = createStreamCapture();
+          beforeAll(() => new Promise((done) => {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
             results.setProperty('metadata', { totalCount: 1234 });
-          });
+          }));
 
           it('should write a first page link', () => {
-            response.buffer.should.contain('myfirst');
+            expect(response.buffer).toContain('myfirst');
           });
 
           it('should write a next page link', () => {
-            response.buffer.should.contain('mynext');
+            expect(response.buffer).toContain('mynext');
           });
 
           it('should not write a previous page link', () => {
-            response.buffer.should.not.contain('myprevious');
+            expect(response.buffer).not.toContain('myprevious');
           });
         });
 
@@ -166,24 +170,24 @@ describe('QuadPatternFragmentsRdfView', () => {
             },
             query: { limit: 100, offset: 1133 },
           };
-          let response = test.createStreamCapture();
-          before((done) => {
+          let response = createStreamCapture();
+          beforeAll(() => new Promise((done) => {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
             results.setProperty('metadata', { totalCount: 1234 });
-          });
+          }));
 
           it('should write a first page link', () => {
-            response.buffer.should.contain('myfirst');
+            expect(response.buffer).toContain('myfirst');
           });
 
           it('should write a next page link', () => {
-            response.buffer.should.contain('mynext');
+            expect(response.buffer).toContain('mynext');
           });
 
           it('should write a previous page link', () => {
-            response.buffer.should.contain('myprevious');
+            expect(response.buffer).toContain('myprevious');
           });
         });
 
@@ -199,24 +203,24 @@ describe('QuadPatternFragmentsRdfView', () => {
             },
             query: { limit: 100, offset: 1135 },
           };
-          let response = test.createStreamCapture();
-          before((done) => {
+          let response = createStreamCapture();
+          beforeAll(() => new Promise((done) => {
             settings.results = results;
             response.getHeader = sinon.stub().returns(format);
             view.render(settings, {}, response, done);
             results.setProperty('metadata', { totalCount: 1234 });
-          });
+          }));
 
           it('should write a first page link', () => {
-            response.buffer.should.contain('myfirst');
+            expect(response.buffer).toContain('myfirst');
           });
 
           it('should not write a next page link', () => {
-            response.buffer.should.not.contain('mynext');
+            expect(response.buffer).not.toContain('mynext');
           });
 
           it('should write a previous page link', () => {
-            response.buffer.should.contain('myprevious');
+            expect(response.buffer).toContain('myprevious');
           });
         });
       });
