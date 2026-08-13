@@ -3,6 +3,7 @@
 import { describe, it, expect } from 'vitest';
 const sinon = require('sinon');
 const http = require('http');
+const { TLSSocket } = require('tls');
 let WebIDControllerExtension = require('../../lib/controllers/WebIDControllerExtension').WebIDControllerExtension; // changed to make tests pass, will be revised in follow up pr
 
 let Controller = require('@ldf/core').controllers.Controller,
@@ -102,6 +103,65 @@ describe('WebIDControllerExtension', () => {
 
       expect(() => { instance._handleRequest(request, {}, () => {}); })
         .toThrow('Expected a TLS connection, but the socket is not a TLSSocket.');
+    });
+
+    function tlsRequest(certificate) {
+      let connection = Object.create(TLSSocket.prototype);
+      connection.getPeerCertificate = () => certificate;
+      return { connection };
+    }
+
+    it('should reject the request when the certificate has no WebID subjectAltName', () => {
+      let instance = Object.create(WebIDControllerExtension.prototype);
+      instance._protocol = 'https';
+      instance._handleForbidden = sinon.spy();
+      let request = tlsRequest({ subject: {} });
+
+      instance._handleRequest(request, {}, () => {});
+
+      expect(instance._handleForbidden.calledOnce).toBe(true);
+      expect(instance._handleForbidden.getCall(0).args[2]).toEqual({
+        reason: 'No WebID found in client certificate.',
+      });
+    });
+
+    it('should call next when the WebID verifies successfully', () => {
+      let instance = Object.create(WebIDControllerExtension.prototype);
+      instance._protocol = 'https';
+      instance._handleForbidden = sinon.spy();
+      instance._verifyWebID = sinon.spy((webID, modulus, exponent, callback) => callback(null, true));
+      let request = tlsRequest({
+        subject: { subjectAltName: 'uniformResourceIdentifier:http://example.org/#me' },
+        modulus: 'ABCD', exponent: '10001',
+      });
+      let next = sinon.spy();
+
+      instance._handleRequest(request, {}, next);
+
+      expect(instance._verifyWebID.calledOnce).toBe(true);
+      expect(instance._verifyWebID.getCall(0).args[0]).toBe('http://example.org/#me');
+      expect(next.calledOnce).toBe(true);
+      expect(instance._handleForbidden.called).toBe(false);
+    });
+
+    it('should reject the request when the WebID does not verify', () => {
+      let instance = Object.create(WebIDControllerExtension.prototype);
+      instance._protocol = 'https';
+      instance._handleForbidden = sinon.spy();
+      instance._verifyWebID = sinon.spy((webID, modulus, exponent, callback) => callback(null, false, 'no match'));
+      let request = tlsRequest({
+        subject: { subjectAltName: 'uniformResourceIdentifier:http://example.org/#me' },
+        modulus: 'ABCD', exponent: '10001',
+      });
+      let next = sinon.spy();
+
+      instance._handleRequest(request, {}, next);
+
+      expect(next.called).toBe(false);
+      expect(instance._handleForbidden.calledOnce).toBe(true);
+      expect(instance._handleForbidden.getCall(0).args[2]).toEqual({
+        webID: 'http://example.org/#me', reason: 'no match',
+      });
     });
   });
 

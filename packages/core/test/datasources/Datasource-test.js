@@ -3,6 +3,7 @@
 import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
 const sinon = require('sinon');
 const Datasource = require('../../lib/datasources/Datasource').Datasource; // changed to make tests pass, will be revised in follow up pr
+const UrlData = require('../../lib/UrlData').UrlData;
 
 const EventEmitter = require('events'),
     fs = require('fs'),
@@ -399,5 +400,55 @@ describe('Datasource', () => {
       expect(datasource._executeQuery.args[0][0].features).toEqual({ custom: true }),
       datasource._executeQuery.args[0][0].graph.equals(dataFactory.namedNode('urn:ldf:emptyGraph'));
     });
+  });
+
+  describe('A Datasource instance with a blank-node-aware urlData', () => {
+    let urlData = new UrlData({ baseURL: 'http://example.org/' });
+    let datasource = new Datasource({ dataFactory, urlData });
+    datasource.initialize();
+    datasource._executeQuery = sinon.spy();
+
+    it('should translate a graph IRI matching the blank node prefix into a blank node in the query', () => {
+      datasource.select({
+        graph: dataFactory.namedNode(urlData.blankNodePrefix + 'b1'),
+        features: {},
+      });
+      expect(datasource._executeQuery.args[0][0].graph).toEqual(dataFactory.blankNode('b1'));
+    });
+  });
+
+  describe('A Datasource instance without quad support', () => {
+    let datasource = new Datasource({ dataFactory, quads: false }, ['triplePattern']);
+    datasource.initialize();
+    datasource._executeQuery = sinon.spy();
+
+    it('should force the default graph on every query, regardless of the requested graph', () => {
+      datasource.select({
+        graph: dataFactory.namedNode('http://example.org/g'),
+        features: { triplePattern: true },
+      });
+      expect(datasource._executeQuery.args[0][0].graph).toEqual(dataFactory.defaultGraph());
+    });
+  });
+
+  describe('A Datasource instance returning a blank-node graph', () => {
+    let urlData = new UrlData({ baseURL: 'http://example.org/' });
+    let datasource = new Datasource({ dataFactory, urlData });
+    datasource.initialize();
+    datasource._executeQuery = sinon.spy((query, destination) => {
+      destination._push(dataFactory.quad(
+        dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o'), dataFactory.blankNode('b1')));
+      destination.close();
+    });
+
+    it('should translate a blank-node graph in the result into its well-known IRI', () => new Promise((done) => {
+      let result = datasource.select({ features: {} }), quads = [];
+      result.on('data', (q) => { quads.push(q); });
+      result.on('end', () => {
+        expect(quads).toHaveLength(1);
+        expect(quads[0].graph).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 'b1'));
+        done();
+      });
+    }));
   });
 });

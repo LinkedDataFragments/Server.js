@@ -295,6 +295,30 @@ describe('SparqlDatasource', () => {
       'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}');
   });
+
+  describe('_encodeObject', () => {
+    let datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql' });
+
+    it('should encode a blank node', () => {
+      expect(datasource._encodeObject(dataFactory.blankNode('b1'))).toBe('_:b1');
+    });
+
+    it('should encode the default graph as an empty string', () => {
+      expect(datasource._encodeObject(dataFactory.defaultGraph())).toBe('');
+    });
+
+    it('should return null for an unrecognized term type', () => {
+      expect(datasource._encodeObject({ termType: 'Quad' })).toBe(null);
+    });
+  });
+
+  describe('_convertLiteral', () => {
+    let datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql' });
+
+    it('should return the ?o variable when no literal is given', () => {
+      expect(datasource._convertLiteral()).toBe('?o');
+    });
+  });
 });
 
 function itShouldExecute(datasource, request, name, query, constructQuery, countQuery) {

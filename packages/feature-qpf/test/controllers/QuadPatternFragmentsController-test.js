@@ -451,4 +451,106 @@ describe('QuadPatternFragmentsController', () => {
       });
     });
   });
+
+  describe('A QuadPatternFragmentsController instance with an extension', () => {
+    let controller, client, router, datasource, view, extension;
+    beforeAll(() => {
+      router = {
+        extractQueryParams: sinon.spy((request, query) => {
+          query.features.datasource = true;
+          query.datasource = '/my-datasource';
+        }),
+      };
+      datasource = {
+        supportsQuery: sinon.stub().returns(true),
+        select: sinon.stub().returns({}),
+        supportedFeatures: { triplePattern: true },
+      };
+      view = new QuadPatternFragmentsRdfView({ dataFactory }),
+      view.render = sinon.spy((settings, request, response) => response.end());
+      extension = { handleRequest: sinon.spy((request, response, next) => next()) };
+      controller = new QuadPatternFragmentsController({
+        routers: [router],
+        views: [view],
+        datasources: { '/my-datasource': datasource },
+        extensions: [extension],
+      });
+      client = request.agent(new DummyServer(controller));
+    });
+
+    describe('receiving a request for a fragment', () => {
+      beforeAll(() => new Promise((done) => {
+        client.get('/my-datasource?a=b&c=d').end(done);
+      }));
+
+      it('should call the extension', () => {
+        expect(extension.handleRequest.calledOnce).toBe(true);
+      });
+
+      it('should render the view once the extension completes', () => {
+        expect(view.render.calledOnce).toBe(true);
+      });
+    });
+  });
+
+  describe('A QuadPatternFragmentsController instance with an extension that errors', () => {
+    let controller, client, router, datasource, view, extension, error, stderrWrite;
+    beforeAll(() => {
+      router = {
+        extractQueryParams: sinon.spy((request, query) => {
+          query.features.datasource = true;
+          query.datasource = '/my-datasource';
+        }),
+      };
+      datasource = {
+        supportsQuery: sinon.stub().returns(true),
+        select: sinon.stub().returns({}),
+        supportedFeatures: { triplePattern: true },
+      };
+      view = new QuadPatternFragmentsRdfView({ dataFactory }),
+      view.render = sinon.spy((settings, request, response) => response.end());
+      error = new Error('extension error');
+      extension = { handleRequest: sinon.spy((request, response, next) => next(error)) };
+      controller = new QuadPatternFragmentsController({
+        routers: [router],
+        views: [view],
+        datasources: { '/my-datasource': datasource },
+        extensions: [extension],
+      });
+      client = request.agent(new DummyServer(controller));
+    });
+
+    describe('receiving a request for a fragment', () => {
+      beforeAll(() => new Promise((done) => {
+        stderrWrite = sinon.stub(process.stderr, 'write');
+        client.get('/my-datasource?a=b&c=d').end(() => { stderrWrite.restore(); done(); });
+      }));
+
+      it('should log the extension error to stderr', () => {
+        expect(stderrWrite.calledOnce).toBe(true);
+        expect(stderrWrite.args[0][0]).toContain('extension error');
+      });
+
+      it('should still render the view', () => {
+        expect(view.render.calledOnce).toBe(true);
+      });
+    });
+  });
+
+  describe('close', () => {
+    it('should close every datasource, even if one throws while closing', () => {
+      let dsA = { close: sinon.stub() };
+      let dsB = { close: sinon.stub().throws(new Error('close failed')) };
+      let dsC = { close: sinon.stub() };
+      let controller = new QuadPatternFragmentsController({
+        datasources: { a: dsA, b: dsB, c: dsC },
+      });
+
+      controller.close();
+
+      expect(dsA.close.calledOnce).toBe(true);
+      expect(dsB.close.calledOnce).toBe(true);
+      expect(dsC.close.calledOnce).toBe(true);
+    });
+  });
 });
