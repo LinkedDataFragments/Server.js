@@ -20,6 +20,11 @@ describe('MementoHtmlViewExtension', () => {
     expect(typeof MementoHtmlViewExtension).toBe('function');
   });
 
+  it('should construct with an empty inverted timegate map when no timegates are configured', () => {
+    let instance = new MementoHtmlViewExtension({ urlData: new UrlData() });
+    expect(instance._invertedTimegateMap).toEqual({});
+  });
+
   describe('_render', () => {
     it('should call done without rendering when the datasource has no memento', () => {
       let instance = view({ id: 'ds1' });

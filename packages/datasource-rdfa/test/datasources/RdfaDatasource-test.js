@@ -26,6 +26,11 @@ describe('RdfaDatasource', () => {
       expect(instance).toBeInstanceOf(Datasource);
       instance.close(done);
     }));
+
+    it('should fall back to the file option when no url is given', () => {
+      let instance = new RdfaDatasource({ dataFactory, file: exampleRdfaUrl });
+      expect(instance._url).toBe(exampleRdfaUrl);
+    });
   });
 
   describe('A RdfaDatasource instance for an example RDFa HTML file', () => {

@@ -4,7 +4,9 @@ import { describe, it, expect, beforeAll } from 'vitest';
 const sinon = require('sinon');
 // changed to make tests pass, will be revised in follow up pr
 let Controller = require('../../lib/controllers/Controller').Controller,
-    UrlData = require('../../lib/UrlData').UrlData;
+    UrlData = require('../../lib/UrlData').UrlData,
+    ViewCollection = require('../../lib/views/ViewCollection').ViewCollection,
+    View = require('../../lib/views/View').View;
 
 let http = require('http'),
     request = require('supertest'),
@@ -114,6 +116,21 @@ describe('Controller', () => {
         expect(request.parsedUrl).toHaveProperty('protocol', 'http:');
       });
     });
+
+    describe('receiving a request with a Forwarded header that has no proto', () => {
+      beforeAll(() => new Promise((done) => {
+        client
+          .get('/path?a=b')
+          .set('Forwarded', 'host="bar:8000"')
+          .end(done);
+      }));
+
+      it('should fall back to the default protocol while still using the forwarded host', () => {
+        let request = controller._handleRequest.getCall(controller._handleRequest.callCount - 1).args[0];
+        expect(request.parsedUrl).toHaveProperty('protocol', 'http:');
+        expect(request.parsedUrl).toHaveProperty('host', 'bar:8000');
+      });
+    });
   });
 
   describe('A Controller instance without baseURL using X-Forwarded-* headers', () => {
@@ -193,6 +210,64 @@ describe('Controller', () => {
       it('should hand over to the next controller', () => {
         expect(controller.next.calledOnce).toBe(true);
       });
+    });
+  });
+
+  describe('A Controller instance constructed with an existing ViewCollection', () => {
+    it('should use that ViewCollection instance directly, without wrapping it again', () => {
+      let views = new ViewCollection();
+      let controller = new Controller({ views });
+      expect(controller._views).toBe(views);
+    });
+  });
+
+  describe('handleRequest with a request that already has a parsedUrl', () => {
+    it('should not overwrite the existing parsedUrl', () => {
+      let controller = new Controller();
+      sinon.spy(controller, '_handleRequest');
+      let existingParsedUrl = { path: '/already-parsed' };
+      let request = { parsedUrl: existingParsedUrl, headers: {} };
+      let response = {};
+
+      controller.handleRequest(request, response, () => {});
+
+      expect(request.parsedUrl).toBe(existingParsedUrl);
+      expect(controller._handleRequest.calledOnce).toBe(true);
+    });
+  });
+
+  describe('handleRequest called back more than once', () => {
+    it('should ignore a second call to next/done', () => {
+      let controller = new Controller();
+      controller._handleRequest = (request, response, next) => { next(); next(); };
+      let next = sinon.spy();
+
+      controller.handleRequest({ url: '/', headers: {} }, {}, next);
+
+      expect(next.calledOnce).toBe(true);
+    });
+  });
+
+  describe('_negotiateView', () => {
+    it('should append to an already-set Vary header instead of replacing it', () => {
+      let controller = new Controller({ views: [new View('MyView', 'text/html')] });
+      let setHeader = sinon.spy();
+      let response = { getHeader: () => 'Origin', setHeader };
+
+      controller._negotiateView('MyView', { headers: {} }, response);
+
+      expect(setHeader.calledWith('Vary', 'Accept, Origin')).toBe(true);
+    });
+
+    it('should fall back to the raw MIME type when the matched view has no responseType', () => {
+      let controller = new Controller();
+      controller._views = { matchView: () => ({ view: {}, type: 'text/plain', responseType: undefined }) };
+      let setHeader = sinon.spy();
+      let response = { getHeader: () => undefined, setHeader };
+
+      controller._negotiateView('MyView', { headers: {} }, response);
+
+      expect(setHeader.calledWith('Content-Type', 'text/plain')).toBe(true);
     });
   });
 });

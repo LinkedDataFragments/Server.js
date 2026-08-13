@@ -26,6 +26,11 @@ describe('N3Datasource', () => {
       expect(instance).toBeInstanceOf(Datasource);
       instance.close(done);
     }));
+
+    it('should fall back to the file option when no url is given', () => {
+      let instance = new N3Datasource({ dataFactory, file: exampleTurtleUrl });
+      expect(instance._url).toBe(exampleTurtleUrl);
+    });
   });
 
   describe('A N3Datasource instance for an example Turtle file', () => {

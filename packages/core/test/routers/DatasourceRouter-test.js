@@ -101,6 +101,15 @@ describe('DatasourceRouter', () => {
         ]
           .forEach((args) => { extractQueryParams(router, ...args); });
       });
+
+      it('should fall back to a path of / when the request has no parsed url', () => {
+        let query = {};
+        router.extractQueryParams({}, query);
+        expect(query.features).toEqual({ datasource: true });
+        // The router's own base length is stripped from the '/' fallback,
+        // same as it would be from any other path.
+        expect(query.datasource).toBe('/'.substr(router._baseLength));
+      });
     });
   });
 });

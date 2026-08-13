@@ -121,6 +121,20 @@ describe('View', () => {
       });
     });
 
+    describe('when _render calls back with an error', () => {
+      it('should emit an error event on the response before ending it', () => {
+        let view = new View(),
+            request = {}, response = { getHeader: sinon.stub().returns('text/html'), emit: sinon.spy(), end: sinon.spy() },
+            error = new Error('render failed');
+        view._render = (settings, req, res, done) => done(error);
+
+        view.render({}, request, response, noop);
+
+        expect(response.emit.calledWith('error', error)).toBe(true);
+        expect(response.end.calledOnce).toBe(true);
+      });
+    });
+
     describe('with view extensions', () => {
       it('should render only the extensions that support the requested content type, in order', () => {
         let rendered = [];
