@@ -252,6 +252,55 @@ describe('CliRunner', () => {
           });
         });
       }));
+
+      it('should abort respawning and restore the normal SIGHUP handler when the new worker dies before listening', () => new Promise((done) => {
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        cluster.workers = { 1: oldWorker };
+        let onSighup = sandbox.stub(process, 'on');
+        build({});
+        let stdout = fakeWritable(), stderr = fakeWritable();
+        runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
+        setImmediate(() => {
+          setImmediate(() => {
+            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            sighupHandler();
+            let newWorker = fork.getCall(fork.callCount - 1).returnValue;
+            newWorker.exitedAfterDisconnect = false;
+            newWorker.emit('exit', 1, null);
+
+            expect(stdout.write.calledWith(sinon.match('Respawning aborted because worker'))).toBe(true);
+            expect(oldWorker.kill.called).toBe(false);
+            // The abort restores the normal SIGHUP handler and removes the pending one.
+            expect(process.addListener.calledWith('SIGHUP', sighupHandler)).toBe(true);
+            expect(process.removeListener.getCalls().some((call) =>
+              call.args[0] === 'SIGHUP' && call.args[1] !== sighupHandler)).toBe(true);
+            done();
+          });
+        });
+      }));
+
+      it('should report that a respawn is already in progress on a second SIGHUP', () => new Promise((done) => {
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        cluster.workers = { 1: oldWorker };
+        let onSighup = sandbox.stub(process, 'on');
+        build({});
+        let stdout = fakeWritable(), stderr = fakeWritable();
+        runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
+        setImmediate(() => {
+          setImmediate(() => {
+            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            sighupHandler();
+            // A respawn is now in progress (oldWorker hasn't been killed yet);
+            // process.addListener was stubbed, so grab the respawnPending
+            // function it was just handed instead of relying on a real signal.
+            let pendingHandler = process.addListener.args.find((args) => args[0] === 'SIGHUP')[1];
+            pendingHandler();
+
+            expect(stdout.write.calledWith(sinon.match('Respawning already in progress'))).toBe(true);
+            done();
+          });
+        });
+      }));
     });
   });
 

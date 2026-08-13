@@ -15,6 +15,13 @@ let testCertFile = path.join(__dirname, '../../../test/assets/test-cert.pem'),
     testKeyFile = path.join(__dirname, '../../../test/assets/test-key.pem');
 
 describe('LinkedDataFragmentsServer', () => {
+  describe('A LinkedDataFragmentsServer instance without a log option', () => {
+    it('should default _log to a no-op function', () => {
+      let server = LinkedDataFragmentsServer({ controllers: [] });
+      expect(() => { server._log('anything'); }).not.toThrow();
+    });
+  });
+
   describe('A LinkedDataFragmentsServer instance with one controller', () => {
     let server, controller, client;
     beforeAll(() => {
