@@ -53,6 +53,12 @@ describe('Util', () => {
       expect(error.name).toBe('MyError');
     });
 
+    it('should default the message to an empty string when none is given', () => {
+      let MyError = Util.createErrorType('MyError');
+      let error = new MyError();
+      expect(error.message).toBe('');
+    });
+
     it('should call the given init function with the constructor arguments', () => {
       let received;
       let MyError = Util.createErrorType('MyError', (message, extra) => { received = extra; });
