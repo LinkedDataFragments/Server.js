@@ -310,6 +310,10 @@ describe('SparqlDatasource', () => {
     it('should return null for an unrecognized term type', () => {
       expect(datasource._encodeObject({ termType: 'Quad' })).toBe(null);
     });
+
+    it('should encode a variable', () => {
+      expect(datasource._encodeObject(dataFactory.variable('x'))).toBe('?x');
+    });
   });
 
   describe('_convertLiteral', () => {
@@ -317,6 +321,18 @@ describe('SparqlDatasource', () => {
 
     it('should return the ?o variable when no literal is given', () => {
       expect(datasource._convertLiteral()).toBe('?o');
+    });
+  });
+
+  describe('_getPatternCount', () => {
+    it('should return the default estimate without querying when a count for the same pattern is already resolving', () => {
+      let datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql', request: sinon.stub() });
+      datasource._resolvingCountQueries['{ ?s ?p ?o }'] = true;
+
+      return datasource._getPatternCount('{ ?s ?p ?o }').then((estimate) => {
+        expect(estimate).toEqual({ totalCount: 1e9, hasExactCount: false });
+        expect(datasource._request.called).toBe(false);
+      });
     });
   });
 });
