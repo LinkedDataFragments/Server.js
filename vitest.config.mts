@@ -33,6 +33,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'lcov'],
       include: ['packages/*/lib/**', 'packages/*/index.ts'],
+      exclude: ['**/*.html', '**/*.js.map'],
     },
   },
 });
