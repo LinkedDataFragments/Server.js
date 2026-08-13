@@ -40,6 +40,14 @@ describe('ViewCollection', () => {
         .toThrow('No view named Bar found.');
     });
 
+    it('should return the views registered under a given name', () => {
+      expect(viewCollection.getViews('MyView1')).toEqual([viewA]);
+    });
+
+    it('should return an empty array for a name with no registered views', () => {
+      expect(viewCollection.getViews('NoSuchView')).toEqual([]);
+    });
+
     describe('when a client requests HTML', () => {
       let viewDetails, request, response;
       beforeAll(() => {

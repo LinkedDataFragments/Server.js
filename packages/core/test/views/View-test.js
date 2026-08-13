@@ -120,6 +120,50 @@ describe('View', () => {
         expect(view._render.getCall(0).args[3]).toBeInstanceOf(Function);
       });
     });
+
+    describe('with view extensions', () => {
+      it('should render only the extensions that support the requested content type, in order', () => {
+        let rendered = [];
+        function extension(name, contentTypes) {
+          let ext = new View(name, contentTypes);
+          ext._render = (settings, request, response, done) => { rendered.push(name); done(); };
+          return ext;
+        }
+        let htmlExt = extension('ParentView:Before', 'text/html'),
+            jsonExt = extension('ParentView:Before', 'application/json');
+        let view = new View('ParentView', null, { views: [htmlExt, jsonExt] });
+        let response = { getHeader: sinon.stub().returns('text/html'), emit: sinon.spy(), end: sinon.spy() };
+        let done = sinon.spy();
+
+        view._renderViewExtensions('Before', { contentType: 'text/html' }, {}, response, done);
+
+        expect(rendered).toEqual(['ParentView:Before']);
+        expect(done.calledOnce).toBe(true);
+      });
+
+      it('should call done directly when there are no matching extensions', () => {
+        let view = new View('ParentView');
+        let done = sinon.spy();
+
+        view._renderViewExtensions('Before', { contentType: 'text/html' }, {}, {}, done);
+
+        expect(done.calledOnce).toBe(true);
+      });
+    });
+
+    describe('_renderViewExtension', () => {
+      it('should render the extension with the given options', () => {
+        let view = new View();
+        let extension = new View('Ext', 'text/html');
+        extension._render = sinon.spy();
+        let request = {}, response = { getHeader: sinon.stub().returns('text/html'), emit: sinon.spy(), end: sinon.spy() };
+        let done = sinon.spy();
+
+        view._renderViewExtension(extension, { contentType: 'text/html' }, request, response, done);
+
+        expect(extension._render.calledOnce).toBe(true);
+      });
+    });
   });
 });
 
