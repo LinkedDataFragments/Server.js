@@ -63,6 +63,8 @@ export interface DatasourceOptions {
   copyright?: string;
   homepage?: string;
   request?: (...args: any[]) => any;
+
+  /** In practice always provided; kept optional since Datasource supports no options at all. */
   dataFactory?: DataFactory;
   graph?: string;
   quads?: boolean;

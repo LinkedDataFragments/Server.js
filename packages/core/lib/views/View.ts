@@ -15,27 +15,20 @@ interface ContentTypeDescriptor {
 // Creates a view with the given name
 export class View {
   name: string;
-  supportedContentTypes!: ContentTypeDescriptor[];
+  supportedContentTypes: ContentTypeDescriptor[];
   dataFactory?: DataFactory;
 
-  protected _supportedContentTypeMatcher!: Record<string, boolean>;
+  protected _supportedContentTypeMatcher: Record<string, boolean>;
   // Once construction is done, views has always been normalized to a real ViewCollection
   protected _defaults: ViewSettings & { views?: ViewCollection };
 
   constructor(viewName?: string, contentTypes?: string, defaults?: ViewSettings) {
     this.name = viewName || '';
-    this._parseContentTypes(contentTypes);
-    this._defaults = (defaults || {}) as ViewSettings & { views?: ViewCollection };
-    this.dataFactory = this._defaults.dataFactory;
-    if (defaults?.views)
-      this._defaults.views = new ViewCollection(defaults.views as View[]);
-  }
 
-  // Parses a string of content types into an array of objects
-  // i.e., 'a/b,q=0.7' => [{ type: 'a/b', responseType: 'a/b;charset=utf-8', quality: 0.7 }]
-  // The "type" represents the MIME type,
-  // whereas "responseType" contains the value of the Content-Type header with encoding.
-  protected _parseContentTypes(contentTypes?: string): void {
+    // Parses a string of content types into an array of objects
+    // i.e., 'a/b,q=0.7' => [{ type: 'a/b', responseType: 'a/b;charset=utf-8', quality: 0.7 }]
+    // The "type" represents the MIME type,
+    // whereas "responseType" contains the value of the Content-Type header with encoding.
     let matcher: Record<string, boolean> = this._supportedContentTypeMatcher = Object.create(null);
     let parsedContentTypes: ContentTypeDescriptor[] | undefined;
     if (typeof contentTypes === 'string') {
@@ -52,6 +45,11 @@ export class View {
       });
     }
     this.supportedContentTypes = parsedContentTypes || [];
+
+    this._defaults = (defaults || {}) as ViewSettings & { views?: ViewCollection };
+    this.dataFactory = this._defaults.dataFactory;
+    if (defaults?.views)
+      this._defaults.views = new ViewCollection(defaults.views as View[]);
   }
 
   // Indicates whether the view supports the given content type

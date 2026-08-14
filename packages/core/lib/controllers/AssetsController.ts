@@ -38,7 +38,7 @@ export class AssetsController extends Controller {
   protected _readAssetsFolder(assetsFolder: string, assetsPath: string): void {
     if (assetsFolder.indexOf('file:///') === 0)
       assetsFolder = assetsFolder.replace('file:///', '');
-    fs.readdirSync(assetsFolder).forEach(function (this: AssetsController, name: string) {
+    fs.readdirSync(assetsFolder).forEach((name: string) => {
       let filename = path.join(assetsFolder, name), stats = fs.statSync(filename);
       // Read an asset file into memory
       if (stats.isFile()) {
@@ -51,7 +51,7 @@ export class AssetsController extends Controller {
       // Read all asset files in a folder
       else if (stats.isDirectory())
         this._readAssetsFolder(filename, assetsPath + name + '/');
-    }, this);
+    });
   }
 
   // Try to serve the requested asset

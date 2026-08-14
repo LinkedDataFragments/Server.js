@@ -44,7 +44,14 @@ export class Controller {
   protected _prefixes: Record<string, string>;
   protected _datasources: DatasourceRegistry;
   protected _views: ViewCollection;
-  protected _baseUrl: Record<keyof Url, string | boolean | undefined>;
+
+  /**
+   * The parsed base URL, with `href`/`path`/`pathname`/`search`/`hash` stripped since
+   * those are request-specific. Typed as a mapped type (not `Record<keyof Url, ...>`)
+   * so each field keeps its own real type from `Url` instead of being collapsed into one
+   * shared union.
+   */
+  protected _baseUrl: { [K in keyof Url]: Url[K] | undefined };
 
   /**
    * Creates a new Controller
@@ -63,7 +70,7 @@ export class Controller {
     // Set up base URL (if we're behind a proxy, this allows reconstructing the actual request URL)
     this._baseUrl = _.mapValues(url.parse((options.urlData || new UrlData()).baseURL), (value, key) => {
       return value && !/^(?:href|path|search|hash)$/.test(key) ? value : undefined;
-    });
+    }) as { [K in keyof Url]: Url[K] | undefined };
   }
 
   /**
@@ -81,13 +88,11 @@ export class Controller {
     // containing the parsed request URL, resolved against the base URL
     if (!request.parsedUrl) {
       // Keep the request's path and query, but take over all other defined baseURL properties
-      // _baseUrl is cast below since lodash's mapValues collapses its value type to a
-      // single union, which doesn't line up field-by-field with UrlObject.
       request.parsedUrl = _.defaults(_.pick(url.parse(request.url!, true), 'path', 'pathname', 'query'),
         this._getForwarded(request),
         this._getXForwardHeaders(request),
         this._baseUrl,
-        { protocol: 'http:', host: request.headers.host }) as UrlObject;
+        { protocol: 'http:', host: request.headers.host }) satisfies UrlObject;
     }
 
     // Try to handle the request

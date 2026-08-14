@@ -66,7 +66,7 @@ export class Datasource extends EventEmitter {
       queryGraphReplacements[options.graph] = '';
       this._queryGraphReplacements = queryGraphReplacements;
     }
-    this._supportsQuads = 'quads' in options ? options.quads! : true;
+    this._supportsQuads = options.quads === undefined ? true : options.quads;
 
     // Whether the datasource can be queried
     this.initialized = false;
@@ -162,7 +162,7 @@ export class Datasource extends EventEmitter {
       query.graph = this.dataFactory.defaultGraph();
 
     // If a custom default graph was set, query it as the default graph
-    if (this._graph && query.graph && query.graph.value in this._queryGraphReplacements!)
+    if (this._graph && query.graph && query.graph.value in (this._queryGraphReplacements ?? {}))
       query.graph = stringToTerm(this._queryGraphReplacements![query.graph.value], this.dataFactory);
 
     // Transform the received quads
