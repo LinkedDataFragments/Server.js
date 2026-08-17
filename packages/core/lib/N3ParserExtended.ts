@@ -25,7 +25,7 @@ interface ParserConstructorInternals {
 }
 
 export class N3ParserExtended<Q extends BaseQuad = Quad> extends N3Parser<Q> {
-  get prefixMap(): Record<string, string> {
+  get prefixes(): Record<string, string> {
     return (this as unknown as ParserPrefixInternals)._prefixes;
   }
 

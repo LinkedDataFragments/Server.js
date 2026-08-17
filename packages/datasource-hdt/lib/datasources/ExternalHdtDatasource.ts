@@ -74,8 +74,8 @@ export class ExternalHdtDatasource extends Datasource {
         destination.close();
       }
     });
-    // prefixMap is N3ParserExtended's typed view of n3's internal _prefixes (same object)
-    parser.prefixMap._ = '_:'; // Ensure blank nodes are named consistently
+    // prefixes is N3ParserExtended's typed view of n3's internal _prefixes (same object)
+    parser.prefixes._ = '_:'; // Ensure blank nodes are named consistently
 
     // Extract the estimated number of total matches from the first (comment) line
     hdt.stdout.once('data', (header: string) => {
