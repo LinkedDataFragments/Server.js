@@ -123,7 +123,7 @@ export class RdfView extends View {
 
   // Creates a writer for JSON-LD
   protected _createJsonLdWriter(settings: ViewSettings, response: LdfResponse, done: RenderDone): RdfWriter {
-    let prefixes = settings.prefixes || {}, context: Record<string, any> = _.omit(prefixes, ''), base = prefixes[''];
+    let prefixes = settings.prefixes || {}, context: Record<string, unknown> = _.omit(prefixes, ''), base = prefixes[''];
     base && (context['@base'] = base);
     const mySerializer = new JsonLdSerializer({ space: '  ', context: context, baseIRI: prefixes[''], useNativeTypes: true })
       .on('error', done);

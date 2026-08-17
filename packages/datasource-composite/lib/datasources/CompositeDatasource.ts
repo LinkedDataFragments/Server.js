@@ -94,10 +94,10 @@ export class CompositeDatasource extends Datasource {
     // (truthy, hence "works"). Pre-existing quirk, preserved as-is.
     return findRecursive(0, absoluteOffset, -1, -1, 0, callback, true);
 
-    function findRecursive(datasourceIndex: number, offset: number, chosenDatasource: number, chosenOffset: number, totalCount: number, hasExactCount: any, _unused?: boolean): void {
+    function findRecursive(datasourceIndex: number, offset: number, chosenDatasource: number, chosenOffset: number, totalCount: number, hasExactCount: unknown, _unused?: boolean): void {
       if (datasourceIndex >= self._datasourceNames.length)
         // We checked all datasources, return our accumulated information
-        callback(chosenDatasource, chosenOffset, totalCount, hasExactCount);
+        callback(chosenDatasource, chosenOffset, totalCount, hasExactCount as boolean);
       else {
         let datasource = self._getDatasourceById(datasourceIndex);
         let emptyQuery: Query = {
