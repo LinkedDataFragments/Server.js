@@ -107,10 +107,9 @@ export class TimegateController extends Controller {
     // Is this resource a well-configured timegate?
     if (timemapDetails) {
       // For OPTIONS (preflight) requests, send only headers (avoiding expensive lookups)
-      if (request.method === 'OPTIONS') {
-        response.end();
-        return;
-      }
+      if (request.method === 'OPTIONS')
+        // eslint-disable-next-line no-void
+        return void response.end();
 
       // Try to find the memento closest to the requested date
       let acceptDatetime = toDate(request.headers['accept-datetime']),

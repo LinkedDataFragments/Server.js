@@ -105,10 +105,9 @@ function _reportError(this: LdfHttpServer, request: LdfRequest | Error | null | 
   // Try to report the error in the response
   try {
     // Ensure errors are not handled recursively, and don't modify an already started response
-    if (response.error || response.headersSent) {
-      response.end();
-      return;
-    }
+    if (response.error || response.headersSent)
+      // eslint-disable-next-line no-void
+      return void response.end();
     response.error = error;
     this._errorController.handleRequest(request as LdfRequest, response, _.noop);
   }
