@@ -17,7 +17,7 @@ export class SummaryRdfViewExtension extends RdfView {
   }
 
   // Generates triples and quads by sending them to the data and/or metadata callbacks
-  protected override _generateRdf(settings: SummaryViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
+  override _generateRdf(settings: SummaryViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     // If summaries are enabled, connect the datasource to its summary
     // TODO: summary should be of/off per dataset
     const summaries = settings.summaries;

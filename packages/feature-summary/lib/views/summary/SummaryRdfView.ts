@@ -13,7 +13,7 @@ export class SummaryRdfView extends RdfView {
   }
 
   // Generates triples and quads by sending them to the data and/or metadata callbacks
-  protected override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
+  override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     // Add summary triples
     const results: StreamParser = settings.results;
     results.on('data', data);

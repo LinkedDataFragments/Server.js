@@ -33,7 +33,7 @@ export class QuadPatternFragmentsRdfView extends RdfView {
   }
 
   // Generates quads by sending them to the data and/or metadata callbacks
-  protected override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
+  override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     let datasource: DatasourceInfo = settings.datasource, fragment: FragmentInfo = settings.fragment, query: Query = settings.query,
         results: AsyncIterator<Quad> = settings.results, metadataDone = false;
 

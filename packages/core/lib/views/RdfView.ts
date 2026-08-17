@@ -25,15 +25,6 @@ interface RdfWriter {
   end: () => void;
 }
 
-// Duck-types a view extension that generates RDF, matching the original
-// check's exact semantics (`extension._generateRdf`, not `instanceof RdfView`).
-interface RdfViewExtension extends View {
-  _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void;
-}
-function isRdfViewExtension(extension: View): extension is RdfViewExtension {
-  return !!(extension as Partial<RdfViewExtension>)._generateRdf;
-}
-
 // Creates a new RDF view with the given name and settings
 export class RdfView extends View {
   public override dataFactory: DataFactory;
@@ -62,8 +53,18 @@ export class RdfView extends View {
     before();
   }
 
-  // Generates triples and quads by sending them to the data and/or metadata callbacks
-  protected _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
+  /**
+   * Generates triples and quads by sending them to the data and/or metadata callbacks.
+   *
+   * This is public (rather than protected) so that `isRdfViewExtension` below can check
+   * for it via `Pick<RdfView, '_generateRdf'>`. That check only tests for the presence of
+   * a `_generateRdf` method, not `instanceof RdfView`: view extensions that generate RDF
+   * are plain `View` instances with this method added, not `RdfView` subclasses, so an
+   * `instanceof` check would be stricter than the original JS and would reject them.
+   * Using `Pick` instead of a hand-rolled duck-typing interface avoids a second type that
+   * has to be kept in sync with this method's signature — TypeScript checks it for us.
+   */
+  _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     throw new Error('The _generateRdf method is not yet implemented.');
   }
 
@@ -150,3 +151,8 @@ export class RdfView extends View {
   }
 }
 
+// Duck-types a view extension that generates RDF, matching the original
+// check's exact semantics (`extension._generateRdf`, not `instanceof RdfView`).
+function isRdfViewExtension(extension: View): extension is View & Pick<RdfView, '_generateRdf'> {
+  return !!(extension as Partial<Pick<RdfView, '_generateRdf'>>)._generateRdf;
+}

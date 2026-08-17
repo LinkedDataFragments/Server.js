@@ -12,7 +12,7 @@ export class ErrorRdfView extends RdfView {
   }
 
   // Generates triples and quads by sending them to the data and/or metadata callbacks
-  protected override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
+  override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     this._addDatasources(settings, data, metadata);
     done();
   }
