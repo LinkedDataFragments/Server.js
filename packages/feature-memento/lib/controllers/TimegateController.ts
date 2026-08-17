@@ -122,7 +122,7 @@ export class TimegateController extends Controller {
         mementoUrl = url.format(mementoUrl);
 
         // Determine the URL of the original resource
-        let originalBaseURL = memento.original, originalUrl: url.UrlObject | string;
+        let originalBaseURL: string | undefined, originalUrl: url.UrlObject | string;
         if (!originalBaseURL)
           originalUrl = { ...request.parsedUrl, pathname: datasource };
         else

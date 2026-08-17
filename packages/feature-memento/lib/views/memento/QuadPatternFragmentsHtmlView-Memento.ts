@@ -13,10 +13,10 @@ type MementoViewSettings = ViewSettings & Pick<MementoRequestSettings, 'datasour
 export class MementoHtmlViewExtension extends HtmlView {
   protected _invertedTimegateMap: Record<string, InvertedTimegateEntry>;
 
-  constructor(settings?: TimegateControllerOptions & ViewSettings) {
+  constructor(settings: TimegateControllerOptions & ViewSettings) {
     super('QuadPatternFragments:Before', settings);
-    let timegates = settings!.timegates || {};
-    this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos, settings!.urlData!);
+    let timegates = settings.timegates || {};
+    this._invertedTimegateMap = TimegateController.parseInvertedTimegateMap(timegates.mementos, settings.urlData!);
   }
 
   // Renders the view with the given settings to the response
