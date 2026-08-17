@@ -7,7 +7,7 @@ import * as path from 'path';
 import { N3ParserExtended as N3Parser } from '@ldf/core/lib/N3ParserExtended';
 import { spawn } from 'child_process';
 import type { Quad } from 'rdf-js';
-import type { DatasourceOptions, Pushable, Query } from '@ldf/core';
+import type { DatasourceOptions, Pushable, Query } from '@ldf/core/lib/types';
 
 let hdtUtility = path.join(__dirname, '../../node_modules/.bin/hdt');
 

@@ -3,7 +3,7 @@
 
 import { RdfView } from '@ldf/core/lib/views/RdfView';
 import type { Quad } from 'rdf-js';
-import type { RdfViewSettings, RenderDone, ViewSettings } from '@ldf/core';
+import type { RdfViewSettings, RenderDone, ViewSettings } from '@ldf/core/lib/types';
 import type { SummaryRenderSettings } from '../../controllers/SummaryController';
 
 type SummaryViewSettings = ViewSettings & SummaryRenderSettings;

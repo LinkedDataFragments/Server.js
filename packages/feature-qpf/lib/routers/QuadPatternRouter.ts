@@ -3,7 +3,7 @@
 
 import { stringToTerm } from 'rdf-string';
 import type { DataFactory, Term } from 'rdf-js';
-import type { Query, RouterRequest } from '@ldf/core';
+import type { Query, RouterRequest } from '@ldf/core/lib/types';
 
 let iriMatcher = /^(<?)([^_?$"<>][^"<>]*)>?$/;
 let literalMatcher = /^("[^]*")(?:|\^\^<?([^"<>]+)>?|@[a-z0-9\-]+)$/i;

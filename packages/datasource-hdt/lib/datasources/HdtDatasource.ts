@@ -5,7 +5,7 @@ import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import * as hdt from 'hdt';
 import { ExternalHdtDatasource } from './ExternalHdtDatasource';
 import type { Quad } from 'rdf-js';
-import type { DatasourceOptions, Pushable, Query } from '@ldf/core';
+import type { DatasourceOptions, Pushable, Query } from '@ldf/core/lib/types';
 
 interface HdtDatasourceOptions extends DatasourceOptions {
   external?: boolean;

@@ -11,7 +11,7 @@ import { UrlData } from '@ldf/core/lib/UrlData';
 import * as Util from '@ldf/core/lib/Util';
 import LRU = require('lru-cache');
 import type { Quad as N3Quad, Prefixes as N3Prefixes } from 'n3';
-import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core';
+import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
 
 let CERT_NS = 'http://www.w3.org/ns/auth/cert#';
 

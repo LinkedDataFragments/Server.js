@@ -3,7 +3,7 @@
 
 import { HtmlView } from '@ldf/core/lib/views/HtmlView';
 import * as path from 'path';
-import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core';
+import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core/lib/types';
 import type { SummaryRenderSettings } from '../../controllers/SummaryController';
 
 type SummaryViewSettings = ViewSettings & Omit<SummaryRenderSettings, 'datasource'>;

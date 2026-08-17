@@ -5,7 +5,7 @@ import { Controller } from '@ldf/core/lib/controllers/Controller';
 import * as url from 'url';
 import * as _ from 'lodash';
 import type { ParsedUrlQuery } from 'querystring';
-import type { ControllerOptions, LdfRequest, LdfResponse, Query, RouterRequest, ViewSettings } from '@ldf/core';
+import type { ControllerOptions, LdfRequest, LdfResponse, Query, RouterRequest, ViewSettings } from '@ldf/core/lib/types';
 import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 
 interface Router {

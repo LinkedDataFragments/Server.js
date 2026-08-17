@@ -5,7 +5,7 @@ import { Controller } from '@ldf/core/lib/controllers/Controller';
 import * as _ from 'lodash';
 import * as url from 'url';
 import * as Util from '@ldf/core/lib/Util';
-import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core';
+import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core/lib/types';
 import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import type { UrlData } from '@ldf/core/lib/UrlData';
 

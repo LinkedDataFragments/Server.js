@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { StreamParser } from 'n3';
 import * as Util from '@ldf/core/lib/Util';
-import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core';
+import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core/lib/types';
 import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 
 export interface SummariesConfig {
