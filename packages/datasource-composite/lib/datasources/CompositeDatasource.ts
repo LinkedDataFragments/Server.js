@@ -4,7 +4,6 @@
 import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import LRU = require('lru-cache');
 import type { Quad } from 'rdf-js';
-import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, DatasourceRegistry, Pushable, Query } from '@ldf/core/lib/types';
 
 interface CompositeDatasourceOptions extends DatasourceOptions {
@@ -146,7 +145,7 @@ export class CompositeDatasource extends Datasource {
   }
 
   // Writes the results of the query to the given quad stream
-  protected override _executeQuery(query: Query, destination: BufferedIterator<Quad>): void {
+  protected override _executeQuery(query: Query, destination: Pushable<Quad>): void {
     let offset =  query.offset || 0, limit = query.limit || Infinity;
     this._getDatasourceInfo(query, offset, (datasourceIndex, relativeOffset, totalCount, hasExactCount) => {
       if (datasourceIndex < 0) {
@@ -198,11 +197,11 @@ export class CompositeDatasource extends Datasource {
 
     // Counts the number of quads and sends them through the callback,
     // only closing the iterator when the callback returns true.
-    function countItems(destination: BufferedIterator<Quad>, closeCallback: (count: number) => boolean): void {
+    function countItems(destination: Pushable<Quad>, closeCallback: (count: number) => boolean): void {
       let count = 0,
-          originalPush = (destination as Pushable<Quad>)._push,
+          originalPush = destination._push,
           originalClose = destination.close;
-      (destination as Pushable<Quad>)._push = function (element: Quad) {
+      destination._push = function (element: Quad) {
         if (element) count++;
         originalPush.call(destination, element);
       };
@@ -213,7 +212,7 @@ export class CompositeDatasource extends Datasource {
     }
 
     function pushToDestination(quad: Quad) {
-      (destination as Pushable<Quad>)._push(quad);
+      destination._push(quad);
     }
     function closeDestination() {
       destination.close();

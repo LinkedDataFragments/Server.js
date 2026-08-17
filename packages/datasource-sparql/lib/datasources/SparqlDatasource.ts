@@ -6,7 +6,6 @@ import { SparqlJsonParser } from 'sparqljson-parse';
 import LRU = require('lru-cache');
 import type { IBindings } from 'sparqljson-parse';
 import type { Literal, NamedNode, Quad, Quad_Graph, Quad_Object, Quad_Predicate, Quad_Subject, Term } from 'rdf-js';
-import type { BufferedIterator } from 'asynciterator';
 import type { DatasourceOptions, Pushable, Query } from '@ldf/core/lib/types';
 
 interface SparqlDatasourceOptions extends DatasourceOptions {
@@ -50,7 +49,7 @@ export class SparqlDatasource extends Datasource {
   }
 
   // Writes the results of the query to the given triple stream
-  protected override _executeQuery(query: Query, destination: BufferedIterator<Quad>): void {
+  protected override _executeQuery(query: Query, destination: Pushable<Quad>): void {
     // Create the HTTP request
     let sparqlPattern = this._createQuadPattern(query), self = this,
         selectQuery = this._createSelectQuery(sparqlPattern, query.offset, query.limit),
@@ -76,7 +75,7 @@ export class SparqlDatasource extends Datasource {
             (binding.o || query.object) as Quad_Object,
             (binding.g || query.graph) as Quad_Graph | undefined,
           );
-          (destination as Pushable<Quad>)._push(triple);
+          destination._push(triple);
         });
         destination.close();
       });
