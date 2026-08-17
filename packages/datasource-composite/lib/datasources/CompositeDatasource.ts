@@ -21,7 +21,7 @@ export class CompositeDatasource extends Datasource {
     super(options, supportedFeatureList);
 
     if (!options.references)
-      throw new Error('A CompositeDatasource requires a `references` array of datasource id\'s in its settings.');
+      throw new Error("A CompositeDatasource requires a `references` array of datasource id's in its settings.");
 
     this._datasources = {};
     this._datasourceNames = [];
