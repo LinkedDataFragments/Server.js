@@ -45,7 +45,7 @@
     "test-ci": "nyc --reporter=lcov npm run mocha",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint --no-error-on-unmatched-pattern packages/*/bin/* packages/*/lib packages/*/test --ext .js,.ts",
+    "lint": "eslint packages/*/bin/* packages/*/lib packages/*/test --ext .js,.ts",
     "clean": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules",
     "dedupe": "npx yarn-deduplicate yarn.lock --scopes",
     "publish": "lerna publish",
