@@ -37,7 +37,7 @@ export class RdfView extends View {
   // Renders the view with the given settings to the response
   protected override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // Add generic writer settings
-    let fragmentUrl: string = settings.fragment && (settings.fragment as { url?: string }).url || '';
+    let fragmentUrl: string = (settings.fragment && (settings.fragment as { url?: string }).url || '') as string;
     settings.fragmentUrl = fragmentUrl;
     settings.metadataGraph = fragmentUrl + '#metadata';
     settings.contentType = response.getHeader('Content-Type') as string;
@@ -105,8 +105,8 @@ export class RdfView extends View {
       meta: function (quad: Quad) {
         // Relate the metadata graph to the data.
         if (supportsGraphs && !metadataGraph) {
-          metadataGraph = settings.metadataGraph;
-          writer.addQuad(dataFactory.namedNode(metadataGraph!), dataFactory.namedNode(primaryTopic), dataFactory.namedNode(settings.fragmentUrl), dataFactory.namedNode(metadataGraph!));
+          metadataGraph = settings.metadataGraph as string | undefined;
+          writer.addQuad(dataFactory.namedNode(metadataGraph!), dataFactory.namedNode(primaryTopic), dataFactory.namedNode(settings.fragmentUrl as string), dataFactory.namedNode(metadataGraph!));
         }
         const graph = quad.graph.termType === 'DefaultGraph' ? (metadataGraph ? dataFactory.namedNode(metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
         writer.addQuad(dataFactory.quad(quad.subject, quad.predicate, quad.object, graph));
@@ -139,7 +139,7 @@ export class RdfView extends View {
       },
       // Adds the metadata triple to the output
       meta: function (quad: Quad) {
-        const graph = quad.graph.termType === 'DefaultGraph' ? (settings.metadataGraph  ? dataFactory.namedNode(settings.metadataGraph) : dataFactory.defaultGraph()) : quad.graph;
+        const graph = quad.graph.termType === 'DefaultGraph' ? (settings.metadataGraph  ? dataFactory.namedNode(settings.metadataGraph as string) : dataFactory.defaultGraph()) : quad.graph;
         mySerializer.write(dataFactory.quad(quad.subject, quad.predicate, quad.object, graph));
       },
       // Ends the output and flushes the stream

@@ -25,7 +25,7 @@ export class QuadPatternFragmentsHtmlView extends HtmlView {
   // Renders the view with the given settings to the response
   protected override _render(settings: QuadPatternFragmentsViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     // Read the data and metadata
-    let self = this, quads: Quad[] = settings.quads = [], results: AsyncIterator<Quad> = settings.results;
+    let self = this, quads: Quad[] = settings.quads = [], results = settings.results as AsyncIterator<Quad>;
     results.on('data', (triple) => { quads.push(triple); });
     results.on('end',  () => { settings.metadata && renderHtml(); });
     results.getProperty('metadata', (metadata: { totalCount: number; hasExactCount: boolean }) => {

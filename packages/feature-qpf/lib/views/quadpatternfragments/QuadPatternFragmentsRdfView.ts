@@ -29,13 +29,13 @@ type DatasourceInfo = Datasource & { index: string; templateUrl: string; support
 // Creates a new QuadPatternFragmentsRdfView
 export class QuadPatternFragmentsRdfView extends RdfView {
   constructor(settings: RdfViewSettings) {
-    super(settings.viewNameOverride || 'QuadPatternFragments', settings);
+    super((settings.viewNameOverride as string | undefined) || 'QuadPatternFragments', settings);
   }
 
   // Generates quads by sending them to the data and/or metadata callbacks
   override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
-    let datasource: DatasourceInfo = settings.datasource, fragment: FragmentInfo = settings.fragment, query: Query = settings.query,
-        results: AsyncIterator<Quad> = settings.results, metadataDone = false;
+    let datasource = settings.datasource as DatasourceInfo, fragment = settings.fragment as FragmentInfo, query = settings.query as Query,
+        results = settings.results as AsyncIterator<Quad>, metadataDone = false;
 
     // Add data source metadata
     this._generateMetadata(metadata, fragment, query, datasource);

@@ -117,7 +117,7 @@ export interface ViewSettings {
   prefixes?: Record<string, string>;
   datasources?: DatasourceRegistry;
   viewPathBase?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // ViewSettings with dataFactory guaranteed present, as required by RdfView and its subclasses
