@@ -5,7 +5,7 @@ import { Controller } from '@ldf/core/lib/controllers/Controller';
 import * as url from 'url';
 import * as _ from 'lodash';
 import type { ParsedUrlQuery } from 'querystring';
-import type { ControllerOptions, LdfRequest, LdfResponse, Query, RouterRequest, ViewSettings } from '@ldf/core/lib/types';
+import type { ControllerOptions, LdfRequest, LdfResponse, Query, QueryFeatures, RouterRequest, ViewSettings } from '@ldf/core/lib/types';
 import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 
 interface Router {
@@ -42,15 +42,15 @@ export class QuadPatternFragmentsController extends Controller {
   protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
     // Create the query from the request by calling the fragment routers
     let requestParams = { url: request.parsedUrl, headers: request.headers } as RouterRequest,
-        query = this._routers.reduce((query: Query, router) => {
+        query: Query & { features: QueryFeatures } = this._routers.reduce((query, router) => {
           try { router.extractQueryParams(requestParams, query); }
           catch (e) { /* ignore routing errors */ }
           return query;
         }, { features: {} });
 
     // Execute the query on the data source
-    let datasource = query.features!.datasource && this._datasources[query.datasource!];
-    delete query.features!.datasource;
+    let datasource = query.features.datasource && this._datasources[query.datasource!];
+    delete query.features.datasource;
     if (!datasource || !datasource.supportsQuery(query) ||
       !this.supportsDatasource(datasource))
       return next();
