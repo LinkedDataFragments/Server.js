@@ -51,7 +51,7 @@ export class Controller {
    * so each field keeps its own real type from `Url` instead of being collapsed into one
    * shared union.
    */
-  protected _baseUrl: { [K in keyof Url]: Url[K] | undefined };
+  protected _baseUrl: Partial<Url>;
 
   /**
    * Creates a new Controller
