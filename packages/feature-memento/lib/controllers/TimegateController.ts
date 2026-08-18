@@ -99,7 +99,7 @@ export class TimegateController extends Controller {
   }
 
   // Perform time negotiation if applicable
-  protected override _handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void): void {
+  protected override _handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void): LdfResponse | undefined {
     let timegateMatch = this._matcher.exec(request.url),
         datasource = timegateMatch && timegateMatch[1],
         timemapDetails = datasource && this._timemaps[datasource];
@@ -108,8 +108,7 @@ export class TimegateController extends Controller {
     if (timemapDetails) {
       // For OPTIONS (preflight) requests, send only headers (avoiding expensive lookups)
       if (request.method === 'OPTIONS')
-        // eslint-disable-next-line no-void
-        return void response.end();
+        return response.end();
 
       // Try to find the memento closest to the requested date
       let acceptDatetime = toDate(request.headers['accept-datetime']),

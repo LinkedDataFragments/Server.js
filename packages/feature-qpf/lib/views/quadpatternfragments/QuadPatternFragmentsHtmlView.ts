@@ -10,6 +10,7 @@ import type { IndexDatasource } from '@ldf/core/lib/datasources/IndexDatasource'
 
 interface QuadPatternFragmentsViewSettings extends ViewSettings {
   datasource: Partial<IndexDatasource>;
+  results: AsyncIterator<Quad>;
 }
 
 // Creates a new QuadPatternFragmentsHtmlView
