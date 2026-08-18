@@ -79,7 +79,7 @@ export class ExternalHdtDatasource extends Datasource {
 
     // Extract the estimated number of total matches from the first (comment) line
     hdt.stdout.once('data', (header: string) => {
-      estimatedTotalCount = parseInt(header.match(/\d+/) as any, 10) || 0;
+      estimatedTotalCount = parseInt(String(header.match(/\d+/)), 10) || 0;
       hasExactCount = header.indexOf('estimated') < 0;
     });
 
