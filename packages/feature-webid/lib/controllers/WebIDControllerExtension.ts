@@ -37,6 +37,8 @@ export class WebIDControllerExtension extends Controller {
 
   constructor(settings: ControllerOptions) {
     super(settings);
+    // TODO: lru-cache v5 is a class; this should be `new LRU(50)`. Calling it as a
+    // plain function is a pre-existing bug, preserved as-is pending test coverage.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     this._cache = (LRU as any)(50);
     this._protocol = settings.urlData!.protocol;
