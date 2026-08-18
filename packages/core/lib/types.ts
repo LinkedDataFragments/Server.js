@@ -81,6 +81,11 @@ export interface LdfRequest extends IncomingMessage {
   parsedUrl?: UrlObject;
 }
 
+// LdfRequest as it always is for a live incoming request: url is only
+// optional on IncomingMessage because the same type doubles as an
+// outgoing response's info, which never applies here.
+export type LdfRequestWithUrl = LdfRequest & { url: string };
+
 export interface LdfResponse extends ServerResponse {
   error?: Error;
 }

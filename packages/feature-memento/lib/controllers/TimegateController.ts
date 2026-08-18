@@ -5,7 +5,7 @@ import { Controller } from '@ldf/core/lib/controllers/Controller';
 import * as _ from 'lodash';
 import * as url from 'url';
 import * as Util from '@ldf/core/lib/Util';
-import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core/lib/types';
+import type { ControllerOptions, LdfRequestWithUrl, LdfResponse, Query } from '@ldf/core/lib/types';
 import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import type { UrlData } from '@ldf/core/lib/UrlData';
 
@@ -99,8 +99,8 @@ export class TimegateController extends Controller {
   }
 
   // Perform time negotiation if applicable
-  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
-    let timegateMatch = this._matcher.exec(request.url!),
+  protected override _handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void): void {
+    let timegateMatch = this._matcher.exec(request.url),
         datasource = timegateMatch && timegateMatch[1],
         timemapDetails = datasource && this._timemaps[datasource];
 

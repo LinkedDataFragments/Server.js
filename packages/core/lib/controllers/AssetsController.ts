@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as mime from 'mime';
 import * as Util from '../Util';
 import { UrlData } from '../UrlData';
-import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
+import type { ControllerOptions, LdfRequestWithUrl, LdfResponse } from '../types';
 
 interface Asset {
   type: string;
@@ -55,8 +55,8 @@ export class AssetsController extends Controller {
   }
 
   // Try to serve the requested asset
-  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
-    let assetMatch = request.url!.match(this._matcher), asset: Asset | null;
+  protected override _handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void): void {
+    let assetMatch = request.url.match(this._matcher), asset: Asset | null;
     if (asset = assetMatch && this._assets[assetMatch[1] || assetMatch[2]]) {
       response.writeHead(200, {
         'Content-Type': asset.type,

@@ -5,7 +5,7 @@ import { Controller } from './Controller';
 import * as url from 'url';
 import * as _ from 'lodash';
 import * as Util from '../Util';
-import type { ControllerOptions, LdfRequest, LdfResponse } from '../types';
+import type { ControllerOptions, LdfRequestWithUrl, LdfResponse } from '../types';
 import type { Datasource } from '../datasources/Datasource';
 
 // Creates a new DeferenceController
@@ -23,8 +23,8 @@ export class DeferenceController extends Controller {
   }
 
   // Dereferences a URL by redirecting to its subject fragment of a certain data source
-  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
-    let match = this._matcher.exec(request.url!), datasource: Datasource | null;
+  protected override _handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void): void {
+    let match = this._matcher.exec(request.url), datasource: Datasource | null;
     if (datasource = match && this._paths[match[1]]) {
       let entity = url.format(_.defaults({
         pathname: datasource.path,

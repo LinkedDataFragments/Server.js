@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { ViewCollection } from '../views/ViewCollection';
 import { UrlData } from '../UrlData';
 import * as Util from '../Util';
-import type { ControllerOptions, DatasourceRegistry, LdfRequest, LdfResponse, NonEmptyArray, ViewSettings } from '../types';
+import type { ControllerOptions, DatasourceRegistry, LdfRequest, LdfRequestWithUrl, LdfResponse, NonEmptyArray, ViewSettings } from '../types';
 import type { View } from '../views/View';
 
 // A single element of the HTTP Forwarded header (RFC 7239)
@@ -83,12 +83,12 @@ export class Controller {
    * @param next - Called when the request could not be handled by this controller, with an error if one occurred
    * @param settings - Additional view-rendering settings to pass through
    */
-  handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
+  handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
     // Add a `parsedUrl` field to `request`,
     // containing the parsed request URL, resolved against the base URL
     if (!request.parsedUrl) {
       // Keep the request's path and query, but take over all other defined baseURL properties
-      request.parsedUrl = _.defaults(_.pick(url.parse(request.url!, true), 'path', 'pathname', 'query'),
+      request.parsedUrl = _.defaults(_.pick(url.parse(request.url, true), 'path', 'pathname', 'query'),
         this._getForwarded(request),
         this._getXForwardHeaders(request),
         this._baseUrl,
@@ -143,7 +143,7 @@ export class Controller {
    * The base implementation just hands off to `next`; subclasses override this
    * to actually handle requests, calling `next` themselves when they don't apply.
    */
-  protected _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
+  protected _handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
     next();
   }
 

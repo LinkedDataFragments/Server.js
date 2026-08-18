@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { StreamParser } from 'n3';
 import * as Util from '@ldf/core/lib/Util';
-import type { ControllerOptions, LdfRequest, LdfResponse, Query } from '@ldf/core/lib/types';
+import type { ControllerOptions, LdfRequestWithUrl, LdfResponse, Query } from '@ldf/core/lib/types';
 import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 
 export interface SummariesConfig {
@@ -46,11 +46,11 @@ export class SummaryController extends Controller {
     this._matcher = new RegExp('^' + Util.toRegExp(this._summariesPath) + '(.+)$');
   }
 
-  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void): void {
+  protected override _handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void): void {
     if (!this._enabled)
       return next();
 
-    let summaryMatch = this._matcher && this._matcher.exec(request.url!), datasource;
+    let summaryMatch = this._matcher && this._matcher.exec(request.url), datasource;
     if (datasource = summaryMatch && summaryMatch[1]) {
       const summaryFile = path.join(this._summariesFolder, datasource + '.ttl');
 

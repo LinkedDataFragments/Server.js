@@ -9,7 +9,7 @@ import * as Util from './Util';
 import { ErrorController } from './controllers/ErrorController';
 import { UrlData } from './UrlData';
 import type { Controller } from './controllers/Controller';
-import type { ControllerOptions, LdfRequest, LdfResponse } from './types';
+import type { ControllerOptions, LdfRequest, LdfRequestWithUrl, LdfResponse } from './types';
 
 interface LinkedDataFragmentsServerOptions extends ControllerOptions {
   ssl?: https.ServerOptions & { keys?: Record<string, unknown> };
@@ -81,7 +81,7 @@ function _processRequest(this: LdfHttpServer, request: LdfRequest, response: Ldf
     // Otherwise, try the next controller
     else {
       let controller = self._controllers[controllerId++], next = _.once(nextController);
-      try { controller.handleRequest(request, response, next); }
+      try { controller.handleRequest(request as LdfRequestWithUrl, response, next); }
       catch (error) { next(Util.toError(error)); }
     }
   }
@@ -109,7 +109,7 @@ function _reportError(this: LdfHttpServer, request: LdfRequest | Error | null | 
       // eslint-disable-next-line no-void
       return void response.end();
     response.error = error;
-    this._errorController.handleRequest(request as LdfRequest, response, _.noop);
+    this._errorController.handleRequest(request as LdfRequestWithUrl, response, _.noop);
   }
   catch (responseError) { this._log(Util.toError(responseError).stack); }
 }

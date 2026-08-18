@@ -5,7 +5,7 @@ import { Controller } from '@ldf/core/lib/controllers/Controller';
 import { TimegateController } from './TimegateController';
 import type { InvertedTimegateEntry, TimegateControllerOptions, MementoRequestSettings } from './TimegateController';
 import * as url from 'url';
-import type { LdfRequest, LdfResponse, ViewSettings } from '@ldf/core/lib/types';
+import type { LdfRequestWithUrl, LdfResponse, ViewSettings } from '@ldf/core/lib/types';
 
 type MementoViewSettings = ViewSettings & MementoRequestSettings;
 
@@ -22,10 +22,10 @@ export class MementoControllerExtension extends Controller {
   }
 
   // Add Memento Link headers
-  protected override _handleRequest(request: LdfRequest, response: LdfResponse, next: (error?: Error) => void, settings: MementoViewSettings): void {
+  protected override _handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void, settings: MementoViewSettings): void {
     let datasource = settings.query.datasource,
         memento = this._invertedTimegateMap[settings.datasource.id as string],
-        requestQuery = request.url!.match(/\?.*|$/)![0];
+        requestQuery = request.url.match(/\?.*|$/)![0];
 
     // Add link to original if it is a memento
     if (memento && memento.interval && memento.interval.length === 2) {
