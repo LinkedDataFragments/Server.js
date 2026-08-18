@@ -79,9 +79,7 @@ export class ExternalHdtDatasource extends Datasource {
 
     // Extract the estimated number of total matches from the first (comment) line
     hdt.stdout.once('data', (header: string) => {
-      // Surfaced as a TypeScript error: parseInt requires a string, but header.match()
-      // returns RegExpMatchArray | null, so the match is extracted explicitly here
-      estimatedTotalCount = parseInt(header.match(/\d+/)?.[0] ?? '', 10) || 0;
+      estimatedTotalCount = parseInt(header.match(/\d+/) as any, 10) || 0;
       hasExactCount = header.indexOf('estimated') < 0;
     });
 
