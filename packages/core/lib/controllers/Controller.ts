@@ -45,12 +45,8 @@ export class Controller {
   protected _datasources: DatasourceRegistry;
   protected _views: ViewCollection;
 
-  /**
-   * The parsed base URL, with `href`/`path`/`pathname`/`search`/`hash` stripped since
-   * those are request-specific. Typed as a mapped type (not `Record<keyof Url, ...>`)
-   * so each field keeps its own real type from `Url` instead of being collapsed into one
-   * shared union.
-   */
+  // The parsed base URL, with `href`/`path`/`pathname`/`search`/`hash` stripped since
+  // those are request-specific.
   protected _baseUrl: Partial<Url>;
 
   /**
@@ -70,7 +66,7 @@ export class Controller {
     // Set up base URL (if we're behind a proxy, this allows reconstructing the actual request URL)
     this._baseUrl = _.mapValues(url.parse((options.urlData || new UrlData()).baseURL), (value, key) => {
       return value && !/^(?:href|path|search|hash)$/.test(key) ? value : undefined;
-    }) as { [K in keyof Url]: Url[K] | undefined };
+    }) as Partial<Url>;
   }
 
   /**
