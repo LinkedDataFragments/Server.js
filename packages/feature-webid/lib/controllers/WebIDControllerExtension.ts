@@ -7,7 +7,6 @@ import type { Socket } from 'net';
 import parseCacheControl = require('parse-cache-control');
 import { N3ParserExtended as N3Parser } from '@ldf/core/lib/N3ParserExtended';
 import { Controller } from '@ldf/core/lib/controllers/Controller';
-import { UrlData } from '@ldf/core/lib/UrlData';
 import * as Util from '@ldf/core/lib/Util';
 import LRU = require('lru-cache');
 import type { Quad as N3Quad, Prefixes as N3Prefixes } from 'n3';
@@ -39,8 +38,8 @@ export class WebIDControllerExtension extends Controller {
   constructor(settings: ControllerOptions) {
     super(settings);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    this._cache = require('lru-cache')(50);
-    this._protocol = (settings.urlData || new UrlData()).protocol;
+    this._cache = (LRU as any)(50);
+    this._protocol = settings.urlData!.protocol;
   }
 
   // Add WebID Link headers
