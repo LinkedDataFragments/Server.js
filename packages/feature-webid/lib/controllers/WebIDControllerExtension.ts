@@ -10,7 +10,7 @@ import { Controller } from '@ldf/core/lib/controllers/Controller';
 import * as Util from '@ldf/core/lib/Util';
 import LRU = require('lru-cache');
 import type { Quad as N3Quad, Prefixes as N3Prefixes } from 'n3';
-import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core/lib/types';
+import type { ControllerOptions, LdfRequest, LdfResponse } from '@ldf/core';
 
 let CERT_NS = 'http://www.w3.org/ns/auth/cert#';
 

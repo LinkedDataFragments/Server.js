@@ -5,7 +5,7 @@ import { HtmlView } from '@ldf/core/lib/views/HtmlView';
 import { TimegateController } from '../../controllers/TimegateController';
 import type { InvertedTimegateEntry, TimegateControllerOptions, MementoRequestSettings } from '../../controllers/TimegateController';
 import * as path from 'path';
-import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core/lib/types';
+import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core';
 
 type MementoViewSettings = ViewSettings & Pick<MementoRequestSettings, 'datasource'>;
 

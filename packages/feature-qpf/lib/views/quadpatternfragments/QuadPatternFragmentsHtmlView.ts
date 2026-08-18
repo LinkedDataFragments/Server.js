@@ -5,7 +5,7 @@ import { HtmlView } from '@ldf/core/lib/views/HtmlView';
 import { join } from 'path';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from 'rdf-js';
-import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core/lib/types';
+import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '@ldf/core';
 import type { IndexDatasource } from '@ldf/core/lib/datasources/IndexDatasource';
 
 interface QuadPatternFragmentsViewSettings extends ViewSettings {

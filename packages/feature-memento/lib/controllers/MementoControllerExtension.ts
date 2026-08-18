@@ -5,7 +5,7 @@ import { Controller } from '@ldf/core/lib/controllers/Controller';
 import { TimegateController } from './TimegateController';
 import type { InvertedTimegateEntry, TimegateControllerOptions, MementoRequestSettings } from './TimegateController';
 import * as url from 'url';
-import type { LdfRequestWithUrl, LdfResponse, ViewSettings } from '@ldf/core/lib/types';
+import type { LdfRequestWithUrl, LdfResponse, ViewSettings } from '@ldf/core';
 
 type MementoViewSettings = ViewSettings & MementoRequestSettings;
 

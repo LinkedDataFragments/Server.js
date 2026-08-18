@@ -4,7 +4,7 @@
 import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import LRU = require('lru-cache');
 import type { Quad } from 'rdf-js';
-import type { DatasourceOptions, DatasourceRegistry, Pushable, Query } from '@ldf/core/lib/types';
+import type { DatasourceOptions, DatasourceRegistry, Pushable, Query } from '@ldf/core';
 
 interface CompositeDatasourceOptions extends DatasourceOptions {
   references?: DatasourceRegistry;
