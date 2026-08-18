@@ -90,7 +90,7 @@ function _processRequest(this: LdfHttpServer, request: LdfRequest, response: Ldf
 }
 
 // Serves an application error
-function _reportError(this: LdfHttpServer, request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): void {
+function _reportError(this: LdfHttpServer, request: LdfRequest | Error | null | undefined, response?: LdfResponse, error?: Error): LdfResponse | undefined {
   // If no request or response is available, the server failed outside of a request; don't recover
   if (!response) {
     error = Util.toError(request);
