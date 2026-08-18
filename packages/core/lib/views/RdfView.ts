@@ -53,19 +53,7 @@ export class RdfView extends View {
     before();
   }
 
-  /**
-   * Generates triples and quads by sending them to the data and/or metadata callbacks.
-   *
-   * This is public (rather than protected) purely for TypeScript's benefit, with no
-   * runtime effect: `keyof` (which `Pick` relies on) excludes protected/private members
-   * from outside the class, so `Pick<RdfView, '_generateRdf'>` below only compiles if
-   * this is public. That check only tests for the presence of
-   * a `_generateRdf` method, not `instanceof RdfView`: view extensions that generate RDF
-   * are plain `View` instances with this method added, not `RdfView` subclasses, so an
-   * `instanceof` check would be stricter than the original JS and would reject them.
-   * Using `Pick` instead of a hand-rolled duck-typing interface avoids a second type that
-   * has to be kept in sync with this method's signature — TypeScript checks it for us.
-   */
+  // Generates triples and quads by sending them to the data and/or metadata callbacks
   _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
     throw new Error('The _generateRdf method is not yet implemented.');
   }
