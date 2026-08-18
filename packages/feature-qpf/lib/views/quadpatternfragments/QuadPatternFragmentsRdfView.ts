@@ -16,7 +16,7 @@ let dcTerms = 'http://purl.org/dc/terms/',
     hydra = 'http://www.w3.org/ns/hydra/core#',
     voID = 'http://rdfs.org/ns/void#';
 
-interface FragmentInfo {
+export interface FragmentInfo {
   url: string;
   pageUrl: string;
   firstPageUrl: string;
@@ -26,6 +26,13 @@ interface FragmentInfo {
 
 type DatasourceInfo = Datasource & { index: string; templateUrl: string; supportsQuads: boolean };
 
+interface QpfRdfViewSettings extends ViewSettings {
+  datasource: DatasourceInfo;
+  fragment: FragmentInfo;
+  query: Query;
+  results: AsyncIterator<Quad>;
+}
+
 // Creates a new QuadPatternFragmentsRdfView
 export class QuadPatternFragmentsRdfView extends RdfView {
   constructor(settings: RdfViewSettings) {
@@ -33,9 +40,9 @@ export class QuadPatternFragmentsRdfView extends RdfView {
   }
 
   // Generates quads by sending them to the data and/or metadata callbacks
-  override _generateRdf(settings: ViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
-    let datasource = settings.datasource as DatasourceInfo, fragment = settings.fragment as FragmentInfo, query = settings.query as Query,
-        results = settings.results as AsyncIterator<Quad>, metadataDone = false;
+  override _generateRdf(settings: QpfRdfViewSettings, data: (quad: Quad) => void, metadata: (quad: Quad) => void, done: RenderDone): void {
+    let datasource = settings.datasource, fragment = settings.fragment, query = settings.query,
+        results = settings.results, metadataDone = false;
 
     // Add data source metadata
     this._generateMetadata(metadata, fragment, query, datasource);

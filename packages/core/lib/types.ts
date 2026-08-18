@@ -122,6 +122,9 @@ export interface ViewSettings {
   prefixes?: Record<string, string>;
   datasources?: DatasourceRegistry;
   viewPathBase?: string;
+  fragment?: { url?: string };
+  fragmentUrl?: string;
+  metadataGraph?: string;
   [key: string]: unknown;
 }
 
