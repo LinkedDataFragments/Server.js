@@ -4,9 +4,6 @@
   "workspaces": [
     "packages/*"
   ],
-  "engines": {
-    "node": ">=20.0"
-  },
   "devDependencies": {
     "@types/lodash": "^4.17.24",
     "@types/lru-cache": "^5.1.1",
