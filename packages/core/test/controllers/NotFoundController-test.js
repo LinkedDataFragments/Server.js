@@ -2,15 +2,14 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 const sinon = require('sinon');
-let NotFoundController = require('../../lib/controllers/NotFoundController').NotFoundController; // changed to make tests pass, will be revised in follow up pr
+let NotFoundController = require('../../lib/controllers/NotFoundController').NotFoundController;
 
 let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
     dataFactory = require('n3').DataFactory;
 
-// changed to make tests pass, will be revised in follow up pr
-let NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView.js').NotFoundHtmlView,
-    NotFoundRdfView = require('../../lib/views/notfound/NotFoundRdfView.js').NotFoundRdfView;
+let NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView').NotFoundHtmlView,
+    NotFoundRdfView = require('../../lib/views/notfound/NotFoundRdfView').NotFoundRdfView;
 
 describe('NotFoundController', () => {
   describe('The NotFoundController module', () => {
@@ -75,14 +74,7 @@ describe('NotFoundController', () => {
       rdfView.render.reset();
     }
 
-    // SKIPPED: constructing NotFoundHtmlView/NotFoundRdfView directly (as opposed
-    // to letting NotFoundController build its own default views) and rendering
-    // through the HTML path hangs indefinitely — qejs.renderFile's returned q
-    // promise never settles. Reproduced with plain `node` against the compiled
-    // .js output too, fully outside Vitest, so this is a pre-existing bug in
-    // the qejs/HtmlView rendering path, not something this conversion caused.
-    // Not fixed here (out of scope — mechanical framework conversion only).
-    describe.skip('receiving a request without Accept header', () => {
+    describe('receiving a request without Accept header', () => {
       let response;
       beforeAll(() => new Promise((done) => {
         resetAll();
@@ -119,9 +111,7 @@ describe('NotFoundController', () => {
       });
     });
 
-    // SKIPPED: see the comment on the previous describe.skip block above — same
-    // pre-existing qejs/HtmlView hang.
-    describe.skip('receiving a request with an Accept header of */*', () => {
+    describe('receiving a request with an Accept header of */*', () => {
       let response;
       beforeAll(() => new Promise((done) => {
         resetAll();
@@ -158,9 +148,7 @@ describe('NotFoundController', () => {
       });
     });
 
-    // SKIPPED: see the comment on the first describe.skip block above — same
-    // pre-existing qejs/HtmlView hang.
-    describe.skip('receiving a request with an Accept header of text/html', () => {
+    describe('receiving a request with an Accept header of text/html', () => {
       let response;
       beforeAll(() => new Promise((done) => {
         resetAll();

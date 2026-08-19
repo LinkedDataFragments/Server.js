@@ -29,6 +29,7 @@ export default defineConfig({
     include: ['packages/*/test/**/*-test.js'],
     environment: 'node',
     testTimeout: 5000,
+    setupFiles: ['./test/vitest-setup.js'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
