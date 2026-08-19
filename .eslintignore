@@ -6,5 +6,3 @@ coverage
 packages/*/**/*.js
 packages/*/**/*.d.ts
 !packages/*/test/**
-!packages/preset-qpf/**/*.js
-!packages/server/**/*.js

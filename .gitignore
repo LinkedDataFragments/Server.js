@@ -4,12 +4,10 @@ summaries
 *.log
 *.hdt.index*
 .nyc_output
+coverage
 
-# Ignore deployment configuration files, but keep defaults and examples
+# Ignore deployment configuration files
 config.json
-config/*.json
-!config/config-defaults.json
-!config/config-example*.json
 
 # Ignore dev environment files
 .idea
@@ -20,7 +18,3 @@ packages/*/**/*.js
 packages/*/**/*.js.map
 packages/*/**/*.d.ts
 !packages/*/test/**
-!packages/preset-qpf/**/*.js
-!packages/preset-qpf/**/*.js.map
-!packages/server/**/*.js
-!packages/server/**/*.js.map
