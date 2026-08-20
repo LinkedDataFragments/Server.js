@@ -179,6 +179,22 @@ describe('CliRunner', () => {
         });
       }));
 
+      it('should report the signal when a crashed worker has no exit code', () => new Promise((done) => {
+        build({});
+        let stdout = fakeWritable(), stderr = fakeWritable();
+        runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
+        setImmediate(() => {
+          setImmediate(() => {
+            let listeningHandler = on.args.find((args) => args[0] === 'listening')[1];
+            let crashedWorker = Object.assign(new EventEmitter(), { process: { pid: 999 }, exitedAfterDisconnect: false });
+            listeningHandler(crashedWorker);
+            crashedWorker.emit('exit', null, 'SIGKILL');
+            expect(stdout.write.calledWith(sinon.match('died with SIGKILL'))).toBe(true);
+            done();
+          });
+        });
+      }));
+
       it('should not respawn a worker that disconnected intentionally', () => new Promise((done) => {
         build({});
         let stdout = fakeWritable(), stderr = fakeWritable();
@@ -253,6 +269,29 @@ describe('CliRunner', () => {
         });
       }));
 
+      it('should kill the replacement and continue when an old worker already died on its own', () => new Promise((done) => {
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        cluster.workers = { 1: undefined, 2: oldWorker };
+        let onSighup = sandbox.stub(process, 'on');
+        build({});
+        let stdout = fakeWritable(), stderr = fakeWritable();
+        runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
+        setImmediate(() => {
+          setImmediate(() => {
+            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            sighupHandler();
+            let firstNewWorker = fork.getCall(fork.callCount - 1).returnValue;
+            firstNewWorker.emit('listening');
+            oldWorker.emit('exit');
+            let secondNewWorker = fork.getCall(fork.callCount - 1).returnValue;
+            secondNewWorker.emit('listening');
+            expect(secondNewWorker.kill.calledOnce).toBe(true);
+            expect(stdout.write.calledWith(sinon.match('Respawned all workers of master'))).toBe(true);
+            done();
+          });
+        });
+      }));
+
       it('should abort respawning and restore the normal SIGHUP handler when the new worker dies before listening', () => new Promise((done) => {
         let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
         cluster.workers = { 1: oldWorker };
@@ -274,6 +313,48 @@ describe('CliRunner', () => {
             expect(process.addListener.calledWith('SIGHUP', sighupHandler)).toBe(true);
             expect(process.removeListener.getCalls().some((call) =>
               call.args[0] === 'SIGHUP' && call.args[1] !== sighupHandler)).toBe(true);
+            done();
+          });
+        });
+      }));
+
+      it('should report the signal when the new worker dies before listening with no exit code', () => new Promise((done) => {
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        cluster.workers = { 1: oldWorker };
+        let onSighup = sandbox.stub(process, 'on');
+        build({});
+        let stdout = fakeWritable(), stderr = fakeWritable();
+        runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
+        setImmediate(() => {
+          setImmediate(() => {
+            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            sighupHandler();
+            let newWorker = fork.getCall(fork.callCount - 1).returnValue;
+            newWorker.exitedAfterDisconnect = false;
+            newWorker.emit('exit', null, 'SIGKILL');
+
+            expect(stdout.write.calledWith(sinon.match('died with SIGKILL'))).toBe(true);
+            done();
+          });
+        });
+      }));
+
+      it('should not treat a deliberate disconnect of the new worker as an abort', () => new Promise((done) => {
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        cluster.workers = { 1: oldWorker };
+        let onSighup = sandbox.stub(process, 'on');
+        build({});
+        let stdout = fakeWritable(), stderr = fakeWritable();
+        runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
+        setImmediate(() => {
+          setImmediate(() => {
+            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            sighupHandler();
+            let newWorker = fork.getCall(fork.callCount - 1).returnValue;
+            newWorker.exitedAfterDisconnect = true;
+            newWorker.emit('exit', 0, null);
+
+            expect(stdout.write.calledWith(sinon.match('Respawning aborted'))).toBe(false);
             done();
           });
         });

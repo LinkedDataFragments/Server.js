@@ -31,6 +31,10 @@ describe('LinkedDataFragmentsServer', () => {
           case '/handle':
             response.end('body contents');
             break;
+          case '/write':
+            response.write('chunk 1');
+            response.end('chunk 2');
+            break;
           case '/error':
             throw new Error('error message');
           default:
@@ -92,6 +96,14 @@ describe('LinkedDataFragmentsServer', () => {
         expect(controller.handleRequest.calledOnce).toBe(true);
         expect(response).toHaveProperty('statusCode', 200);
         expect(response).toHaveProperty('text', '');
+      }).end(done);
+    }));
+
+    it('should silently no-op an explicit write() call with HEAD requests', () => new Promise((done) => {
+      client.head('/write').expect((response) => {
+        expect(controller.handleRequest.calledOnce).toBe(true);
+        expect(response).toHaveProperty('statusCode', 200);
+        expect(response.body).not.toHaveProperty('length');
       }).end(done);
     }));
 

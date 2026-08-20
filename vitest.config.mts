@@ -33,7 +33,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      include: ['packages/*/lib/**', 'packages/*/index.ts'],
+      include: ['packages/*/lib/**'],
       exclude: ['**/*.html', '**/*.js.map'],
     },
   },

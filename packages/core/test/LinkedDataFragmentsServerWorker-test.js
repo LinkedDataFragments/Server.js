@@ -110,6 +110,33 @@ describe('LinkedDataFragmentsServerWorker', () => {
 
       expect(() => { config.accesslogger(request, response); }).toThrow(/format/);
     });
+
+    it('should append the log entry to the access log file', () => {
+      let fs = require('fs');
+      let accessLogPath = require.resolve('access-log');
+      let originalExports = require.cache[accessLogPath].exports;
+      require.cache[accessLogPath].exports = (req, res, format, cb) => cb('fake log entry');
+      let appendFile = sandbox.stub(fs, 'appendFile');
+      try {
+        let config = baseConfig({ logging: { enabled: true, file: '/tmp/access.log' } });
+        // eslint-disable-next-line no-new
+        new LinkedDataFragmentsServerWorker(config);
+        let request = { connection: { remoteAddress: '127.0.0.1' }, url: '/foo', method: 'GET', headers: {} };
+        let response = { writeHead: () => {}, end: () => {}, statusCode: 200 };
+
+        config.accesslogger(request, response);
+        expect(appendFile.calledWith('/tmp/access.log', 'fake log entry\n')).toBe(true);
+
+        let stderrWrite = sandbox.stub(process.stderr, 'write');
+        appendFile.args[0][2](null);
+        expect(stderrWrite.called).toBe(false);
+        appendFile.args[0][2](new Error('disk full'));
+        expect(stderrWrite.calledWith(sinon.match('Error when writing to access log file'))).toBe(true);
+      }
+      finally {
+        require.cache[accessLogPath].exports = originalExports;
+      }
+    });
   });
 
   describe('run', () => {
@@ -139,6 +166,26 @@ describe('LinkedDataFragmentsServerWorker', () => {
         done();
       }));
     }));
+
+    it('should wait for every datasource before listening', () => {
+      let dsA = new EventEmitter(); dsA.initialize = sinon.spy();
+      let dsB = new EventEmitter(); dsB.initialize = sinon.spy();
+      let worker = new LinkedDataFragmentsServerWorker(baseConfig({
+        datasources: { a: dsA, b: dsB },
+        port: 0,
+        urlData: { protocol: 'http', baseURL: 'http://localhost/' },
+      }));
+      let log = sandbox.stub(console, 'log');
+      let once = sandbox.stub(process, 'once');
+
+      worker.run();
+      dsA.emit('initialized');
+      expect(log.called).toBe(false);
+      dsB.emit('initialized');
+      expect(log.called).toBe(true);
+      // Stop the real (ephemeral-port) server the handler just started listening on.
+      once.args.find((args) => args[0] === 'SIGINT')[1]();
+    });
 
     it('should apply an explicit port argument over the config port', () => new Promise((done) => {
       let worker = new LinkedDataFragmentsServerWorker(baseConfig({

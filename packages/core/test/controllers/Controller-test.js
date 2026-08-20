@@ -21,6 +21,10 @@ describe('Controller', () => {
     it('should be a Controller constructor', () => {
       expect(new Controller()).toBeInstanceOf(Controller);
     });
+
+    it('should have a no-op close method', () => {
+      expect(() => new Controller().close()).not.toThrow();
+    });
   });
 
   describe('A Controller instance without baseURL', () => {

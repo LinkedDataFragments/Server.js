@@ -27,6 +27,10 @@ describe('SparqlDatasource', () => {
     it('should create Datasource objects', () => {
       expect(new SparqlDatasource({ dataFactory })).toBeInstanceOf(Datasource);
     });
+
+    it('should not throw when constructed without options', () => {
+      expect(() => new SparqlDatasource()).not.toThrow();
+    });
   });
 
   describe('A SparqlDatasource instance', () => {
