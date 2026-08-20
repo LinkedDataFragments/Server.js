@@ -27,7 +27,7 @@
     "rdf-object": "^1.14.0",
     "sinon": "^1.17.4",
     "sinon-chai": "^2.14.0",
-    "supertest": "^6.0.0",
+    "supertest": "^7.0.0",
     "typescript": "^5.9.3"
   },
   "pre-commit": [
