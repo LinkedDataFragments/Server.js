@@ -1,12 +1,14 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-let SummaryController = require('../../lib/controllers/SummaryController');
+let SummaryController = require('../../lib/controllers/SummaryController').SummaryController; // changed to make tests pass, will be revised in follow up pr
 
 let request = require('supertest'),
     DummyServer = require('../../../../test/DummyServer'),
     fs = require('fs'),
     path = require('path');
 
-let SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js');
+let SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js').SummaryRdfView; // changed to make tests pass, will be revised in follow up pr
+
+let dataFactory = require('n3').DataFactory;
 
 describe('SummaryController', () => {
   describe('The SummaryController module', () => {
@@ -27,7 +29,7 @@ describe('SummaryController', () => {
     let controller, client;
     before(() => {
       controller = new SummaryController({
-        views: [new SummaryRdfView()],
+        views: [new SummaryRdfView({ dataFactory })],
         summaries: { dir: path.join(__dirname, '/../../../../test/assets') },
         prefixes: {
           ds: 'http://semweb.mmlab.be/ns/datasummaries#',

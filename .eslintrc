@@ -197,6 +197,83 @@
       rules: {
         "import/no-extraneous-dependencies": "off"
       }
+    },
+    {
+      // TypeScript source files
+      files: [ "packages/**/*.ts" ],
+      parser: "@typescript-eslint/parser",
+      extends: [ "plugin:@typescript-eslint/recommended-requiring-type-checking" ],
+      parserOptions: {
+        ecmaVersion: 9,
+        sourceType: "module",
+        project: "./tsconfig.json"
+      },
+      plugins: [ "@typescript-eslint" ],
+      rules: {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [ 2, { args: "none" } ],
+        // The TS compiler already catches undefined references, and this rule
+        // otherwise misfires on TS-only constructs (interfaces, type imports).
+        "no-undef": "off",
+        // Misfires on TS function-overload signatures (multiple declarations
+        // for one implementation) — the TS compiler already validates those.
+        "no-redeclare": "off",
+        // Third-party type names (e.g. rdf-js's Quad_Graph) aren't ours to rename.
+        "camelcase": "off",
+        // Comunica's own eslint config disables these same three as "TODO: check
+        // if these can be enabled" — any flowing through further calls/assignments
+        // is too common a real pattern here to enforce yet.
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-argument": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        // This codebase uses `let` pervasively as a long-standing style choice;
+        // enforcing const-where-possible would touch nearly every converted file.
+        "prefer-const": "off",
+        // 'text ' + someNumber is safe and pervasive in this codebase's string-building
+        // style; keep the rule's real catches (undefined, objects, Terms) active.
+        "@typescript-eslint/restrict-plus-operands": [ 2, { allowNumberAndString: true } ],
+        // Every hit is a destructured DataFactory method (quad/namedNode/literal) or
+        // lodash's _.noop — none use `this`, but the rule can't see that from the
+        // third-party type declarations alone.
+        "@typescript-eslint/unbound-method": "off",
+        // no-floating-promises' own suggested fix for an intentionally-unawaited
+        // promise chain is prefixing it with `void`.
+        "no-void": [ 2, { allowAsStatement: true } ],
+        // `x as unknown as Y` opts out of type checking entirely for x. Files with
+        // an existing, individually-reviewed need for it are exempted below;
+        // this catches it showing up anywhere else. Prefer a real type, or
+        // String(x)/Number(x) if this is really just coercion.
+        "no-restricted-syntax": [ 2, {
+          selector: "TSAsExpression > TSAsExpression[typeAnnotation.type='TSUnknownKeyword']",
+          message: "as unknown as X bypasses type checking. Prefer a real type; if unavoidable, add this file to the no-restricted-syntax exemption list in .eslintrc."
+        } ]
+      }
+    },
+    {
+      // HdtDatasource's constructor swaps in an ExternalHdtDatasource instance in place
+      // of `this`; the two are sibling classes (not a subtype relationship), and each
+      // independently overrides several of Datasource's protected methods, which brands
+      // them as structurally incompatible for TS's purposes even though they're
+      // interchangeable at runtime. Resolving this for real means either widening those
+      // protected overrides to public across both classes, or replacing the pattern with
+      // a factory function — both bigger changes than a type-only cleanup; see the
+      // commit history for the investigation.
+      files: [
+        "packages/datasource-hdt/lib/datasources/HdtDatasource.ts"
+      ],
+      rules: {
+        "no-restricted-syntax": "off"
+      }
+    },
+    {
+      // Needs `as unknown as X` to reach n3.Parser's internals,
+      // since @types/n3 has no typing for them.
+      files: [
+        "packages/core/lib/N3ParserExtended.ts"
+      ],
+      rules: {
+        "no-restricted-syntax": "off"
+      }
     }
   ]
 }

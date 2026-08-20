@@ -40,6 +40,8 @@ jobs:
           key: ${{ runner.os }}-test-modules-${{ hashFiles('**/yarn.lock') }}
       - name: Install dependencies
         run: yarn install
+      - name: Build TypeScript
+        run: yarn run build
       - name: Run tests
         run: yarn run test-ci
       - name: Submit coverage results
