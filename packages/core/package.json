@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "asynciterator": "^3.0.0",
-    "componentsjs": "^4.0.4",
+    "componentsjs": "^6.0.0",
     "forwarded-parse": "^2.1.0",
     "jsonld-streaming-serializer": "^3.0.0",
     "lodash": "^4.0.0",
