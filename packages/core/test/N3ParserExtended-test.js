@@ -7,10 +7,10 @@ describe('N3ParserExtended', () => {
     expect(typeof N3ParserExtended).toBe('function');
   });
 
-  it('should expose the prefixes seen while parsing through prefixMap', () => {
+  it('should expose the prefixes seen while parsing through prefixes', () => {
     let parser = new N3ParserExtended();
     parser.parse('@prefix ex: <http://example.org/>.\nex:s ex:p ex:o.');
-    expect(parser.prefixMap).toHaveProperty('ex', 'http://example.org/');
+    expect(parser.prefixes).toHaveProperty('ex', 'http://example.org/');
   });
 
   it('should parse synchronously and return quads when called without a callback', () => {

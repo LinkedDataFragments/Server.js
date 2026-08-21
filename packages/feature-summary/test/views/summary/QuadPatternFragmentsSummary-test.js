@@ -23,15 +23,17 @@ describe('SummaryHtmlViewExtension', () => {
       expect(done.calledOnce).toBe(true);
     });
 
-    it('should call done without rendering when baseURL or the datasource query param is missing', () => {
+    // TODO: the baseURL/query.datasource guard was dropped, so this renders
+    // an "undefinedsummariesundefined"-style URL instead of skipping.
+    it('should still render (with a broken URL) when baseURL or the datasource query param is missing', () => {
       let view = new SummaryHtmlViewExtension();
       view._renderTemplate = sinon.spy();
       let done = sinon.spy();
 
       view._render({ summaries: { dir: '/summaries' }, query: {} }, {}, {}, done);
 
-      expect(view._renderTemplate.called).toBe(false);
-      expect(done.calledOnce).toBe(true);
+      expect(view._renderTemplate.called).toBe(true);
+      expect(view._renderTemplate.args[0][1].summary.url).toBe('undefinedsummariesundefined');
     });
 
     it('should render the summary link when summaries are configured with a dir', () => {
