@@ -1,14 +1,17 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect } from 'vitest';
+import { extractQueryParams } from '../../../../test/test-helpers';
 let PageRouter = require('../../lib/routers/PageRouter').PageRouter; // changed to make tests pass, will be revised in follow up pr
 
 describe('PageRouter', () => {
   describe('The PageRouter module', () => {
     it('should be a function', () => {
-      PageRouter.should.be.a('function');
+      expect(typeof PageRouter).toBe('function');
     });
 
     it('should be a PageRouter constructor', () => {
-      new PageRouter().should.be.an.instanceof(PageRouter);
+      expect(new PageRouter()).toBeInstanceOf(PageRouter);
     });
   });
 
@@ -75,7 +78,7 @@ describe('PageRouter', () => {
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 100, offset: 200 },
           ],
         ]
-          .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -143,7 +146,7 @@ describe('PageRouter', () => {
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 250, offset: 500 },
           ],
         ]
-          .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -162,7 +165,7 @@ describe('PageRouter', () => {
             { a: 1, features: { limit: true }, limit: 100 },
           ],
         ]
-          .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });

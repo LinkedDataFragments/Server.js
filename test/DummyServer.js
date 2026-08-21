@@ -1,13 +1,14 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 const http = require('http');
+const sinon = require('sinon');
 
 /* Dummy server that emulates LinkedDataFragmentsServer */
 function DummyServer(controller) {
   const server = http.createServer();
-  server.on('request', function (request, response) {
+  server.on('request', (request, response) => {
     // End the response if the controller did not handle the request
-    controller.next = sinon.spy(function (error) {
+    controller.next = sinon.spy((error) => {
       controller.error = error;
       if (!response.headersSent)
         response.writeHead(error ? 500 : 200);

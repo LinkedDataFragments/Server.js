@@ -1,4 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect, beforeAll } from 'vitest';
 let DereferenceController = require('../../lib/controllers/DereferenceController').DeferenceController; // changed to make tests pass, will be revised in follow up pr
 
 let request = require('supertest'),
@@ -7,38 +9,38 @@ let request = require('supertest'),
 describe('DereferenceController', () => {
   describe('The DereferenceController module', () => {
     it('should be a function', () => {
-      DereferenceController.should.be.a('function');
+      expect(typeof DereferenceController).toBe('function');
     });
 
     it('should be a DereferenceController constructor', () => {
-      new DereferenceController().should.be.an.instanceof(DereferenceController);
+      expect(new DereferenceController()).toBeInstanceOf(DereferenceController);
     });
   });
 
   describe('A DereferenceController instance', () => {
     let controller, client;
-    before(() => {
+    beforeAll(() => {
       controller = new DereferenceController({ dereference: { '/resource/': { path: 'dbpedia/2014' } } });
       client = request.agent(new DummyServer(controller));
     });
 
     describe('receiving a request for a dereferenced URL', () => {
       let response;
-      before((done) => {
+      beforeAll(() => new Promise((done) => {
         client.get('/resource/Mickey_Mouse')
           .end((error, res) => { response = res; done(error); });
-      });
+      }));
 
       it('should not hand over to the next controller', () => {
-        controller.next.should.not.have.been.called;
+        expect(controller.next.called).toBe(false);
       });
 
       it('should set the status code to 303', () => {
-        response.should.have.property('statusCode', 303);
+        expect(response).toHaveProperty('statusCode', 303);
       });
 
       it('should set the text/plain content type', () => {
-        response.headers.should.have.property('content-type', 'text/plain;charset=utf-8');
+        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
       });
 
       it('should set the Location header correctly', () => {
@@ -46,7 +48,7 @@ describe('DereferenceController', () => {
             entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
             expectedLocation = 'http://' + hostname + '/dbpedia/2014?subject=' + entityUrl;
 
-        response.headers.should.have.property('location', expectedLocation);
+        expect(response.headers).toHaveProperty('location', expectedLocation);
       });
 
       it('should mention the desired location in the body', () => {
@@ -54,17 +56,17 @@ describe('DereferenceController', () => {
             entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
             expectedLocation = 'http://' + hostname + '/dbpedia/2014?subject=' + entityUrl;
 
-        response.text.should.contain(expectedLocation);
+        expect(response.text).toContain(expectedLocation);
       });
     });
 
     describe('receiving a request for a non-defererenced URL', () => {
-      before((done) => {
+      beforeAll(() => new Promise((done) => {
         client.get('/otherresource/Mickey_Mouse').end(done);
-      });
+      }));
 
       it('should hand over to the next controller', () => {
-        controller.next.should.have.been.calledOnce;
+        expect(controller.next.calledOnce).toBe(true);
       });
     });
   });
