@@ -60,10 +60,8 @@ describe('UrlData', () => {
     expect(urlData.protocol).toBe('http');
   });
 
-  // assetsPath is always computed from baseURLPath + 'assets/', which is
-  // never an empty string — so the `|| options.assetsPath` fallback can
-  // never be reached, and an explicit assetsPath option is silently ignored.
-  // This documents that current behavior rather than the option working.
+  // TODO: assetsPath is always computed from baseURLPath + 'assets/', never
+  // empty, so the `|| options.assetsPath` fallback is silently unreachable.
   it('should ignore an explicit assetsPath option', () => {
     let urlData = new UrlData({ baseURL: '/base/', assetsPath: '/custom-assets/' });
     expect(urlData.assetsPath).toBe('/base/assets/');

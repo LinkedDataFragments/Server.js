@@ -24,12 +24,6 @@ describe('HtmlView', () => {
   });
 
   describe('_renderTemplate', () => {
-    // qejs resolves template paths via require.main.filename, which Vitest's
-    // module runner never sets (no traditional require.main entry point) —
-    // every real qejs.renderFile call throws for this reason alone, so its
-    // success path can't be exercised here. This test covers what that
-    // failure actually looks like and confirms it reaches done() as an
-    // error rather than hanging or throwing uncaught.
     it('should call done with an error when qejs fails to render', () => new Promise((done) => {
       let view = new HtmlView('Error');
       let res = response();

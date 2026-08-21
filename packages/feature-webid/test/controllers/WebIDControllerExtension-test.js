@@ -190,11 +190,10 @@ describe('WebIDControllerExtension', () => {
         'WebID does not match certificate: WRONG - 1 (webid) <> ABCD - 65537 (cert)')).toBe(true);
     });
 
-    // The predicate switch in _verifyWebID compares an N3 term object against
-    // string literals with ===, which never matches — a pre-existing bug that
-    // makes the fetched modulus/exponent always come out empty, regardless of
-    // what the WebID document actually contains. These tests document that
-    // current (broken) behavior rather than the feature working correctly.
+    // TODO: the predicate switch in _verifyWebID compares an N3 term object
+    // against string literals with ===, which never matches, so the fetched
+    // modulus/exponent always come out empty regardless of what the WebID
+    // document actually contains.
     describe('on a cache miss', () => {
       it('should always report a mismatch, since the parsed modulus/exponent are never populated', () => new Promise((done) => {
         let instance = Object.create(WebIDControllerExtension.prototype);

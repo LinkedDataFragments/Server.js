@@ -3,28 +3,14 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { spawn } from 'child_process';
 import { existsSync } from 'fs';
-// vi.mock only intercepts modules loaded through Vite's transform graph. A
-// plain `require('../../lib/datasources/ExternalHdtDatasource')` resolves
-// via Node's own module loader directly, bypassing Vite entirely, so the lib
-// code's own child_process/fs imports would never see the mocked versions
-// below — importing it instead routes it through Vite like the rest of this
-// file already needs to (see vitest.config.mts for the matching .ts/.js
-// resolution-order note).
+// vi.mock only intercepts modules loaded through Vite's transform graph, so
+// this must be import()'d rather than require()'d for the mocks below to work.
 import { ExternalHdtDatasource } from '../../lib/datasources/ExternalHdtDatasource';
 import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 
-// child_process.spawn and fs.existsSync need vi.mock rather than a sinon
-// property stub: the lib code's own imports of these (whether namespace-
-// style `import * as fs` or named `import { spawn }`) resolve to a separate
-// module instance under Vite's transform than a plain `require()` in this
-// test file would, so mutating properties on our own copy doesn't affect
-// theirs. Wrapping the real implementation by default keeps the
-// real-HDT-file integration tests below (and other files' use of the real
-// fs/child_process, e.g. JsonLdDatasource's fs.createReadStream) working
-// unchanged; individual tests override with mockReturnValueOnce/
-// mockImplementationOnce. A Proxy (not a `{ ...actual }` spread) is used so
-// untouched methods keep `this` bound to the real module — many Node builtin
-// methods rely on that internally, and a shallow spread silently breaks it.
+// Wraps the real module in a Proxy (not a `{ ...actual }` spread, which
+// breaks `this` binding on native methods) so untouched methods keep working
+// and individual tests can still override specific ones.
 function mockModulePreservingThis(actual, overrides) {
   return new Proxy(actual, {
     get(target, prop, receiver) {
@@ -253,10 +239,10 @@ describe('ExternalHdtDatasource', () => {
       });
     });
 
-    // KNOWN BUG (pre-existing, not introduced by this test): the query string passed
-    // to the `hdt` CLI is built through plain string concatenation
-    // (`query.subject || '?s'`), but a Term's default toString() is "[object Object]",
-    // not its IRI. So any subject/predicate/object filter currently matches nothing.
+    // TODO: the query string passed to the `hdt` CLI is built through plain
+    // string concatenation (`query.subject || '?s'`), but a Term's default
+    // toString() is "[object Object]", not its IRI, so any subject/predicate/
+    // object filter currently matches nothing.
     describe('executing a query with a subject filter', () => {
       let resultsCount = 0;
       beforeAll(() => new Promise((done) => {

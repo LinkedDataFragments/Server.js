@@ -96,11 +96,9 @@ describe('LinkedDataFragmentsServerWorker', () => {
       expect(typeof config.accesslogger).toBe('function');
     });
 
-    // access-log's own implementation treats a `null` third argument as an
-    // options object (`typeof null === 'object'`), so it always crashes
-    // reading `.format` off it — this accesslogger throws every time it's
-    // actually invoked, regardless of request/response content. A
-    // pre-existing bug, preserved as-is; this documents the real behavior.
+    // TODO: access-log treats a `null` third argument as an options object
+    // (`typeof null === 'object'`) and crashes reading `.format` off it,
+    // so the accesslogger throws on every real invocation. Fix or replace it.
     it('should throw when the accesslogger is actually invoked, due to a bug in access-log itself', () => {
       let config = baseConfig({ logging: { enabled: true, file: '/tmp/access.log' } });
       // eslint-disable-next-line no-new
@@ -140,10 +138,6 @@ describe('LinkedDataFragmentsServerWorker', () => {
   });
 
   describe('run', () => {
-    // process.once/on are stubbed throughout so the handlers can be invoked
-    // directly, the same way CliRunner-test.js drives cluster/process signal
-    // handling — this exercises the real logic without ever registering a
-    // real process-wide listener that could leak into other tests.
     it('should start listening once all datasources are ready', () => new Promise((done) => {
       let datasource = fakeDatasource();
       let worker = new LinkedDataFragmentsServerWorker(baseConfig({
