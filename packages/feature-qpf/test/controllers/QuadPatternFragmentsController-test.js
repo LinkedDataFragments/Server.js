@@ -1,11 +1,10 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import DummyServer from '../../../../test/DummyServer';
 let QuadPatternFragmentsController = require('../../').controllers.QuadPatternFragmentsController;
 
 let request = require('supertest'),
-    DummyServer = require('../../../../test/DummyServer'),
     http = require('http');
 
 let QuadPatternFragmentsHtmlView = require('../../').views.quadpatternfragments.QuadPatternFragmentsHtmlView,
@@ -27,10 +26,10 @@ describe('QuadPatternFragmentsController', () => {
   describe('A QuadPatternFragmentsController instance with 3 routers', () => {
     let controller, client, routerA, routerB, routerC, datasource, datasources, view, prefixes;
     beforeAll(() => {
-      routerA = { extractQueryParams: sinon.stub() };
-      routerB = { extractQueryParams: sinon.stub().throws(new Error('second router error')) };
+      routerA = { extractQueryParams: vi.fn() };
+      routerB = { extractQueryParams: vi.fn(() => { throw new Error('second router error'); }) };
       routerC = {
-        extractQueryParams: sinon.spy((request, query) => {
+        extractQueryParams: vi.fn((request, query) => {
           query.features.datasource = true;
           query.features.other = true;
           query.datasource = '/my-datasource';
@@ -39,13 +38,13 @@ describe('QuadPatternFragmentsController', () => {
       };
       datasource = {
         title: 'My data',
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub().returns({ stream: 'items' }),
+        supportsQuery: vi.fn().mockReturnValue(true),
+        select: vi.fn().mockReturnValue({ stream: 'items' }),
         supportedFeatures: { quadPattern: true },
       };
       datasources = { 'my-datasource': datasource };
       view = new QuadPatternFragmentsRdfView({ dataFactory }),
-      sinon.spy(view, 'render');
+      vi.spyOn(view, 'render');
       prefixes = { a: 'a' };
       controller = new QuadPatternFragmentsController({
         urlData: new UrlData({ baseURL: 'https://example.org/base/?bar=foo' }),
@@ -57,11 +56,11 @@ describe('QuadPatternFragmentsController', () => {
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      routerA.extractQueryParams.reset();
-      routerB.extractQueryParams.reset();
-      routerC.extractQueryParams.reset();
-      datasource.supportsQuery.reset();
-      datasource.select.reset();
+      routerA.extractQueryParams.mockClear();
+      routerB.extractQueryParams.mockClear();
+      routerC.extractQueryParams.mockClear();
+      datasource.supportsQuery.mockClear();
+      datasource.select.mockClear();
     }
 
     describe('receiving a request for a fragment', () => {
@@ -71,9 +70,9 @@ describe('QuadPatternFragmentsController', () => {
       }));
 
       it('should call the first router with the request and an empty query', () => {
-        expect(routerA.extractQueryParams.calledOnce).toBe(true);
+        expect(routerA.extractQueryParams).toHaveBeenCalledOnce();
 
-        let args = routerA.extractQueryParams.firstCall.args;
+        let args = routerA.extractQueryParams.mock.calls[0];
         expect(args[0]).toHaveProperty('url');
         expect(args[0].url).toHaveProperty('path', '/my-datasource?a=b&c=d');
         expect(args[0].url).toHaveProperty('pathname', '/my-datasource');
@@ -86,38 +85,38 @@ describe('QuadPatternFragmentsController', () => {
       });
 
       it('should call the second router with the same request and query', () => {
-        expect(routerB.extractQueryParams.calledOnce).toBe(true);
+        expect(routerB.extractQueryParams).toHaveBeenCalledOnce();
 
-        expect(routerB.extractQueryParams.firstCall.args[0]).toBe(
-          routerA.extractQueryParams.firstCall.args[0]);
-        expect(routerB.extractQueryParams.firstCall.args[1]).toBe(
-          routerA.extractQueryParams.firstCall.args[1]);
+        expect(routerB.extractQueryParams.mock.calls[0][0]).toBe(
+          routerA.extractQueryParams.mock.calls[0][0]);
+        expect(routerB.extractQueryParams.mock.calls[0][1]).toBe(
+          routerA.extractQueryParams.mock.calls[0][1]);
       });
 
       it('should call the third router with the same request and query', () => {
-        expect(routerC.extractQueryParams.calledOnce).toBe(true);
+        expect(routerC.extractQueryParams).toHaveBeenCalledOnce();
 
-        expect(routerC.extractQueryParams.firstCall.args[0]).toBe(
-          routerA.extractQueryParams.firstCall.args[0]);
-        expect(routerC.extractQueryParams.firstCall.args[1]).toBe(
-          routerA.extractQueryParams.firstCall.args[1]);
+        expect(routerC.extractQueryParams.mock.calls[0][0]).toBe(
+          routerA.extractQueryParams.mock.calls[0][0]);
+        expect(routerC.extractQueryParams.mock.calls[0][1]).toBe(
+          routerA.extractQueryParams.mock.calls[0][1]);
       });
 
       it('should verify whether the data source supports the query', () => {
-        let query = routerC.extractQueryParams.firstCall.args[1];
-        expect(datasource.supportsQuery.calledOnce).toBe(true);
-        expect(datasource.supportsQuery.calledWith(query)).toBe(true);
+        let query = routerC.extractQueryParams.mock.calls[0][1];
+        expect(datasource.supportsQuery).toHaveBeenCalledOnce();
+        expect(datasource.supportsQuery).toHaveBeenCalledWith(query);
       });
 
       it('should send the query to the right data source', () => {
-        let query = routerC.extractQueryParams.firstCall.args[1];
-        expect(datasource.select.calledOnce).toBe(true);
-        expect(datasource.select.calledWith(query)).toBe(true);
+        let query = routerC.extractQueryParams.mock.calls[0][1];
+        expect(datasource.select).toHaveBeenCalledOnce();
+        expect(datasource.select.mock.calls[0][0]).toBe(query);
       });
 
       it('should pass the query result to the output view', () => {
-        expect(view.render.calledOnce).toBe(true);
-        let args = view.render.firstCall.args;
+        expect(view.render).toHaveBeenCalledOnce();
+        let args = view.render.mock.calls[0];
 
         expect(typeof args[0]).toBe('object'); // settings
         expect(args[1]).toBeInstanceOf(http.IncomingMessage);
@@ -125,9 +124,9 @@ describe('QuadPatternFragmentsController', () => {
       });
 
       it('should pass the correct settings to the view', () => {
-        expect(view.render.calledOnce).toBe(true);
-        let query = routerC.extractQueryParams.firstCall.args[1];
-        let settings = view.render.firstCall.args[0];
+        expect(view.render).toHaveBeenCalledOnce();
+        let query = routerC.extractQueryParams.mock.calls[0][1];
+        let settings = view.render.mock.calls[0][0];
 
         expect(settings.datasource).toHaveProperty('title', 'My data');
         expect(settings.datasource).toHaveProperty('index', 'https://example.org/#dataset');
@@ -158,7 +157,7 @@ describe('QuadPatternFragmentsController', () => {
       }));
 
       it('should include a previousPageUrl', () => {
-        let settings = view.render.getCall(view.render.callCount - 1).args[0];
+        let settings = view.render.mock.calls[view.render.mock.calls.length - 1][0];
         expect(settings.fragment.previousPageUrl).toBe('https://example.org/my-datasource?a=b&page=2');
       });
     });
@@ -166,18 +165,18 @@ describe('QuadPatternFragmentsController', () => {
     describe('receiving a request for an unsupported fragment', () => {
       beforeAll(() => new Promise((done) => {
         resetAll();
-        datasource.supportsQuery = sinon.stub().returns(false);
+        datasource.supportsQuery = vi.fn().mockReturnValue(false);
         client.get('/my-datasource?a=b&c=d').end(done);
       }));
 
       it('should verify whether the data source supports the query', () => {
-        let query = routerC.extractQueryParams.firstCall.args[1];
-        expect(datasource.supportsQuery.calledOnce).toBe(true);
-        expect(datasource.supportsQuery.calledWith(query)).toBe(true);
+        let query = routerC.extractQueryParams.mock.calls[0][1];
+        expect(datasource.supportsQuery).toHaveBeenCalledOnce();
+        expect(datasource.supportsQuery).toHaveBeenCalledWith(query);
       });
 
       it('should not send the query to the data source', () => {
-        expect(datasource.select.called).toBe(false);
+        expect(datasource.select).not.toHaveBeenCalled();
       });
     });
   });
@@ -186,8 +185,8 @@ describe('QuadPatternFragmentsController', () => {
     let controller, client, htmlView, rdfView;
     beforeAll(() => {
       let datasource = {
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub().returns({
+        supportsQuery: vi.fn().mockReturnValue(true),
+        select: vi.fn().mockReturnValue({
           on: function (event, callback) {
             if (event === 'end' || event === 'metadata')
               setImmediate(callback, {});
@@ -203,8 +202,8 @@ describe('QuadPatternFragmentsController', () => {
       };
       htmlView = new QuadPatternFragmentsHtmlView();
       rdfView = new QuadPatternFragmentsRdfView({ dataFactory });
-      sinon.spy(htmlView, 'render');
-      sinon.spy(rdfView, 'render');
+      vi.spyOn(htmlView, 'render');
+      vi.spyOn(rdfView, 'render');
       controller = new QuadPatternFragmentsController({
         routers: [router],
         datasources: { 'my-datasource': datasource },
@@ -213,8 +212,8 @@ describe('QuadPatternFragmentsController', () => {
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      htmlView.render.reset();
-      rdfView.render.reset();
+      htmlView.render.mockClear();
+      rdfView.render.mockClear();
     }
 
     describe('receiving a request without Accept header', () => {
@@ -226,7 +225,7 @@ describe('QuadPatternFragmentsController', () => {
       }));
 
       it('should call the default view', () => {
-        expect(htmlView.render.calledOnce).toBe(true);
+        expect(htmlView.render).toHaveBeenCalledOnce();
       });
 
       it('should set the text/html content type', () => {
@@ -247,7 +246,7 @@ describe('QuadPatternFragmentsController', () => {
       }));
 
       it('should call the HTML view', () => {
-        expect(htmlView.render.calledOnce).toBe(true);
+        expect(htmlView.render).toHaveBeenCalledOnce();
       });
 
       it('should set the text/html content type', () => {
@@ -268,7 +267,7 @@ describe('QuadPatternFragmentsController', () => {
       }));
 
       it('should call the HTML view', () => {
-        expect(htmlView.render.calledOnce).toBe(true);
+        expect(htmlView.render).toHaveBeenCalledOnce();
       });
 
       it('should set the text/html content type', () => {
@@ -289,7 +288,7 @@ describe('QuadPatternFragmentsController', () => {
       }));
 
       it('should call the Turtle view', () => {
-        expect(rdfView.render.calledOnce).toBe(true);
+        expect(rdfView.render).toHaveBeenCalledOnce();
       });
 
       it('should set the text/turtle content type', () => {
@@ -310,7 +309,7 @@ describe('QuadPatternFragmentsController', () => {
       }));
 
       it('should call the Turtle view', () => {
-        expect(rdfView.render.calledOnce).toBe(true);
+        expect(rdfView.render).toHaveBeenCalledOnce();
       });
 
       it('should set the text/n3 content type', () => {
@@ -327,8 +326,8 @@ describe('QuadPatternFragmentsController', () => {
     let controller, client;
     beforeAll(() => {
       let datasource = {
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub(),
+        supportsQuery: vi.fn().mockReturnValue(true),
+        select: vi.fn(),
         supportedFeatures: { triplePattern: true },
       };
       let router = {
@@ -389,15 +388,15 @@ describe('QuadPatternFragmentsController', () => {
     let controller, client, router, datasource, error, view;
     beforeAll(() => {
       router = {
-        extractQueryParams: sinon.spy((request, query) => {
+        extractQueryParams: vi.fn((request, query) => {
           query.features.datasource = true;
           query.datasource = '/my-datasource';
         }),
       };
       error = new Error('datasource error'),
       datasource = {
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub().throws(error),
+        supportsQuery: vi.fn().mockReturnValue(true),
+        select: vi.fn(() => { throw error; }),
         supportedFeatures: { triplePattern: true },
       };
       view = new QuadPatternFragmentsRdfView({ dataFactory }),
@@ -409,7 +408,7 @@ describe('QuadPatternFragmentsController', () => {
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      router.extractQueryParams.reset();
+      router.extractQueryParams.mockClear();
     }
 
     describe('receiving a request for a fragment', () => {
@@ -428,19 +427,19 @@ describe('QuadPatternFragmentsController', () => {
     let controller, client, router, datasource, error, view;
     beforeAll(() => {
       router = {
-        extractQueryParams: sinon.spy((request, query) => {
+        extractQueryParams: vi.fn((request, query) => {
           query.features.datasource = true;
           query.datasource = '/my-datasource';
         }),
       };
       error = new Error('datasource error'),
       datasource = {
-        supportsQuery: sinon.stub().returns(true),
+        supportsQuery: vi.fn().mockReturnValue(true),
         select: function (query, callback) { setImmediate(callback.bind(null, error)); },
         supportedFeatures: { triplePattern: true },
       };
       view = new QuadPatternFragmentsRdfView({ dataFactory }),
-      view.render = sinon.stub(); // avoid writing a partial body
+      view.render = vi.fn(); // avoid writing a partial body
       controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
@@ -449,7 +448,7 @@ describe('QuadPatternFragmentsController', () => {
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      router.extractQueryParams.reset();
+      router.extractQueryParams.mockClear();
     }
 
     describe('receiving a request for a fragment', () => {
@@ -468,19 +467,19 @@ describe('QuadPatternFragmentsController', () => {
     let controller, client, router, datasource, view, extension;
     beforeAll(() => {
       router = {
-        extractQueryParams: sinon.spy((request, query) => {
+        extractQueryParams: vi.fn((request, query) => {
           query.features.datasource = true;
           query.datasource = '/my-datasource';
         }),
       };
       datasource = {
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub().returns({}),
+        supportsQuery: vi.fn().mockReturnValue(true),
+        select: vi.fn().mockReturnValue({}),
         supportedFeatures: { triplePattern: true },
       };
       view = new QuadPatternFragmentsRdfView({ dataFactory }),
-      view.render = sinon.spy((settings, request, response) => response.end());
-      extension = { handleRequest: sinon.spy((request, response, next) => next()) };
+      view.render = vi.fn((settings, request, response) => response.end());
+      extension = { handleRequest: vi.fn((request, response, next) => next()) };
       controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
@@ -496,11 +495,11 @@ describe('QuadPatternFragmentsController', () => {
       }));
 
       it('should call the extension', () => {
-        expect(extension.handleRequest.calledOnce).toBe(true);
+        expect(extension.handleRequest).toHaveBeenCalledOnce();
       });
 
       it('should render the view once the extension completes', () => {
-        expect(view.render.calledOnce).toBe(true);
+        expect(view.render).toHaveBeenCalledOnce();
       });
     });
   });
@@ -509,20 +508,20 @@ describe('QuadPatternFragmentsController', () => {
     let controller, client, router, datasource, view, extension, error, stderrWrite;
     beforeAll(() => {
       router = {
-        extractQueryParams: sinon.spy((request, query) => {
+        extractQueryParams: vi.fn((request, query) => {
           query.features.datasource = true;
           query.datasource = '/my-datasource';
         }),
       };
       datasource = {
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub().returns({}),
+        supportsQuery: vi.fn().mockReturnValue(true),
+        select: vi.fn().mockReturnValue({}),
         supportedFeatures: { triplePattern: true },
       };
       view = new QuadPatternFragmentsRdfView({ dataFactory }),
-      view.render = sinon.spy((settings, request, response) => response.end());
+      view.render = vi.fn((settings, request, response) => response.end());
       error = new Error('extension error');
-      extension = { handleRequest: sinon.spy((request, response, next) => next(error)) };
+      extension = { handleRequest: vi.fn((request, response, next) => next(error)) };
       controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
@@ -534,17 +533,19 @@ describe('QuadPatternFragmentsController', () => {
 
     describe('receiving a request for a fragment', () => {
       beforeAll(() => new Promise((done) => {
-        stderrWrite = sinon.stub(process.stderr, 'write');
-        client.get('/my-datasource?a=b&c=d').end(() => { stderrWrite.restore(); done(); });
+        stderrWrite = vi.spyOn(process.stderr, 'write').mockImplementation(() => {});
+        client.get('/my-datasource?a=b&c=d').end(() => { done(); });
       }));
 
+      afterAll(() => { stderrWrite.mockRestore(); });
+
       it('should log the extension error to stderr', () => {
-        expect(stderrWrite.calledOnce).toBe(true);
-        expect(stderrWrite.args[0][0]).toContain('extension error');
+        expect(stderrWrite).toHaveBeenCalledOnce();
+        expect(stderrWrite.mock.calls[0][0]).toContain('extension error');
       });
 
       it('should still render the view', () => {
-        expect(view.render.calledOnce).toBe(true);
+        expect(view.render).toHaveBeenCalledOnce();
       });
     });
   });
@@ -594,20 +595,20 @@ describe('QuadPatternFragmentsController', () => {
   describe('when an extension errors without a stack trace', () => {
     it('should log the error message instead of a stack trace', () => new Promise((done) => {
       let router = {
-        extractQueryParams: sinon.spy((request, query) => {
+        extractQueryParams: vi.fn((request, query) => {
           query.features.datasource = true;
           query.datasource = '/my-datasource';
         }),
       };
       let datasource = {
-        supportsQuery: sinon.stub().returns(true),
-        select: sinon.stub().returns({}),
+        supportsQuery: vi.fn().mockReturnValue(true),
+        select: vi.fn().mockReturnValue({}),
         supportedFeatures: { triplePattern: true },
       };
       let view = new QuadPatternFragmentsRdfView({ dataFactory });
-      view.render = sinon.spy((settings, request, response) => response.end());
+      view.render = vi.fn((settings, request, response) => response.end());
       let error = { message: 'no stack here' }; // a thrown value without a real .stack
-      let extension = { handleRequest: sinon.spy((request, response, next) => next(error)) };
+      let extension = { handleRequest: vi.fn((request, response, next) => next(error)) };
       let controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
@@ -615,11 +616,11 @@ describe('QuadPatternFragmentsController', () => {
         extensions: [extension],
       });
       let client = request.agent(new DummyServer(controller));
-      let stderrWrite = sinon.stub(process.stderr, 'write');
+      let stderrWrite = vi.spyOn(process.stderr, 'write').mockImplementation(() => {});
 
       client.get('/my-datasource?a=b&c=d').end(() => {
-        expect(stderrWrite.calledWith(sinon.match(String(error)))).toBe(true);
-        stderrWrite.restore();
+        expect(stderrWrite).toHaveBeenCalledWith(expect.stringContaining(String(error)));
+        stderrWrite.mockRestore();
         done();
       });
     }));
@@ -627,18 +628,18 @@ describe('QuadPatternFragmentsController', () => {
 
   describe('close', () => {
     it('should close every datasource, even if one throws while closing', () => {
-      let dsA = { close: sinon.stub() };
-      let dsB = { close: sinon.stub().throws(new Error('close failed')) };
-      let dsC = { close: sinon.stub() };
+      let dsA = { close: vi.fn() };
+      let dsB = { close: vi.fn(() => { throw new Error('close failed'); }) };
+      let dsC = { close: vi.fn() };
       let controller = new QuadPatternFragmentsController({
         datasources: { a: dsA, b: dsB, c: dsC },
       });
 
       controller.close();
 
-      expect(dsA.close.calledOnce).toBe(true);
-      expect(dsB.close.calledOnce).toBe(true);
-      expect(dsC.close.calledOnce).toBe(true);
+      expect(dsA.close).toHaveBeenCalledOnce();
+      expect(dsB.close).toHaveBeenCalledOnce();
+      expect(dsC.close).toHaveBeenCalledOnce();
     });
   });
 });

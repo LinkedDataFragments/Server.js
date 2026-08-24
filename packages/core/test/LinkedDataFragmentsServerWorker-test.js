@@ -1,13 +1,12 @@
 /*! @license MIT ©2014-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, afterEach, vi } from 'vitest';
 const { EventEmitter } = require('events');
 let LinkedDataFragmentsServerWorker = require('../lib/LinkedDataFragmentsServerWorker').LinkedDataFragmentsServerWorker;
 
 function fakeDatasource() {
   let ds = new EventEmitter();
-  ds.initialize = sinon.spy(() => setImmediate(() => ds.emit('initialized')));
+  ds.initialize = vi.fn(() => setImmediate(() => ds.emit('initialized')));
   return ds;
 }
 
@@ -21,9 +20,7 @@ function baseConfig(overrides) {
 }
 
 describe('LinkedDataFragmentsServerWorker', () => {
-  let sandbox;
-  beforeEach(() => { sandbox = sinon.sandbox.create(); });
-  afterEach(() => { sandbox.restore(); });
+  afterEach(() => { vi.restoreAllMocks(); });
 
   describe('The LinkedDataFragmentsServerWorker module', () => {
     it('should be a function', () => {
@@ -64,14 +61,14 @@ describe('LinkedDataFragmentsServerWorker', () => {
 
     it('should hide a datasource and warn when it errors', () => {
       let datasource = fakeDatasource();
-      let stderrWrite = sandbox.stub(process.stderr, 'write');
+      let stderrWrite = vi.spyOn(process.stderr, 'write').mockImplementation(() => {});
       let config = baseConfig({ datasources: { mine: datasource } });
       // eslint-disable-next-line no-new
       new LinkedDataFragmentsServerWorker(config);
       datasource.emit('error', new Error('connection refused'));
 
       expect(config.datasources.mine.hide).toBe(true);
-      expect(stderrWrite.calledWith(sinon.match(/skipped datasource mine.*connection refused/))).toBe(true);
+      expect(stderrWrite).toHaveBeenCalledWith(expect.stringMatching(/skipped datasource mine.*connection refused/));
     });
 
     it('should always set config.log to console.log', () => {
@@ -114,7 +111,7 @@ describe('LinkedDataFragmentsServerWorker', () => {
       let accessLogPath = require.resolve('access-log');
       let originalExports = require.cache[accessLogPath].exports;
       require.cache[accessLogPath].exports = (req, res, format, cb) => cb('fake log entry');
-      let appendFile = sandbox.stub(fs, 'appendFile');
+      let appendFile = vi.spyOn(fs, 'appendFile').mockImplementation(() => {});
       try {
         let config = baseConfig({ logging: { enabled: true, file: '/tmp/access.log' } });
         // eslint-disable-next-line no-new
@@ -123,13 +120,13 @@ describe('LinkedDataFragmentsServerWorker', () => {
         let response = { writeHead: () => {}, end: () => {}, statusCode: 200 };
 
         config.accesslogger(request, response);
-        expect(appendFile.calledWith('/tmp/access.log', 'fake log entry\n')).toBe(true);
+        expect(appendFile).toHaveBeenCalledWith('/tmp/access.log', 'fake log entry\n', expect.any(Function));
 
-        let stderrWrite = sandbox.stub(process.stderr, 'write');
-        appendFile.args[0][2](null);
-        expect(stderrWrite.called).toBe(false);
-        appendFile.args[0][2](new Error('disk full'));
-        expect(stderrWrite.calledWith(sinon.match('Error when writing to access log file'))).toBe(true);
+        let stderrWrite = vi.spyOn(process.stderr, 'write').mockImplementation(() => {});
+        appendFile.mock.calls[0][2](null);
+        expect(stderrWrite).not.toHaveBeenCalled();
+        appendFile.mock.calls[0][2](new Error('disk full'));
+        expect(stderrWrite).toHaveBeenCalledWith(expect.stringContaining('Error when writing to access log file'));
       }
       finally {
         require.cache[accessLogPath].exports = originalExports;
@@ -145,40 +142,40 @@ describe('LinkedDataFragmentsServerWorker', () => {
         port: 0,
         urlData: { protocol: 'http', baseURL: 'http://localhost/' },
       }));
-      let log = sandbox.stub(console, 'log');
-      let once = sandbox.stub(process, 'once');
+      let log = vi.spyOn(console, 'log').mockImplementation(() => {});
+      let once = vi.spyOn(process, 'once').mockImplementation(() => {});
 
       worker.run();
 
       setImmediate(() => setImmediate(() => {
-        expect(datasource.initialize.calledOnce).toBe(true);
-        expect(log.getCall(0).args[0]).toContain('running on');
+        expect(datasource.initialize).toHaveBeenCalledOnce();
+        expect(log.mock.calls[0][0]).toContain('running on');
         // Stop the real (ephemeral-port) server the handler just started listening on.
-        let sigintHandler = once.args.find((args) => args[0] === 'SIGINT')[1];
+        let sigintHandler = once.mock.calls.find((args) => args[0] === 'SIGINT')[1];
         sigintHandler();
-        expect(log.getCall(1).args).toEqual(['Stopping worker', process.pid]);
+        expect(log.mock.calls[1]).toEqual(['Stopping worker', process.pid]);
         done();
       }));
     }));
 
     it('should wait for every datasource before listening', () => {
-      let dsA = new EventEmitter(); dsA.initialize = sinon.spy();
-      let dsB = new EventEmitter(); dsB.initialize = sinon.spy();
+      let dsA = new EventEmitter(); dsA.initialize = vi.fn();
+      let dsB = new EventEmitter(); dsB.initialize = vi.fn();
       let worker = new LinkedDataFragmentsServerWorker(baseConfig({
         datasources: { a: dsA, b: dsB },
         port: 0,
         urlData: { protocol: 'http', baseURL: 'http://localhost/' },
       }));
-      let log = sandbox.stub(console, 'log');
-      let once = sandbox.stub(process, 'once');
+      let log = vi.spyOn(console, 'log').mockImplementation(() => {});
+      let once = vi.spyOn(process, 'once').mockImplementation(() => {});
 
       worker.run();
       dsA.emit('initialized');
-      expect(log.called).toBe(false);
+      expect(log).not.toHaveBeenCalled();
       dsB.emit('initialized');
-      expect(log.called).toBe(true);
+      expect(log).toHaveBeenCalled();
       // Stop the real (ephemeral-port) server the handler just started listening on.
-      once.args.find((args) => args[0] === 'SIGINT')[1]();
+      once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
     });
 
     it('should apply an explicit port argument over the config port', () => new Promise((done) => {
@@ -186,14 +183,14 @@ describe('LinkedDataFragmentsServerWorker', () => {
         port: 0,
         urlData: { protocol: 'http', baseURL: 'http://localhost/' },
       }));
-      sandbox.stub(console, 'log');
-      let once = sandbox.stub(process, 'once');
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+      let once = vi.spyOn(process, 'once').mockImplementation(() => {});
 
       worker.run(56789);
       expect(worker._config.port).toBe(56789);
 
       setImmediate(() => setImmediate(() => {
-        once.args.find((args) => args[0] === 'SIGINT')[1]();
+        once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
         done();
       }));
     }));
@@ -203,15 +200,15 @@ describe('LinkedDataFragmentsServerWorker', () => {
         port: 0,
         urlData: { protocol: 'http', baseURL: 'http://localhost/' },
       }));
-      sandbox.stub(console, 'log');
-      let once = sandbox.stub(process, 'once');
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+      let once = vi.spyOn(process, 'once').mockImplementation(() => {});
       let portBeforeRun = worker._config.port;
 
       worker.run(0);
       expect(worker._config.port).toBe(portBeforeRun);
 
       setImmediate(() => setImmediate(() => {
-        once.args.find((args) => args[0] === 'SIGINT')[1]();
+        once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
         done();
       }));
     }));
@@ -221,18 +218,18 @@ describe('LinkedDataFragmentsServerWorker', () => {
         port: 0,
         urlData: { protocol: 'http', baseURL: 'http://localhost/' },
       }));
-      sandbox.stub(console, 'log');
-      let once = sandbox.stub(process, 'once');
-      let on = sandbox.stub(process, 'on');
-      let exit = sandbox.stub(process, 'exit');
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+      let once = vi.spyOn(process, 'once').mockImplementation(() => {});
+      let on = vi.spyOn(process, 'on').mockImplementation(() => {});
+      let exit = vi.spyOn(process, 'exit').mockImplementation(() => {});
 
       worker.run();
 
       setImmediate(() => setImmediate(() => {
-        once.args.find((args) => args[0] === 'SIGINT')[1]();
-        let secondSigintHandler = on.args.find((args) => args[0] === 'SIGINT')[1];
+        once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
+        let secondSigintHandler = on.mock.calls.find((args) => args[0] === 'SIGINT')[1];
         secondSigintHandler();
-        expect(exit.calledWith(1)).toBe(true);
+        expect(exit).toHaveBeenCalledWith(1);
         done();
       }));
     }));

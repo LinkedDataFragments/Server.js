@@ -1,7 +1,6 @@
 /*! @license MIT ©2016 Miel Vander Sande, Ghent University - imec */
 
-import { describe, it, expect } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, vi } from 'vitest';
 const http = require('http');
 const { TLSSocket } = require('tls');
 let WebIDControllerExtension = require('../../lib/controllers/WebIDControllerExtension').WebIDControllerExtension; // changed to make tests pass, will be revised in follow up pr
@@ -47,10 +46,10 @@ describe('WebIDControllerExtension', () => {
     it('should call next without inspecting the request when the protocol is not https', () => {
       let instance = Object.create(WebIDControllerExtension.prototype);
       instance._protocol = 'http';
-      let next = sinon.spy();
+      let next = vi.fn();
       instance._handleRequest({}, {}, next);
-      expect(next.calledOnce).toBe(true);
-      expect(next.calledWithExactly()).toBe(true);
+      expect(next).toHaveBeenCalledOnce();
+      expect(next).toHaveBeenCalledWith();
     });
   });
 
@@ -58,7 +57,7 @@ describe('WebIDControllerExtension', () => {
     function handle(options) {
       let instance = Object.create(WebIDControllerExtension.prototype);
       let written;
-      let response = { writeHead: sinon.spy(), end: (text) => { written = text; } };
+      let response = { writeHead: vi.fn(), end: (text) => { written = text; } };
       instance._handleNotAcceptable({ url: '/foo' }, response, options);
       return written;
     }
@@ -78,18 +77,18 @@ describe('WebIDControllerExtension', () => {
     it('should render the Forbidden view with a 401 status', () => {
       let instance = Object.create(WebIDControllerExtension.prototype);
       let view = new View('Forbidden', 'text/plain');
-      sinon.stub(view, 'render');
+      vi.spyOn(view, 'render').mockImplementation(() => {});
       instance._views = new ViewCollection([view]);
       instance._prefixes = { a: 'b' };
       instance._datasources = { c: 'd' };
-      let response = { writeHead: sinon.spy(), getHeader: () => undefined, setHeader: () => {} };
+      let response = { writeHead: vi.fn(), getHeader: () => undefined, setHeader: () => {} };
       let request = { url: '/foo', headers: {} };
 
       instance._handleForbidden(request, response, { webID: 'http://example.org/#me', reason: 'no match' });
 
-      expect(response.writeHead.calledWith(401)).toBe(true);
-      expect(view.render.calledOnce).toBe(true);
-      expect(view.render.getCall(0).args[0]).toEqual({
+      expect(response.writeHead).toHaveBeenCalledWith(401);
+      expect(view.render).toHaveBeenCalledOnce();
+      expect(view.render.mock.calls[0][0]).toEqual({
         url: '/foo', prefixes: { a: 'b' }, datasources: { c: 'd' }, reason: 'no match',
       });
     });
@@ -114,13 +113,13 @@ describe('WebIDControllerExtension', () => {
     it('should reject the request when the certificate has no WebID subjectAltName', () => {
       let instance = Object.create(WebIDControllerExtension.prototype);
       instance._protocol = 'https';
-      instance._handleForbidden = sinon.spy();
+      instance._handleForbidden = vi.fn();
       let request = tlsRequest({ subject: {} });
 
       instance._handleRequest(request, {}, () => {});
 
-      expect(instance._handleForbidden.calledOnce).toBe(true);
-      expect(instance._handleForbidden.getCall(0).args[2]).toEqual({
+      expect(instance._handleForbidden).toHaveBeenCalledOnce();
+      expect(instance._handleForbidden.mock.calls[0][2]).toEqual({
         reason: 'No WebID found in client certificate.',
       });
     });
@@ -128,38 +127,38 @@ describe('WebIDControllerExtension', () => {
     it('should call next when the WebID verifies successfully', () => {
       let instance = Object.create(WebIDControllerExtension.prototype);
       instance._protocol = 'https';
-      instance._handleForbidden = sinon.spy();
-      instance._verifyWebID = sinon.spy((webID, modulus, exponent, callback) => callback(null, true));
+      instance._handleForbidden = vi.fn();
+      instance._verifyWebID = vi.fn((webID, modulus, exponent, callback) => callback(null, true));
       let request = tlsRequest({
         subject: { subjectAltName: 'uniformResourceIdentifier:http://example.org/#me' },
         modulus: 'ABCD', exponent: '10001',
       });
-      let next = sinon.spy();
+      let next = vi.fn();
 
       instance._handleRequest(request, {}, next);
 
-      expect(instance._verifyWebID.calledOnce).toBe(true);
-      expect(instance._verifyWebID.getCall(0).args[0]).toBe('http://example.org/#me');
-      expect(next.calledOnce).toBe(true);
-      expect(instance._handleForbidden.called).toBe(false);
+      expect(instance._verifyWebID).toHaveBeenCalledOnce();
+      expect(instance._verifyWebID.mock.calls[0][0]).toBe('http://example.org/#me');
+      expect(next).toHaveBeenCalledOnce();
+      expect(instance._handleForbidden).not.toHaveBeenCalled();
     });
 
     it('should reject the request when the WebID does not verify', () => {
       let instance = Object.create(WebIDControllerExtension.prototype);
       instance._protocol = 'https';
-      instance._handleForbidden = sinon.spy();
-      instance._verifyWebID = sinon.spy((webID, modulus, exponent, callback) => callback(null, false, 'no match'));
+      instance._handleForbidden = vi.fn();
+      instance._verifyWebID = vi.fn((webID, modulus, exponent, callback) => callback(null, false, 'no match'));
       let request = tlsRequest({
         subject: { subjectAltName: 'uniformResourceIdentifier:http://example.org/#me' },
         modulus: 'ABCD', exponent: '10001',
       });
-      let next = sinon.spy();
+      let next = vi.fn();
 
       instance._handleRequest(request, {}, next);
 
-      expect(next.called).toBe(false);
-      expect(instance._handleForbidden.calledOnce).toBe(true);
-      expect(instance._handleForbidden.getCall(0).args[2]).toEqual({
+      expect(next).not.toHaveBeenCalled();
+      expect(instance._handleForbidden).toHaveBeenCalledOnce();
+      expect(instance._handleForbidden.mock.calls[0][2]).toEqual({
         webID: 'http://example.org/#me', reason: 'no match',
       });
     });
@@ -172,22 +171,22 @@ describe('WebIDControllerExtension', () => {
     it('should verify successfully against a matching cached id', () => {
       let instance = Object.create(WebIDControllerExtension.prototype);
       instance._cache = { get: () => ({ modulus: 'ABCD', exponent: 65537 }) };
-      let callback = sinon.spy();
+      let callback = vi.fn();
 
       instance._verifyWebID('http://example.org/#me', 'ABCD', 65537, callback);
 
-      expect(callback.calledWithExactly(null, true)).toBe(true);
+      expect(callback).toHaveBeenCalledWith(null, true);
     });
 
     it('should report a mismatch against a non-matching cached id', () => {
       let instance = Object.create(WebIDControllerExtension.prototype);
       instance._cache = { get: () => ({ modulus: 'WRONG', exponent: 1 }) };
-      let callback = sinon.spy();
+      let callback = vi.fn();
 
       instance._verifyWebID('http://example.org/#me', 'ABCD', 65537, callback);
 
-      expect(callback.calledWithExactly(null, false,
-        'WebID does not match certificate: WRONG - 1 (webid) <> ABCD - 65537 (cert)')).toBe(true);
+      expect(callback).toHaveBeenCalledWith(null, false,
+        'WebID does not match certificate: WRONG - 1 (webid) <> ABCD - 65537 (cert)');
     });
 
     // TODO: the predicate switch in _verifyWebID compares an N3 term object
@@ -197,7 +196,7 @@ describe('WebIDControllerExtension', () => {
     describe('on a cache miss', () => {
       it('should always report a mismatch, since the parsed modulus/exponent are never populated', () => new Promise((done) => {
         let instance = Object.create(WebIDControllerExtension.prototype);
-        instance._cache = { get: () => undefined, set: sinon.spy() };
+        instance._cache = { get: () => undefined, set: vi.fn() };
         let originalRequest = http.request;
         http.request = (url, cb) => {
           cb(createHttpResponse(
@@ -212,7 +211,7 @@ describe('WebIDControllerExtension', () => {
           expect(error).toBe(null);
           expect(verified).toBe(false);
           expect(reason).toBe('WebID does not match certificate: undefined - undefined (webid) <> ABCD - 65537 (cert)');
-          expect(instance._cache.set.calledWith('http://example.org/#me', {})).toBe(true);
+          expect(instance._cache.set).toHaveBeenCalledWith('http://example.org/#me', {}, expect.anything());
           done();
         });
       }));

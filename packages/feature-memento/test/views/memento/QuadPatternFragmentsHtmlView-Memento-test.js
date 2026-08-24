@@ -1,6 +1,5 @@
 /*! @license MIT ©2016 Ruben Verborgh, Ghent University - imec */
-import { describe, it, expect } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, vi } from 'vitest';
 let MementoHtmlViewExtension = require('../../../lib/views/memento/QuadPatternFragmentsHtmlView-Memento.js').MementoHtmlViewExtension;
 let UrlData = require('@ldf/core').UrlData;
 
@@ -28,24 +27,24 @@ describe('MementoHtmlViewExtension', () => {
   describe('_render', () => {
     it('should call done without rendering when the datasource has no memento', () => {
       let instance = view({ id: 'ds1' });
-      instance._renderTemplate = sinon.spy();
-      let done = sinon.spy();
+      instance._renderTemplate = vi.fn();
+      let done = vi.fn();
 
       instance._render({ datasource: { id: 'ds2' } }, {}, {}, done);
 
-      expect(instance._renderTemplate.called).toBe(false);
-      expect(done.calledOnce).toBe(true);
+      expect(instance._renderTemplate).not.toHaveBeenCalled();
+      expect(done).toHaveBeenCalledOnce();
     });
 
     it('should render the memento details when the datasource has one', () => {
       let instance = view({ id: 'ds1' });
-      instance._renderTemplate = sinon.spy();
-      let done = sinon.spy();
+      instance._renderTemplate = vi.fn();
+      let done = vi.fn();
 
       instance._render({ datasource: { id: 'ds1' } }, {}, {}, done);
 
-      expect(instance._renderTemplate.calledOnce).toBe(true);
-      expect(instance._renderTemplate.getCall(0).args[1]).toEqual({
+      expect(instance._renderTemplate).toHaveBeenCalledOnce();
+      expect(instance._renderTemplate.mock.calls[0][1]).toEqual({
         start: new Date('2020-01-01T00:00:00Z'),
         end: new Date('2020-06-01T00:00:00Z'),
       });

@@ -1,6 +1,6 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 let HdtDatasource = require('../../').datasources.HdtDatasource,
     ExternalHdtDatasource = require('../../lib/datasources/ExternalHdtDatasource').ExternalHdtDatasource;
 
@@ -8,8 +8,7 @@ let Datasource = require('@ldf/core').datasources.Datasource,
     UrlData = require('@ldf/core').UrlData,
     path = require('path'),
     dataFactory = require('n3').DataFactory,
-    RdfString = require('rdf-string'),
-    sinon = require('sinon');
+    RdfString = require('rdf-string');
 
 let exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
@@ -64,12 +63,12 @@ describe('HdtDatasource', () => {
       instance._hdtDocument = {
         searchTriples: () => Promise.resolve({ triples: [{}, {}], totalCount: 5, hasExactCount: false }),
       };
-      let setProperty = sinon.spy();
+      let setProperty = vi.fn();
       let destination = {
         setProperty,
-        _push: sinon.spy(),
+        _push: vi.fn(),
         close: () => {
-          expect(setProperty.calledWith('metadata', { totalCount: 6, hasExactCount: false })).toBe(true);
+          expect(setProperty).toHaveBeenCalledWith('metadata', { totalCount: 6, hasExactCount: false });
           done();
         },
       };
@@ -81,12 +80,12 @@ describe('HdtDatasource', () => {
       instance._hdtDocument = {
         searchTriples: () => Promise.resolve({ triples: [{}, {}], totalCount: 1, hasExactCount: false }),
       };
-      let setProperty = sinon.spy();
+      let setProperty = vi.fn();
       let destination = {
         setProperty,
-        _push: sinon.spy(),
+        _push: vi.fn(),
         close: () => {
-          expect(setProperty.calledWith('metadata', { totalCount: 8, hasExactCount: false })).toBe(true);
+          expect(setProperty).toHaveBeenCalledWith('metadata', { totalCount: 8, hasExactCount: false });
           done();
         },
       };

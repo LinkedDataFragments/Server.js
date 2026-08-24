@@ -1,7 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, vi } from 'vitest';
 // changed to make tests pass, will be revised in follow up pr
 let View = require('../../lib/views/View').View,
     resolve = require('path').resolve;
@@ -70,7 +69,7 @@ describe('View', () => {
 
     describe('without _render method', () => {
       it('should throw an error on calling render', () => {
-        let response = { getHeader: sinon.stub() };
+        let response = { getHeader: vi.fn() };
         expect(() => { new View().render(null, null, response); })
           .toThrow('The _render method is not yet implemented.');
       });
@@ -79,59 +78,59 @@ describe('View', () => {
     describe('created without defaults', () => {
       it('should call _render with the given options', () => {
         let view = new View(),
-            request = {}, response = { getHeader: sinon.stub().returns('text/html') },
+            request = {}, response = { getHeader: vi.fn().mockReturnValue('text/html') },
             options = { a: 'b' };
-        view._render = sinon.spy();
+        view._render = vi.fn();
         view.render(options, request, response, noop);
-        expect(response.getHeader.calledOnce).toBe(true);
-        expect(response.getHeader.calledWith('Content-Type')).toBe(true);
-        expect(view._render.getCall(0).args).toHaveLength(4);
-        expect(view._render.calledOnce).toBe(true);
-        expect(view._render.getCall(0).args[0]).toEqual({
+        expect(response.getHeader).toHaveBeenCalledOnce();
+        expect(response.getHeader).toHaveBeenCalledWith('Content-Type');
+        expect(view._render.mock.calls[0]).toHaveLength(4);
+        expect(view._render).toHaveBeenCalledOnce();
+        expect(view._render.mock.calls[0][0]).toEqual({
           a: 'b',
           contentType: 'text/html',
           viewPathBase: resolve(__dirname, '../../lib/views/base.html'),
         });
-        expect(view._render.getCall(0).args[1]).toBe(request);
-        expect(view._render.getCall(0).args[2]).toBe(response);
-        expect(view._render.getCall(0).args[3]).toBeInstanceOf(Function);
+        expect(view._render.mock.calls[0][1]).toBe(request);
+        expect(view._render.mock.calls[0][2]).toBe(response);
+        expect(view._render.mock.calls[0][3]).toBeInstanceOf(Function);
       });
     });
 
     describe('created with defaults', () => {
       it('should call _render with the combined defaults and options', () => {
         let view = new View(null, null, { c: 'd' }),
-            request = {}, response = { getHeader: sinon.stub().returns('text/html') },
+            request = {}, response = { getHeader: vi.fn().mockReturnValue('text/html') },
             options = { a: 'b' };
-        view._render = sinon.spy();
+        view._render = vi.fn();
         view.render(options, request, response, noop);
-        expect(response.getHeader.calledOnce).toBe(true);
-        expect(response.getHeader.calledWith('Content-Type')).toBe(true);
-        expect(view._render.calledOnce).toBe(true);
-        expect(view._render.getCall(0).args).toHaveLength(4);
-        expect(view._render.getCall(0).args[0]).toEqual({
+        expect(response.getHeader).toHaveBeenCalledOnce();
+        expect(response.getHeader).toHaveBeenCalledWith('Content-Type');
+        expect(view._render).toHaveBeenCalledOnce();
+        expect(view._render.mock.calls[0]).toHaveLength(4);
+        expect(view._render.mock.calls[0][0]).toEqual({
           a: 'b',
           c: 'd',
           contentType: 'text/html',
           viewPathBase: resolve(__dirname, '../../lib/views/base.html'),
         });
-        expect(view._render.getCall(0).args[1]).toBe(request);
-        expect(view._render.getCall(0).args[2]).toBe(response);
-        expect(view._render.getCall(0).args[3]).toBeInstanceOf(Function);
+        expect(view._render.mock.calls[0][1]).toBe(request);
+        expect(view._render.mock.calls[0][2]).toBe(response);
+        expect(view._render.mock.calls[0][3]).toBeInstanceOf(Function);
       });
     });
 
     describe('when _render calls back with an error', () => {
       it('should emit an error event on the response before ending it', () => {
         let view = new View(),
-            request = {}, response = { getHeader: sinon.stub().returns('text/html'), emit: sinon.spy(), end: sinon.spy() },
+            request = {}, response = { getHeader: vi.fn().mockReturnValue('text/html'), emit: vi.fn(), end: vi.fn() },
             error = new Error('render failed');
         view._render = (settings, req, res, done) => done(error);
 
         view.render({}, request, response, noop);
 
-        expect(response.emit.calledWith('error', error)).toBe(true);
-        expect(response.end.calledOnce).toBe(true);
+        expect(response.emit).toHaveBeenCalledWith('error', error);
+        expect(response.end).toHaveBeenCalledOnce();
       });
     });
 
@@ -146,22 +145,22 @@ describe('View', () => {
         let htmlExt = extension('ParentView:Before', 'text/html'),
             jsonExt = extension('ParentView:Before', 'application/json');
         let view = new View('ParentView', null, { views: [htmlExt, jsonExt] });
-        let response = { getHeader: sinon.stub().returns('text/html'), emit: sinon.spy(), end: sinon.spy() };
-        let done = sinon.spy();
+        let response = { getHeader: vi.fn().mockReturnValue('text/html'), emit: vi.fn(), end: vi.fn() };
+        let done = vi.fn();
 
         view._renderViewExtensions('Before', { contentType: 'text/html' }, {}, response, done);
 
         expect(rendered).toEqual(['ParentView:Before']);
-        expect(done.calledOnce).toBe(true);
+        expect(done).toHaveBeenCalledOnce();
       });
 
       it('should call done directly when there are no matching extensions', () => {
         let view = new View('ParentView');
-        let done = sinon.spy();
+        let done = vi.fn();
 
         view._renderViewExtensions('Before', { contentType: 'text/html' }, {}, {}, done);
 
-        expect(done.calledOnce).toBe(true);
+        expect(done).toHaveBeenCalledOnce();
       });
     });
 
@@ -169,13 +168,13 @@ describe('View', () => {
       it('should render the extension with the given options', () => {
         let view = new View();
         let extension = new View('Ext', 'text/html');
-        extension._render = sinon.spy();
-        let request = {}, response = { getHeader: sinon.stub().returns('text/html'), emit: sinon.spy(), end: sinon.spy() };
-        let done = sinon.spy();
+        extension._render = vi.fn();
+        let request = {}, response = { getHeader: vi.fn().mockReturnValue('text/html'), emit: vi.fn(), end: vi.fn() };
+        let done = vi.fn();
 
         view._renderViewExtension(extension, { contentType: 'text/html' }, request, response, done);
 
-        expect(extension._render.calledOnce).toBe(true);
+        expect(extension._render).toHaveBeenCalledOnce();
       });
     });
   });

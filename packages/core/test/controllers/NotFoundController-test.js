@@ -1,11 +1,10 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, beforeAll, vi } from 'vitest';
+import DummyServer from '../../../../test/DummyServer';
 let NotFoundController = require('../../lib/controllers/NotFoundController').NotFoundController;
 
 let request = require('supertest'),
-    DummyServer = require('../../../../test/DummyServer'),
     dataFactory = require('n3').DataFactory;
 
 let NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView').NotFoundHtmlView,
@@ -37,7 +36,7 @@ describe('NotFoundController', () => {
       }));
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -63,15 +62,15 @@ describe('NotFoundController', () => {
     beforeAll(() => {
       htmlView = new NotFoundHtmlView({ dataFactory });
       rdfView  = new NotFoundRdfView({ dataFactory });
-      sinon.spy(htmlView, 'render');
-      sinon.spy(rdfView,  'render');
+      vi.spyOn(htmlView, 'render');
+      vi.spyOn(rdfView, 'render');
       datasources = { a: { title: 'foo', url: 'http://example.org/foo#dataset' } };
       controller = new NotFoundController({ views: [htmlView, rdfView], datasources: datasources });
       client = request.agent(new DummyServer(controller));
     });
     function resetAll() {
-      htmlView.render.reset();
-      rdfView.render.reset();
+      htmlView.render.mockClear();
+      rdfView.render.mockClear();
     }
 
     describe('receiving a request without Accept header', () => {
@@ -83,15 +82,15 @@ describe('NotFoundController', () => {
       }));
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
       });
 
       it('should call the HTML view', () => {
-        expect(htmlView.render.calledOnce).toBe(true);
+        expect(htmlView.render).toHaveBeenCalledOnce();
       });
 
       it('should not call the RDF view', () => {
-        expect(rdfView.render.called).toBe(false);
+        expect(rdfView.render).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -120,15 +119,15 @@ describe('NotFoundController', () => {
       }));
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
       });
 
       it('should call the HTML view', () => {
-        expect(htmlView.render.calledOnce).toBe(true);
+        expect(htmlView.render).toHaveBeenCalledOnce();
       });
 
       it('should not call the RDF view', () => {
-        expect(rdfView.render.called).toBe(false);
+        expect(rdfView.render).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -157,15 +156,15 @@ describe('NotFoundController', () => {
       }));
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
       });
 
       it('should call the HTML view', () => {
-        expect(htmlView.render.calledOnce).toBe(true);
+        expect(htmlView.render).toHaveBeenCalledOnce();
       });
 
       it('should not call the RDF view', () => {
-        expect(rdfView.render.called).toBe(false);
+        expect(rdfView.render).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -194,15 +193,15 @@ describe('NotFoundController', () => {
       }));
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
       });
 
       it('should call the RDF view', () => {
-        expect(rdfView.render.calledOnce).toBe(true);
+        expect(rdfView.render).toHaveBeenCalledOnce();
       });
 
       it('should not call the HTML view', () => {
-        expect(htmlView.render.called).toBe(false);
+        expect(htmlView.render).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -232,15 +231,15 @@ describe('NotFoundController', () => {
       }));
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
       });
 
       it('should call the RDF view', () => {
-        expect(rdfView.render.calledOnce).toBe(true);
+        expect(rdfView.render).toHaveBeenCalledOnce();
       });
 
       it('should not call the HTML view', () => {
-        expect(htmlView.render.called).toBe(false);
+        expect(htmlView.render).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {

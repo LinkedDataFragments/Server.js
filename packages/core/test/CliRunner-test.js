@@ -1,7 +1,6 @@
 /*! @license MIT ©2013-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 let CliRunner = require('../lib/CliRunner'),
     runCli = CliRunner.runCli,
     runCustom = CliRunner.runCustom;
@@ -11,19 +10,17 @@ const EventEmitter = require('events').EventEmitter;
 const cluster = require('cluster');
 
 function fakeWritable() {
-  return { write: sinon.spy() };
+  return { write: vi.fn() };
 }
 
 describe('CliRunner', () => {
-  let sandbox;
   let originalIsMaster, originalWorkers;
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
     originalIsMaster = cluster.isMaster;
     originalWorkers = cluster.workers;
   });
   afterEach(() => {
-    sandbox.restore();
+    vi.restoreAllMocks();
     cluster.isMaster = originalIsMaster;
     cluster.workers = originalWorkers;
   });
@@ -31,49 +28,49 @@ describe('CliRunner', () => {
   describe('runCustom', () => {
     describe('with an invalid number of arguments', () => {
       it('should print usage and exit for zero arguments', () => {
-        let exit = sandbox.stub(process, 'exit');
+        let exit = vi.spyOn(process, 'exit').mockImplementation(() => {});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom([], process.stdin, stdout, stderr, null, {});
-        expect(stdout.write.calledWith(sinon.match('usage:'))).toBe(true);
-        expect(exit.calledWith(1)).toBe(true);
+        expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('usage:'));
+        expect(exit).toHaveBeenCalledWith(1);
       });
 
       it('should print usage and exit for more than 4 arguments', () => {
-        let exit = sandbox.stub(process, 'exit');
+        let exit = vi.spyOn(process, 'exit').mockImplementation(() => {});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['a', 'b', 'c', 'd', 'e'], process.stdin, stdout, stderr, null, {});
-        expect(stdout.write.calledWith(sinon.match('usage:'))).toBe(true);
-        expect(exit.calledWith(1)).toBe(true);
+        expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('usage:'));
+        expect(exit).toHaveBeenCalledWith(1);
       });
 
       it('should print usage and exit for --help', () => {
-        let exit = sandbox.stub(process, 'exit');
+        let exit = vi.spyOn(process, 'exit').mockImplementation(() => {});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['--help'], process.stdin, stdout, stderr, null, {});
-        expect(stdout.write.calledWith(sinon.match('usage:'))).toBe(true);
-        expect(exit.calledWith(1)).toBe(true);
+        expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('usage:'));
+        expect(exit).toHaveBeenCalledWith(1);
       });
 
       it('should print usage and exit for -h', () => {
-        let exit = sandbox.stub(process, 'exit');
+        let exit = vi.spyOn(process, 'exit').mockImplementation(() => {});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['-h'], process.stdin, stdout, stderr, null, {});
-        expect(stdout.write.calledWith(sinon.match('usage:'))).toBe(true);
-        expect(exit.calledWith(1)).toBe(true);
+        expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('usage:'));
+        expect(exit).toHaveBeenCalledWith(1);
       });
     });
 
     describe('when the component definition fails to build', () => {
       it('should report the error and exit', () => new Promise((done) => {
-        let exit = sandbox.stub(process, 'exit');
+        let exit = vi.spyOn(process, 'exit').mockImplementation(() => {});
         let error = new Error('bad config');
-        sandbox.stub(ComponentsManager, 'build').returns(Promise.reject(error));
+        vi.spyOn(ComponentsManager, 'build').mockReturnValue(Promise.reject(error));
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
-          expect(stderr.write.calledWith('Component definition error:\n')).toBe(true);
-          expect(stderr.write.calledWith(sinon.match(error.stack))).toBe(true);
-          expect(exit.calledWith(1)).toBe(true);
+          expect(stderr.write).toHaveBeenCalledWith('Component definition error:\n');
+          expect(stderr.write).toHaveBeenCalledWith(expect.stringContaining(error.stack));
+          expect(exit).toHaveBeenCalledWith(1);
           done();
         });
       }));
@@ -81,17 +78,17 @@ describe('CliRunner', () => {
 
     describe('when instantiation fails', () => {
       it('should report the error and exit', () => new Promise((done) => {
-        let exit = sandbox.stub(process, 'exit');
+        let exit = vi.spyOn(process, 'exit').mockImplementation(() => {});
         let error = new Error('bad instantiation');
         let manager = { instantiate: () => Promise.reject(error) };
-        sandbox.stub(ComponentsManager, 'build').returns(Promise.resolve(manager));
+        vi.spyOn(ComponentsManager, 'build').mockReturnValue(Promise.resolve(manager));
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            expect(stderr.write.calledWith('Instantiation error:\n')).toBe(true);
-            expect(stderr.write.calledWith(sinon.match(error.stack))).toBe(true);
-            expect(exit.calledWith(1)).toBe(true);
+            expect(stderr.write).toHaveBeenCalledWith('Instantiation error:\n');
+            expect(stderr.write).toHaveBeenCalledWith(expect.stringContaining(error.stack));
+            expect(exit).toHaveBeenCalledWith(1);
             done();
           });
         });
@@ -101,14 +98,14 @@ describe('CliRunner', () => {
     describe('when running as a cluster worker', () => {
       it('should run the worker with the given port', () => new Promise((done) => {
         cluster.isMaster = false;
-        let worker = { run: sinon.spy(), _config: {} };
+        let worker = { run: vi.fn(), _config: {} };
         let manager = { instantiate: () => Promise.resolve(worker) };
-        sandbox.stub(ComponentsManager, 'build').returns(Promise.resolve(manager));
+        vi.spyOn(ComponentsManager, 'build').mockReturnValue(Promise.resolve(manager));
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json', '3000'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            expect(worker.run.calledWith(3000)).toBe(true);
+            expect(worker.run).toHaveBeenCalledWith(3000);
             done();
           });
         });
@@ -118,19 +115,19 @@ describe('CliRunner', () => {
     describe('when running as the cluster master', () => {
       let fork, on, once;
       beforeEach(() => {
-        fork = sandbox.stub(cluster, 'fork', () => Object.assign(new EventEmitter(), { process: { pid: fork.callCount + 8000 }, kill: sinon.spy() }));
-        on = sandbox.stub(cluster, 'on');
-        once = sandbox.stub(process, 'once');
+        fork = vi.spyOn(cluster, 'fork').mockImplementation(() => Object.assign(new EventEmitter(), { process: { pid: fork.mock.calls.length + 8000 }, kill: vi.fn() }));
+        on = vi.spyOn(cluster, 'on').mockImplementation(() => {});
+        once = vi.spyOn(process, 'once').mockImplementation(() => {});
         // Stubbed only to prevent real signal-listener registration during these tests.
-        sandbox.stub(process, 'addListener');
-        sandbox.stub(process, 'removeListener');
+        vi.spyOn(process, 'addListener').mockImplementation(() => {});
+        vi.spyOn(process, 'removeListener').mockImplementation(() => {});
       });
 
       function build(config, extraProps) {
-        let worker = Object.assign({ run: sinon.spy(), _config: config }, extraProps);
+        let worker = Object.assign({ run: vi.fn(), _config: config }, extraProps);
         let manager = { instantiate: () => Promise.resolve(worker) };
-        sandbox.stub(ComponentsManager, 'build', (options) => {
-          options.configLoader({ register: sinon.spy() });
+        vi.spyOn(ComponentsManager, 'build').mockImplementation((options) => {
+          options.configLoader({ register: vi.fn() });
           return Promise.resolve(manager);
         });
         return worker;
@@ -142,8 +139,8 @@ describe('CliRunner', () => {
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            expect(stdout.write.calledWith(sinon.match('Master ' + process.pid + ' running.'))).toBe(true);
-            expect(fork.callCount).toBe(1);
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('Master ' + process.pid + ' running.'));
+            expect(fork).toHaveBeenCalledTimes(1);
             done();
           });
         });
@@ -155,7 +152,7 @@ describe('CliRunner', () => {
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            expect(fork.callCount).toBe(3);
+            expect(fork).toHaveBeenCalledTimes(3);
             done();
           });
         });
@@ -167,13 +164,13 @@ describe('CliRunner', () => {
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            expect(on.calledWith('listening')).toBe(true);
-            let listeningHandler = on.args.find((args) => args[0] === 'listening')[1];
+            expect(on).toHaveBeenCalledWith('listening', expect.any(Function));
+            let listeningHandler = on.mock.calls.find((args) => args[0] === 'listening')[1];
             let crashedWorker = Object.assign(new EventEmitter(), { process: { pid: 999 }, exitedAfterDisconnect: false });
             listeningHandler(crashedWorker);
             crashedWorker.emit('exit', 1, null);
-            expect(stdout.write.calledWith(sinon.match('died with 1'))).toBe(true);
-            expect(fork.callCount).toBe(2);
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('died with 1'));
+            expect(fork).toHaveBeenCalledTimes(2);
             done();
           });
         });
@@ -185,11 +182,11 @@ describe('CliRunner', () => {
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            let listeningHandler = on.args.find((args) => args[0] === 'listening')[1];
+            let listeningHandler = on.mock.calls.find((args) => args[0] === 'listening')[1];
             let crashedWorker = Object.assign(new EventEmitter(), { process: { pid: 999 }, exitedAfterDisconnect: false });
             listeningHandler(crashedWorker);
             crashedWorker.emit('exit', null, 'SIGKILL');
-            expect(stdout.write.calledWith(sinon.match('died with SIGKILL'))).toBe(true);
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('died with SIGKILL'));
             done();
           });
         });
@@ -201,27 +198,27 @@ describe('CliRunner', () => {
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            let listeningHandler = on.args.find((args) => args[0] === 'listening')[1];
+            let listeningHandler = on.mock.calls.find((args) => args[0] === 'listening')[1];
             let disconnectedWorker = Object.assign(new EventEmitter(), { process: { pid: 999 }, exitedAfterDisconnect: true });
             listeningHandler(disconnectedWorker);
             disconnectedWorker.emit('exit', 0, null);
-            expect(fork.callCount).toBe(1);
+            expect(fork).toHaveBeenCalledTimes(1);
             done();
           });
         });
       }));
 
       it('should disconnect the cluster on SIGINT', () => new Promise((done) => {
-        let disconnect = sandbox.stub(cluster, 'disconnect');
+        let disconnect = vi.spyOn(cluster, 'disconnect').mockImplementation(() => {});
         build({});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            expect(once.calledWith('SIGINT')).toBe(true);
-            let sigintHandler = once.args.find((args) => args[0] === 'SIGINT')[1];
+            expect(once).toHaveBeenCalledWith('SIGINT', expect.any(Function));
+            let sigintHandler = once.mock.calls.find((args) => args[0] === 'SIGINT')[1];
             sigintHandler();
-            expect(disconnect.calledOnce).toBe(true);
+            expect(disconnect).toHaveBeenCalledOnce();
             done();
           });
         });
@@ -229,155 +226,155 @@ describe('CliRunner', () => {
 
       it('should immediately report completion on SIGHUP when there are no workers left', () => new Promise((done) => {
         cluster.workers = {};
-        let onSighup = sandbox.stub(process, 'on');
+        let onSighup = vi.spyOn(process, 'on').mockImplementation(() => {});
         build({});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            expect(onSighup.calledWith('SIGHUP')).toBe(true);
-            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            expect(onSighup).toHaveBeenCalledWith('SIGHUP', expect.any(Function));
+            let sighupHandler = onSighup.mock.calls.find((args) => args[0] === 'SIGHUP')[1];
             sighupHandler();
-            expect(stdout.write.calledWith(sinon.match('Respawning workers of master'))).toBe(true);
-            expect(stdout.write.calledWith(sinon.match('Respawned all workers of master'))).toBe(true);
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('Respawning workers of master'));
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('Respawned all workers of master'));
             done();
           });
         });
       }));
 
       it('should respawn an old worker once its replacement starts listening', () => new Promise((done) => {
-        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: vi.fn() });
         cluster.workers = { 1: oldWorker };
-        let onSighup = sandbox.stub(process, 'on');
+        let onSighup = vi.spyOn(process, 'on').mockImplementation(() => {});
         build({});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            let sighupHandler = onSighup.mock.calls.find((args) => args[0] === 'SIGHUP')[1];
             sighupHandler();
             // The respawn loop just forked a replacement worker; grab it and
             // make it start listening, which should trigger killing the old one.
-            let newWorker = fork.getCall(fork.callCount - 1).returnValue;
+            let newWorker = fork.mock.results[fork.mock.results.length - 1].value;
             newWorker.emit('listening');
-            expect(oldWorker.kill.calledOnce).toBe(true);
+            expect(oldWorker.kill).toHaveBeenCalledOnce();
             oldWorker.emit('exit');
-            expect(stdout.write.calledWith(sinon.match('replaces killed worker'))).toBe(true);
-            expect(stdout.write.calledWith(sinon.match('Respawned all workers of master'))).toBe(true);
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('replaces killed worker'));
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('Respawned all workers of master'));
             done();
           });
         });
       }));
 
       it('should kill the replacement and continue when an old worker already died on its own', () => new Promise((done) => {
-        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: vi.fn() });
         cluster.workers = { 1: undefined, 2: oldWorker };
-        let onSighup = sandbox.stub(process, 'on');
+        let onSighup = vi.spyOn(process, 'on').mockImplementation(() => {});
         build({});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            let sighupHandler = onSighup.mock.calls.find((args) => args[0] === 'SIGHUP')[1];
             sighupHandler();
-            let firstNewWorker = fork.getCall(fork.callCount - 1).returnValue;
+            let firstNewWorker = fork.mock.results[fork.mock.results.length - 1].value;
             firstNewWorker.emit('listening');
             oldWorker.emit('exit');
-            let secondNewWorker = fork.getCall(fork.callCount - 1).returnValue;
+            let secondNewWorker = fork.mock.results[fork.mock.results.length - 1].value;
             secondNewWorker.emit('listening');
-            expect(secondNewWorker.kill.calledOnce).toBe(true);
-            expect(stdout.write.calledWith(sinon.match('Respawned all workers of master'))).toBe(true);
+            expect(secondNewWorker.kill).toHaveBeenCalledOnce();
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('Respawned all workers of master'));
             done();
           });
         });
       }));
 
       it('should abort respawning and restore the normal SIGHUP handler when the new worker dies before listening', () => new Promise((done) => {
-        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: vi.fn() });
         cluster.workers = { 1: oldWorker };
-        let onSighup = sandbox.stub(process, 'on');
+        let onSighup = vi.spyOn(process, 'on').mockImplementation(() => {});
         build({});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            let sighupHandler = onSighup.mock.calls.find((args) => args[0] === 'SIGHUP')[1];
             sighupHandler();
-            let newWorker = fork.getCall(fork.callCount - 1).returnValue;
+            let newWorker = fork.mock.results[fork.mock.results.length - 1].value;
             newWorker.exitedAfterDisconnect = false;
             newWorker.emit('exit', 1, null);
 
-            expect(stdout.write.calledWith(sinon.match('Respawning aborted because worker'))).toBe(true);
-            expect(oldWorker.kill.called).toBe(false);
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('Respawning aborted because worker'));
+            expect(oldWorker.kill).not.toHaveBeenCalled();
             // The abort restores the normal SIGHUP handler and removes the pending one.
-            expect(process.addListener.calledWith('SIGHUP', sighupHandler)).toBe(true);
-            expect(process.removeListener.getCalls().some((call) =>
-              call.args[0] === 'SIGHUP' && call.args[1] !== sighupHandler)).toBe(true);
+            expect(process.addListener).toHaveBeenCalledWith('SIGHUP', sighupHandler);
+            expect(process.removeListener.mock.calls.some((args) =>
+              args[0] === 'SIGHUP' && args[1] !== sighupHandler)).toBe(true);
             done();
           });
         });
       }));
 
       it('should report the signal when the new worker dies before listening with no exit code', () => new Promise((done) => {
-        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: vi.fn() });
         cluster.workers = { 1: oldWorker };
-        let onSighup = sandbox.stub(process, 'on');
+        let onSighup = vi.spyOn(process, 'on').mockImplementation(() => {});
         build({});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            let sighupHandler = onSighup.mock.calls.find((args) => args[0] === 'SIGHUP')[1];
             sighupHandler();
-            let newWorker = fork.getCall(fork.callCount - 1).returnValue;
+            let newWorker = fork.mock.results[fork.mock.results.length - 1].value;
             newWorker.exitedAfterDisconnect = false;
             newWorker.emit('exit', null, 'SIGKILL');
 
-            expect(stdout.write.calledWith(sinon.match('died with SIGKILL'))).toBe(true);
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('died with SIGKILL'));
             done();
           });
         });
       }));
 
       it('should not treat a deliberate disconnect of the new worker as an abort', () => new Promise((done) => {
-        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: vi.fn() });
         cluster.workers = { 1: oldWorker };
-        let onSighup = sandbox.stub(process, 'on');
+        let onSighup = vi.spyOn(process, 'on').mockImplementation(() => {});
         build({});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            let sighupHandler = onSighup.mock.calls.find((args) => args[0] === 'SIGHUP')[1];
             sighupHandler();
-            let newWorker = fork.getCall(fork.callCount - 1).returnValue;
+            let newWorker = fork.mock.results[fork.mock.results.length - 1].value;
             newWorker.exitedAfterDisconnect = true;
             newWorker.emit('exit', 0, null);
 
-            expect(stdout.write.calledWith(sinon.match('Respawning aborted'))).toBe(false);
+            expect(stdout.write).not.toHaveBeenCalledWith(expect.stringContaining('Respawning aborted'));
             done();
           });
         });
       }));
 
       it('should report that a respawn is already in progress on a second SIGHUP', () => new Promise((done) => {
-        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: sinon.spy() });
+        let oldWorker = Object.assign(new EventEmitter(), { process: { pid: 1234 }, kill: vi.fn() });
         cluster.workers = { 1: oldWorker };
-        let onSighup = sandbox.stub(process, 'on');
+        let onSighup = vi.spyOn(process, 'on').mockImplementation(() => {});
         build({});
         let stdout = fakeWritable(), stderr = fakeWritable();
         runCustom(['config.json'], process.stdin, stdout, stderr, null, {});
         setImmediate(() => {
           setImmediate(() => {
-            let sighupHandler = onSighup.args.find((args) => args[0] === 'SIGHUP')[1];
+            let sighupHandler = onSighup.mock.calls.find((args) => args[0] === 'SIGHUP')[1];
             sighupHandler();
             // A respawn is now in progress (oldWorker hasn't been killed yet);
             // process.addListener was stubbed, so grab the respawnPending
             // function it was just handed instead of relying on a real signal.
-            let pendingHandler = process.addListener.args.find((args) => args[0] === 'SIGHUP')[1];
+            let pendingHandler = process.addListener.mock.calls.find((args) => args[0] === 'SIGHUP')[1];
             pendingHandler();
 
-            expect(stdout.write.calledWith(sinon.match('Respawning already in progress'))).toBe(true);
+            expect(stdout.write).toHaveBeenCalledWith(expect.stringContaining('Respawning already in progress'));
             done();
           });
         });
@@ -387,17 +384,17 @@ describe('CliRunner', () => {
 
   describe('runCli', () => {
     it('should invoke runCustom with argv, standard streams, and the module root path', () => {
-      let exit = sandbox.stub(process, 'exit');
-      let write = sandbox.stub(process.stdout, 'write');
+      let exit = vi.spyOn(process, 'exit').mockImplementation(() => {});
+      let write = vi.spyOn(process.stdout, 'write').mockImplementation(() => {});
       let originalArgv = process.argv;
       process.argv = ['node', 'script.js'];
       try {
         runCli('/path/to/module');
-        expect(write.calledWith(sinon.match('usage:'))).toBe(true);
-        expect(exit.calledWith(1)).toBe(true);
+        expect(write).toHaveBeenCalledWith(expect.stringContaining('usage:'));
+        expect(exit).toHaveBeenCalledWith(1);
       }
       finally {
-        write.restore();
+        write.mockRestore();
         process.argv = originalArgv;
       }
     });

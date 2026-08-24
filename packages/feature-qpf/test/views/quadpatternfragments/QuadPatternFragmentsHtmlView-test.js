@@ -1,7 +1,6 @@
 /*! @license MIT ©2015-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 
-import { describe, it, expect } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, vi } from 'vitest';
 const path = require('path');
 const AsyncIterator = require('asynciterator');
 let QuadPatternFragmentsHtmlView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsHtmlView;
@@ -25,7 +24,7 @@ describe('QuadPatternFragmentsHtmlView', () => {
   describe('_render', () => {
     function render(datasource, resultsFactory) {
       let view = new QuadPatternFragmentsHtmlView();
-      let renderTemplate = sinon.spy((template, settings, request, response, done) => done());
+      let renderTemplate = vi.fn((template, settings, request, response, done) => done());
       view._renderTemplate = renderTemplate;
       let results = resultsFactory();
       let settings = { datasource, query: {}, results };
@@ -37,16 +36,16 @@ describe('QuadPatternFragmentsHtmlView', () => {
 
     it('should render the datasource template for a non-index datasource', () => {
       return render({}, AsyncIterator.empty).then(({ renderTemplate }) => {
-        expect(renderTemplate.calledOnce).toBe(true);
-        expect(renderTemplate.getCall(0).args[0]).toContain('datasource');
-        expect(renderTemplate.getCall(0).args[0]).not.toContain('index.');
+        expect(renderTemplate).toHaveBeenCalledOnce();
+        expect(renderTemplate.mock.calls[0][0]).toContain('datasource');
+        expect(renderTemplate.mock.calls[0][0]).not.toContain('index.');
       });
     });
 
     it('should render the index template for an index datasource', () => {
       return render({ role: 'index' }, AsyncIterator.empty).then(({ renderTemplate }) => {
-        expect(renderTemplate.calledOnce).toBe(true);
-        expect(renderTemplate.getCall(0).args[0]).toMatch(/index$/);
+        expect(renderTemplate).toHaveBeenCalledOnce();
+        expect(renderTemplate.mock.calls[0][0]).toMatch(/index$/);
       });
     });
 
@@ -67,7 +66,7 @@ describe('QuadPatternFragmentsHtmlView', () => {
 
     it('should render only once, whether metadata arrives before or after the stream ends', () => {
       let view = new QuadPatternFragmentsHtmlView();
-      let renderTemplate = sinon.spy((template, settings, request, response, done) => done());
+      let renderTemplate = vi.fn((template, settings, request, response, done) => done());
       view._renderTemplate = renderTemplate;
       let results = new AsyncIterator.TransformIterator();
       let settings = { datasource: {}, query: {}, results };
@@ -77,7 +76,7 @@ describe('QuadPatternFragmentsHtmlView', () => {
         results.source = AsyncIterator.empty();
         setImmediate(() => { results.setProperty('metadata', { totalCount: 5 }); });
       }).then(() => {
-        expect(renderTemplate.calledOnce).toBe(true);
+        expect(renderTemplate).toHaveBeenCalledOnce();
       });
     });
   });

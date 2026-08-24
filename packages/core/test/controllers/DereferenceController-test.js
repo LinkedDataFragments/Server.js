@@ -1,10 +1,10 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
+import DummyServer from '../../../../test/DummyServer';
 let DereferenceController = require('../../lib/controllers/DereferenceController').DeferenceController; // changed to make tests pass, will be revised in follow up pr
 
-let request = require('supertest'),
-    DummyServer = require('../../../../test/DummyServer');
+let request = require('supertest');
 
 describe('DereferenceController', () => {
   describe('The DereferenceController module', () => {
@@ -32,7 +32,7 @@ describe('DereferenceController', () => {
       }));
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
       });
 
       it('should set the status code to 303', () => {
@@ -66,7 +66,7 @@ describe('DereferenceController', () => {
       }));
 
       it('should hand over to the next controller', () => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
       });
     });
   });

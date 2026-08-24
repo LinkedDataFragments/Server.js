@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Miel Vander Sande, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
+import DummyServer from '../../../../test/DummyServer';
 let TimegateController = require('../../lib/controllers/TimegateController').TimegateController; // changed to make tests pass, will be revised in follow up pr
 
 let Controller = require('@ldf/core').controllers.Controller,
     UrlData = require('@ldf/core').UrlData,
-    request = require('supertest'),
-    DummyServer = require('../../../../test/DummyServer');
+    request = require('supertest');
 
 describe('TimegateController', () => {
   describe('The TimegateController module', () => {
@@ -198,14 +198,14 @@ describe('TimegateController', () => {
 
     it('should hand over to the next controller for a non-timegate path', () => new Promise((done) => {
       client.get('/other/').end(() => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
         done();
       });
     }));
 
     it('should hand over to the next controller for an unconfigured timegate', () => new Promise((done) => {
       client.get('/timegate/unconfigured').end(() => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
         done();
       });
     }));
@@ -213,7 +213,7 @@ describe('TimegateController', () => {
     it('should end an OPTIONS request without handing over to the next controller', () => new Promise((done) => {
       client.options('/timegate/resource').end((error, res) => {
         expect(res.statusCode).toBe(200);
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
         done();
       });
     }));
@@ -238,7 +238,7 @@ describe('TimegateController', () => {
 
       it('should hand over to the next controller instead of redirecting', () => new Promise((done) => {
         emptyClient.get('/timegate/resource').end(() => {
-          expect(emptyController.next.calledOnce).toBe(true);
+          expect(emptyController.next).toHaveBeenCalledOnce();
           done();
         });
       }));

@@ -1,7 +1,6 @@
 /*! @license MIT ©2016 Miel Vander Sande, Ghent University - imec */
 
-import { describe, it, expect } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, vi } from 'vitest';
 let MementoControllerExtension = require('../../lib/controllers/MementoControllerExtension').MementoControllerExtension; // changed to make tests pass, will be revised in follow up pr
 
 let Controller = require('@ldf/core').controllers.Controller,
@@ -86,10 +85,10 @@ describe('MementoControllerExtension', () => {
       let request = { url: '/ds4/?subject=x', parsedUrl: url.parse('http://example.org/ds4/?subject=x', true) },
           response = { setHeader: () => {} },
           settings = { query: { datasource: 'ds4' }, datasource: { id: 'ds4' } },
-          next = sinon.spy();
+          next = vi.fn();
 
       extension._handleRequest(request, response, next, settings);
-      expect(next.calledOnce).toBe(true);
+      expect(next).toHaveBeenCalledOnce();
     });
   });
 });

@@ -1,7 +1,6 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 const Datasource = require('../../lib/datasources/Datasource').Datasource; // changed to make tests pass, will be revised in follow up pr
 const UrlData = require('../../lib/UrlData').UrlData;
 
@@ -107,7 +106,7 @@ describe('Datasource', () => {
       }));
 
       it('fetches an http(s) resource via the configured request function', () => new Promise((done) => {
-        let fakeRequest = sinon.spy(() => {
+        let fakeRequest = vi.fn(() => {
           let stream = new EventEmitter();
           setImmediate(() => {
             stream.emit('response', { statusCode: 200 });
@@ -117,7 +116,7 @@ describe('Datasource', () => {
         });
         let httpDatasource = new Datasource({ dataFactory, request: fakeRequest });
         let result = httpDatasource._fetch({ url: 'http://example.org/resource' });
-        expect(fakeRequest.calledOnce).toBe(true);
+        expect(fakeRequest).toHaveBeenCalledOnce();
         result.on('end', done);
         result.on('error', done);
       }));
@@ -178,18 +177,18 @@ describe('Datasource', () => {
     beforeAll(() => {
       datasource = new Datasource({ dataFactory });
       datasource._initialize = () => new Promise((resolve) => initResolver = resolve);
-      initSpy = sinon.spy(datasource, '_initialize');
+      initSpy = vi.spyOn(datasource, '_initialize');
       Object.defineProperty(datasource, 'supportedFeatures', {
         value: { all: true },
       });
-      datasource.on('initialized', initializedListener = sinon.stub());
-      datasource.on('error', errorListener = sinon.stub());
+      datasource.on('initialized', initializedListener = vi.fn());
+      datasource.on('error', errorListener = vi.fn());
       datasource.initialize();
     });
 
     describe('after construction', () => {
       it('should have called the initializer', () => {
-        expect(initSpy.calledOnce).toBe(true);
+        expect(initSpy).toHaveBeenCalledOnce();
       });
 
       it('should not be initialized', () => {
@@ -218,11 +217,11 @@ describe('Datasource', () => {
       });
 
       it('should have called "initialized" listeners', () => {
-        expect(initializedListener.calledOnce).toBe(true);
+        expect(initializedListener).toHaveBeenCalledOnce();
       });
 
       it('should not have called "error" listeners', () => {
-        expect(errorListener.called).toBe(false);
+        expect(errorListener).not.toHaveBeenCalled();
       });
 
       it('should support queries', () => {
@@ -244,15 +243,15 @@ describe('Datasource', () => {
       datasource = new Datasource({ dataFactory });
       error = new Error('initializer error');
       datasource._initialize = () => { throw error; };
-      sinon.spy(datasource, '_initialize');
-      datasource.on('initialized', initializedListener = sinon.stub());
-      datasource.on('error', errorListener = sinon.stub());
+      vi.spyOn(datasource, '_initialize');
+      datasource.on('initialized', initializedListener = vi.fn());
+      datasource.on('error', errorListener = vi.fn());
       datasource.initialize();
     });
 
     describe('after the initializer calls the callback', () => {
       it('should have called the initializer', () => {
-        expect(datasource._initialize.calledOnce).toBe(true);
+        expect(datasource._initialize).toHaveBeenCalledOnce();
       });
 
       it('should not be initialized', () => {
@@ -260,12 +259,12 @@ describe('Datasource', () => {
       });
 
       it('should not have called "initialized" listeners', () => {
-        expect(initializedListener.called).toBe(false);
+        expect(initializedListener).not.toHaveBeenCalled();
       });
 
       it('should not have called "error" listeners', () => {
-        expect(errorListener.calledOnce).toBe(true);
-        expect(errorListener.calledWith(error)).toBe(true);
+        expect(errorListener).toHaveBeenCalledOnce();
+        expect(errorListener).toHaveBeenCalledWith(error);
       });
     });
   });
@@ -276,15 +275,15 @@ describe('Datasource', () => {
       datasource = new Datasource({ dataFactory });
       error = new Error('initializer error');
       datasource._initialize = () => Promise.reject(error);
-      sinon.spy(datasource, '_initialize');
-      datasource.on('initialized', initializedListener = sinon.stub());
-      datasource.on('error', errorListener = sinon.stub());
+      vi.spyOn(datasource, '_initialize');
+      datasource.on('initialized', initializedListener = vi.fn());
+      datasource.on('error', errorListener = vi.fn());
       datasource.initialize();
     });
 
     describe('after the initializer calls the callback', () => {
       it('should have called the initializer', () => {
-        expect(datasource._initialize.calledOnce).toBe(true);
+        expect(datasource._initialize).toHaveBeenCalledOnce();
       });
 
       it('should not be initialized', () => {
@@ -292,12 +291,12 @@ describe('Datasource', () => {
       });
 
       it('should not have called "initialized" listeners', () => {
-        expect(initializedListener.called).toBe(false);
+        expect(initializedListener).not.toHaveBeenCalled();
       });
 
       it('should not have called "error" listeners', () => {
-        expect(errorListener.calledOnce).toBe(true);
-        expect(errorListener.calledWith(error)).toBe(true);
+        expect(errorListener).toHaveBeenCalledOnce();
+        expect(errorListener).toHaveBeenCalledWith(error);
       });
     });
   });
@@ -308,7 +307,7 @@ describe('Datasource', () => {
       enumerable: true,
       value: { a: true, b: true, c: false },
     });
-    datasource._executeQuery = sinon.stub();
+    datasource._executeQuery = vi.fn();
     datasource.initialize();
 
     it('should support the empty query', () => {
@@ -338,11 +337,11 @@ describe('Datasource', () => {
     });
 
     it('should attach an error listener on select if one was passed', () => {
-      let onError = sinon.stub(), error = new Error();
+      let onError = vi.fn(), error = new Error();
       let result = datasource.select({ features: {} }, onError);
       result.emit('error', error);
-      expect(onError.calledOnce).toBe(true);
-      expect(onError.calledWith(error)).toBe(true);
+      expect(onError).toHaveBeenCalledOnce();
+      expect(onError).toHaveBeenCalledWith(error);
     });
   });
 
@@ -356,7 +355,7 @@ describe('Datasource', () => {
       value: { custom: true },
     });
     datasource.initialize();
-    datasource._executeQuery = sinon.spy((query, destination) => {
+    datasource._executeQuery = vi.fn((query, destination) => {
       destination._push(dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o1')));
       destination._push(dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o2'), dataFactory.defaultGraph()));
       destination._push(dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o3'), dataFactory.namedNode('g')));
@@ -364,7 +363,7 @@ describe('Datasource', () => {
     });
 
     beforeEach(() => {
-      datasource._executeQuery.reset();
+      datasource._executeQuery.mockClear();
     });
 
     it('should move triples in the default graph to the given graph', () => new Promise((done) => {
@@ -388,8 +387,8 @@ describe('Datasource', () => {
         graph: dataFactory.namedNode('http://example.org/#mygraph'),
         features: { custom: true },
       });
-      expect(datasource._executeQuery.args[0][0].features).toEqual({ custom: true }),
-      datasource._executeQuery.args[0][0].graph.equals(dataFactory.defaultGraph());
+      expect(datasource._executeQuery.mock.calls[0][0].features).toEqual({ custom: true }),
+      datasource._executeQuery.mock.calls[0][0].graph.equals(dataFactory.defaultGraph());
     });
 
     it('should query the default graph as the empty graph', () => {
@@ -397,8 +396,8 @@ describe('Datasource', () => {
         graph: dataFactory.defaultGraph(),
         features: { custom: true },
       });
-      expect(datasource._executeQuery.args[0][0].features).toEqual({ custom: true }),
-      datasource._executeQuery.args[0][0].graph.equals(dataFactory.namedNode('urn:ldf:emptyGraph'));
+      expect(datasource._executeQuery.mock.calls[0][0].features).toEqual({ custom: true }),
+      datasource._executeQuery.mock.calls[0][0].graph.equals(dataFactory.namedNode('urn:ldf:emptyGraph'));
     });
   });
 
@@ -406,14 +405,14 @@ describe('Datasource', () => {
     let urlData = new UrlData({ baseURL: 'http://example.org/' });
     let datasource = new Datasource({ dataFactory, urlData });
     datasource.initialize();
-    datasource._executeQuery = sinon.spy();
+    datasource._executeQuery = vi.fn();
 
     it('should translate a graph IRI matching the blank node prefix into a blank node in the query', () => {
       datasource.select({
         graph: dataFactory.namedNode(urlData.blankNodePrefix + 'b1'),
         features: {},
       });
-      expect(datasource._executeQuery.args[0][0].graph).toEqual(dataFactory.blankNode('b1'));
+      expect(datasource._executeQuery.mock.calls[0][0].graph).toEqual(dataFactory.blankNode('b1'));
     });
 
     it('should translate a subject IRI matching the blank node prefix into a blank node in the query', () => {
@@ -421,7 +420,7 @@ describe('Datasource', () => {
         subject: dataFactory.namedNode(urlData.blankNodePrefix + 'b1'),
         features: {},
       });
-      let lastQuery = datasource._executeQuery.args[datasource._executeQuery.callCount - 1][0];
+      let lastQuery = datasource._executeQuery.mock.calls[datasource._executeQuery.mock.calls.length - 1][0];
       expect(lastQuery.subject).toEqual(dataFactory.blankNode('b1'));
     });
 
@@ -430,7 +429,7 @@ describe('Datasource', () => {
         object: dataFactory.namedNode(urlData.blankNodePrefix + 'b1'),
         features: {},
       });
-      let lastQuery = datasource._executeQuery.args[datasource._executeQuery.callCount - 1][0];
+      let lastQuery = datasource._executeQuery.mock.calls[datasource._executeQuery.mock.calls.length - 1][0];
       expect(lastQuery.object).toEqual(dataFactory.blankNode('b1'));
     });
   });
@@ -438,14 +437,14 @@ describe('Datasource', () => {
   describe('A Datasource instance without quad support', () => {
     let datasource = new Datasource({ dataFactory, quads: false }, ['triplePattern']);
     datasource.initialize();
-    datasource._executeQuery = sinon.spy();
+    datasource._executeQuery = vi.fn();
 
     it('should force the default graph on every query, regardless of the requested graph', () => {
       datasource.select({
         graph: dataFactory.namedNode('http://example.org/g'),
         features: { triplePattern: true },
       });
-      expect(datasource._executeQuery.args[0][0].graph).toEqual(dataFactory.defaultGraph());
+      expect(datasource._executeQuery.mock.calls[0][0].graph).toEqual(dataFactory.defaultGraph());
     });
   });
 
@@ -453,7 +452,7 @@ describe('Datasource', () => {
     let urlData = new UrlData({ baseURL: 'http://example.org/' });
     let datasource = new Datasource({ dataFactory, urlData });
     datasource.initialize();
-    datasource._executeQuery = sinon.spy((query, destination) => {
+    datasource._executeQuery = vi.fn((query, destination) => {
       destination._push(dataFactory.quad(
         dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o'), dataFactory.blankNode('b1')));
       destination.close();
@@ -474,7 +473,7 @@ describe('Datasource', () => {
     let urlData = new UrlData({ baseURL: 'http://example.org/' });
     let datasource = new Datasource({ dataFactory, urlData });
     datasource.initialize();
-    datasource._executeQuery = sinon.spy((query, destination) => {
+    datasource._executeQuery = vi.fn((query, destination) => {
       destination._push(dataFactory.quad(
         dataFactory.blankNode('s1'), dataFactory.namedNode('p'), dataFactory.blankNode('o1')));
       destination.close();
@@ -496,7 +495,7 @@ describe('Datasource', () => {
     it('should not attach an error listener', () => {
       let datasource = new Datasource({ dataFactory });
       datasource.initialize();
-      datasource._executeQuery = sinon.stub();
+      datasource._executeQuery = vi.fn();
 
       expect(() => { datasource.select({ features: {} }); }).not.toThrow();
     });

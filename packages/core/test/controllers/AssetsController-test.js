@@ -1,11 +1,11 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
+import DummyServer from '../../../../test/DummyServer';
 let AssetsController = require('../../lib/controllers/AssetsController').AssetsController; // changed to make tests pass, will be revised in follow up pr
 let UrlData = require('../../lib/UrlData').UrlData;
 
 let request = require('supertest'),
-    DummyServer = require('../../../../test/DummyServer'),
     fs = require('fs'),
     path = require('path');
 
@@ -37,7 +37,7 @@ describe('AssetsController', () => {
     it('should correctly serve SVG assets', () => new Promise((done) => {
       client.get('/assets/images/logo').expect((response) => {
         let asset = fs.readFileSync(path.join(__dirname, '/../../assets/images/logo.svg'), 'utf8');
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response.headers).toHaveProperty('content-type', 'image/svg+xml');
         expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
@@ -48,7 +48,7 @@ describe('AssetsController', () => {
     it('should correctly serve CSS assets', () => new Promise((done) => {
       client.get('/assets/styles/ldf-server').expect((response) => {
         let asset = fs.readFileSync(path.join(__dirname, '/../../assets/styles/ldf-server.css'), 'utf8');
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response.headers).toHaveProperty('content-type', 'text/css;charset=utf-8');
         expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
@@ -59,7 +59,7 @@ describe('AssetsController', () => {
     it('should correctly serve ICO assets', () => new Promise((done) => {
       client.get('/favicon.ico').expect((response) => {
         let asset = fs.readFileSync(path.join(__dirname, '/../../assets/favicon.ico'), 'utf8');
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response.headers).toHaveProperty('content-type', 'image/vnd.microsoft.icon');
         expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
@@ -69,13 +69,13 @@ describe('AssetsController', () => {
 
     it('should hand over to the next controller if no asset with that name is found', () => new Promise((done) => {
       client.get('/assets/unknown').expect((response) => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
       }).end(done);
     }));
 
     it('should hand over to the next controller for non-asset paths', () => new Promise((done) => {
       client.get('/other').expect((response) => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
       }).end(done);
     }));
   });

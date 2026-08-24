@@ -1,7 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, vi } from 'vitest';
 let RdfView = require('../../lib/views/RdfView').RdfView,
     View = require('../../lib/views/View').View;
 
@@ -31,13 +30,13 @@ describe('RdfView', () => {
 
     describe('_renderViewExtension', () => {
       it('should call _generateRdf on an extension that implements it', () => {
-        let extension = { _generateRdf: sinon.spy() },
+        let extension = { _generateRdf: vi.fn() },
             view = new RdfView('', { dataFactory }),
             options = { writer: { data: noop, meta: noop, end: noop } }, done = noop;
         view._renderViewExtension(extension, options, {}, {}, done);
-        expect(extension._generateRdf.calledOnce).toBe(true);
-        expect(extension._generateRdf
-          .calledWith(options, options.writer.data, options.writer.meta, done)).toBe(true);
+        expect(extension._generateRdf).toHaveBeenCalledOnce();
+        expect(extension._generateRdf)
+          .toHaveBeenCalledWith(options, options.writer.data, options.writer.meta, done);
       });
 
       it('should do nothing for an extension that does not implement _generateRdf', () => {
@@ -50,9 +49,9 @@ describe('RdfView', () => {
 
     describe('_addDatasources', () => {
       it('should skip datasources without a url', () => {
-        let view = new RdfView('', { dataFactory }), metadata = sinon.spy();
+        let view = new RdfView('', { dataFactory }), metadata = vi.fn();
         view._addDatasources({ datasources: { a: { title: 'no-url datasource' } } }, noop, metadata);
-        expect(metadata.called).toBe(false);
+        expect(metadata).not.toHaveBeenCalled();
       });
     });
 

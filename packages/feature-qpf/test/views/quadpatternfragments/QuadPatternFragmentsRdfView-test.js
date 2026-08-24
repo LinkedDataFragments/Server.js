@@ -1,7 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { createStreamCapture } from '../../../../../test/test-helpers';
 let QuadPatternFragmentsRdfView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsRdfView;
 
@@ -74,7 +73,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           let response = createStreamCapture();
           beforeAll(() => new Promise((done) => {
             settings.results = results;
-            response.getHeader = sinon.stub().returns(format);
+            response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, done);
             results.setProperty('metadata', { totalCount: 1234 });
           }));
@@ -93,7 +92,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           let response = createStreamCapture();
           beforeAll(() => new Promise((done) => {
             settings.results = new AsyncIterator.TransformIterator();
-            response.getHeader = sinon.stub().returns(format);
+            response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, done);
             settings.results.setProperty('metadata', { totalCount: 1234 });
             settings.results.source = results;
@@ -113,7 +112,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           let response = createStreamCapture();
           beforeAll(() => new Promise((done) => {
             settings.results = results;
-            response.getHeader = sinon.stub().returns(format);
+            response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, done);
             setImmediate(() => {
               results.setProperty('metadata', { totalCount: 1234 });
@@ -140,7 +139,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           let response = createStreamCapture();
           beforeAll(() => new Promise((done) => {
             settings.results = results;
-            response.getHeader = sinon.stub().returns(format);
+            response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, done);
             results.setProperty('metadata', { totalCount: 1234 });
           }));
@@ -173,7 +172,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           let response = createStreamCapture();
           beforeAll(() => new Promise((done) => {
             settings.results = results;
-            response.getHeader = sinon.stub().returns(format);
+            response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, done);
             results.setProperty('metadata', { totalCount: 1234 });
           }));
@@ -206,7 +205,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           let response = createStreamCapture();
           beforeAll(() => new Promise((done) => {
             settings.results = results;
-            response.getHeader = sinon.stub().returns(format);
+            response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, done);
             results.setProperty('metadata', { totalCount: 1234 });
           }));
@@ -230,11 +229,11 @@ describe('QuadPatternFragmentsRdfView', () => {
   describe('sendFragmentMetadata', () => {
     it('should emit nothing when the fragment has no pageUrl', () => {
       let view = new QuadPatternFragmentsRdfView({ dataFactory });
-      let metadata = sinon.stub();
+      let metadata = vi.fn();
 
       view.sendFragmentMetadata(metadata, {}, {}, {}, { totalCount: 0, hasExactCount: true });
 
-      expect(metadata.called).toBe(false);
+      expect(metadata).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,6 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 let CompositeDatasource = require('../../').datasources.CompositeDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -9,8 +9,7 @@ let Datasource = require('@ldf/core').datasources.Datasource,
     path = require('path'),
     dataFactory = require('n3').DataFactory;
 
-let sinon = require('sinon'),
-    EventEmitter = require('events');
+let EventEmitter = require('events');
 
 let exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
@@ -33,7 +32,7 @@ function fakeDatasource(options) {
     _graph: options.graph,
     supportedFeatures: options.supportedFeatures || { triplePattern: true, quadPattern: true, limit: true, offset: true, totalCount: true },
     supportsQuery: () => options.supportsQuery !== false,
-    select: sinon.spy(() => {
+    select: vi.fn(() => {
       let iterator = new EventEmitter();
       iterator.getProperty = (name, callback) => {
         if (name === 'metadata')
@@ -239,7 +238,7 @@ describe('CompositeDatasource', () => {
         stream.on('data', (quad) => results.push(quad));
         stream.on('end', () => {
           expect(results.length).toBe(3);
-          expect(a.select.called).toBe(false);
+          expect(a.select).not.toHaveBeenCalled();
           done();
         });
       });
@@ -259,7 +258,7 @@ describe('CompositeDatasource', () => {
         stream.on('data', (quad) => results.push(quad));
         stream.on('end', () => {
           expect(results.length).toBe(3);
-          expect(a.select.called).toBe(false);
+          expect(a.select).not.toHaveBeenCalled();
           done();
         });
       });
@@ -284,14 +283,14 @@ describe('CompositeDatasource', () => {
     }));
 
     it('should use the cached exact count on a repeated identical query', () => new Promise((done) => {
-      let selectCallsBefore = a.select.callCount;
+      let selectCallsBefore = a.select.mock.calls.length;
       let stream = instance.select(query), totalCount;
       stream.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       stream.on('data', () => {});
       stream.on('end', () => {
         expect(totalCount).toBe(1001);
         // Metadata check + final fetch, but no extra manual-count select this time
-        expect(a.select.callCount).toBe(selectCallsBefore + 2);
+        expect(a.select.mock.calls.length).toBe(selectCallsBefore + 2);
         done();
       });
     }));
@@ -308,14 +307,14 @@ describe('CompositeDatasource', () => {
     }));
 
     it('should recompute the exact count on every repeated query, since it is never cached', () => new Promise((done) => {
-      let selectCallsBefore = a.select.callCount;
+      let selectCallsBefore = a.select.mock.calls.length;
       let stream = instance.select(query), totalCount;
       stream.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       stream.on('data', () => {});
       stream.on('end', () => {
         expect(totalCount).toBe(5);
         // Metadata check + manual-count select + final fetch, every time
-        expect(a.select.callCount).toBe(selectCallsBefore + 3);
+        expect(a.select.mock.calls.length).toBe(selectCallsBefore + 3);
         done();
       });
     }));

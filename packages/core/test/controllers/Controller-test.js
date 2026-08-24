@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, beforeAll, vi } from 'vitest';
+import DummyServer from '../../../../test/DummyServer';
 // changed to make tests pass, will be revised in follow up pr
 let Controller = require('../../lib/controllers/Controller').Controller,
     UrlData = require('../../lib/UrlData').UrlData,
@@ -9,8 +9,7 @@ let Controller = require('../../lib/controllers/Controller').Controller,
     View = require('../../lib/views/View').View;
 
 let http = require('http'),
-    request = require('supertest'),
-    DummyServer = require('../../../../test/DummyServer');
+    request = require('supertest');
 
 describe('Controller', () => {
   describe('The Controller module', () => {
@@ -31,7 +30,7 @@ describe('Controller', () => {
     let controller, client;
     beforeAll(() => {
       controller = new Controller();
-      sinon.spy(controller, '_handleRequest');
+      vi.spyOn(controller, '_handleRequest');
       client = request.agent(new DummyServer(controller));
     });
 
@@ -41,16 +40,16 @@ describe('Controller', () => {
       }));
 
       it('should call _handleRequest with request, response and next', () => {
-        expect(controller._handleRequest.calledOnce).toBe(true);
-        let args = controller._handleRequest.getCall(0).args;
+        expect(controller._handleRequest).toHaveBeenCalledOnce();
+        let args = controller._handleRequest.mock.calls[0];
         expect(args[0]).toHaveProperty('url');
         expect(args[1]).toBeInstanceOf(http.ServerResponse);
         expect(args[2]).toBeInstanceOf(Function);
       });
 
       it('should extend _handleRequest with the original URL as parsedUrl property', () => {
-        expect(controller._handleRequest.calledOnce).toBe(true);
-        let request = controller._handleRequest.getCall(0).args[0];
+        expect(controller._handleRequest).toHaveBeenCalledOnce();
+        let request = controller._handleRequest.mock.calls[0][0];
         expect(request).toHaveProperty('parsedUrl');
         expect(request.parsedUrl).toEqual({
           protocol: 'http:', host: request.headers.host, hostname: undefined, port: undefined,
@@ -60,7 +59,7 @@ describe('Controller', () => {
       });
 
       it('should hand over to the next controller', () => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
       });
     });
   });
@@ -69,7 +68,7 @@ describe('Controller', () => {
     let controller, client;
     beforeAll(() => {
       controller = new Controller({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
-      sinon.spy(controller, '_handleRequest');
+      vi.spyOn(controller, '_handleRequest');
       client = request.agent(new DummyServer(controller));
     });
 
@@ -84,16 +83,16 @@ describe('Controller', () => {
       }));
 
       it('should call _handleRequest with request, response and next', () => {
-        expect(controller._handleRequest.calledOnce).toBe(true);
-        let args = controller._handleRequest.getCall(0).args;
+        expect(controller._handleRequest).toHaveBeenCalledOnce();
+        let args = controller._handleRequest.mock.calls[0];
         expect(args[0]).toHaveProperty('url');
         expect(args[1]).toBeInstanceOf(http.ServerResponse);
         expect(args[2]).toBeInstanceOf(Function);
       });
 
       it('should extend _handleRequest with the original URL as parsedUrl property', () => {
-        expect(controller._handleRequest.calledOnce).toBe(true);
-        let request = controller._handleRequest.getCall(0).args[0];
+        expect(controller._handleRequest).toHaveBeenCalledOnce();
+        let request = controller._handleRequest.mock.calls[0][0];
         expect(request).toHaveProperty('parsedUrl');
         expect(request.parsedUrl).toEqual({
           protocol: 'https:', host: 'bar:8000', hostname: 'example.org', port: '1234',
@@ -103,7 +102,7 @@ describe('Controller', () => {
       });
 
       it('should hand over to the next controller', () => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
       });
     });
 
@@ -116,7 +115,7 @@ describe('Controller', () => {
       }));
 
       it('should fall back to the request\'s own information', () => {
-        let request = controller._handleRequest.getCall(controller._handleRequest.callCount - 1).args[0];
+        let request = controller._handleRequest.mock.calls[controller._handleRequest.mock.calls.length - 1][0];
         expect(request.parsedUrl).toHaveProperty('protocol', 'http:');
       });
     });
@@ -130,7 +129,7 @@ describe('Controller', () => {
       }));
 
       it('should fall back to the default protocol while still using the forwarded host', () => {
-        let request = controller._handleRequest.getCall(controller._handleRequest.callCount - 1).args[0];
+        let request = controller._handleRequest.mock.calls[controller._handleRequest.mock.calls.length - 1][0];
         expect(request.parsedUrl).toHaveProperty('protocol', 'http:');
         expect(request.parsedUrl).toHaveProperty('host', 'bar:8000');
       });
@@ -141,7 +140,7 @@ describe('Controller', () => {
     let controller, client;
     beforeAll(() => {
       controller = new Controller();
-      sinon.spy(controller, '_handleRequest');
+      vi.spyOn(controller, '_handleRequest');
       client = request.agent(new DummyServer(controller));
     });
 
@@ -155,16 +154,16 @@ describe('Controller', () => {
       }));
 
       it('should call _handleRequest with request, response and next', () => {
-        expect(controller._handleRequest.calledOnce).toBe(true);
-        let args = controller._handleRequest.getCall(0).args;
+        expect(controller._handleRequest).toHaveBeenCalledOnce();
+        let args = controller._handleRequest.mock.calls[0];
         expect(args[0]).toHaveProperty('url');
         expect(args[1]).toBeInstanceOf(http.ServerResponse);
         expect(args[2]).toBeInstanceOf(Function);
       });
 
       it('should extend _handleRequest with the original URL as parsedUrl property', () => {
-        expect(controller._handleRequest.calledOnce).toBe(true);
-        let request = controller._handleRequest.getCall(0).args[0];
+        expect(controller._handleRequest).toHaveBeenCalledOnce();
+        let request = controller._handleRequest.mock.calls[0][0];
         expect(request).toHaveProperty('parsedUrl');
         expect(request.parsedUrl).toEqual({
           protocol: 'https:', host: 'foo:5000', hostname: undefined, port: undefined,
@@ -174,7 +173,7 @@ describe('Controller', () => {
       });
 
       it('should hand over to the next controller', () => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
       });
     });
   });
@@ -183,7 +182,7 @@ describe('Controller', () => {
     let controller, client;
     beforeAll(() => {
       controller = new Controller({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
-      sinon.spy(controller, '_handleRequest');
+      vi.spyOn(controller, '_handleRequest');
       client = request.agent(new DummyServer(controller));
     });
 
@@ -193,16 +192,16 @@ describe('Controller', () => {
       }));
 
       it('should call _handleRequest with request, response and next', () => {
-        expect(controller._handleRequest.calledOnce).toBe(true);
-        let args = controller._handleRequest.getCall(0).args;
+        expect(controller._handleRequest).toHaveBeenCalledOnce();
+        let args = controller._handleRequest.mock.calls[0];
         expect(args[0]).toHaveProperty('url');
         expect(args[1]).toBeInstanceOf(http.ServerResponse);
         expect(args[2]).toBeInstanceOf(Function);
       });
 
       it('should extend _handleRequest with the rebased URL as parsedUrl property', () => {
-        expect(controller._handleRequest.calledOnce).toBe(true);
-        let request = controller._handleRequest.getCall(0).args[0];
+        expect(controller._handleRequest).toHaveBeenCalledOnce();
+        let request = controller._handleRequest.mock.calls[0][0];
         expect(request).toHaveProperty('parsedUrl');
         expect(request.parsedUrl).toEqual({
           protocol: 'http:', host: 'example.org:1234', hostname: 'example.org', port: '1234',
@@ -212,7 +211,7 @@ describe('Controller', () => {
       });
 
       it('should hand over to the next controller', () => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
       });
     });
   });
@@ -228,7 +227,7 @@ describe('Controller', () => {
   describe('handleRequest with a request that already has a parsedUrl', () => {
     it('should not overwrite the existing parsedUrl', () => {
       let controller = new Controller();
-      sinon.spy(controller, '_handleRequest');
+      vi.spyOn(controller, '_handleRequest');
       let existingParsedUrl = { path: '/already-parsed' };
       let request = { parsedUrl: existingParsedUrl, headers: {} };
       let response = {};
@@ -236,7 +235,7 @@ describe('Controller', () => {
       controller.handleRequest(request, response, () => {});
 
       expect(request.parsedUrl).toBe(existingParsedUrl);
-      expect(controller._handleRequest.calledOnce).toBe(true);
+      expect(controller._handleRequest).toHaveBeenCalledOnce();
     });
   });
 
@@ -244,34 +243,34 @@ describe('Controller', () => {
     it('should ignore a second call to next/done', () => {
       let controller = new Controller();
       controller._handleRequest = (request, response, next) => { next(); next(); };
-      let next = sinon.spy();
+      let next = vi.fn();
 
       controller.handleRequest({ url: '/', headers: {} }, {}, next);
 
-      expect(next.calledOnce).toBe(true);
+      expect(next).toHaveBeenCalledOnce();
     });
   });
 
   describe('_negotiateView', () => {
     it('should append to an already-set Vary header instead of replacing it', () => {
       let controller = new Controller({ views: [new View('MyView', 'text/html')] });
-      let setHeader = sinon.spy();
+      let setHeader = vi.fn();
       let response = { getHeader: () => 'Origin', setHeader };
 
       controller._negotiateView('MyView', { headers: {} }, response);
 
-      expect(setHeader.calledWith('Vary', 'Accept, Origin')).toBe(true);
+      expect(setHeader).toHaveBeenCalledWith('Vary', 'Accept, Origin');
     });
 
     it('should fall back to the raw MIME type when the matched view has no responseType', () => {
       let controller = new Controller();
       controller._views = { matchView: () => ({ view: {}, type: 'text/plain', responseType: undefined }) };
-      let setHeader = sinon.spy();
+      let setHeader = vi.fn();
       let response = { getHeader: () => undefined, setHeader };
 
       controller._negotiateView('MyView', { headers: {} }, response);
 
-      expect(setHeader.calledWith('Content-Type', 'text/plain')).toBe(true);
+      expect(setHeader).toHaveBeenCalledWith('Content-Type', 'text/plain');
     });
   });
 });

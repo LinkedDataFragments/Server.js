@@ -1,14 +1,14 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
-const http = require('http');
-const sinon = require('sinon');
+import * as http from 'http';
+import { vi } from 'vitest';
 
 /* Dummy server that emulates LinkedDataFragmentsServer */
 function DummyServer(controller) {
   const server = http.createServer();
   server.on('request', (request, response) => {
     // End the response if the controller did not handle the request
-    controller.next = sinon.spy((error) => {
+    controller.next = vi.fn((error) => {
       controller.error = error;
       if (!response.headersSent)
         response.writeHead(error ? 500 : 200);
@@ -20,4 +20,4 @@ function DummyServer(controller) {
   return server;
 }
 
-module.exports = DummyServer;
+export default DummyServer;

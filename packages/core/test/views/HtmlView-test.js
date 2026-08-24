@@ -1,6 +1,5 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
-import { describe, it, expect } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, vi } from 'vitest';
 let HtmlView = require('../../lib/views/HtmlView').HtmlView,
     View = require('../../lib/views/View').View;
 
@@ -9,8 +8,8 @@ function response(write) {
     write: write || (() => {}),
     writeHead: () => {},
     getHeader: () => undefined,
-    end: sinon.spy(),
-    emit: sinon.spy(),
+    end: vi.fn(),
+    emit: vi.fn(),
   };
 }
 

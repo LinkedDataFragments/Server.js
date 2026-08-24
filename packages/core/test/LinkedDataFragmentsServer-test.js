@@ -1,7 +1,6 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
-const sinon = require('sinon');
+import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 let LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer').LinkedDataFragmentsServer; // changed to make tests pass, will be revised in follow up pr
 let UrlData = require('../lib/UrlData').UrlData;
 
@@ -26,7 +25,7 @@ describe('LinkedDataFragmentsServer', () => {
     let server, controller, client;
     beforeAll(() => {
       controller = {
-        handleRequest: sinon.spy((request, response, next) => {
+        handleRequest: vi.fn((request, response, next) => {
           switch (request.url) {
           case '/handle':
             response.end('body contents');
@@ -44,7 +43,7 @@ describe('LinkedDataFragmentsServer', () => {
       };
       server = new LinkedDataFragmentsServer({
         controllers: [controller],
-        log: sinon.stub(),
+        log: vi.fn(),
         protocol: 'http',
         response: {
           headers: {
@@ -56,7 +55,7 @@ describe('LinkedDataFragmentsServer', () => {
       client = request.agent(server);
     });
     beforeEach(() => {
-      controller.handleRequest.reset();
+      controller.handleRequest.mockClear();
     });
 
     it('should send the configured headers', () => new Promise((done) => {
@@ -68,7 +67,7 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should not allow POST requests', () => new Promise((done) => {
       client.post('/').expect((response) => {
-        expect(controller.handleRequest.called).toBe(false);
+        expect(controller.handleRequest).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 405);
         expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
         expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
@@ -77,7 +76,7 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should send a body with GET requests', () => new Promise((done) => {
       client.get('/handle').expect((response) => {
-        expect(controller.handleRequest.calledOnce).toBe(true);
+        expect(controller.handleRequest).toHaveBeenCalledOnce();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response).toHaveProperty('text', 'body contents');
       }).end(done);
@@ -85,7 +84,7 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should not send a body with HEAD requests', () => new Promise((done) => {
       client.head('/handle').expect((response) => {
-        expect(controller.handleRequest.calledOnce).toBe(true);
+        expect(controller.handleRequest).toHaveBeenCalledOnce();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response.body).not.toHaveProperty('length');
       }).end(done);
@@ -93,7 +92,7 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should not send a body with OPTIONS requests', () => new Promise((done) => {
       client.options('/handle').expect((response) => {
-        expect(controller.handleRequest.calledOnce).toBe(true);
+        expect(controller.handleRequest).toHaveBeenCalledOnce();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response).toHaveProperty('text', '');
       }).end(done);
@@ -101,7 +100,7 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should silently no-op an explicit write() call with HEAD requests', () => new Promise((done) => {
       client.head('/write').expect((response) => {
-        expect(controller.handleRequest.calledOnce).toBe(true);
+        expect(controller.handleRequest).toHaveBeenCalledOnce();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response.body).not.toHaveProperty('length');
       }).end(done);
@@ -109,7 +108,7 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should error when the controller cannot handle the request', () => new Promise((done) => {
       client.get('/unsupported').expect((response) => {
-        expect(controller.handleRequest.calledOnce).toBe(true);
+        expect(controller.handleRequest).toHaveBeenCalledOnce();
         expect(response).toHaveProperty('statusCode', 500);
         expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
         expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
@@ -118,7 +117,7 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should error when the controller errors', () => new Promise((done) => {
       client.get('/error').expect((response) => {
-        expect(controller.handleRequest.calledOnce).toBe(true);
+        expect(controller.handleRequest).toHaveBeenCalledOnce();
         expect(response).toHaveProperty('statusCode', 500);
         expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
         expect(response).toHaveProperty('text', 'Application error: error message\n');
@@ -130,7 +129,7 @@ describe('LinkedDataFragmentsServer', () => {
     let server, controllerA, controllerB, client;
     beforeAll(() => {
       controllerA = {
-        handleRequest: sinon.spy((request, response, next) => {
+        handleRequest: vi.fn((request, response, next) => {
           switch (request.url) {
           case '/handleA':
             response.end('body contents A');
@@ -143,7 +142,7 @@ describe('LinkedDataFragmentsServer', () => {
         }),
       };
       controllerB = {
-        handleRequest: sinon.spy((request, response, next) => {
+        handleRequest: vi.fn((request, response, next) => {
           switch (request.url) {
           case '/handleB':
             response.end('body contents B');
@@ -159,19 +158,19 @@ describe('LinkedDataFragmentsServer', () => {
       server = new LinkedDataFragmentsServer({
         controllers: [controllerA, controllerB],
         protocol: 'http',
-        log: sinon.stub(),
+        log: vi.fn(),
       });
       client = request.agent(server);
     });
     beforeEach(() => {
-      controllerA.handleRequest.reset();
-      controllerB.handleRequest.reset();
+      controllerA.handleRequest.mockClear();
+      controllerB.handleRequest.mockClear();
     });
 
     it('should not allow POST requests', () => new Promise((done) => {
       client.post('/').expect((response) => {
-        expect(controllerA.handleRequest.called).toBe(false);
-        expect(controllerB.handleRequest.called).toBe(false);
+        expect(controllerA.handleRequest).not.toHaveBeenCalled();
+        expect(controllerB.handleRequest).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 405);
         expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
         expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
@@ -180,8 +179,8 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should use the first controller when it can handle the request', () => new Promise((done) => {
       client.get('/handleA').expect((response) => {
-        expect(controllerA.handleRequest.calledOnce).toBe(true);
-        expect(controllerB.handleRequest.called).toBe(false);
+        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+        expect(controllerB.handleRequest).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response).toHaveProperty('text', 'body contents A');
       }).end(done);
@@ -189,8 +188,8 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should use the second controller when the first cannot handle the request', () => new Promise((done) => {
       client.get('/handleB').expect((response) => {
-        expect(controllerA.handleRequest.calledOnce).toBe(true);
-        expect(controllerB.handleRequest.calledOnce).toBe(true);
+        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+        expect(controllerB.handleRequest).toHaveBeenCalledOnce();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response).toHaveProperty('text', 'body contents B');
       }).end(done);
@@ -198,8 +197,8 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should error when neither controller can handle the request', () => new Promise((done) => {
       client.get('/unsupported').expect((response) => {
-        expect(controllerA.handleRequest.calledOnce).toBe(true);
-        expect(controllerB.handleRequest.calledOnce).toBe(true);
+        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+        expect(controllerB.handleRequest).toHaveBeenCalledOnce();
         expect(response).toHaveProperty('statusCode', 500);
         expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
         expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
@@ -208,8 +207,8 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should error when the first controller errors', () => new Promise((done) => {
       client.get('/errorA').expect((response) => {
-        expect(controllerA.handleRequest.calledOnce).toBe(true);
-        expect(controllerB.handleRequest.called).toBe(false);
+        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+        expect(controllerB.handleRequest).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 500);
         expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
         expect(response).toHaveProperty('text', 'Application error: error message A\n');
@@ -218,8 +217,8 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should error when the second controller errors', () => new Promise((done) => {
       client.get('/errorB').expect((response) => {
-        expect(controllerA.handleRequest.calledOnce).toBe(true);
-        expect(controllerB.handleRequest.calledOnce).toBe(true);
+        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+        expect(controllerB.handleRequest).toHaveBeenCalledOnce();
         expect(response).toHaveProperty('statusCode', 500);
         expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
         expect(response).toHaveProperty('text', 'Application error: error message B\n');
@@ -232,7 +231,7 @@ describe('LinkedDataFragmentsServer', () => {
       let server = new LinkedDataFragmentsServer({
         urlData: new UrlData({ protocol: 'https' }),
         ssl: { keys: { cert: testCertFile, key: testKeyFile } },
-        log: sinon.stub(),
+        log: vi.fn(),
       });
       expect(server).toBeInstanceOf(https.Server);
     });
@@ -241,7 +240,7 @@ describe('LinkedDataFragmentsServer', () => {
       let server = new LinkedDataFragmentsServer({
         urlData: new UrlData({ protocol: 'https' }),
         ssl: { keys: { cert: [testCertFile], key: testKeyFile } },
-        log: sinon.stub(),
+        log: vi.fn(),
       });
       expect(server).toBeInstanceOf(https.Server);
     });
@@ -251,7 +250,7 @@ describe('LinkedDataFragmentsServer', () => {
         urlData: new UrlData({ protocol: 'https' }),
         ssl: { keys: { cert: testCertFile, key: testKeyFile } },
         authentication: { webid: true },
-        log: sinon.stub(),
+        log: vi.fn(),
       });
       expect(server).toBeInstanceOf(https.Server);
     });
@@ -260,7 +259,7 @@ describe('LinkedDataFragmentsServer', () => {
       let server = new LinkedDataFragmentsServer({
         urlData: new UrlData({ protocol: 'https' }),
         ssl: { keys: { cert: fs.readFileSync(testCertFile, 'utf8'), key: fs.readFileSync(testKeyFile, 'utf8') } },
-        log: sinon.stub(),
+        log: vi.fn(),
       });
       expect(server).toBeInstanceOf(https.Server);
     });
@@ -270,7 +269,7 @@ describe('LinkedDataFragmentsServer', () => {
     it('should throw', () => {
       expect(() => {
         // eslint-disable-next-line no-new
-        new LinkedDataFragmentsServer({ urlData: new UrlData({ protocol: 'ftp' }), log: sinon.stub() });
+        new LinkedDataFragmentsServer({ urlData: new UrlData({ protocol: 'ftp' }), log: vi.fn() });
       }).toThrow('The configured protocol ftp is invalid.');
     });
   });
@@ -278,7 +277,7 @@ describe('LinkedDataFragmentsServer', () => {
   describe('A LinkedDataFragmentsServer instance handling a request that fails outside of a controller', () => {
     it('should report the error', () => new Promise((done) => {
       let server = new LinkedDataFragmentsServer({
-        controllers: [], log: sinon.stub(),
+        controllers: [], log: vi.fn(),
         response: { headers: { 'Bad-Header': 'invalid\r\nvalue' } },
       });
       request.agent(server).get('/').expect((response) => {
@@ -289,41 +288,41 @@ describe('LinkedDataFragmentsServer', () => {
 
   describe('A LinkedDataFragmentsServer instance reporting a fatal error', () => {
     it('should log the error and exit the process', () => {
-      let exitStub = sinon.stub(process, 'exit'), logSpy = sinon.spy();
+      let exitStub = vi.spyOn(process, 'exit').mockImplementation(() => {}), logSpy = vi.fn();
       let server = new LinkedDataFragmentsServer({ controllers: [], log: logSpy });
       let error = new Error('fatal error');
       server.emit('error', error);
-      expect(logSpy.calledWith('Fatal error, exiting process\n', error.stack)).toBe(true);
-      expect(exitStub.calledWith(-1)).toBe(true);
-      exitStub.restore();
+      expect(logSpy).toHaveBeenCalledWith('Fatal error, exiting process\n', error.stack);
+      expect(exitStub).toHaveBeenCalledWith(-1);
+      exitStub.mockRestore();
     });
   });
 
   describe('A LinkedDataFragmentsServer instance reporting an error on an already-handled response', () => {
     it('should end the response without reporting the error again', () => {
-      let server = new LinkedDataFragmentsServer({ controllers: [], log: sinon.stub() });
-      let endSpy = sinon.spy();
-      let response = { headersSent: true, end: endSpy, setHeader: sinon.stub() };
+      let server = new LinkedDataFragmentsServer({ controllers: [], log: vi.fn() });
+      let endSpy = vi.fn();
+      let response = { headersSent: true, end: endSpy, setHeader: vi.fn() };
       server._reportError({}, response, new Error('already handled'));
-      expect(endSpy.calledOnce).toBe(true);
+      expect(endSpy).toHaveBeenCalledOnce();
     });
   });
 
   describe('A LinkedDataFragmentsServer instance whose error controller itself fails', () => {
     it('should log the secondary error', () => {
-      let logSpy = sinon.spy();
+      let logSpy = vi.fn();
       let server = new LinkedDataFragmentsServer({ controllers: [], log: logSpy });
       server._errorController.handleRequest = () => { throw new Error('error controller failed'); };
-      let response = { headersSent: false, setHeader: sinon.stub() };
+      let response = { headersSent: false, setHeader: vi.fn() };
       server._reportError({}, response, new Error('original error'));
-      expect(logSpy.calledTwice).toBe(true);
-      expect(logSpy.getCall(1).args[0]).toContain('error controller failed');
+      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(logSpy.mock.calls[1][0]).toContain('error controller failed');
     });
   });
 
   describe('Stopping a LinkedDataFragmentsServer instance', () => {
     it('should destroy open sockets', () => new Promise((done) => {
-      let server = new LinkedDataFragmentsServer({ controllers: [], log: sinon.stub() });
+      let server = new LinkedDataFragmentsServer({ controllers: [], log: vi.fn() });
       server.listen(0, () => {
         let socket = net.connect({ port: server.address().port }, () => {
           setImmediate(() => {
@@ -335,19 +334,19 @@ describe('LinkedDataFragmentsServer', () => {
     }));
 
     it('should close all controllers', () => {
-      let closeSpy = sinon.spy();
-      let controller = { handleRequest: sinon.spy(), close: closeSpy };
-      let server = new LinkedDataFragmentsServer({ controllers: [controller], log: sinon.stub() });
+      let closeSpy = vi.fn();
+      let controller = { handleRequest: vi.fn(), close: closeSpy };
+      let server = new LinkedDataFragmentsServer({ controllers: [controller], log: vi.fn() });
       server.stop();
-      expect(closeSpy.calledOnce).toBe(true);
+      expect(closeSpy).toHaveBeenCalledOnce();
     });
 
     it('should tolerate a controller whose close() throws', () => {
-      let logSpy = sinon.spy();
-      let controller = { handleRequest: sinon.spy(), close: () => { throw new Error('close failed'); } };
+      let logSpy = vi.fn();
+      let controller = { handleRequest: vi.fn(), close: () => { throw new Error('close failed'); } };
       let server = new LinkedDataFragmentsServer({ controllers: [controller], log: logSpy });
       expect(() => { server.stop(); }).not.toThrow();
-      expect(logSpy.calledWith(sinon.match.instanceOf(Error))).toBe(true);
+      expect(logSpy).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 });

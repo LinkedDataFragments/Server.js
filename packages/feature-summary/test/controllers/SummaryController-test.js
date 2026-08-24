@@ -1,10 +1,10 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
+import DummyServer from '../../../../test/DummyServer';
 let SummaryController = require('../../lib/controllers/SummaryController').SummaryController; // changed to make tests pass, will be revised in follow up pr
 
 let request = require('supertest'),
-    DummyServer = require('../../../../test/DummyServer'),
     fs = require('fs'),
     path = require('path');
 
@@ -44,7 +44,7 @@ describe('SummaryController', () => {
     it('should correctly serve summary in Turtle', () => new Promise((done) => {
       client.get('/summaries/summary').set('Accept', 'text/turtle').expect((response) => {
         let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response.headers).toHaveProperty('content-type', 'text/turtle;charset=utf-8');
         expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
@@ -55,7 +55,7 @@ describe('SummaryController', () => {
     it('should correctly serve summary in Trig', () => new Promise((done) => {
       client.get('/summaries/summary').expect((response) => {
         let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response.headers).toHaveProperty('content-type', 'application/trig;charset=utf-8');
         expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
@@ -66,7 +66,7 @@ describe('SummaryController', () => {
     it('should correctly serve summary in ntriples', () => new Promise((done) => {
       client.get('/summaries/summary').set('Accept', 'application/n-triples').expect((response) => {
         let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
-        expect(controller.next.called).toBe(false);
+        expect(controller.next).not.toHaveBeenCalled();
         expect(response).toHaveProperty('statusCode', 200);
         expect(response.headers).toHaveProperty('content-type', 'application/n-triples;charset=utf-8');
         expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
@@ -76,13 +76,13 @@ describe('SummaryController', () => {
 
     it('should hand over to the next controller if no summary with that name is found', () => new Promise((done) => {
       client.get('/summaries/unknown').expect((response) => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
       }).end(done);
     }));
 
     it('should hand over to the next controller for non-summary paths', () => new Promise((done) => {
       client.get('/other').expect((response) => {
-        expect(controller.next.calledOnce).toBe(true);
+        expect(controller.next).toHaveBeenCalledOnce();
       }).end(done);
     }));
   });
