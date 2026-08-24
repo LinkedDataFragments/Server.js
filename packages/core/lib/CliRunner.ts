@@ -18,7 +18,7 @@ type Writable = { write(chunk: string): void };
 // Run function for starting the server from the command line
 export function runCli(moduleRootPath: string): void {
   let argv = process.argv.slice(2);
-  runCustom(argv, process.stdin, process.stdout, process.stderr, null, { mainModulePath: moduleRootPath });
+  void runCustom(argv, process.stdin, process.stdout, process.stderr, null, { mainModulePath: moduleRootPath });
 }
 
 // Generic run function for starting the server from a given config
@@ -29,7 +29,7 @@ export function runCustom(
   stderr: Writable,
   componentConfigUri: string | null,
   properties: Record<string, any>,
-): void {
+): Promise<void> {
   if (args.length < 1 || args.length > 4 || /^--?h(elp)?$/.test(args[0])) {
     stdout.write('usage: server config.json [port [workers [componentConfigUri]]]\n');
     return process.exit(1);
@@ -39,7 +39,7 @@ export function runCustom(
       cliWorkers = parseInt(args[2], 10),
       configUri = args[3] || componentConfigUri || 'urn:ldf-server:my';
 
-  ComponentsManager.build<LinkedDataFragmentsServerWorker>({
+  return ComponentsManager.build<LinkedDataFragmentsServerWorker>({
     ...properties,
     configLoader: (registry: ConfigRegistry) => registry.register(args[0]),
   } as IComponentsManagerBuilderOptions<LinkedDataFragmentsServerWorker>)
