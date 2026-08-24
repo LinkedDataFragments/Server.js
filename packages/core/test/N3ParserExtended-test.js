@@ -1,5 +1,6 @@
 /*! @license MIT ©2026 Ghent University - imec */
 import { describe, it, expect } from 'vitest';
+import { withResolvers } from '../../../test/test-helpers';
 let N3ParserExtended = require('../lib/N3ParserExtended').N3ParserExtended;
 
 describe('N3ParserExtended', () => {
@@ -23,7 +24,7 @@ describe('N3ParserExtended', () => {
   it('should parse asynchronously through a callback', async () => {
     let parser = new N3ParserExtended();
     let quads = [];
-    let { promise, resolve } = Promise.withResolvers();
+    let { promise, resolve } = withResolvers();
     // eslint-disable-next-line promise/prefer-await-to-callbacks -- fires once per quad, not a single-shot promise
     parser.parse('<http://example.org/s> <http://example.org/p> <http://example.org/o>.', (error, quad) => {
       expect(error).toBeNull();

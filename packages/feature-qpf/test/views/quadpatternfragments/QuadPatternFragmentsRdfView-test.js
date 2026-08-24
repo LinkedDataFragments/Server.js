@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import { createStreamCapture } from '../../../../../test/test-helpers';
+import { createStreamCapture, withResolvers } from '../../../../../test/test-helpers';
 let QuadPatternFragmentsRdfView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsRdfView;
 
 let _ = require('lodash'),
@@ -72,7 +72,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           let results = AsyncIterator.empty();
           let response = createStreamCapture();
           beforeAll(async () => {
-            let { promise, resolve } = Promise.withResolvers();
+            let { promise, resolve } = withResolvers();
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
@@ -93,7 +93,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           ]);
           let response = createStreamCapture();
           beforeAll(async () => {
-            let { promise, resolve } = Promise.withResolvers();
+            let { promise, resolve } = withResolvers();
             settings.results = new AsyncIterator.TransformIterator();
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
@@ -115,7 +115,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           ]);
           let response = createStreamCapture();
           beforeAll(async () => {
-            let { promise, resolve } = Promise.withResolvers();
+            let { promise, resolve } = withResolvers();
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
@@ -144,7 +144,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           };
           let response = createStreamCapture();
           beforeAll(async () => {
-            let { promise, resolve } = Promise.withResolvers();
+            let { promise, resolve } = withResolvers();
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
@@ -179,7 +179,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           };
           let response = createStreamCapture();
           beforeAll(async () => {
-            let { promise, resolve } = Promise.withResolvers();
+            let { promise, resolve } = withResolvers();
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
@@ -214,7 +214,7 @@ describe('QuadPatternFragmentsRdfView', () => {
           };
           let response = createStreamCapture();
           beforeAll(async () => {
-            let { promise, resolve } = Promise.withResolvers();
+            let { promise, resolve } = withResolvers();
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);

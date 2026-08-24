@@ -1,7 +1,7 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import { createHttpResponse, streamLength } from '../../../../test/test-helpers';
+import { createHttpResponse, streamLength, withResolvers } from '../../../../test/test-helpers';
 import { once } from 'events';
 let SparqlDatasource = require('../../').datasources.SparqlDatasource;
 
@@ -72,7 +72,7 @@ describe('SparqlDatasource', () => {
     });
 
     it('should throw an error when trying to execute an unsupported query', async () => {
-      let { promise, resolve } = Promise.withResolvers();
+      let { promise, resolve } = withResolvers();
       datasource.select({ features: { a: true, b: true } }, resolve);
       let error = await promise;
       expect(error).toBeInstanceOf(Error);
@@ -267,7 +267,7 @@ describe('SparqlDatasource', () => {
         let query = { subject: dataFactory.namedNode('abcdef'), features: { quadPattern: true } };
         let result = datasource.select(query);
         request.mock.results[1].value.emit('error', new Error());
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; resolve(); });
         await promise;
       });
@@ -362,7 +362,7 @@ function itShouldExecute(datasource, request, name, query, constructQuery, count
       request.onFirstCall(createHttpResponse(jsonResult, 'application/sparql-results+json'));
       request.onSecondCall(createHttpResponse(countResult, 'text/csv'));
       result = datasource.select(query);
-      let { promise, resolve } = Promise.withResolvers();
+      let { promise, resolve } = withResolvers();
       result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; resolve(); });
       await promise;
     });

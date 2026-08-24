@@ -1,6 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { withResolvers } from '../../../../test/test-helpers';
 let CompositeDatasource = require('../../').datasources.CompositeDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -321,7 +322,7 @@ describe('CompositeDatasource', () => {
       instance.initialize();
       await once(instance, 'initialized');
       let pushed = [];
-      let { promise, resolve } = Promise.withResolvers();
+      let { promise, resolve } = withResolvers();
       let destination = {
         setProperty: () => {},
         _push: (element) => pushed.push(element),

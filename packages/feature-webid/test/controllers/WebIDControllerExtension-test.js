@@ -10,7 +10,7 @@ let Controller = require('@ldf/core').controllers.Controller,
     View = require('@ldf/core').views.View,
     ViewCollection = require('@ldf/core').views.ViewCollection;
 
-let { createHttpResponse } = require('../../../../test/test-helpers');
+let { createHttpResponse, withResolvers } = require('../../../../test/test-helpers');
 
 describe('WebIDControllerExtension', () => {
   describe('The WebIDControllerExtension module', () => {
@@ -211,7 +211,7 @@ describe('WebIDControllerExtension', () => {
         };
         /* eslint-enable promise/prefer-await-to-callbacks */
 
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         // eslint-disable-next-line promise/prefer-await-to-callbacks -- _verifyWebID's own signature is callback-based
         instance._verifyWebID('http://example.org/#me', 'ABCD', 65537, (error, verified, reason) => {
           http.request = originalRequest;
@@ -235,7 +235,7 @@ describe('WebIDControllerExtension', () => {
           };
         };
 
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         // eslint-disable-next-line promise/prefer-await-to-callbacks -- _verifyWebID's own signature is callback-based
         instance._verifyWebID('http://example.org/#me', 'ABCD', 65537, (error, verified, reason) => {
           http.request = originalRequest;

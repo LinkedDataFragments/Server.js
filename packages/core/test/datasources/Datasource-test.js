@@ -1,6 +1,7 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
+import { withResolvers } from '../../../../test/test-helpers';
 const Datasource = require('../../lib/datasources/Datasource').Datasource; // changed to make tests pass, will be revised in follow up pr
 const UrlData = require('../../lib/UrlData').UrlData;
 
@@ -46,7 +47,7 @@ describe('Datasource', () => {
     });
 
     it('should throw an error when trying to execute an unsupported query', async () => {
-      let { promise, resolve } = Promise.withResolvers();
+      let { promise, resolve } = withResolvers();
       datasource.select({ features: { a: true, b: true } }, resolve);
       let error = await promise;
       expect(error).toBeInstanceOf(Error);
@@ -160,7 +161,7 @@ describe('Datasource', () => {
     beforeAll(() => {
       datasource = new Datasource({ dataFactory });
       datasource._initialize = () => {
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         initResolver = resolve;
         return promise;
       };
@@ -187,7 +188,7 @@ describe('Datasource', () => {
       });
 
       it('should error when trying to query', async () => {
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         datasource.select({}, resolve);
         let error = await promise;
         expect(error).toHaveProperty('message', 'The datasource is not initialized yet');
@@ -216,7 +217,7 @@ describe('Datasource', () => {
       });
 
       it('should allow querying', async () => {
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         datasource.select({}, resolve);
         let error = await promise;
         expect(error).toHaveProperty('message', '_executeQuery has not been implemented');
@@ -354,7 +355,7 @@ describe('Datasource', () => {
     });
 
     it('should move triples in the default graph to the given graph', async () => {
-      let { promise, reject } = Promise.withResolvers();
+      let { promise, reject } = withResolvers();
       let result = datasource.select({ features: { custom: true } }, reject), quads = [];
       result.on('data', (q) => { quads.push(q); });
       await Promise.race([once(result, 'end'), promise]);

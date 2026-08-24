@@ -1,6 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, vi } from 'vitest';
+import { withResolvers } from '../../../../test/test-helpers';
 let RdfView = require('../../lib/views/RdfView').RdfView,
     View = require('../../lib/views/View').View;
 
@@ -59,7 +60,7 @@ describe('RdfView', () => {
       it('should preserve a metadata quad\'s own non-default graph', async () => {
         let view = new RdfView('', { dataFactory }), written = '';
         let response = { write: (data) => { written += data; } };
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         let writer = view._createN3Writer(
           { contentType: 'application/trig', metadataGraph: 'urn:meta', fragmentUrl: 'urn:frag', prefixes: {} },
           response, resolve);
@@ -78,7 +79,7 @@ describe('RdfView', () => {
         try {
           let view = new RdfView('', { dataFactory }), written;
           let response = { write: (data) => { written = data; } };
-          let { promise, resolve } = Promise.withResolvers();
+          let { promise, resolve } = withResolvers();
           let writer = view._createN3Writer({ contentType: 'text/turtle', prefixes: {} }, response, resolve);
           writer.end();
           await promise;
@@ -97,7 +98,7 @@ describe('RdfView', () => {
 
       it('should not set @base when the prefixes have no base entry', async () => {
         let view = new RdfView('', { dataFactory }), { response, getOutput } = collect();
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         let writer = view._createJsonLdWriter({ prefixes: {} }, response, resolve);
         writer.end();
         await promise;
@@ -106,7 +107,7 @@ describe('RdfView', () => {
 
       it('should set @base when the prefixes have a base entry', async () => {
         let view = new RdfView('', { dataFactory }), { response, getOutput } = collect();
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         let writer = view._createJsonLdWriter({ prefixes: { '': 'http://example.org/' } }, response, resolve);
         writer.end();
         await promise;
@@ -115,7 +116,7 @@ describe('RdfView', () => {
 
       it('should preserve a metadata quad\'s own non-default graph', async () => {
         let view = new RdfView('', { dataFactory }), { response, getOutput } = collect();
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         let writer = view._createJsonLdWriter({ prefixes: {} }, response, resolve);
         writer.meta(dataFactory.quad(
           dataFactory.namedNode('urn:s'), dataFactory.namedNode('urn:p'), dataFactory.namedNode('urn:o'),
@@ -127,7 +128,7 @@ describe('RdfView', () => {
 
       it('should use the default graph for default-graph metadata when no metadataGraph is set', async () => {
         let view = new RdfView('', { dataFactory }), { response, getOutput } = collect();
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         let writer = view._createJsonLdWriter({ prefixes: {}, metadataGraph: undefined }, response, resolve);
         writer.meta(dataFactory.quad(
           dataFactory.namedNode('urn:s'), dataFactory.namedNode('urn:p'), dataFactory.namedNode('urn:o'),
@@ -140,7 +141,7 @@ describe('RdfView', () => {
 
       it('should call back with an error when the underlying JSON-LD serializer errors', async () => {
         let view = new RdfView('', { dataFactory }), { response } = collect();
-        let { promise, resolve } = Promise.withResolvers();
+        let { promise, resolve } = withResolvers();
         let writer = view._createJsonLdWriter({ prefixes: {} }, response, resolve);
         writer.data(dataFactory.quad(
           dataFactory.namedNode('urn:s'), dataFactory.namedNode('urn:p'),

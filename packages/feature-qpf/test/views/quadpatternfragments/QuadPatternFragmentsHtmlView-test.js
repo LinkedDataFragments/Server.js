@@ -1,6 +1,7 @@
 /*! @license MIT ©2015-2017 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 
 import { describe, it, expect, vi } from 'vitest';
+import { withResolvers } from '../../../../../test/test-helpers';
 const path = require('path');
 const AsyncIterator = require('asynciterator');
 let QuadPatternFragmentsHtmlView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsHtmlView;
@@ -28,7 +29,7 @@ describe('QuadPatternFragmentsHtmlView', () => {
       view._renderTemplate = renderTemplate;
       let results = resultsFactory();
       let settings = { datasource, query: {}, results };
-      let { promise, resolve } = Promise.withResolvers();
+      let { promise, resolve } = withResolvers();
       view._render(settings, {}, {}, () => resolve({ renderTemplate, settings }));
       results.setProperty('metadata', { totalCount: 0 });
       return promise;
@@ -67,7 +68,7 @@ describe('QuadPatternFragmentsHtmlView', () => {
       let results = new AsyncIterator.TransformIterator();
       let settings = { datasource: {}, query: {}, results };
 
-      let { promise, resolve } = Promise.withResolvers();
+      let { promise, resolve } = withResolvers();
       view._render(settings, {}, {}, resolve);
       results.source = AsyncIterator.empty();
       setImmediate(() => { results.setProperty('metadata', { totalCount: 5 }); });
