@@ -33,53 +33,57 @@ describe('MementoControllerExtension', () => {
       },
     });
 
-    it('should add original and timegate links for a request matching the memento', () => new Promise((done) => {
+    it('should add original and timegate links for a request matching the memento', () => {
       let request = { url: '/ds1/?subject=x', parsedUrl: url.parse('http://example.org/ds1/?subject=x', true) },
           headers = {}, response = { setHeader: (name, value) => { headers[name] = value; } },
-          settings = { query: {}, datasource: { id: 'ds1' } };
+          settings = { query: {}, datasource: { id: 'ds1' } },
+          next = vi.fn();
 
-      extension._handleRequest(request, response, () => {
-        expect(headers.Link).toContain('rel=original');
-        expect(headers.Link).toContain('rel=timegate');
-        expect(headers.Link).toContain('/timegate/resource');
-        expect(headers).toHaveProperty('Memento-Datetime');
-        done();
-      }, settings);
-    }));
+      extension._handleRequest(request, response, next, settings);
 
-    it('should add a local timegate link for a non-memento resource with timegate: true', () => new Promise((done) => {
+      expect(next).toHaveBeenCalledOnce();
+      expect(headers.Link).toContain('rel=original');
+      expect(headers.Link).toContain('rel=timegate');
+      expect(headers.Link).toContain('/timegate/resource');
+      expect(headers).toHaveProperty('Memento-Datetime');
+    });
+
+    it('should add a local timegate link for a non-memento resource with timegate: true', () => {
       let request = { url: '/ds2/?subject=x', parsedUrl: url.parse('http://example.org/ds2/?subject=x', true) },
           headers = {}, response = { setHeader: (name, value) => { headers[name] = value; } },
-          settings = { query: { datasource: 'ds2' }, datasource: { id: 'ds2', timegate: true } };
+          settings = { query: { datasource: 'ds2' }, datasource: { id: 'ds2', timegate: true } },
+          next = vi.fn();
 
-      extension._handleRequest(request, response, () => {
-        expect(headers.Link).toContain('rel=timegate');
-        expect(headers.Link).toContain('/timegate/ds2');
-        done();
-      }, settings);
-    }));
+      extension._handleRequest(request, response, next, settings);
 
-    it('should use a configured external timegate URL as-is', () => new Promise((done) => {
+      expect(next).toHaveBeenCalledOnce();
+      expect(headers.Link).toContain('rel=timegate');
+      expect(headers.Link).toContain('/timegate/ds2');
+    });
+
+    it('should use a configured external timegate URL as-is', () => {
       let request = { url: '/ds3/?subject=x', parsedUrl: url.parse('http://example.org/ds3/?subject=x', true) },
           headers = {}, response = { setHeader: (name, value) => { headers[name] = value; } },
-          settings = { query: { datasource: 'ds3' }, datasource: { id: 'ds3', timegate: 'http://external.example.org/timegate/ds3' } };
+          settings = { query: { datasource: 'ds3' }, datasource: { id: 'ds3', timegate: 'http://external.example.org/timegate/ds3' } },
+          next = vi.fn();
 
-      extension._handleRequest(request, response, () => {
-        expect(headers.Link).toBe('<http://external.example.org/timegate/ds3?subject=x>;rel=timegate');
-        done();
-      }, settings);
-    }));
+      extension._handleRequest(request, response, next, settings);
 
-    it('should not add a Link header for a resource without a timegate configuration', () => new Promise((done) => {
+      expect(next).toHaveBeenCalledOnce();
+      expect(headers.Link).toBe('<http://external.example.org/timegate/ds3?subject=x>;rel=timegate');
+    });
+
+    it('should not add a Link header for a resource without a timegate configuration', () => {
       let request = { url: '/ds4/?subject=x', parsedUrl: url.parse('http://example.org/ds4/?subject=x', true) },
           headers = {}, response = { setHeader: (name, value) => { headers[name] = value; } },
-          settings = { query: { datasource: 'ds4' }, datasource: { id: 'ds4' } };
+          settings = { query: { datasource: 'ds4' }, datasource: { id: 'ds4' } },
+          next = vi.fn();
 
-      extension._handleRequest(request, response, () => {
-        expect(headers).not.toHaveProperty('Link');
-        done();
-      }, settings);
-    }));
+      extension._handleRequest(request, response, next, settings);
+
+      expect(next).toHaveBeenCalledOnce();
+      expect(headers).not.toHaveProperty('Link');
+    });
 
     it('should always hand over to the next controller', () => {
       let request = { url: '/ds4/?subject=x', parsedUrl: url.parse('http://example.org/ds4/?subject=x', true) },

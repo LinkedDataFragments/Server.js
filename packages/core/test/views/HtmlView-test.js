@@ -1,5 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 import { describe, it, expect, vi } from 'vitest';
+import { promisify } from 'util';
 let HtmlView = require('../../lib/views/HtmlView').HtmlView,
     View = require('../../lib/views/View').View;
 
@@ -23,53 +24,44 @@ describe('HtmlView', () => {
   });
 
   describe('_renderTemplate', () => {
-    it('should call done with an error when qejs fails to render', () => new Promise((done) => {
+    it('should call done with an error when qejs fails to render', async () => {
       let view = new HtmlView('Error');
       let res = response();
 
-      view._renderTemplate('error/error', {}, {}, res, (error) => {
-        expect(error).toBeInstanceOf(Error);
-        done();
-      });
-    }));
+      await expect(promisify(view._renderTemplate.bind(view))('error/error', {}, {}, res))
+        .rejects.toBeInstanceOf(Error);
+    });
 
-    it('should initialize extension entries in the options for later use by the template', () => new Promise((done) => {
+    it('should initialize extension entries in the options for later use by the template', async () => {
       let view = new HtmlView('Error');
       function alreadyResolved() {}
-      let options = { error: new Error('boom'), extensions: { Before: null, QuadBefore: 'function', After: alreadyResolved } };
+      let options = { ...view._defaults, error: new Error('boom'), extensions: { Before: null, QuadBefore: 'function', After: alreadyResolved } };
       let res = response();
 
-      view._renderTemplate('error/error', options, {}, res, () => {
-        expect(options.extensions.Before).not.toBe(null);
-        expect(typeof options.extensions.QuadBefore).toBe('function');
-        expect(options.extensions.After).toBe(alreadyResolved);
-        done();
-      });
-    }));
+      await promisify(view._renderTemplate.bind(view))('error/error', options, {}, res);
+      expect(options.extensions.Before).not.toBe(null);
+      expect(typeof options.extensions.QuadBefore).toBe('function');
+      expect(options.extensions.After).toBe(alreadyResolved);
+    });
 
-    it('should build a callable extension function that renders that extension\'s contents', () => new Promise((done) => {
+    it('should build a callable extension function that renders that extension\'s contents', async () => {
       let view = new HtmlView('Error');
-      let options = { error: new Error('boom'), extensions: { QuadBefore: 'function' } };
+      let options = { ...view._defaults, error: new Error('boom'), extensions: { QuadBefore: 'function' } };
       let res = response();
 
-      view._renderTemplate('error/error', options, {}, res, () => {
-        options.extensions.QuadBefore({ some: 'data' }).then((contents) => {
-          expect(contents).toBe('');
-          done();
-        });
-      });
-    }));
+      await promisify(view._renderTemplate.bind(view))('error/error', options, {}, res);
+      let contents = await options.extensions.QuadBefore({ some: 'data' });
+      expect(contents).toBe('');
+    });
 
-    it('should accept an absolute template path', () => new Promise((done) => {
+    it('should accept an absolute template path', async () => {
       let view = new HtmlView('Error');
       let absolutePath = require('path').join(__dirname, '../../lib/views/error/error');
       let res = response((html) => {
         expect(html).toContain('Error executing your request');
       });
 
-      view._renderTemplate(absolutePath, { error: new Error('boom') }, {}, res, () => {
-        done();
-      });
-    }));
+      await promisify(view._renderTemplate.bind(view))(absolutePath, { ...view._defaults, error: new Error('boom') }, {}, res);
+    });
   });
 });

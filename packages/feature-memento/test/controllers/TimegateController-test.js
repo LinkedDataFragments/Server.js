@@ -196,36 +196,28 @@ describe('TimegateController', () => {
       client = request.agent(new DummyServer(controller));
     });
 
-    it('should hand over to the next controller for a non-timegate path', () => new Promise((done) => {
-      client.get('/other/').end(() => {
-        expect(controller.next).toHaveBeenCalledOnce();
-        done();
-      });
-    }));
+    it('should hand over to the next controller for a non-timegate path', async () => {
+      await client.get('/other/');
+      expect(controller.next).toHaveBeenCalledOnce();
+    });
 
-    it('should hand over to the next controller for an unconfigured timegate', () => new Promise((done) => {
-      client.get('/timegate/unconfigured').end(() => {
-        expect(controller.next).toHaveBeenCalledOnce();
-        done();
-      });
-    }));
+    it('should hand over to the next controller for an unconfigured timegate', async () => {
+      await client.get('/timegate/unconfigured');
+      expect(controller.next).toHaveBeenCalledOnce();
+    });
 
-    it('should end an OPTIONS request without handing over to the next controller', () => new Promise((done) => {
-      client.options('/timegate/resource').end((error, res) => {
-        expect(res.statusCode).toBe(200);
-        expect(controller.next).not.toHaveBeenCalled();
-        done();
-      });
-    }));
+    it('should end an OPTIONS request without handing over to the next controller', async () => {
+      let res = await client.options('/timegate/resource');
+      expect(res.statusCode).toBe(200);
+      expect(controller.next).not.toHaveBeenCalled();
+    });
 
-    it('should redirect to the closest memento with Link and Vary headers', () => new Promise((done) => {
-      client.get('/timegate/resource').end((error, res) => {
-        expect(res.headers).toHaveProperty('vary', 'Accept-Datetime');
-        expect(res.headers.link).toContain('rel="memento"');
-        expect(res.headers.link).toContain('rel="original"');
-        done();
-      });
-    }));
+    it('should redirect to the closest memento with Link and Vary headers', async () => {
+      let res = await client.get('/timegate/resource');
+      expect(res.headers).toHaveProperty('vary', 'Accept-Datetime');
+      expect(res.headers.link).toContain('rel="memento"');
+      expect(res.headers.link).toContain('rel="original"');
+    });
 
     describe('for a configured timegate with no mementos', () => {
       let emptyController, emptyClient;
@@ -236,12 +228,10 @@ describe('TimegateController', () => {
         emptyClient = request.agent(new DummyServer(emptyController));
       });
 
-      it('should hand over to the next controller instead of redirecting', () => new Promise((done) => {
-        emptyClient.get('/timegate/resource').end(() => {
-          expect(emptyController.next).toHaveBeenCalledOnce();
-          done();
-        });
-      }));
+      it('should hand over to the next controller instead of redirecting', async () => {
+        await emptyClient.get('/timegate/resource');
+        expect(emptyController.next).toHaveBeenCalledOnce();
+      });
     });
 
     describe('for a timegate whose timemap carries a custom original base URL', () => {
@@ -264,13 +254,11 @@ describe('TimegateController', () => {
       // TODO: originalBaseURL is declared but never assigned from
       // memento.original in _handleRequest, so a configured custom base URL
       // is silently ignored and the request's own URL is used instead.
-      it('should ignore the custom base URL, since originalBaseURL is never read from the memento', () => new Promise((done) => {
-        customClient.get('/timegate/resource?foo=bar').end((error, res) => {
-          expect(res.headers.link).not.toContain('original.example.org');
-          expect(res.headers.link).toContain('/resource?foo=bar>;rel="original"');
-          done();
-        });
-      }));
+      it('should ignore the custom base URL, since originalBaseURL is never read from the memento', async () => {
+        let res = await customClient.get('/timegate/resource?foo=bar');
+        expect(res.headers.link).not.toContain('original.example.org');
+        expect(res.headers.link).toContain('/resource?foo=bar>;rel="original"');
+      });
     });
   });
 });

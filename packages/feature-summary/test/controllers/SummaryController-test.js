@@ -41,50 +41,45 @@ describe('SummaryController', () => {
       client = request.agent(new DummyServer(controller));
     });
 
-    it('should correctly serve summary in Turtle', () => new Promise((done) => {
-      client.get('/summaries/summary').set('Accept', 'text/turtle').expect((response) => {
-        let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
-        expect(controller.next).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response.headers).toHaveProperty('content-type', 'text/turtle;charset=utf-8');
-        expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
-        expect(response.text).toBe(summary);
-      }).end(done);
-    }));
+    it('should correctly serve summary in Turtle', async () => {
+      let response = await client.get('/summaries/summary').set('Accept', 'text/turtle');
+      let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
+      expect(controller.next).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response.headers).toHaveProperty('content-type', 'text/turtle;charset=utf-8');
+      expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
+      expect(response.text).toBe(summary);
+    });
 
-    it('should correctly serve summary in Trig', () => new Promise((done) => {
-      client.get('/summaries/summary').expect((response) => {
-        let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
-        expect(controller.next).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response.headers).toHaveProperty('content-type', 'application/trig;charset=utf-8');
-        expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
-        expect(response.text).toBe(summary);
-      }).end(done);
-    }));
+    it('should correctly serve summary in Trig', async () => {
+      let response = await client.get('/summaries/summary');
+      let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
+      expect(controller.next).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response.headers).toHaveProperty('content-type', 'application/trig;charset=utf-8');
+      expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
+      expect(response.text).toBe(summary);
+    });
 
-    it('should correctly serve summary in ntriples', () => new Promise((done) => {
-      client.get('/summaries/summary').set('Accept', 'application/n-triples').expect((response) => {
-        let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
-        expect(controller.next).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response.headers).toHaveProperty('content-type', 'application/n-triples;charset=utf-8');
-        expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
-        expect(response.text).toBe(summary);
-      }).end(done);
-    }));
+    it('should correctly serve summary in ntriples', async () => {
+      let response = await client.get('/summaries/summary').set('Accept', 'application/n-triples');
+      let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
+      expect(controller.next).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response.headers).toHaveProperty('content-type', 'application/n-triples;charset=utf-8');
+      expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
+      expect(response.text).toBe(summary);
+    });
 
-    it('should hand over to the next controller if no summary with that name is found', () => new Promise((done) => {
-      client.get('/summaries/unknown').expect((response) => {
-        expect(controller.next).toHaveBeenCalledOnce();
-      }).end(done);
-    }));
+    it('should hand over to the next controller if no summary with that name is found', async () => {
+      await client.get('/summaries/unknown');
+      expect(controller.next).toHaveBeenCalledOnce();
+    });
 
-    it('should hand over to the next controller for non-summary paths', () => new Promise((done) => {
-      client.get('/other').expect((response) => {
-        expect(controller.next).toHaveBeenCalledOnce();
-      }).end(done);
-    }));
+    it('should hand over to the next controller for non-summary paths', async () => {
+      await client.get('/other');
+      expect(controller.next).toHaveBeenCalledOnce();
+    });
   });
 
   describe('An SummaryController instance without a configured summaries directory', () => {

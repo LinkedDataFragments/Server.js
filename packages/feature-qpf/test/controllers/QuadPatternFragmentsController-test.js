@@ -64,10 +64,10 @@ describe('QuadPatternFragmentsController', () => {
     }
 
     describe('receiving a request for a fragment', () => {
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/my-datasource?a=b&c=d').end(done);
-      }));
+        await client.get('/my-datasource?a=b&c=d');
+      });
 
       it('should call the first router with the request and an empty query', () => {
         expect(routerA.extractQueryParams).toHaveBeenCalledOnce();
@@ -151,10 +151,10 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request for page 2 or later of a fragment', () => {
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/my-datasource?a=b&page=3').end(done);
-      }));
+        await client.get('/my-datasource?a=b&page=3');
+      });
 
       it('should include a previousPageUrl', () => {
         let settings = view.render.mock.calls[view.render.mock.calls.length - 1][0];
@@ -163,11 +163,11 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request for an unsupported fragment', () => {
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
         datasource.supportsQuery = vi.fn().mockReturnValue(false);
-        client.get('/my-datasource?a=b&c=d').end(done);
-      }));
+        await client.get('/my-datasource?a=b&c=d');
+      });
 
       it('should verify whether the data source supports the query', () => {
         let query = routerC.extractQueryParams.mock.calls[0][1];
@@ -187,6 +187,8 @@ describe('QuadPatternFragmentsController', () => {
       let datasource = {
         supportsQuery: vi.fn().mockReturnValue(true),
         select: vi.fn().mockReturnValue({
+          // Mocks AsyncIterator's own on(event, callback) signature.
+          // eslint-disable-next-line promise/prefer-await-to-callbacks
           on: function (event, callback) {
             if (event === 'end' || event === 'metadata')
               setImmediate(callback, {});
@@ -218,11 +220,10 @@ describe('QuadPatternFragmentsController', () => {
 
     describe('receiving a request without Accept header', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/my-datasource')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/my-datasource');
+      });
 
       it('should call the default view', () => {
         expect(htmlView.render).toHaveBeenCalledOnce();
@@ -239,11 +240,10 @@ describe('QuadPatternFragmentsController', () => {
 
     describe('receiving a request with an Accept header of */*', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/my-datasource').set('Accept', '*/*')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/my-datasource').set('Accept', '*/*');
+      });
 
       it('should call the HTML view', () => {
         expect(htmlView.render).toHaveBeenCalledOnce();
@@ -260,11 +260,10 @@ describe('QuadPatternFragmentsController', () => {
 
     describe('receiving a request with an Accept header of text/html', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/my-datasource').set('Accept', 'text/html')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/my-datasource').set('Accept', 'text/html');
+      });
 
       it('should call the HTML view', () => {
         expect(htmlView.render).toHaveBeenCalledOnce();
@@ -281,11 +280,10 @@ describe('QuadPatternFragmentsController', () => {
 
     describe('receiving a request with an Accept header of text/turtle', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/my-datasource').set('Accept', 'text/turtle')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/my-datasource').set('Accept', 'text/turtle');
+      });
 
       it('should call the Turtle view', () => {
         expect(rdfView.render).toHaveBeenCalledOnce();
@@ -302,11 +300,10 @@ describe('QuadPatternFragmentsController', () => {
 
     describe('receiving a request with an Accept header of text/n3', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/my-datasource').set('Accept', 'text/n3')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/my-datasource').set('Accept', 'text/n3');
+      });
 
       it('should call the Turtle view', () => {
         expect(rdfView.render).toHaveBeenCalledOnce();
@@ -345,10 +342,9 @@ describe('QuadPatternFragmentsController', () => {
 
     describe('receiving a request without Accept header', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
-        client.get('/my-datasource')
-          .end((error, res) => { response = res; done(error); });
-      }));
+      beforeAll(async () => {
+        response = await client.get('/my-datasource');
+      });
 
       it('should return status code 406', () => {
         expect(response).toHaveProperty('statusCode', 406);
@@ -365,10 +361,9 @@ describe('QuadPatternFragmentsController', () => {
 
     describe('receiving a request with an Accept header of text/html', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
-        client.get('/my-datasource').set('Accept', 'text/html')
-          .end((error, res) => { response = res; done(error); });
-      }));
+      beforeAll(async () => {
+        response = await client.get('/my-datasource').set('Accept', 'text/html');
+      });
 
       it('should return status code 406', () => {
         expect(response).toHaveProperty('statusCode', 406);
@@ -412,10 +407,10 @@ describe('QuadPatternFragmentsController', () => {
     }
 
     describe('receiving a request for a fragment', () => {
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/my-datasource?a=b&c=d').end(done);
-      }));
+        await client.get('/my-datasource?a=b&c=d');
+      });
 
       it('should emit the error', () => {
         expect(controller.error).toBe(error);
@@ -435,6 +430,8 @@ describe('QuadPatternFragmentsController', () => {
       error = new Error('datasource error'),
       datasource = {
         supportsQuery: vi.fn().mockReturnValue(true),
+        // Mocks Datasource.select's own callback-based signature.
+        // eslint-disable-next-line promise/prefer-await-to-callbacks
         select: function (query, callback) { setImmediate(callback.bind(null, error)); },
         supportedFeatures: { triplePattern: true },
       };
@@ -452,10 +449,10 @@ describe('QuadPatternFragmentsController', () => {
     }
 
     describe('receiving a request for a fragment', () => {
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/my-datasource?a=b&c=d').end(done);
-      }));
+        await client.get('/my-datasource?a=b&c=d');
+      });
 
       it('should emit the error', () => {
         expect(controller.error).toBe(error);
@@ -490,9 +487,9 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request for a fragment', () => {
-      beforeAll(() => new Promise((done) => {
-        client.get('/my-datasource?a=b&c=d').end(done);
-      }));
+      beforeAll(async () => {
+        await client.get('/my-datasource?a=b&c=d');
+      });
 
       it('should call the extension', () => {
         expect(extension.handleRequest).toHaveBeenCalledOnce();
@@ -532,10 +529,10 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request for a fragment', () => {
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         stderrWrite = vi.spyOn(process.stderr, 'write').mockImplementation(() => {});
-        client.get('/my-datasource?a=b&c=d').end(() => { done(); });
-      }));
+        await client.get('/my-datasource?a=b&c=d');
+      });
 
       afterAll(() => { stderrWrite.mockRestore(); });
 
@@ -593,7 +590,7 @@ describe('QuadPatternFragmentsController', () => {
   });
 
   describe('when an extension errors without a stack trace', () => {
-    it('should log the error message instead of a stack trace', () => new Promise((done) => {
+    it('should log the error message instead of a stack trace', async () => {
       let router = {
         extractQueryParams: vi.fn((request, query) => {
           query.features.datasource = true;
@@ -618,12 +615,10 @@ describe('QuadPatternFragmentsController', () => {
       let client = request.agent(new DummyServer(controller));
       let stderrWrite = vi.spyOn(process.stderr, 'write').mockImplementation(() => {});
 
-      client.get('/my-datasource?a=b&c=d').end(() => {
-        expect(stderrWrite).toHaveBeenCalledWith(expect.stringContaining(String(error)));
-        stderrWrite.mockRestore();
-        done();
-      });
-    }));
+      await client.get('/my-datasource?a=b&c=d');
+      expect(stderrWrite).toHaveBeenCalledWith(expect.stringContaining(String(error)));
+      stderrWrite.mockRestore();
+    });
   });
 
   describe('close', () => {

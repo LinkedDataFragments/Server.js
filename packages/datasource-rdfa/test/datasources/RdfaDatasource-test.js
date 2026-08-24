@@ -1,6 +1,8 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { once } from 'events';
+import { promisify } from 'util';
 let RdfaDatasource = require('../../').datasources.RdfaDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -15,17 +17,17 @@ describe('RdfaDatasource', () => {
       expect(typeof RdfaDatasource).toBe('function');
     });
 
-    it('should be a RdfaDatasource constructor', () => new Promise((done) => {
+    it('should be a RdfaDatasource constructor', async () => {
       let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(RdfaDatasource);
-      instance.close(done);
-    }));
+      await promisify(instance.close.bind(instance))();
+    });
 
-    it('should create Datasource objects', () => new Promise((done) => {
+    it('should create Datasource objects', async () => {
       let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      instance.close(done);
-    }));
+      await promisify(instance.close.bind(instance))();
+    });
 
     it('should fall back to the file option when no url is given', () => {
       let instance = new RdfaDatasource({ dataFactory, file: exampleRdfaUrl });
@@ -35,11 +37,11 @@ describe('RdfaDatasource', () => {
 
   describe('A RdfaDatasource instance for an example RDFa HTML file', () => {
     let datasource = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
-    beforeAll(() => new Promise((done) => {
+    beforeAll(async () => {
       datasource.initialize();
-      datasource.on('initialized', done);
-    }));
-    afterAll(() => new Promise((done) => { datasource.close(done); }));
+      await once(datasource, 'initialized');
+    });
+    afterAll(() => promisify(datasource.close.bind(datasource))());
 
     itShouldExecute(datasource,
       'the empty query',
@@ -91,12 +93,12 @@ describe('RdfaDatasource', () => {
 function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount;
-    beforeAll(() => new Promise((done) => {
+    beforeAll(async () => {
       let result = datasource.select(query);
       result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       result.on('data', (triple) => { resultsCount++; });
-      result.on('end', done);
-    }));
+      await once(result, 'end');
+    });
 
     it('should return the expected number of triples', () => {
       expect(resultsCount).toBe(expectedResultsCount);

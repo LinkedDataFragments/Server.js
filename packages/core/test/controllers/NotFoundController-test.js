@@ -30,10 +30,9 @@ describe('NotFoundController', () => {
 
     describe('receiving a request', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
-        client.get('/notfound')
-          .end((error, res) => { response = res; done(error); });
-      }));
+      beforeAll(async () => {
+        response = await client.get('/notfound');
+      });
 
       it('should not hand over to the next controller', () => {
         expect(controller.next).not.toHaveBeenCalled();
@@ -75,11 +74,10 @@ describe('NotFoundController', () => {
 
     describe('receiving a request without Accept header', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/notfound')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/notfound');
+      });
 
       it('should not hand over to the next controller', () => {
         expect(controller.next).not.toHaveBeenCalled();
@@ -112,11 +110,10 @@ describe('NotFoundController', () => {
 
     describe('receiving a request with an Accept header of */*', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/notfound').set('Accept', '*/*')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/notfound').set('Accept', '*/*');
+      });
 
       it('should not hand over to the next controller', () => {
         expect(controller.next).not.toHaveBeenCalled();
@@ -149,11 +146,10 @@ describe('NotFoundController', () => {
 
     describe('receiving a request with an Accept header of text/html', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/notfound').set('Accept', 'text/html')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/notfound').set('Accept', 'text/html');
+      });
 
       it('should not hand over to the next controller', () => {
         expect(controller.next).not.toHaveBeenCalled();
@@ -186,11 +182,10 @@ describe('NotFoundController', () => {
 
     describe('receiving a request with an Accept header of text/turtle', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/notfound').set('Accept', 'text/turtle')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/notfound').set('Accept', 'text/turtle');
+      });
 
       it('should not hand over to the next controller', () => {
         expect(controller.next).not.toHaveBeenCalled();
@@ -224,11 +219,10 @@ describe('NotFoundController', () => {
 
     describe('receiving a request with an Accept header of application/trig', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
+      beforeAll(async () => {
         resetAll();
-        client.get('/notfound').set('Accept', 'application/trig')
-          .end((error, res) => { response = res; done(error); });
-      }));
+        response = await client.get('/notfound').set('Accept', 'application/trig');
+      });
 
       it('should not hand over to the next controller', () => {
         expect(controller.next).not.toHaveBeenCalled();

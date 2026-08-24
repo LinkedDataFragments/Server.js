@@ -56,35 +56,36 @@ describe('RdfView', () => {
     });
 
     describe('_createN3Writer', () => {
-      it('should preserve a metadata quad\'s own non-default graph', () => new Promise((done) => {
+      it('should preserve a metadata quad\'s own non-default graph', async () => {
         let view = new RdfView('', { dataFactory }), written = '';
         let response = { write: (data) => { written += data; } };
+        let { promise, resolve } = Promise.withResolvers();
         let writer = view._createN3Writer(
           { contentType: 'application/trig', metadataGraph: 'urn:meta', fragmentUrl: 'urn:frag', prefixes: {} },
-          response, () => {
-            expect(written).toContain('urn:owngraph');
-            done();
-          });
+          response, resolve);
         writer.meta(dataFactory.quad(
           dataFactory.namedNode('urn:s'), dataFactory.namedNode('urn:p'), dataFactory.namedNode('urn:o'),
           dataFactory.namedNode('urn:owngraph')));
         writer.end();
-      }));
+        await promise;
+        expect(written).toContain('urn:owngraph');
+      });
 
-      it('should write nothing when the underlying N3 writer errors', () => new Promise((done) => {
+      it('should write nothing when the underlying N3 writer errors', async () => {
         let originalEnd = N3.Writer.prototype.end;
+        // eslint-disable-next-line promise/prefer-await-to-callbacks -- simulates N3.Writer's own callback-based .end() API
         N3.Writer.prototype.end = function (callback) { callback(new Error('failed')); };
         try {
           let view = new RdfView('', { dataFactory }), written;
           let response = { write: (data) => { written = data; } };
-          let writer = view._createN3Writer({ contentType: 'text/turtle', prefixes: {} }, response, () => {
-            expect(written).toBe('');
-            done();
-          });
+          let { promise, resolve } = Promise.withResolvers();
+          let writer = view._createN3Writer({ contentType: 'text/turtle', prefixes: {} }, response, resolve);
           writer.end();
+          await promise;
+          expect(written).toBe('');
         }
         finally { N3.Writer.prototype.end = originalEnd; }
-      }));
+      });
     });
 
     describe('_createJsonLdWriter', () => {
@@ -94,61 +95,59 @@ describe('RdfView', () => {
         return { response: response, getOutput: () => output };
       }
 
-      it('should not set @base when the prefixes have no base entry', () => new Promise((done) => {
+      it('should not set @base when the prefixes have no base entry', async () => {
         let view = new RdfView('', { dataFactory }), { response, getOutput } = collect();
-        let writer = view._createJsonLdWriter({ prefixes: {} }, response, () => {
-          expect(JSON.parse(getOutput())['@context']).not.toHaveProperty('@base');
-          done();
-        });
+        let { promise, resolve } = Promise.withResolvers();
+        let writer = view._createJsonLdWriter({ prefixes: {} }, response, resolve);
         writer.end();
-      }));
+        await promise;
+        expect(JSON.parse(getOutput())['@context']).not.toHaveProperty('@base');
+      });
 
-      it('should set @base when the prefixes have a base entry', () => new Promise((done) => {
+      it('should set @base when the prefixes have a base entry', async () => {
         let view = new RdfView('', { dataFactory }), { response, getOutput } = collect();
-        let writer = view._createJsonLdWriter({ prefixes: { '': 'http://example.org/' } }, response, () => {
-          expect(JSON.parse(getOutput())['@context']).toHaveProperty('@base', 'http://example.org/');
-          done();
-        });
+        let { promise, resolve } = Promise.withResolvers();
+        let writer = view._createJsonLdWriter({ prefixes: { '': 'http://example.org/' } }, response, resolve);
         writer.end();
-      }));
+        await promise;
+        expect(JSON.parse(getOutput())['@context']).toHaveProperty('@base', 'http://example.org/');
+      });
 
-      it('should preserve a metadata quad\'s own non-default graph', () => new Promise((done) => {
+      it('should preserve a metadata quad\'s own non-default graph', async () => {
         let view = new RdfView('', { dataFactory }), { response, getOutput } = collect();
-        let writer = view._createJsonLdWriter({ prefixes: {} }, response, () => {
-          expect(getOutput()).toContain('urn:owngraph');
-          done();
-        });
+        let { promise, resolve } = Promise.withResolvers();
+        let writer = view._createJsonLdWriter({ prefixes: {} }, response, resolve);
         writer.meta(dataFactory.quad(
           dataFactory.namedNode('urn:s'), dataFactory.namedNode('urn:p'), dataFactory.namedNode('urn:o'),
           dataFactory.namedNode('urn:owngraph')));
         writer.end();
-      }));
+        await promise;
+        expect(getOutput()).toContain('urn:owngraph');
+      });
 
-      it('should use the default graph for default-graph metadata when no metadataGraph is set', () => new Promise((done) => {
+      it('should use the default graph for default-graph metadata when no metadataGraph is set', async () => {
         let view = new RdfView('', { dataFactory }), { response, getOutput } = collect();
-        let writer = view._createJsonLdWriter({ prefixes: {}, metadataGraph: undefined }, response, () => {
-          let parsed = JSON.parse(getOutput());
-          expect(parsed['@graph'][0]).toHaveProperty('@id', 'urn:s');
-          done();
-        });
+        let { promise, resolve } = Promise.withResolvers();
+        let writer = view._createJsonLdWriter({ prefixes: {}, metadataGraph: undefined }, response, resolve);
         writer.meta(dataFactory.quad(
           dataFactory.namedNode('urn:s'), dataFactory.namedNode('urn:p'), dataFactory.namedNode('urn:o'),
           dataFactory.defaultGraph()));
         writer.end();
-      }));
+        await promise;
+        let parsed = JSON.parse(getOutput());
+        expect(parsed['@graph'][0]).toHaveProperty('@id', 'urn:s');
+      });
 
-      it('should call back with an error when the underlying JSON-LD serializer errors', () => new Promise((done) => {
-        let view = new RdfView('', { dataFactory }), { response } = collect(), callCount = 0;
-        let writer = view._createJsonLdWriter({ prefixes: {} }, response, (error) => {
-          if (callCount++ === 0) {
-            expect(error.message).toContain('Invalid JSON literal');
-            done();
-          }
-        });
+      it('should call back with an error when the underlying JSON-LD serializer errors', async () => {
+        let view = new RdfView('', { dataFactory }), { response } = collect();
+        let { promise, resolve } = Promise.withResolvers();
+        let writer = view._createJsonLdWriter({ prefixes: {} }, response, resolve);
         writer.data(dataFactory.quad(
           dataFactory.namedNode('urn:s'), dataFactory.namedNode('urn:p'),
           dataFactory.literal('not valid json', dataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON'))));
-      }));
+        let error = await promise;
+        expect(error.message).toContain('Invalid JSON literal');
+      });
     });
   });
 });

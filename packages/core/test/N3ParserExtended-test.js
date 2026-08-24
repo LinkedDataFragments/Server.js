@@ -20,19 +20,21 @@ describe('N3ParserExtended', () => {
     expect(quads[0].subject.value).toBe('http://example.org/s');
   });
 
-  it('should parse asynchronously through a callback', () => new Promise((done) => {
+  it('should parse asynchronously through a callback', async () => {
     let parser = new N3ParserExtended();
     let quads = [];
+    let { promise, resolve } = Promise.withResolvers();
+    // eslint-disable-next-line promise/prefer-await-to-callbacks -- fires once per quad, not a single-shot promise
     parser.parse('<http://example.org/s> <http://example.org/p> <http://example.org/o>.', (error, quad) => {
       expect(error).toBeNull();
       if (quad)
         quads.push(quad);
-      else {
-        expect(quads).toHaveLength(1);
-        done();
-      }
+      else
+        resolve();
     });
-  }));
+    await promise;
+    expect(quads).toHaveLength(1);
+  });
 
   it('should reset the shared blank node prefix', () => {
     expect(() => N3ParserExtended.resetBlankNodePrefix()).not.toThrow();

@@ -34,49 +34,44 @@ describe('AssetsController', () => {
       client = request.agent(new DummyServer(controller));
     });
 
-    it('should correctly serve SVG assets', () => new Promise((done) => {
-      client.get('/assets/images/logo').expect((response) => {
-        let asset = fs.readFileSync(path.join(__dirname, '/../../assets/images/logo.svg'), 'utf8');
-        expect(controller.next).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response.headers).toHaveProperty('content-type', 'image/svg+xml');
-        expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
-        expect(response.body.toString()).toBe(asset);
-      }).end(done);
-    }));
+    it('should correctly serve SVG assets', async () => {
+      let response = await client.get('/assets/images/logo');
+      let asset = fs.readFileSync(path.join(__dirname, '/../../assets/images/logo.svg'), 'utf8');
+      expect(controller.next).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response.headers).toHaveProperty('content-type', 'image/svg+xml');
+      expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
+      expect(response.body.toString()).toBe(asset);
+    });
 
-    it('should correctly serve CSS assets', () => new Promise((done) => {
-      client.get('/assets/styles/ldf-server').expect((response) => {
-        let asset = fs.readFileSync(path.join(__dirname, '/../../assets/styles/ldf-server.css'), 'utf8');
-        expect(controller.next).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response.headers).toHaveProperty('content-type', 'text/css;charset=utf-8');
-        expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
-        expect(response).toHaveProperty('text', asset);
-      }).end(done);
-    }));
+    it('should correctly serve CSS assets', async () => {
+      let response = await client.get('/assets/styles/ldf-server');
+      let asset = fs.readFileSync(path.join(__dirname, '/../../assets/styles/ldf-server.css'), 'utf8');
+      expect(controller.next).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response.headers).toHaveProperty('content-type', 'text/css;charset=utf-8');
+      expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
+      expect(response).toHaveProperty('text', asset);
+    });
 
-    it('should correctly serve ICO assets', () => new Promise((done) => {
-      client.get('/favicon.ico').expect((response) => {
-        let asset = fs.readFileSync(path.join(__dirname, '/../../assets/favicon.ico'), 'utf8');
-        expect(controller.next).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response.headers).toHaveProperty('content-type', 'image/vnd.microsoft.icon');
-        expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
-        expect(response.body.toString()).toBe(asset);
-      }).end(done);
-    }));
+    it('should correctly serve ICO assets', async () => {
+      let response = await client.get('/favicon.ico');
+      let asset = fs.readFileSync(path.join(__dirname, '/../../assets/favicon.ico'), 'utf8');
+      expect(controller.next).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response.headers).toHaveProperty('content-type', 'image/vnd.microsoft.icon');
+      expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
+      expect(response.body.toString()).toBe(asset);
+    });
 
-    it('should hand over to the next controller if no asset with that name is found', () => new Promise((done) => {
-      client.get('/assets/unknown').expect((response) => {
-        expect(controller.next).toHaveBeenCalledOnce();
-      }).end(done);
-    }));
+    it('should hand over to the next controller if no asset with that name is found', async () => {
+      await client.get('/assets/unknown');
+      expect(controller.next).toHaveBeenCalledOnce();
+    });
 
-    it('should hand over to the next controller for non-asset paths', () => new Promise((done) => {
-      client.get('/other').expect((response) => {
-        expect(controller.next).toHaveBeenCalledOnce();
-      }).end(done);
-    }));
+    it('should hand over to the next controller for non-asset paths', async () => {
+      await client.get('/other');
+      expect(controller.next).toHaveBeenCalledOnce();
+    });
   });
 });

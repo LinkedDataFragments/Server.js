@@ -5,6 +5,8 @@ const Datasource = require('../../lib/datasources/Datasource').Datasource; // ch
 const UrlData = require('../../lib/UrlData').UrlData;
 
 const EventEmitter = require('events'),
+    { once } = EventEmitter,
+    { promisify } = require('util'),
     fs = require('fs'),
     path = require('path'),
     N3 = require('n3');
@@ -43,13 +45,13 @@ describe('Datasource', () => {
       expect(datasource.supportsQuery({ features: { a: true, b: true } })).toBe(false);
     });
 
-    it('should throw an error when trying to execute an unsupported query', () => new Promise((done) => {
-      datasource.select({ features: { a: true, b: true } }, (error) => {
-        expect(error).toBeInstanceOf(Error);
-        expect(error).toHaveProperty('message', 'The datasource does not support the given query');
-        done();
-      });
-    }));
+    it('should throw an error when trying to execute an unsupported query', async () => {
+      let { promise, resolve } = Promise.withResolvers();
+      datasource.select({ features: { a: true, b: true } }, resolve);
+      let error = await promise;
+      expect(error).toBeInstanceOf(Error);
+      expect(error).toHaveProperty('message', 'The datasource does not support the given query');
+    });
 
     it('should throw an error when trying to execute a supported query', () => {
       expect(() => { datasource.select({ features: {} }); })
@@ -57,55 +59,42 @@ describe('Datasource', () => {
     });
 
     describe('fetching a resource', () => {
-      it('fetches an existing resource', () => new Promise((done) => {
+      it('fetches an existing resource', async () => {
         let result = datasource._fetch({ url: 'file://' + exampleFile }), buffer = '';
         result.on('data', (d) => { buffer += d; });
-        result.on('end', () => {
-          expect(buffer).toBe(fs.readFileSync(exampleFile, 'utf8'));
-          done();
-        });
-        result.on('error', done);
-      }));
+        await once(result, 'end');
+        expect(buffer).toBe(fs.readFileSync(exampleFile, 'utf8'));
+      });
 
-      it('assumes file:// as the default protocol', () => new Promise((done) => {
+      it('assumes file:// as the default protocol', async () => {
         let result = datasource._fetch({ url: exampleFile }), buffer = '';
         result.on('data', (d) => { buffer += d; });
-        result.on('end', () => {
-          expect(buffer).toBe(fs.readFileSync(exampleFile, 'utf8'));
-          done();
-        });
-        result.on('error', done);
-      }));
+        await once(result, 'end');
+        expect(buffer).toBe(fs.readFileSync(exampleFile, 'utf8'));
+      });
 
-      it('emits an error when the protocol is unknown', () => new Promise((done) => {
+      it('emits an error when the protocol is unknown', async () => {
         let result = datasource._fetch({ url: 'myprotocol:abc' });
-        result.on('error', (error) => {
-          expect(error.message).toContain('Unknown protocol: myprotocol');
-          done();
-        });
-      }));
+        let [error] = await once(result, 'error');
+        expect(error.message).toContain('Unknown protocol: myprotocol');
+      });
 
-      it('emits an error on the datasource when no error listener is attached to the result', () => new Promise((done) => {
+      it('emits an error on the datasource when no error listener is attached to the result', async () => {
         let result = datasource._fetch({ url: exampleFile + 'notfound' });
-        result.on('data', done);
-        datasource.on('error', (error) => {
-          expect(error.message).toContain('ENOENT: no such file or directory');
-          done();
-        });
-      }));
+        result.on('data', () => {});
+        let [error] = await once(datasource, 'error');
+        expect(error.message).toContain('ENOENT: no such file or directory');
+      });
 
-      it('does not emit an error on the datasource when an error listener is attached to the result', () => new Promise((done) => {
+      it('does not emit an error on the datasource when an error listener is attached to the result', async () => {
         let result = datasource._fetch({ url: exampleFile + 'notfound' });
-        result.on('error', (error) => {
-          expect(error.message).toContain('ENOENT: no such file or directory');
-          done();
-        });
-        datasource.on('error', (error) => {
-          done(error);
-        });
-      }));
+        let datasourceErrored = once(datasource, 'error');
+        let [error] = await once(result, 'error');
+        expect(error.message).toContain('ENOENT: no such file or directory');
+        expect(await Promise.race([datasourceErrored, Promise.resolve(null)])).toBeNull();
+      });
 
-      it('fetches an http(s) resource via the configured request function', () => new Promise((done) => {
+      it('fetches an http(s) resource via the configured request function', async () => {
         let fakeRequest = vi.fn(() => {
           let stream = new EventEmitter();
           setImmediate(() => {
@@ -117,11 +106,10 @@ describe('Datasource', () => {
         let httpDatasource = new Datasource({ dataFactory, request: fakeRequest });
         let result = httpDatasource._fetch({ url: 'http://example.org/resource' });
         expect(fakeRequest).toHaveBeenCalledOnce();
-        result.on('end', done);
-        result.on('error', done);
-      }));
+        await once(result, 'end');
+      });
 
-      it('emits an error for an http(s) response with a non-success status code', () => new Promise((done) => {
+      it('emits an error for an http(s) response with a non-success status code', async () => {
         function fakeRequest() {
           let stream = new EventEmitter();
           setImmediate(() => { stream.emit('response', { statusCode: 404 }); });
@@ -129,11 +117,9 @@ describe('Datasource', () => {
         }
         let httpDatasource = new Datasource({ dataFactory, request: fakeRequest });
         let result = httpDatasource._fetch({ url: 'https://example.org/missing' });
-        result.on('error', (error) => {
-          expect(error.message).toContain('returned 404');
-          done();
-        });
-      }));
+        let [error] = await once(result, 'error');
+        expect(error.message).toContain('returned 404');
+      });
     });
 
     describe('when closed without a callback', () => {
@@ -143,9 +129,7 @@ describe('Datasource', () => {
     });
 
     describe('when closed with a callback', () => {
-      it('should invoke the callback', () => new Promise((done) => {
-        datasource.close(done);
-      }));
+      it('should invoke the callback', () => promisify(datasource.close.bind(datasource))());
     });
   });
 
@@ -156,13 +140,12 @@ describe('Datasource', () => {
       expect(datasource.hide).toBe(true);
     });
 
-    it('should initialize immediately without becoming queryable', () => new Promise((done) => {
-      datasource.on('initialized', () => {
-        expect(datasource.initialized).toBe(true);
-        done();
-      });
+    it('should initialize immediately without becoming queryable', async () => {
+      let initialized = once(datasource, 'initialized');
       datasource.initialize();
-    }));
+      await initialized;
+      expect(datasource.initialized).toBe(true);
+    });
   });
 
   describe('A Datasource instance without quad support', () => {
@@ -176,7 +159,11 @@ describe('Datasource', () => {
     let datasource, initializedListener, errorListener, initResolver, initSpy;
     beforeAll(() => {
       datasource = new Datasource({ dataFactory });
-      datasource._initialize = () => new Promise((resolve) => initResolver = resolve);
+      datasource._initialize = () => {
+        let { promise, resolve } = Promise.withResolvers();
+        initResolver = resolve;
+        return promise;
+      };
       initSpy = vi.spyOn(datasource, '_initialize');
       Object.defineProperty(datasource, 'supportedFeatures', {
         value: { all: true },
@@ -199,12 +186,12 @@ describe('Datasource', () => {
         expect(datasource.supportsQuery({})).toBe(false);
       });
 
-      it('should error when trying to query', () => new Promise((done) => {
-        datasource.select({}, (error) => {
-          expect(error).toHaveProperty('message', 'The datasource is not initialized yet');
-          done();
-        });
-      }));
+      it('should error when trying to query', async () => {
+        let { promise, resolve } = Promise.withResolvers();
+        datasource.select({}, resolve);
+        let error = await promise;
+        expect(error).toHaveProperty('message', 'The datasource is not initialized yet');
+      });
     });
 
     describe('after the initializer calls the callback', () => {
@@ -228,12 +215,12 @@ describe('Datasource', () => {
         expect(datasource.supportsQuery({})).toBe(true);
       });
 
-      it('should allow querying', () => new Promise((done) => {
-        datasource.select({}, (error) => {
-          expect(error).toHaveProperty('message', '_executeQuery has not been implemented');
-          done();
-        });
-      }));
+      it('should allow querying', async () => {
+        let { promise, resolve } = Promise.withResolvers();
+        datasource.select({}, resolve);
+        let error = await promise;
+        expect(error).toHaveProperty('message', '_executeQuery has not been implemented');
+      });
     });
   });
 
@@ -366,21 +353,20 @@ describe('Datasource', () => {
       datasource._executeQuery.mockClear();
     });
 
-    it('should move triples in the default graph to the given graph', () => new Promise((done) => {
-      let result = datasource.select({ features: { custom: true } }, done), quads = [];
+    it('should move triples in the default graph to the given graph', async () => {
+      let { promise, reject } = Promise.withResolvers();
+      let result = datasource.select({ features: { custom: true } }, reject), quads = [];
       result.on('data', (q) => { quads.push(q); });
-      result.on('end', () => {
-        let matchingquads = [
-          dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o1'), dataFactory.namedNode('http://example.org/#mygraph')),
-          dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o2'), dataFactory.namedNode('http://example.org/#mygraph')),
-          dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o3'), dataFactory.namedNode('g')),
-        ];
-        expect(matchingquads.length).toBe(quads.length);
-        for (let i = 0; i < quads.length; i++)
-          expect(quads[i]).toEqual(matchingquads[i]);
-        done();
-      });
-    }));
+      await Promise.race([once(result, 'end'), promise]);
+      let matchingquads = [
+        dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o1'), dataFactory.namedNode('http://example.org/#mygraph')),
+        dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o2'), dataFactory.namedNode('http://example.org/#mygraph')),
+        dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o3'), dataFactory.namedNode('g')),
+      ];
+      expect(matchingquads.length).toBe(quads.length);
+      for (let i = 0; i < quads.length; i++)
+        expect(quads[i]).toEqual(matchingquads[i]);
+    });
 
     it('should query the given graph as the default graph', () => {
       datasource.select({
@@ -458,15 +444,13 @@ describe('Datasource', () => {
       destination.close();
     });
 
-    it('should translate a blank-node graph in the result into its well-known IRI', () => new Promise((done) => {
+    it('should translate a blank-node graph in the result into its well-known IRI', async () => {
       let result = datasource.select({ features: {} }), quads = [];
       result.on('data', (q) => { quads.push(q); });
-      result.on('end', () => {
-        expect(quads).toHaveLength(1);
-        expect(quads[0].graph).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 'b1'));
-        done();
-      });
-    }));
+      await once(result, 'end');
+      expect(quads).toHaveLength(1);
+      expect(quads[0].graph).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 'b1'));
+    });
   });
 
   describe('A Datasource instance returning blank-node subjects and objects', () => {
@@ -479,16 +463,14 @@ describe('Datasource', () => {
       destination.close();
     });
 
-    it('should translate blank-node subjects and objects in the result into their well-known IRIs', () => new Promise((done) => {
+    it('should translate blank-node subjects and objects in the result into their well-known IRIs', async () => {
       let result = datasource.select({ features: {} }), quads = [];
       result.on('data', (q) => { quads.push(q); });
-      result.on('end', () => {
-        expect(quads).toHaveLength(1);
-        expect(quads[0].subject).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 's1'));
-        expect(quads[0].object).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 'o1'));
-        done();
-      });
-    }));
+      await once(result, 'end');
+      expect(quads).toHaveLength(1);
+      expect(quads[0].subject).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 's1'));
+      expect(quads[0].object).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 'o1'));
+    });
   });
 
   describe('A Datasource instance queried without an onError callback', () => {

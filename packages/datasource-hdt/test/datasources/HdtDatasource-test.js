@@ -8,7 +8,9 @@ let Datasource = require('@ldf/core').datasources.Datasource,
     UrlData = require('@ldf/core').UrlData,
     path = require('path'),
     dataFactory = require('n3').DataFactory,
-    RdfString = require('rdf-string');
+    RdfString = require('rdf-string'),
+    { once } = require('events'),
+    { promisify } = require('util');
 
 let exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
@@ -19,19 +21,19 @@ describe('HdtDatasource', () => {
       expect(typeof HdtDatasource).toBe('function');
     });
 
-    it('should be an HdtDatasource constructor', () => new Promise((done) => {
+    it('should be an HdtDatasource constructor', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(HdtDatasource);
-      instance.close(done);
-    }));
+      await promisify(instance.close.bind(instance))();
+    });
 
-    it('should create Datasource objects', () => new Promise((done) => {
+    it('should create Datasource objects', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(Datasource);
-      instance.close(done);
-    }));
+      await promisify(instance.close.bind(instance))();
+    });
 
     it('should not throw when constructed without options', () => {
       expect(() => {
@@ -45,77 +47,64 @@ describe('HdtDatasource', () => {
         .toBeInstanceOf(ExternalHdtDatasource);
     });
 
-    it('should do nothing when closed a second time', () => new Promise((done) => {
+    it('should do nothing when closed a second time', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
-      instance.on('initialized', () => {
-        instance.close(() => {
-          expect(() => { instance.close(); }).not.toThrow();
-          done();
-        });
-      });
-    }));
+      await once(instance, 'initialized');
+      await promisify(instance.close.bind(instance))();
+      expect(() => { instance.close(); }).not.toThrow();
+    });
   });
 
   describe('_executeQuery', () => {
-    it('should round the estimated total count up when it underestimates the offset and page', () => new Promise((done) => {
+    it('should round the estimated total count up when it underestimates the offset and page', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance._hdtDocument = {
         searchTriples: () => Promise.resolve({ triples: [{}, {}], totalCount: 5, hasExactCount: false }),
       };
       let setProperty = vi.fn();
-      let destination = {
-        setProperty,
-        _push: vi.fn(),
-        close: () => {
-          expect(setProperty).toHaveBeenCalledWith('metadata', { totalCount: 6, hasExactCount: false });
-          done();
-        },
-      };
+      let { promise, resolve } = Promise.withResolvers();
+      let destination = { setProperty, _push: vi.fn(), close: resolve };
       instance._executeQuery({ offset: 4, limit: 10 }, destination);
-    }));
+      await promise;
+      expect(setProperty).toHaveBeenCalledWith('metadata', { totalCount: 6, hasExactCount: false });
+    });
 
-    it('should double the returned triple count when it fills the whole page', () => new Promise((done) => {
+    it('should double the returned triple count when it fills the whole page', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance._hdtDocument = {
         searchTriples: () => Promise.resolve({ triples: [{}, {}], totalCount: 1, hasExactCount: false }),
       };
       let setProperty = vi.fn();
-      let destination = {
-        setProperty,
-        _push: vi.fn(),
-        close: () => {
-          expect(setProperty).toHaveBeenCalledWith('metadata', { totalCount: 8, hasExactCount: false });
-          done();
-        },
-      };
+      let { promise, resolve } = Promise.withResolvers();
+      let destination = { setProperty, _push: vi.fn(), close: resolve };
       instance._executeQuery({ offset: 4, limit: 1 }, destination);
-    }));
+      await promise;
+      expect(setProperty).toHaveBeenCalledWith('metadata', { totalCount: 8, hasExactCount: false });
+    });
 
-    it('should emit an error when the underlying HDT search fails', () => new Promise((done) => {
+    it('should emit an error when the underlying HDT search fails', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       let error = new Error('search failed');
       instance._hdtDocument = { searchTriples: () => Promise.reject(error) };
-      let destination = { setProperty: () => {}, emit: (event, err) => {
-        expect(event).toBe('error');
-        expect(err).toBe(error);
-        done();
-      } };
+      let { promise, resolve } = Promise.withResolvers();
+      let destination = { setProperty: () => {}, emit: (event, err) => resolve({ event, err }) };
       instance._executeQuery({}, destination);
-    }));
+      let { event, err } = await promise;
+      expect(event).toBe('error');
+      expect(err).toBe(error);
+    });
   });
 
   describe('A HdtDatasource instance for an example HDT file', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    beforeAll(() => new Promise((done) => {
+    beforeAll(async () => {
       datasource = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       datasource.initialize();
-      datasource.on('initialized', done);
-    }));
-    afterAll(() => new Promise((done) => {
-      datasource.close(done);
-    }));
+      await once(datasource, 'initialized');
+    });
+    afterAll(() => promisify(datasource.close.bind(datasource))());
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -171,14 +160,12 @@ describe('HdtDatasource', () => {
   describe('A HdtDatasource instance with blank nodes', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    beforeAll(() => new Promise((done) => {
+    beforeAll(async () => {
       datasource = new HdtDatasource({ dataFactory, file: exampleHdtFileWithBlanks });
       datasource.initialize();
-      datasource.on('initialized', done);
-    }));
-    afterAll(() => new Promise((done) => {
-      datasource.close(done);
-    }));
+      await once(datasource, 'initialized');
+    });
+    afterAll(() => promisify(datasource.close.bind(datasource))());
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -220,18 +207,16 @@ describe('HdtDatasource', () => {
   describe('A HdtDatasource instance with blank nodes and a blank node prefix', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    beforeAll(() => new Promise((done) => {
+    beforeAll(async () => {
       datasource = new HdtDatasource({
         dataFactory,
         file: exampleHdtFileWithBlanks,
         urlData: new UrlData({ baseURL: 'http://example.org/' }),
       });
       datasource.initialize();
-      datasource.on('initialized', done);
-    }));
-    afterAll(() => new Promise((done) => {
-      datasource.close(done);
-    }));
+      await once(datasource, 'initialized');
+    });
+    afterAll(() => promisify(datasource.close.bind(datasource))());
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -275,12 +260,12 @@ function itShouldExecute(getDatasource, name, query,
   expectedResultsCount, expectedTotalCount, expectedTriples) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount, triples = [];
-    beforeAll(() => new Promise((done) => {
+    beforeAll(async () => {
       let result = getDatasource().select(query);
       result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       result.on('data', (triple) => { resultsCount++; expectedTriples && triples.push(triple); });
-      result.on('end', done);
-    }));
+      await once(result, 'end');
+    });
 
     it('should return the expected number of triples', () => {
       expect(resultsCount).toBe(expectedResultsCount);

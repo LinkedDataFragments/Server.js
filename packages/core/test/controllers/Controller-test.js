@@ -35,9 +35,7 @@ describe('Controller', () => {
     });
 
     describe('receiving a request', () => {
-      beforeAll(() => new Promise((done) => {
-        client.get('/path?a=b').end(done);
-      }));
+      beforeAll(() => client.get('/path?a=b'));
 
       it('should call _handleRequest with request, response and next', () => {
         expect(controller._handleRequest).toHaveBeenCalledOnce();
@@ -73,14 +71,11 @@ describe('Controller', () => {
     });
 
     describe('receiving a request', () => {
-      beforeAll(() => new Promise((done) => {
-        client
-          .get('/path?a=b')
-          .set('X-Forwarded-Host', 'foo:5000')
-          // NOTE: the priority will go to the Forwarded header over the X-Forwarded-Host header
-          .set('Forwarded', 'proto=https;host="bar:8000"')
-          .end(done);
-      }));
+      beforeAll(() => client
+        .get('/path?a=b')
+        .set('X-Forwarded-Host', 'foo:5000')
+        // NOTE: the priority will go to the Forwarded header over the X-Forwarded-Host header
+        .set('Forwarded', 'proto=https;host="bar:8000"'));
 
       it('should call _handleRequest with request, response and next', () => {
         expect(controller._handleRequest).toHaveBeenCalledOnce();
@@ -107,12 +102,9 @@ describe('Controller', () => {
     });
 
     describe('receiving a request with a malformed Forwarded header', () => {
-      beforeAll(() => new Promise((done) => {
-        client
-          .get('/path?a=b')
-          .set('Forwarded', 'proto="unterminated')
-          .end(done);
-      }));
+      beforeAll(() => client
+        .get('/path?a=b')
+        .set('Forwarded', 'proto="unterminated'));
 
       it('should fall back to the request\'s own information', () => {
         let request = controller._handleRequest.mock.calls[controller._handleRequest.mock.calls.length - 1][0];
@@ -121,12 +113,9 @@ describe('Controller', () => {
     });
 
     describe('receiving a request with a Forwarded header that has no proto', () => {
-      beforeAll(() => new Promise((done) => {
-        client
-          .get('/path?a=b')
-          .set('Forwarded', 'host="bar:8000"')
-          .end(done);
-      }));
+      beforeAll(() => client
+        .get('/path?a=b')
+        .set('Forwarded', 'host="bar:8000"'));
 
       it('should fall back to the default protocol while still using the forwarded host', () => {
         let request = controller._handleRequest.mock.calls[controller._handleRequest.mock.calls.length - 1][0];
@@ -145,13 +134,10 @@ describe('Controller', () => {
     });
 
     describe('receiving a request', () => {
-      beforeAll(() => new Promise((done) => {
-        client
-          .get('/path?a=b')
-          .set('X-Forwarded-Host', 'foo:5000')
-          .set('X-Forwarded-Proto', 'https')
-          .end(done);
-      }));
+      beforeAll(() => client
+        .get('/path?a=b')
+        .set('X-Forwarded-Host', 'foo:5000')
+        .set('X-Forwarded-Proto', 'https'));
 
       it('should call _handleRequest with request, response and next', () => {
         expect(controller._handleRequest).toHaveBeenCalledOnce();
@@ -187,9 +173,7 @@ describe('Controller', () => {
     });
 
     describe('receiving a request', () => {
-      beforeAll(() => new Promise((done) => {
-        client.get('/path?a=b').end(done);
-      }));
+      beforeAll(() => client.get('/path?a=b'));
 
       it('should call _handleRequest with request, response and next', () => {
         expect(controller._handleRequest).toHaveBeenCalledOnce();

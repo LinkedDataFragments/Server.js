@@ -1,6 +1,8 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { once } from 'events';
+import { promisify } from 'util';
 let JsonLdDatasource = require('../../').datasources.JsonLdDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -15,26 +17,26 @@ describe('JsonLdDatasource', () => {
       expect(typeof JsonLdDatasource).toBe('function');
     });
 
-    it('should be a JsonLdDatasource constructor', () => new Promise((done) => {
+    it('should be a JsonLdDatasource constructor', async () => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       expect(instance).toBeInstanceOf(JsonLdDatasource);
-      instance.close(done);
-    }));
+      await promisify(instance.close.bind(instance))();
+    });
 
-    it('should create Datasource objects', () => new Promise((done) => {
+    it('should create Datasource objects', async () => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      instance.close(done);
-    }));
+      await promisify(instance.close.bind(instance))();
+    });
   });
 
   describe('A JsonLdDatasource instance for an example JsonLd file', () => {
     let datasource = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
-    beforeAll(() => new Promise((done) => {
+    beforeAll(async () => {
       datasource.initialize();
-      datasource.on('initialized', done);
-    }));
-    afterAll(() => new Promise((done) => { datasource.close(done); }));
+      await once(datasource, 'initialized');
+    });
+    afterAll(() => promisify(datasource.close.bind(datasource))());
 
     itShouldExecute(datasource,
       'the empty query',
@@ -96,12 +98,12 @@ describe('JsonLdDatasource', () => {
 function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount;
-    beforeAll(() => new Promise((done) => {
+    beforeAll(async () => {
       let result = datasource.select(query);
       result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       result.on('data', (triple) => { resultsCount++; });
-      result.on('end', done);
-    }));
+      await once(result, 'end');
+    });
 
     it('should return the expected number of triples', () => {
       expect(resultsCount).toBe(expectedResultsCount);

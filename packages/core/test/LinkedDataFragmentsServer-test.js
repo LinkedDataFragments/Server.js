@@ -8,7 +8,9 @@ let request = require('supertest'),
     net = require('net'),
     path = require('path'),
     fs = require('fs'),
-    https = require('https');
+    https = require('https'),
+    { once } = require('events'),
+    { promisify } = require('util');
 
 let testCertFile = path.join(__dirname, '../../../test/assets/test-cert.pem'),
     testKeyFile = path.join(__dirname, '../../../test/assets/test-key.pem');
@@ -58,71 +60,63 @@ describe('LinkedDataFragmentsServer', () => {
       controller.handleRequest.mockClear();
     });
 
-    it('should send the configured headers', () => new Promise((done) => {
-      client.head('/').expect((response) => {
-        expect(response.headers).toHaveProperty('access-control-allow-origin', '*');
-        expect(response.headers).toHaveProperty('my-header', 'value');
-      }).end(done);
-    }));
+    it('should send the configured headers', async () => {
+      let response = await client.head('/');
+      expect(response.headers).toHaveProperty('access-control-allow-origin', '*');
+      expect(response.headers).toHaveProperty('my-header', 'value');
+    });
 
-    it('should not allow POST requests', () => new Promise((done) => {
-      client.post('/').expect((response) => {
-        expect(controller.handleRequest).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 405);
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-        expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
-      }).end(done);
-    }));
+    it('should not allow POST requests', async () => {
+      let response = await client.post('/');
+      expect(controller.handleRequest).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 405);
+      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+      expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
+    });
 
-    it('should send a body with GET requests', () => new Promise((done) => {
-      client.get('/handle').expect((response) => {
-        expect(controller.handleRequest).toHaveBeenCalledOnce();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response).toHaveProperty('text', 'body contents');
-      }).end(done);
-    }));
+    it('should send a body with GET requests', async () => {
+      let response = await client.get('/handle');
+      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response).toHaveProperty('text', 'body contents');
+    });
 
-    it('should not send a body with HEAD requests', () => new Promise((done) => {
-      client.head('/handle').expect((response) => {
-        expect(controller.handleRequest).toHaveBeenCalledOnce();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response.body).not.toHaveProperty('length');
-      }).end(done);
-    }));
+    it('should not send a body with HEAD requests', async () => {
+      let response = await client.head('/handle');
+      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response.body).not.toHaveProperty('length');
+    });
 
-    it('should not send a body with OPTIONS requests', () => new Promise((done) => {
-      client.options('/handle').expect((response) => {
-        expect(controller.handleRequest).toHaveBeenCalledOnce();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response).toHaveProperty('text', '');
-      }).end(done);
-    }));
+    it('should not send a body with OPTIONS requests', async () => {
+      let response = await client.options('/handle');
+      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response).toHaveProperty('text', '');
+    });
 
-    it('should silently no-op an explicit write() call with HEAD requests', () => new Promise((done) => {
-      client.head('/write').expect((response) => {
-        expect(controller.handleRequest).toHaveBeenCalledOnce();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response.body).not.toHaveProperty('length');
-      }).end(done);
-    }));
+    it('should silently no-op an explicit write() call with HEAD requests', async () => {
+      let response = await client.head('/write');
+      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response.body).not.toHaveProperty('length');
+    });
 
-    it('should error when the controller cannot handle the request', () => new Promise((done) => {
-      client.get('/unsupported').expect((response) => {
-        expect(controller.handleRequest).toHaveBeenCalledOnce();
-        expect(response).toHaveProperty('statusCode', 500);
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-        expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
-      }).end(done);
-    }));
+    it('should error when the controller cannot handle the request', async () => {
+      let response = await client.get('/unsupported');
+      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(response).toHaveProperty('statusCode', 500);
+      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+      expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
+    });
 
-    it('should error when the controller errors', () => new Promise((done) => {
-      client.get('/error').expect((response) => {
-        expect(controller.handleRequest).toHaveBeenCalledOnce();
-        expect(response).toHaveProperty('statusCode', 500);
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-        expect(response).toHaveProperty('text', 'Application error: error message\n');
-      }).end(done);
-    }));
+    it('should error when the controller errors', async () => {
+      let response = await client.get('/error');
+      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(response).toHaveProperty('statusCode', 500);
+      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+      expect(response).toHaveProperty('text', 'Application error: error message\n');
+    });
   });
 
   describe('A LinkedDataFragmentsServer instance with two controllers', () => {
@@ -167,63 +161,57 @@ describe('LinkedDataFragmentsServer', () => {
       controllerB.handleRequest.mockClear();
     });
 
-    it('should not allow POST requests', () => new Promise((done) => {
-      client.post('/').expect((response) => {
-        expect(controllerA.handleRequest).not.toHaveBeenCalled();
-        expect(controllerB.handleRequest).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 405);
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-        expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
-      }).end(done);
-    }));
+    it('should not allow POST requests', async () => {
+      let response = await client.post('/');
+      expect(controllerA.handleRequest).not.toHaveBeenCalled();
+      expect(controllerB.handleRequest).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 405);
+      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+      expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
+    });
 
-    it('should use the first controller when it can handle the request', () => new Promise((done) => {
-      client.get('/handleA').expect((response) => {
-        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-        expect(controllerB.handleRequest).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response).toHaveProperty('text', 'body contents A');
-      }).end(done);
-    }));
+    it('should use the first controller when it can handle the request', async () => {
+      let response = await client.get('/handleA');
+      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+      expect(controllerB.handleRequest).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response).toHaveProperty('text', 'body contents A');
+    });
 
-    it('should use the second controller when the first cannot handle the request', () => new Promise((done) => {
-      client.get('/handleB').expect((response) => {
-        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-        expect(controllerB.handleRequest).toHaveBeenCalledOnce();
-        expect(response).toHaveProperty('statusCode', 200);
-        expect(response).toHaveProperty('text', 'body contents B');
-      }).end(done);
-    }));
+    it('should use the second controller when the first cannot handle the request', async () => {
+      let response = await client.get('/handleB');
+      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+      expect(controllerB.handleRequest).toHaveBeenCalledOnce();
+      expect(response).toHaveProperty('statusCode', 200);
+      expect(response).toHaveProperty('text', 'body contents B');
+    });
 
-    it('should error when neither controller can handle the request', () => new Promise((done) => {
-      client.get('/unsupported').expect((response) => {
-        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-        expect(controllerB.handleRequest).toHaveBeenCalledOnce();
-        expect(response).toHaveProperty('statusCode', 500);
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-        expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
-      }).end(done);
-    }));
+    it('should error when neither controller can handle the request', async () => {
+      let response = await client.get('/unsupported');
+      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+      expect(controllerB.handleRequest).toHaveBeenCalledOnce();
+      expect(response).toHaveProperty('statusCode', 500);
+      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+      expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
+    });
 
-    it('should error when the first controller errors', () => new Promise((done) => {
-      client.get('/errorA').expect((response) => {
-        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-        expect(controllerB.handleRequest).not.toHaveBeenCalled();
-        expect(response).toHaveProperty('statusCode', 500);
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-        expect(response).toHaveProperty('text', 'Application error: error message A\n');
-      }).end(done);
-    }));
+    it('should error when the first controller errors', async () => {
+      let response = await client.get('/errorA');
+      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+      expect(controllerB.handleRequest).not.toHaveBeenCalled();
+      expect(response).toHaveProperty('statusCode', 500);
+      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+      expect(response).toHaveProperty('text', 'Application error: error message A\n');
+    });
 
-    it('should error when the second controller errors', () => new Promise((done) => {
-      client.get('/errorB').expect((response) => {
-        expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-        expect(controllerB.handleRequest).toHaveBeenCalledOnce();
-        expect(response).toHaveProperty('statusCode', 500);
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-        expect(response).toHaveProperty('text', 'Application error: error message B\n');
-      }).end(done);
-    }));
+    it('should error when the second controller errors', async () => {
+      let response = await client.get('/errorB');
+      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
+      expect(controllerB.handleRequest).toHaveBeenCalledOnce();
+      expect(response).toHaveProperty('statusCode', 500);
+      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+      expect(response).toHaveProperty('text', 'Application error: error message B\n');
+    });
   });
 
   describe('A LinkedDataFragmentsServer instance with the https protocol', () => {
@@ -275,15 +263,14 @@ describe('LinkedDataFragmentsServer', () => {
   });
 
   describe('A LinkedDataFragmentsServer instance handling a request that fails outside of a controller', () => {
-    it('should report the error', () => new Promise((done) => {
+    it('should report the error', async () => {
       let server = new LinkedDataFragmentsServer({
         controllers: [], log: vi.fn(),
         response: { headers: { 'Bad-Header': 'invalid\r\nvalue' } },
       });
-      request.agent(server).get('/').expect((response) => {
-        expect(response).toHaveProperty('statusCode', 500);
-      }).end(done);
-    }));
+      let response = await request.agent(server).get('/');
+      expect(response).toHaveProperty('statusCode', 500);
+    });
   });
 
   describe('A LinkedDataFragmentsServer instance reporting a fatal error', () => {
@@ -321,17 +308,15 @@ describe('LinkedDataFragmentsServer', () => {
   });
 
   describe('Stopping a LinkedDataFragmentsServer instance', () => {
-    it('should destroy open sockets', () => new Promise((done) => {
+    it('should destroy open sockets', async () => {
       let server = new LinkedDataFragmentsServer({ controllers: [], log: vi.fn() });
-      server.listen(0, () => {
-        let socket = net.connect({ port: server.address().port }, () => {
-          setImmediate(() => {
-            server.stop();
-            socket.on('close', () => done());
-          });
-        });
-      });
-    }));
+      await promisify(server.listen.bind(server))(0);
+      let socket = net.connect({ port: server.address().port });
+      await once(socket, 'connect');
+      await promisify(setImmediate)();
+      server.stop();
+      await once(socket, 'close');
+    });
 
     it('should close all controllers', () => {
       let closeSpy = vi.fn();

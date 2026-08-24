@@ -2,7 +2,10 @@
 
 import { describe, it, expect, afterEach, vi } from 'vitest';
 const { EventEmitter } = require('events');
+const { promisify } = require('util');
 let LinkedDataFragmentsServerWorker = require('../lib/LinkedDataFragmentsServerWorker').LinkedDataFragmentsServerWorker;
+
+const tick = promisify(setImmediate);
 
 function fakeDatasource() {
   let ds = new EventEmitter();
@@ -110,6 +113,7 @@ describe('LinkedDataFragmentsServerWorker', () => {
       let fs = require('fs');
       let accessLogPath = require.resolve('access-log');
       let originalExports = require.cache[accessLogPath].exports;
+      // eslint-disable-next-line promise/prefer-await-to-callbacks -- simulates access-log's own callback-based API
       require.cache[accessLogPath].exports = (req, res, format, cb) => cb('fake log entry');
       let appendFile = vi.spyOn(fs, 'appendFile').mockImplementation(() => {});
       try {
@@ -135,7 +139,7 @@ describe('LinkedDataFragmentsServerWorker', () => {
   });
 
   describe('run', () => {
-    it('should start listening once all datasources are ready', () => new Promise((done) => {
+    it('should start listening once all datasources are ready', async () => {
       let datasource = fakeDatasource();
       let worker = new LinkedDataFragmentsServerWorker(baseConfig({
         datasources: { a: datasource },
@@ -147,16 +151,15 @@ describe('LinkedDataFragmentsServerWorker', () => {
 
       worker.run();
 
-      setImmediate(() => setImmediate(() => {
-        expect(datasource.initialize).toHaveBeenCalledOnce();
-        expect(log.mock.calls[0][0]).toContain('running on');
-        // Stop the real (ephemeral-port) server the handler just started listening on.
-        let sigintHandler = once.mock.calls.find((args) => args[0] === 'SIGINT')[1];
-        sigintHandler();
-        expect(log.mock.calls[1]).toEqual(['Stopping worker', process.pid]);
-        done();
-      }));
-    }));
+      await tick();
+      await tick();
+      expect(datasource.initialize).toHaveBeenCalledOnce();
+      expect(log.mock.calls[0][0]).toContain('running on');
+      // Stop the real (ephemeral-port) server the handler just started listening on.
+      let sigintHandler = once.mock.calls.find((args) => args[0] === 'SIGINT')[1];
+      sigintHandler();
+      expect(log.mock.calls[1]).toEqual(['Stopping worker', process.pid]);
+    });
 
     it('should wait for every datasource before listening', () => {
       let dsA = new EventEmitter(); dsA.initialize = vi.fn();
@@ -178,7 +181,7 @@ describe('LinkedDataFragmentsServerWorker', () => {
       once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
     });
 
-    it('should apply an explicit port argument over the config port', () => new Promise((done) => {
+    it('should apply an explicit port argument over the config port', async () => {
       let worker = new LinkedDataFragmentsServerWorker(baseConfig({
         port: 0,
         urlData: { protocol: 'http', baseURL: 'http://localhost/' },
@@ -189,13 +192,12 @@ describe('LinkedDataFragmentsServerWorker', () => {
       worker.run(56789);
       expect(worker._config.port).toBe(56789);
 
-      setImmediate(() => setImmediate(() => {
-        once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
-        done();
-      }));
-    }));
+      await tick();
+      await tick();
+      once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
+    });
 
-    it('should leave the config port untouched when called without an argument or with 0', () => new Promise((done) => {
+    it('should leave the config port untouched when called without an argument or with 0', async () => {
       let worker = new LinkedDataFragmentsServerWorker(baseConfig({
         port: 0,
         urlData: { protocol: 'http', baseURL: 'http://localhost/' },
@@ -207,13 +209,12 @@ describe('LinkedDataFragmentsServerWorker', () => {
       worker.run(0);
       expect(worker._config.port).toBe(portBeforeRun);
 
-      setImmediate(() => setImmediate(() => {
-        once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
-        done();
-      }));
-    }));
+      await tick();
+      await tick();
+      once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
+    });
 
-    it('should force-exit on a second SIGINT', () => new Promise((done) => {
+    it('should force-exit on a second SIGINT', async () => {
       let worker = new LinkedDataFragmentsServerWorker(baseConfig({
         port: 0,
         urlData: { protocol: 'http', baseURL: 'http://localhost/' },
@@ -225,13 +226,12 @@ describe('LinkedDataFragmentsServerWorker', () => {
 
       worker.run();
 
-      setImmediate(() => setImmediate(() => {
-        once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
-        let secondSigintHandler = on.mock.calls.find((args) => args[0] === 'SIGINT')[1];
-        secondSigintHandler();
-        expect(exit).toHaveBeenCalledWith(1);
-        done();
-      }));
-    }));
+      await tick();
+      await tick();
+      once.mock.calls.find((args) => args[0] === 'SIGINT')[1]();
+      let secondSigintHandler = on.mock.calls.find((args) => args[0] === 'SIGINT')[1];
+      secondSigintHandler();
+      expect(exit).toHaveBeenCalledWith(1);
+    });
   });
 });

@@ -1,6 +1,7 @@
 /*! @license MIT ©2014-2015 Ruben Verborgh and Ruben Taelman, Ghent University - imec */
 
 import { describe, it, expect } from 'vitest';
+import { once } from 'events';
 let MemoryDatasource = require('../../lib/datasources/MemoryDatasource').MemoryDatasource,
     Datasource = require('../../lib/datasources/Datasource').Datasource;
 
@@ -36,14 +37,13 @@ describe('MemoryDatasource', () => {
   });
 
   describe('A MemoryDatasource instance without an overridden _getAllQuads', () => {
-    it('should error when initialized', () => new Promise((done) => {
+    it('should error when initialized', async () => {
       let datasource = new MemoryDatasource({ dataFactory });
-      datasource.on('error', (error) => {
-        expect(error.message).toBe('_getAllQuads is not implemented');
-        done();
-      });
+      let errorEvent = once(datasource, 'error');
       datasource.initialize();
-    }));
+      let [error] = await errorEvent;
+      expect(error.message).toBe('_getAllQuads is not implemented');
+    });
   });
 
   describe('A MemoryDatasource subclass whose _getAllQuads errors', () => {
@@ -53,13 +53,12 @@ describe('MemoryDatasource', () => {
       }
     }
 
-    it('should error when initialized', () => new Promise((done) => {
+    it('should error when initialized', async () => {
       let datasource = new FailingDatasource({ dataFactory });
-      datasource.on('error', (error) => {
-        expect(error.message).toBe('could not read quads');
-        done();
-      });
+      let errorEvent = once(datasource, 'error');
       datasource.initialize();
-    }));
+      let [error] = await errorEvent;
+      expect(error.message).toBe('could not read quads');
+    });
   });
 });

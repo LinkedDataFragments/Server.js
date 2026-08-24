@@ -128,6 +128,7 @@ describe('WebIDControllerExtension', () => {
       let instance = Object.create(WebIDControllerExtension.prototype);
       instance._protocol = 'https';
       instance._handleForbidden = vi.fn();
+      // eslint-disable-next-line promise/prefer-await-to-callbacks -- mocks _verifyWebID's own callback-based signature
       instance._verifyWebID = vi.fn((webID, modulus, exponent, callback) => callback(null, true));
       let request = tlsRequest({
         subject: { subjectAltName: 'uniformResourceIdentifier:http://example.org/#me' },
@@ -147,6 +148,7 @@ describe('WebIDControllerExtension', () => {
       let instance = Object.create(WebIDControllerExtension.prototype);
       instance._protocol = 'https';
       instance._handleForbidden = vi.fn();
+      // eslint-disable-next-line promise/prefer-await-to-callbacks -- mocks _verifyWebID's own callback-based signature
       instance._verifyWebID = vi.fn((webID, modulus, exponent, callback) => callback(null, false, 'no match'));
       let request = tlsRequest({
         subject: { subjectAltName: 'uniformResourceIdentifier:http://example.org/#me' },
@@ -194,10 +196,12 @@ describe('WebIDControllerExtension', () => {
     // modulus/exponent always come out empty regardless of what the WebID
     // document actually contains.
     describe('on a cache miss', () => {
-      it('should always report a mismatch, since the parsed modulus/exponent are never populated', () => new Promise((done) => {
+      it('should always report a mismatch, since the parsed modulus/exponent are never populated', async () => {
         let instance = Object.create(WebIDControllerExtension.prototype);
         instance._cache = { get: () => undefined, set: vi.fn() };
         let originalRequest = http.request;
+        // Mocks http.request's own callback-based signature.
+        /* eslint-disable promise/prefer-await-to-callbacks */
         http.request = (url, cb) => {
           cb(createHttpResponse(
             '@prefix cert: <http://www.w3.org/ns/auth/cert#> . ' +
@@ -205,18 +209,22 @@ describe('WebIDControllerExtension', () => {
             'text/turtle'));
           return { on: () => {}, end: () => {} };
         };
+        /* eslint-enable promise/prefer-await-to-callbacks */
 
+        let { promise, resolve } = Promise.withResolvers();
+        // eslint-disable-next-line promise/prefer-await-to-callbacks -- _verifyWebID's own signature is callback-based
         instance._verifyWebID('http://example.org/#me', 'ABCD', 65537, (error, verified, reason) => {
           http.request = originalRequest;
-          expect(error).toBe(null);
-          expect(verified).toBe(false);
-          expect(reason).toBe('WebID does not match certificate: undefined - undefined (webid) <> ABCD - 65537 (cert)');
-          expect(instance._cache.set).toHaveBeenCalledWith('http://example.org/#me', {}, expect.anything());
-          done();
+          resolve({ error, verified, reason });
         });
-      }));
+        let { error, verified, reason } = await promise;
+        expect(error).toBe(null);
+        expect(verified).toBe(false);
+        expect(reason).toBe('WebID does not match certificate: undefined - undefined (webid) <> ABCD - 65537 (cert)');
+        expect(instance._cache.set).toHaveBeenCalledWith('http://example.org/#me', {}, expect.anything());
+      });
 
-      it('should report the download error when the request fails', () => new Promise((done) => {
+      it('should report the download error when the request fails', async () => {
         let instance = Object.create(WebIDControllerExtension.prototype);
         instance._cache = { get: () => undefined };
         let originalRequest = http.request;
@@ -227,14 +235,17 @@ describe('WebIDControllerExtension', () => {
           };
         };
 
+        let { promise, resolve } = Promise.withResolvers();
+        // eslint-disable-next-line promise/prefer-await-to-callbacks -- _verifyWebID's own signature is callback-based
         instance._verifyWebID('http://example.org/#me', 'ABCD', 65537, (error, verified, reason) => {
           http.request = originalRequest;
-          expect(error).toBe(null);
-          expect(verified).toBe(false);
-          expect(reason).toBe('Unabled to download http://example.org/#me (connect failed).');
-          done();
+          resolve({ error, verified, reason });
         });
-      }));
+        let { error, verified, reason } = await promise;
+        expect(error).toBe(null);
+        expect(verified).toBe(false);
+        expect(reason).toBe('Unabled to download http://example.org/#me (connect failed).');
+      });
     });
   });
 });

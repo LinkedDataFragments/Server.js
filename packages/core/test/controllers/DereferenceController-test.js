@@ -26,10 +26,7 @@ describe('DereferenceController', () => {
 
     describe('receiving a request for a dereferenced URL', () => {
       let response;
-      beforeAll(() => new Promise((done) => {
-        client.get('/resource/Mickey_Mouse')
-          .end((error, res) => { response = res; done(error); });
-      }));
+      beforeAll(async () => { response = await client.get('/resource/Mickey_Mouse'); });
 
       it('should not hand over to the next controller', () => {
         expect(controller.next).not.toHaveBeenCalled();
@@ -61,9 +58,7 @@ describe('DereferenceController', () => {
     });
 
     describe('receiving a request for a non-defererenced URL', () => {
-      beforeAll(() => new Promise((done) => {
-        client.get('/otherresource/Mickey_Mouse').end(done);
-      }));
+      beforeAll(() => client.get('/otherresource/Mickey_Mouse'));
 
       it('should hand over to the next controller', () => {
         expect(controller.next).toHaveBeenCalledOnce();
