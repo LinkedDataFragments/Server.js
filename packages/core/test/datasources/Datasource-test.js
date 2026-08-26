@@ -6,7 +6,6 @@ const Datasource = require('../../lib/datasources/Datasource').Datasource; // ch
 
 const EventEmitter = require('events'),
     { once } = EventEmitter,
-    { promisify } = require('util'),
     fs = require('fs'),
     path = require('path'),
     N3 = require('n3');
@@ -103,7 +102,11 @@ describe('Datasource', () => {
     });
 
     describe('when closed with a callback', () => {
-      it('should invoke the callback', () => promisify(datasource.close)());
+      it('should invoke the callback', () => {
+        let { promise, resolve } = withResolvers();
+        datasource.close(resolve);
+        return promise;
+      });
     });
   });
 

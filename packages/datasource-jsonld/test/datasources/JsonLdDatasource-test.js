@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { once } from 'events';
-import { promisify } from 'util';
+import { withResolvers } from '../../../../test/test-helpers';
 let JsonLdDatasource = require('../../').datasources.JsonLdDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -20,13 +20,17 @@ describe('JsonLdDatasource', () => {
     it('should be a JsonLdDatasource constructor', async () => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       expect(instance).toBeInstanceOf(JsonLdDatasource);
-      await promisify(instance.close)();
+      let { promise, resolve } = withResolvers();
+      instance.close(resolve);
+      await promise;
     });
 
     it('should create Datasource objects', async () => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      await promisify(instance.close)();
+      let { promise, resolve } = withResolvers();
+      instance.close(resolve);
+      await promise;
     });
   });
 
@@ -36,7 +40,11 @@ describe('JsonLdDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close)());
+    afterAll(() => {
+      let { promise, resolve } = withResolvers();
+      datasource.close(resolve);
+      return promise;
+    });
 
     itShouldExecute(datasource,
       'the empty query',

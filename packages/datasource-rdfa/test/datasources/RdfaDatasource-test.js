@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { once } from 'events';
-import { promisify } from 'util';
+import { withResolvers } from '../../../../test/test-helpers';
 let RdfaDatasource = require('../../').datasources.RdfaDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -20,13 +20,17 @@ describe('RdfaDatasource', () => {
     it('should be a RdfaDatasource constructor', async () => {
       let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(RdfaDatasource);
-      await promisify(instance.close)();
+      let { promise, resolve } = withResolvers();
+      instance.close(resolve);
+      await promise;
     });
 
     it('should create Datasource objects', async () => {
       let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      await promisify(instance.close)();
+      let { promise, resolve } = withResolvers();
+      instance.close(resolve);
+      await promise;
     });
   });
 
@@ -36,7 +40,11 @@ describe('RdfaDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close)());
+    afterAll(() => {
+      let { promise, resolve } = withResolvers();
+      datasource.close(resolve);
+      return promise;
+    });
 
     itShouldExecute(datasource,
       'the empty query',

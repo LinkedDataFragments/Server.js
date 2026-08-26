@@ -1,6 +1,7 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { withResolvers } from '../../../../test/test-helpers';
 let HdtDatasource = require('../../').datasources.HdtDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -8,8 +9,7 @@ let Datasource = require('@ldf/core').datasources.Datasource,
     path = require('path'),
     dataFactory = require('n3').DataFactory,
     RdfString = require('rdf-string'),
-    { once } = require('events'),
-    { promisify } = require('util');
+    { once } = require('events');
 
 let exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
@@ -24,14 +24,18 @@ describe('HdtDatasource', () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(HdtDatasource);
-      await promisify(instance.close.bind(instance))();
+      let { promise, resolve } = withResolvers();
+      instance.close(resolve);
+      await promise;
     });
 
     it('should create Datasource objects', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(Datasource);
-      await promisify(instance.close.bind(instance))();
+      let { promise, resolve } = withResolvers();
+      instance.close(resolve);
+      await promise;
     });
   });
 
@@ -43,7 +47,11 @@ describe('HdtDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close.bind(datasource))());
+    afterAll(() => {
+      let { promise, resolve } = withResolvers();
+      datasource.close(resolve);
+      return promise;
+    });
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -104,7 +112,11 @@ describe('HdtDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close.bind(datasource))());
+    afterAll(() => {
+      let { promise, resolve } = withResolvers();
+      datasource.close(resolve);
+      return promise;
+    });
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -155,7 +167,11 @@ describe('HdtDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close.bind(datasource))());
+    afterAll(() => {
+      let { promise, resolve } = withResolvers();
+      datasource.close(resolve);
+      return promise;
+    });
 
     itShouldExecute(getDatasource,
       'the empty query',

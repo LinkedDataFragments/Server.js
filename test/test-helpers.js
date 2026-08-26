@@ -29,7 +29,7 @@ export function createStreamCapture() {
   stream.buffer = '';
   stream._write = (chunk, encoding, callback) => {
     stream.buffer += chunk;
-    callback();
+    callback && callback();
   };
   return stream;
 }

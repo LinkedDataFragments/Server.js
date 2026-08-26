@@ -1,6 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { withResolvers } from '../../../../test/test-helpers';
 let CompositeDatasource = require('../../').datasources.CompositeDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -10,8 +11,7 @@ let Datasource = require('@ldf/core').datasources.Datasource,
     dataFactory = require('n3').DataFactory;
 
 let EventEmitter = require('events'),
-    { once } = EventEmitter,
-    { promisify } = require('util');
+    { once } = EventEmitter;
 
 let exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
@@ -49,19 +49,25 @@ describe('CompositeDatasource', () => {
     it('should be an CompositeDatasource constructor', async () => {
       let instance = new CompositeDatasource({ references: references, dataFactory });
       expect(instance).toBeInstanceOf(CompositeDatasource);
-      await promisify(instance.close)();
+      let { promise, resolve } = withResolvers();
+      instance.close(resolve);
+      await promise;
     });
 
     it('should create CompositeDatasource objects', async () => {
       let instance = new CompositeDatasource({ references: references, dataFactory });
       expect(instance).toBeInstanceOf(CompositeDatasource);
-      await promisify(instance.close)();
+      let { promise, resolve } = withResolvers();
+      instance.close(resolve);
+      await promise;
     });
 
     it('should create Datasource objects', async () => {
       let instance = new CompositeDatasource({ references: references, dataFactory });
       expect(instance).toBeInstanceOf(Datasource);
-      await promisify(instance.close)();
+      let { promise, resolve } = withResolvers();
+      instance.close(resolve);
+      await promise;
     });
   });
 
@@ -73,7 +79,11 @@ describe('CompositeDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close)());
+    afterAll(() => {
+      let { promise, resolve } = withResolvers();
+      datasource.close(resolve);
+      return promise;
+    });
 
     itShouldExecute(getDatasource,
       'the empty query',
