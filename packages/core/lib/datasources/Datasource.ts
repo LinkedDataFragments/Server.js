@@ -151,11 +151,11 @@ export class Datasource extends EventEmitter {
     // Translate blank nodes IRIs in the query to blank nodes
     let blankNodePrefix = this.urlData.blankNodePrefix, blankNodePrefixLength = this.urlData.blankNodePrefixLength;
     if (query.subject && query.subject.termType === 'NamedNode' && query.subject.value.indexOf(blankNodePrefix) === 0)
-      query.subject = this.dataFactory.blankNode(query.subject.value.substr(blankNodePrefixLength));
+      query.subject = this.dataFactory.blankNode(query.subject.value.slice(blankNodePrefixLength));
     if (query.object && query.object.termType === 'NamedNode'  && query.object.value.indexOf(blankNodePrefix) === 0)
-      query.object  = this.dataFactory.blankNode(query.object.value.substr(blankNodePrefixLength));
+      query.object  = this.dataFactory.blankNode(query.object.value.slice(blankNodePrefixLength));
     if (query.graph && query.graph.termType === 'NamedNode'   && query.graph.value.indexOf(blankNodePrefix) === 0)
-      query.graph   = this.dataFactory.blankNode(query.graph.value.substr(blankNodePrefixLength));
+      query.graph   = this.dataFactory.blankNode(query.graph.value.slice(blankNodePrefixLength));
 
     // Force the default graph if QPF support is disable
     if (!this._supportsQuads)
@@ -214,7 +214,7 @@ export class Datasource extends EventEmitter {
       break;
     // Read a file from the local filesystem
     case 'file':
-      stream = fs.createReadStream(url.substr(protocolMatch[0].length), { encoding: 'utf8' });
+      stream = fs.createReadStream(url.slice(protocolMatch[0].length), { encoding: 'utf8' });
       break;
     default:
       stream = new EventEmitter();

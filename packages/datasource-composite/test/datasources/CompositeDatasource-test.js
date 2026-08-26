@@ -49,19 +49,19 @@ describe('CompositeDatasource', () => {
     it('should be an CompositeDatasource constructor', async () => {
       let instance = new CompositeDatasource({ references: references, dataFactory });
       expect(instance).toBeInstanceOf(CompositeDatasource);
-      await promisify(instance.close.bind(instance))();
+      await promisify(instance.close)();
     });
 
     it('should create CompositeDatasource objects', async () => {
       let instance = new CompositeDatasource({ references: references, dataFactory });
       expect(instance).toBeInstanceOf(CompositeDatasource);
-      await promisify(instance.close.bind(instance))();
+      await promisify(instance.close)();
     });
 
     it('should create Datasource objects', async () => {
       let instance = new CompositeDatasource({ references: references, dataFactory });
       expect(instance).toBeInstanceOf(Datasource);
-      await promisify(instance.close.bind(instance))();
+      await promisify(instance.close)();
     });
   });
 
@@ -73,7 +73,7 @@ describe('CompositeDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close.bind(datasource))());
+    afterAll(() => promisify(datasource.close)());
 
     itShouldExecute(getDatasource,
       'the empty query',

@@ -20,13 +20,13 @@ describe('RdfaDatasource', () => {
     it('should be a RdfaDatasource constructor', async () => {
       let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(RdfaDatasource);
-      await promisify(instance.close.bind(instance))();
+      await promisify(instance.close)();
     });
 
     it('should create Datasource objects', async () => {
       let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      await promisify(instance.close.bind(instance))();
+      await promisify(instance.close)();
     });
   });
 
@@ -36,7 +36,7 @@ describe('RdfaDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close.bind(datasource))());
+    afterAll(() => promisify(datasource.close)());
 
     itShouldExecute(datasource,
       'the empty query',

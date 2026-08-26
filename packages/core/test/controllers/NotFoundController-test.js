@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import DummyServer from '../../../../test/DummyServer';
+import { DummyServer } from '../../../../test/DummyServer';
 let NotFoundController = require('../../lib/controllers/NotFoundController').NotFoundController;
 
 let request = require('supertest'),
@@ -25,7 +25,7 @@ describe('NotFoundController', () => {
     let controller, client;
     beforeAll(() => {
       controller = new NotFoundController();
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
 
     describe('receiving a request', () => {
@@ -65,7 +65,7 @@ describe('NotFoundController', () => {
       vi.spyOn(rdfView, 'render');
       datasources = { a: { title: 'foo', url: 'http://example.org/foo#dataset' } };
       controller = new NotFoundController({ views: [htmlView, rdfView], datasources: datasources });
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
     function resetAll() {
       htmlView.render.mockClear();

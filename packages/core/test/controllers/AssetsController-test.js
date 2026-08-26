@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import DummyServer from '../../../../test/DummyServer';
+import { DummyServer } from '../../../../test/DummyServer';
 let AssetsController = require('../../lib/controllers/AssetsController').AssetsController; // changed to make tests pass, will be revised in follow up pr
 
 let request = require('supertest'),
@@ -23,7 +23,7 @@ describe('AssetsController', () => {
     let controller, client;
     beforeAll(() => {
       controller = new AssetsController();
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
 
     it('should correctly serve SVG assets', async () => {

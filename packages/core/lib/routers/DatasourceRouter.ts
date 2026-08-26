@@ -17,7 +17,7 @@ export class DatasourceRouter {
   extractQueryParams(request: RouterRequest, query: Query): void {
     (query.features || (query.features = {})).datasource = true;
     let path = request.url && request.url.pathname || '/';
-    query.datasource = path.substr(this._baseLength);
+    query.datasource = path.slice(this._baseLength);
   }
 }
 

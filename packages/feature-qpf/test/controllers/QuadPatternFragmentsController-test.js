@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import DummyServer from '../../../../test/DummyServer';
+import { DummyServer } from '../../../../test/DummyServer';
 let QuadPatternFragmentsController = require('../../').controllers.QuadPatternFragmentsController;
 
 let request = require('supertest'),
@@ -53,7 +53,7 @@ describe('QuadPatternFragmentsController', () => {
         views: [view],
         prefixes: prefixes,
       });
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
     function resetAll() {
       routerA.extractQueryParams.mockClear();
@@ -199,7 +199,7 @@ describe('QuadPatternFragmentsController', () => {
         datasources: { 'my-datasource': datasource },
         views: [htmlView, rdfView],
       });
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
     function resetAll() {
       htmlView.render.mockClear();
@@ -325,7 +325,7 @@ describe('QuadPatternFragmentsController', () => {
         routers: [router],
         datasources: { 'my-datasource': datasource },
       });
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
 
     describe('receiving a request without Accept header', () => {
@@ -388,7 +388,7 @@ describe('QuadPatternFragmentsController', () => {
         views: [view],
         datasources: { '/my-datasource': datasource },
       });
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
     function resetAll() {
       router.extractQueryParams.mockClear();
@@ -430,7 +430,7 @@ describe('QuadPatternFragmentsController', () => {
         views: [view],
         datasources: { 'my-datasource': datasource },
       });
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
     function resetAll() {
       router.extractQueryParams.mockClear();

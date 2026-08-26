@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import DummyServer from '../../../../test/DummyServer';
+import { DummyServer } from '../../../../test/DummyServer';
 let DereferenceController = require('../../lib/controllers/DereferenceController').DeferenceController; // changed to make tests pass, will be revised in follow up pr
 
 let request = require('supertest');
@@ -21,7 +21,7 @@ describe('DereferenceController', () => {
     let controller, client;
     beforeAll(() => {
       controller = new DereferenceController({ dereference: { '/resource/': { path: 'dbpedia/2014' } } });
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
 
     describe('receiving a request for a dereferenced URL', () => {

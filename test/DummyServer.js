@@ -4,7 +4,7 @@ import * as http from 'http';
 import { vi } from 'vitest';
 
 /* Dummy server that emulates LinkedDataFragmentsServer */
-function DummyServer(controller) {
+export function DummyServer(controller) {
   const server = http.createServer();
   server.on('request', (request, response) => {
     // End the response if the controller did not handle the request
@@ -19,5 +19,3 @@ function DummyServer(controller) {
   });
   return server;
 }
-
-export default DummyServer;

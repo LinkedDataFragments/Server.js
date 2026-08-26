@@ -20,13 +20,13 @@ describe('JsonLdDatasource', () => {
     it('should be a JsonLdDatasource constructor', async () => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       expect(instance).toBeInstanceOf(JsonLdDatasource);
-      await promisify(instance.close.bind(instance))();
+      await promisify(instance.close)();
     });
 
     it('should create Datasource objects', async () => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      await promisify(instance.close.bind(instance))();
+      await promisify(instance.close)();
     });
   });
 
@@ -36,7 +36,7 @@ describe('JsonLdDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close.bind(datasource))());
+    afterAll(() => promisify(datasource.close)());
 
     itShouldExecute(datasource,
       'the empty query',

@@ -88,10 +88,11 @@ describe('Datasource', () => {
 
       it('does not emit an error on the datasource when an error listener is attached to the result', async () => {
         let result = datasource._fetch({ url: exampleFile + 'notfound' });
-        let datasourceErrored = once(datasource, 'error');
+        let datasourceErrorListener = vi.fn();
+        datasource.on('error', datasourceErrorListener);
         let [error] = await once(result, 'error');
         expect(error.message).toContain('ENOENT: no such file or directory');
-        expect(await Promise.race([datasourceErrored, Promise.resolve(null)])).toBeNull();
+        expect(datasourceErrorListener).not.toHaveBeenCalled();
       });
     });
 
@@ -102,7 +103,7 @@ describe('Datasource', () => {
     });
 
     describe('when closed with a callback', () => {
-      it('should invoke the callback', () => promisify(datasource.close.bind(datasource))());
+      it('should invoke the callback', () => promisify(datasource.close)());
     });
   });
 

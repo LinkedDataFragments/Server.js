@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import DummyServer from '../../../../test/DummyServer';
+import { DummyServer } from '../../../../test/DummyServer';
 // changed to make tests pass, will be revised in follow up pr
 let Controller = require('../../lib/controllers/Controller').Controller,
     UrlData = require('../../lib/UrlData').UrlData;
@@ -25,7 +25,7 @@ describe('Controller', () => {
     beforeAll(() => {
       controller = new Controller();
       vi.spyOn(controller, '_handleRequest');
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
 
     describe('receiving a request', () => {
@@ -61,7 +61,7 @@ describe('Controller', () => {
     beforeAll(() => {
       controller = new Controller({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       vi.spyOn(controller, '_handleRequest');
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
 
     describe('receiving a request', () => {
@@ -101,7 +101,7 @@ describe('Controller', () => {
     beforeAll(() => {
       controller = new Controller();
       vi.spyOn(controller, '_handleRequest');
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
 
     describe('receiving a request', () => {
@@ -140,7 +140,7 @@ describe('Controller', () => {
     beforeAll(() => {
       controller = new Controller({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       vi.spyOn(controller, '_handleRequest');
-      client = request.agent(new DummyServer(controller));
+      client = request.agent(new DummyServer(controller), {});
     });
 
     describe('receiving a request', () => {

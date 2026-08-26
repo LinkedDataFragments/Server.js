@@ -20,13 +20,13 @@ describe('N3Datasource', () => {
     it('should be a N3Datasource constructor', async () => {
       let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       expect(instance).toBeInstanceOf(N3Datasource);
-      await promisify(instance.close.bind(instance))();
+      await promisify(instance.close)();
     });
 
     it('should create Datasource objects', async () => {
       let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      await promisify(instance.close.bind(instance))();
+      await promisify(instance.close)();
     });
   });
 
@@ -36,7 +36,7 @@ describe('N3Datasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => promisify(datasource.close.bind(datasource))());
+    afterAll(() => promisify(datasource.close)());
 
     itShouldExecute(datasource,
       'the empty query',
