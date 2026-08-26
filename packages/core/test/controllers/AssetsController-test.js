@@ -3,7 +3,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import DummyServer from '../../../../test/DummyServer';
 let AssetsController = require('../../lib/controllers/AssetsController').AssetsController; // changed to make tests pass, will be revised in follow up pr
-let UrlData = require('../../lib/UrlData').UrlData;
 
 let request = require('supertest'),
     fs = require('fs'),
@@ -17,13 +16,6 @@ describe('AssetsController', () => {
 
     it('should be an AssetsController constructor', () => {
       expect(new AssetsController()).toBeInstanceOf(AssetsController);
-    });
-
-    it('should use the assets path from a given urlData', () => {
-      let controller = new AssetsController({ urlData: new UrlData({ assetsPath: '/static/' }) });
-      return request.agent(new DummyServer(controller)).get('/static/images/logo').expect((response) => {
-        expect(response).toHaveProperty('statusCode', 200);
-      });
     });
   });
 

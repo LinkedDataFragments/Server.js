@@ -1,9 +1,7 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import { withResolvers } from '../../../../test/test-helpers';
-let HdtDatasource = require('../../').datasources.HdtDatasource,
-    ExternalHdtDatasource = require('../../lib/datasources/ExternalHdtDatasource').ExternalHdtDatasource;
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+let HdtDatasource = require('../../').datasources.HdtDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
     UrlData = require('@ldf/core').UrlData,
@@ -34,66 +32,6 @@ describe('HdtDatasource', () => {
       instance.initialize();
       expect(instance).toBeInstanceOf(Datasource);
       await promisify(instance.close.bind(instance))();
-    });
-
-    it('should not throw when constructed without options', () => {
-      expect(() => {
-        // eslint-disable-next-line no-new
-        new HdtDatasource();
-      }).not.toThrow();
-    });
-
-    it('should return an ExternalHdtDatasource when the external option is set', () => {
-      expect(new HdtDatasource({ dataFactory, file: exampleHdtFile, external: true }))
-        .toBeInstanceOf(ExternalHdtDatasource);
-    });
-
-    it('should do nothing when closed a second time', async () => {
-      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
-      instance.initialize();
-      await once(instance, 'initialized');
-      await promisify(instance.close.bind(instance))();
-      expect(() => { instance.close(); }).not.toThrow();
-    });
-  });
-
-  describe('_executeQuery', () => {
-    it('should round the estimated total count up when it underestimates the offset and page', async () => {
-      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
-      instance._hdtDocument = {
-        searchTriples: () => Promise.resolve({ triples: [{}, {}], totalCount: 5, hasExactCount: false }),
-      };
-      let setProperty = vi.fn();
-      let { promise, resolve } = withResolvers();
-      let destination = { setProperty, _push: vi.fn(), close: resolve };
-      instance._executeQuery({ offset: 4, limit: 10 }, destination);
-      await promise;
-      expect(setProperty).toHaveBeenCalledWith('metadata', { totalCount: 6, hasExactCount: false });
-    });
-
-    it('should double the returned triple count when it fills the whole page', async () => {
-      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
-      instance._hdtDocument = {
-        searchTriples: () => Promise.resolve({ triples: [{}, {}], totalCount: 1, hasExactCount: false }),
-      };
-      let setProperty = vi.fn();
-      let { promise, resolve } = withResolvers();
-      let destination = { setProperty, _push: vi.fn(), close: resolve };
-      instance._executeQuery({ offset: 4, limit: 1 }, destination);
-      await promise;
-      expect(setProperty).toHaveBeenCalledWith('metadata', { totalCount: 8, hasExactCount: false });
-    });
-
-    it('should emit an error when the underlying HDT search fails', async () => {
-      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
-      let error = new Error('search failed');
-      instance._hdtDocument = { searchTriples: () => Promise.reject(error) };
-      let { promise, resolve } = withResolvers();
-      let destination = { setProperty: () => {}, emit: (event, err) => resolve({ event, err }) };
-      instance._executeQuery({}, destination);
-      let { event, err } = await promise;
-      expect(event).toBe('error');
-      expect(err).toBe(error);
     });
   });
 

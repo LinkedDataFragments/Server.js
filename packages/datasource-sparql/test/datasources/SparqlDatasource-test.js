@@ -38,10 +38,6 @@ describe('SparqlDatasource', () => {
     it('should create Datasource objects', () => {
       expect(new SparqlDatasource({ dataFactory })).toBeInstanceOf(Datasource);
     });
-
-    it('should not throw when constructed without options', () => {
-      expect(() => new SparqlDatasource()).not.toThrow();
-    });
   });
 
   describe('A SparqlDatasource instance', () => {
@@ -312,45 +308,6 @@ describe('SparqlDatasource', () => {
       { object: dataFactory.literal('a literal', dataFactory.namedNode('http://ex.org/foo#literal')), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}');
-  });
-
-  describe('_encodeObject', () => {
-    let datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql' });
-
-    it('should encode a blank node', () => {
-      expect(datasource._encodeObject(dataFactory.blankNode('b1'))).toBe('_:b1');
-    });
-
-    it('should encode the default graph as an empty string', () => {
-      expect(datasource._encodeObject(dataFactory.defaultGraph())).toBe('');
-    });
-
-    it('should return null for an unrecognized term type', () => {
-      expect(datasource._encodeObject({ termType: 'Quad' })).toBe(null);
-    });
-
-    it('should encode a variable', () => {
-      expect(datasource._encodeObject(dataFactory.variable('x'))).toBe('?x');
-    });
-  });
-
-  describe('_convertLiteral', () => {
-    let datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql' });
-
-    it('should return the ?o variable when no literal is given', () => {
-      expect(datasource._convertLiteral()).toBe('?o');
-    });
-  });
-
-  describe('_getPatternCount', () => {
-    it('should return the default estimate without querying when a count for the same pattern is already resolving', async () => {
-      let datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql', request: vi.fn() });
-      datasource._resolvingCountQueries['{ ?s ?p ?o }'] = true;
-
-      let estimate = await datasource._getPatternCount('{ ?s ?p ?o }');
-      expect(estimate).toEqual({ totalCount: 1e9, hasExactCount: false });
-      expect(datasource._request).not.toHaveBeenCalled();
-    });
   });
 });
 

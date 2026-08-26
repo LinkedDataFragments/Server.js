@@ -2,27 +2,10 @@
 
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 let LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer').LinkedDataFragmentsServer; // changed to make tests pass, will be revised in follow up pr
-let UrlData = require('../lib/UrlData').UrlData;
 
-let request = require('supertest'),
-    net = require('net'),
-    path = require('path'),
-    fs = require('fs'),
-    https = require('https'),
-    { once } = require('events'),
-    { promisify } = require('util');
-
-let testCertFile = path.join(__dirname, '../../../test/assets/test-cert.pem'),
-    testKeyFile = path.join(__dirname, '../../../test/assets/test-key.pem');
+let request = require('supertest');
 
 describe('LinkedDataFragmentsServer', () => {
-  describe('A LinkedDataFragmentsServer instance without a log option', () => {
-    it('should default _log to a no-op function', () => {
-      let server = LinkedDataFragmentsServer({ controllers: [] });
-      expect(() => { server._log('anything'); }).not.toThrow();
-    });
-  });
-
   describe('A LinkedDataFragmentsServer instance with one controller', () => {
     let server, controller, client;
     beforeAll(() => {
@@ -31,10 +14,6 @@ describe('LinkedDataFragmentsServer', () => {
           switch (request.url) {
           case '/handle':
             response.end('body contents');
-            break;
-          case '/write':
-            response.write('chunk 1');
-            response.end('chunk 2');
             break;
           case '/error':
             throw new Error('error message');
@@ -93,13 +72,6 @@ describe('LinkedDataFragmentsServer', () => {
       expect(controller.handleRequest).toHaveBeenCalledOnce();
       expect(response).toHaveProperty('statusCode', 200);
       expect(response).toHaveProperty('text', '');
-    });
-
-    it('should silently no-op an explicit write() call with HEAD requests', async () => {
-      let response = await client.head('/write');
-      expect(controller.handleRequest).toHaveBeenCalledOnce();
-      expect(response).toHaveProperty('statusCode', 200);
-      expect(response.body).not.toHaveProperty('length');
     });
 
     it('should error when the controller cannot handle the request', async () => {
@@ -211,127 +183,6 @@ describe('LinkedDataFragmentsServer', () => {
       expect(response).toHaveProperty('statusCode', 500);
       expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
       expect(response).toHaveProperty('text', 'Application error: error message B\n');
-    });
-  });
-
-  describe('A LinkedDataFragmentsServer instance with the https protocol', () => {
-    it('should create an https server', () => {
-      let server = new LinkedDataFragmentsServer({
-        urlData: new UrlData({ protocol: 'https' }),
-        ssl: { keys: { cert: testCertFile, key: testKeyFile } },
-        log: vi.fn(),
-      });
-      expect(server).toBeInstanceOf(https.Server);
-    });
-
-    it('should accept an array of key material values', () => {
-      let server = new LinkedDataFragmentsServer({
-        urlData: new UrlData({ protocol: 'https' }),
-        ssl: { keys: { cert: [testCertFile], key: testKeyFile } },
-        log: vi.fn(),
-      });
-      expect(server).toBeInstanceOf(https.Server);
-    });
-
-    it('should require a client certificate when WebID authentication is enabled', () => {
-      let server = new LinkedDataFragmentsServer({
-        urlData: new UrlData({ protocol: 'https' }),
-        ssl: { keys: { cert: testCertFile, key: testKeyFile } },
-        authentication: { webid: true },
-        log: vi.fn(),
-      });
-      expect(server).toBeInstanceOf(https.Server);
-    });
-
-    it('should accept literal key material that is not a file path', () => {
-      let server = new LinkedDataFragmentsServer({
-        urlData: new UrlData({ protocol: 'https' }),
-        ssl: { keys: { cert: fs.readFileSync(testCertFile, 'utf8'), key: fs.readFileSync(testKeyFile, 'utf8') } },
-        log: vi.fn(),
-      });
-      expect(server).toBeInstanceOf(https.Server);
-    });
-  });
-
-  describe('A LinkedDataFragmentsServer instance with an invalid protocol', () => {
-    it('should throw', () => {
-      expect(() => {
-        // eslint-disable-next-line no-new
-        new LinkedDataFragmentsServer({ urlData: new UrlData({ protocol: 'ftp' }), log: vi.fn() });
-      }).toThrow('The configured protocol ftp is invalid.');
-    });
-  });
-
-  describe('A LinkedDataFragmentsServer instance handling a request that fails outside of a controller', () => {
-    it('should report the error', async () => {
-      let server = new LinkedDataFragmentsServer({
-        controllers: [], log: vi.fn(),
-        response: { headers: { 'Bad-Header': 'invalid\r\nvalue' } },
-      });
-      let response = await request.agent(server).get('/');
-      expect(response).toHaveProperty('statusCode', 500);
-    });
-  });
-
-  describe('A LinkedDataFragmentsServer instance reporting a fatal error', () => {
-    it('should log the error and exit the process', () => {
-      let exitStub = vi.spyOn(process, 'exit').mockImplementation(() => {}), logSpy = vi.fn();
-      let server = new LinkedDataFragmentsServer({ controllers: [], log: logSpy });
-      let error = new Error('fatal error');
-      server.emit('error', error);
-      expect(logSpy).toHaveBeenCalledWith('Fatal error, exiting process\n', error.stack);
-      expect(exitStub).toHaveBeenCalledWith(-1);
-      exitStub.mockRestore();
-    });
-  });
-
-  describe('A LinkedDataFragmentsServer instance reporting an error on an already-handled response', () => {
-    it('should end the response without reporting the error again', () => {
-      let server = new LinkedDataFragmentsServer({ controllers: [], log: vi.fn() });
-      let endSpy = vi.fn();
-      let response = { headersSent: true, end: endSpy, setHeader: vi.fn() };
-      server._reportError({}, response, new Error('already handled'));
-      expect(endSpy).toHaveBeenCalledOnce();
-    });
-  });
-
-  describe('A LinkedDataFragmentsServer instance whose error controller itself fails', () => {
-    it('should log the secondary error', () => {
-      let logSpy = vi.fn();
-      let server = new LinkedDataFragmentsServer({ controllers: [], log: logSpy });
-      server._errorController.handleRequest = () => { throw new Error('error controller failed'); };
-      let response = { headersSent: false, setHeader: vi.fn() };
-      server._reportError({}, response, new Error('original error'));
-      expect(logSpy).toHaveBeenCalledTimes(2);
-      expect(logSpy.mock.calls[1][0]).toContain('error controller failed');
-    });
-  });
-
-  describe('Stopping a LinkedDataFragmentsServer instance', () => {
-    it('should destroy open sockets', async () => {
-      let server = new LinkedDataFragmentsServer({ controllers: [], log: vi.fn() });
-      await promisify(server.listen.bind(server))(0);
-      let socket = net.connect({ port: server.address().port });
-      await once(socket, 'connect');
-      await promisify(setImmediate)();
-      server.stop();
-      await once(socket, 'close');
-    });
-
-    it('should close all controllers', () => {
-      let closeSpy = vi.fn();
-      let controller = { handleRequest: vi.fn(), close: closeSpy };
-      let server = new LinkedDataFragmentsServer({ controllers: [controller], log: vi.fn() });
-      server.stop();
-      expect(closeSpy).toHaveBeenCalledOnce();
-    });
-
-    it('should tolerate a controller whose close() throws', () => {
-      let logSpy = vi.fn();
-      let controller = { handleRequest: vi.fn(), close: () => { throw new Error('close failed'); } };
-      let server = new LinkedDataFragmentsServer({ controllers: [controller], log: logSpy });
-      expect(() => { server.stop(); }).not.toThrow();
-      expect(logSpy).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 });

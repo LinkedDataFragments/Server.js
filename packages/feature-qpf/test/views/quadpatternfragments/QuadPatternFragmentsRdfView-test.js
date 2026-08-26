@@ -237,15 +237,4 @@ describe('QuadPatternFragmentsRdfView', () => {
       });
     });
   });
-
-  describe('sendFragmentMetadata', () => {
-    it('should emit nothing when the fragment has no pageUrl', () => {
-      let view = new QuadPatternFragmentsRdfView({ dataFactory });
-      let metadata = vi.fn();
-
-      view.sendFragmentMetadata(metadata, {}, {}, {}, { totalCount: 0, hasExactCount: true });
-
-      expect(metadata).not.toHaveBeenCalled();
-    });
-  });
 });

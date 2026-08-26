@@ -16,9 +16,9 @@ import type { WorkerConfig } from './types';
 type Writable = { write(chunk: string): void };
 
 // Run function for starting the server from the command line
-export function runCli(moduleRootPath: string): void {
+export function runCli(moduleRootPath: string): Promise<void> {
   let argv = process.argv.slice(2);
-  void runCustom(argv, process.stdin, process.stdout, process.stderr, null, { mainModulePath: moduleRootPath });
+  return runCustom(argv, process.stdin, process.stdout, process.stderr, null, { mainModulePath: moduleRootPath });
 }
 
 // Generic run function for starting the server from a given config

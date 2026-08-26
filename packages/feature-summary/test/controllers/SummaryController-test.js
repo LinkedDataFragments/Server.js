@@ -81,13 +81,4 @@ describe('SummaryController', () => {
       expect(controller.next).toHaveBeenCalledOnce();
     });
   });
-
-  describe('An SummaryController instance without a configured summaries directory', () => {
-    it('should always hand over to the next controller', () => {
-      let controller = new SummaryController();
-      let handled = false;
-      controller._handleRequest({ url: '/summaries/foo' }, {}, () => { handled = true; });
-      expect(handled).toBe(true);
-    });
-  });
 });

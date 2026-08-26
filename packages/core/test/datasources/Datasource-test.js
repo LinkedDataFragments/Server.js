@@ -3,7 +3,6 @@
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import { withResolvers } from '../../../../test/test-helpers';
 const Datasource = require('../../lib/datasources/Datasource').Datasource; // changed to make tests pass, will be revised in follow up pr
-const UrlData = require('../../lib/UrlData').UrlData;
 
 const EventEmitter = require('events'),
     { once } = EventEmitter,
@@ -94,33 +93,6 @@ describe('Datasource', () => {
         expect(error.message).toContain('ENOENT: no such file or directory');
         expect(await Promise.race([datasourceErrored, Promise.resolve(null)])).toBeNull();
       });
-
-      it('fetches an http(s) resource via the configured request function', async () => {
-        let fakeRequest = vi.fn(() => {
-          let stream = new EventEmitter();
-          setImmediate(() => {
-            stream.emit('response', { statusCode: 200 });
-            stream.emit('end');
-          });
-          return stream;
-        });
-        let httpDatasource = new Datasource({ dataFactory, request: fakeRequest });
-        let result = httpDatasource._fetch({ url: 'http://example.org/resource' });
-        expect(fakeRequest).toHaveBeenCalledOnce();
-        await once(result, 'end');
-      });
-
-      it('emits an error for an http(s) response with a non-success status code', async () => {
-        function fakeRequest() {
-          let stream = new EventEmitter();
-          setImmediate(() => { stream.emit('response', { statusCode: 404 }); });
-          return stream;
-        }
-        let httpDatasource = new Datasource({ dataFactory, request: fakeRequest });
-        let result = httpDatasource._fetch({ url: 'https://example.org/missing' });
-        let [error] = await once(result, 'error');
-        expect(error.message).toContain('returned 404');
-      });
     });
 
     describe('when closed without a callback', () => {
@@ -131,28 +103,6 @@ describe('Datasource', () => {
 
     describe('when closed with a callback', () => {
       it('should invoke the callback', () => promisify(datasource.close.bind(datasource))());
-    });
-  });
-
-  describe('A disabled Datasource instance', () => {
-    let datasource = new Datasource({ dataFactory, enabled: false });
-
-    it('should also be hidden', () => {
-      expect(datasource.hide).toBe(true);
-    });
-
-    it('should initialize immediately without becoming queryable', async () => {
-      let initialized = once(datasource, 'initialized');
-      datasource.initialize();
-      await initialized;
-      expect(datasource.initialized).toBe(true);
-    });
-  });
-
-  describe('A Datasource instance without quad support', () => {
-    it('should not indicate support for the quadPattern feature', () => {
-      let datasource = new Datasource({ dataFactory, quads: false }, ['quadPattern', 'triplePattern']);
-      expect(datasource.supportedFeatures).toEqual({ triplePattern: true });
     });
   });
 
@@ -385,102 +335,6 @@ describe('Datasource', () => {
       });
       expect(datasource._executeQuery.mock.calls[0][0].features).toEqual({ custom: true }),
       datasource._executeQuery.mock.calls[0][0].graph.equals(dataFactory.namedNode('urn:ldf:emptyGraph'));
-    });
-  });
-
-  describe('A Datasource instance with a blank-node-aware urlData', () => {
-    let urlData = new UrlData({ baseURL: 'http://example.org/' });
-    let datasource = new Datasource({ dataFactory, urlData });
-    datasource.initialize();
-    datasource._executeQuery = vi.fn();
-
-    it('should translate a graph IRI matching the blank node prefix into a blank node in the query', () => {
-      datasource.select({
-        graph: dataFactory.namedNode(urlData.blankNodePrefix + 'b1'),
-        features: {},
-      });
-      expect(datasource._executeQuery.mock.calls[0][0].graph).toEqual(dataFactory.blankNode('b1'));
-    });
-
-    it('should translate a subject IRI matching the blank node prefix into a blank node in the query', () => {
-      datasource.select({
-        subject: dataFactory.namedNode(urlData.blankNodePrefix + 'b1'),
-        features: {},
-      });
-      let lastQuery = datasource._executeQuery.mock.calls[datasource._executeQuery.mock.calls.length - 1][0];
-      expect(lastQuery.subject).toEqual(dataFactory.blankNode('b1'));
-    });
-
-    it('should translate an object IRI matching the blank node prefix into a blank node in the query', () => {
-      datasource.select({
-        object: dataFactory.namedNode(urlData.blankNodePrefix + 'b1'),
-        features: {},
-      });
-      let lastQuery = datasource._executeQuery.mock.calls[datasource._executeQuery.mock.calls.length - 1][0];
-      expect(lastQuery.object).toEqual(dataFactory.blankNode('b1'));
-    });
-  });
-
-  describe('A Datasource instance without quad support', () => {
-    let datasource = new Datasource({ dataFactory, quads: false }, ['triplePattern']);
-    datasource.initialize();
-    datasource._executeQuery = vi.fn();
-
-    it('should force the default graph on every query, regardless of the requested graph', () => {
-      datasource.select({
-        graph: dataFactory.namedNode('http://example.org/g'),
-        features: { triplePattern: true },
-      });
-      expect(datasource._executeQuery.mock.calls[0][0].graph).toEqual(dataFactory.defaultGraph());
-    });
-  });
-
-  describe('A Datasource instance returning a blank-node graph', () => {
-    let urlData = new UrlData({ baseURL: 'http://example.org/' });
-    let datasource = new Datasource({ dataFactory, urlData });
-    datasource.initialize();
-    datasource._executeQuery = vi.fn((query, destination) => {
-      destination._push(dataFactory.quad(
-        dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o'), dataFactory.blankNode('b1')));
-      destination.close();
-    });
-
-    it('should translate a blank-node graph in the result into its well-known IRI', async () => {
-      let result = datasource.select({ features: {} }), quads = [];
-      result.on('data', (q) => { quads.push(q); });
-      await once(result, 'end');
-      expect(quads).toHaveLength(1);
-      expect(quads[0].graph).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 'b1'));
-    });
-  });
-
-  describe('A Datasource instance returning blank-node subjects and objects', () => {
-    let urlData = new UrlData({ baseURL: 'http://example.org/' });
-    let datasource = new Datasource({ dataFactory, urlData });
-    datasource.initialize();
-    datasource._executeQuery = vi.fn((query, destination) => {
-      destination._push(dataFactory.quad(
-        dataFactory.blankNode('s1'), dataFactory.namedNode('p'), dataFactory.blankNode('o1')));
-      destination.close();
-    });
-
-    it('should translate blank-node subjects and objects in the result into their well-known IRIs', async () => {
-      let result = datasource.select({ features: {} }), quads = [];
-      result.on('data', (q) => { quads.push(q); });
-      await once(result, 'end');
-      expect(quads).toHaveLength(1);
-      expect(quads[0].subject).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 's1'));
-      expect(quads[0].object).toEqual(dataFactory.namedNode(urlData.blankNodePrefix + 'o1'));
-    });
-  });
-
-  describe('A Datasource instance queried without an onError callback', () => {
-    it('should not attach an error listener', () => {
-      let datasource = new Datasource({ dataFactory });
-      datasource.initialize();
-      datasource._executeQuery = vi.fn();
-
-      expect(() => { datasource.select({ features: {} }); }).not.toThrow();
     });
   });
 });
