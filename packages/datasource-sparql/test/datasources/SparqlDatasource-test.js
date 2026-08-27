@@ -1,7 +1,7 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import { createHttpResponse, streamLength, withResolvers } from '../../../../test/test-helpers';
+import { createHttpResponse, streamLength } from '../../../../test/test-helpers';
 import { once } from 'events';
 let SparqlDatasource = require('../../').datasources.SparqlDatasource;
 
@@ -261,9 +261,9 @@ describe('SparqlDatasource', () => {
         let query = { subject: dataFactory.namedNode('abcdef'), features: { quadPattern: true } };
         let result = datasource.select(query);
         request.mock.results[1].value.emit('error', new Error());
-        let { promise, resolve } = withResolvers();
-        result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; resolve(); });
-        await promise;
+        await new Promise((resolve) => {
+          result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; resolve(); });
+        });
       });
 
       it('should emit a high count estimate', () => {
@@ -317,9 +317,9 @@ function itShouldExecute(datasource, request, name, query, constructQuery, count
       request.onFirstCall(createHttpResponse(jsonResult, 'application/sparql-results+json'));
       request.onSecondCall(createHttpResponse(countResult, 'text/csv'));
       result = datasource.select(query);
-      let { promise, resolve } = withResolvers();
-      result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; resolve(); });
-      await promise;
+      await new Promise((resolve) => {
+        result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; resolve(); });
+      });
     });
 
     it('should request a matching CONSTRUCT query', () => {

@@ -42,12 +42,3 @@ export function streamLength(stream) {
     stream.on('end', () => resolve(length));
   });
 }
-
-// Creates a deferred promise, like Promise.withResolvers (Node 22+),
-// but compatible with the Node 20 target this project still supports.
-// TODO: replace once Node 20 support is dropped.
-export function withResolvers() {
-  let resolve, reject;
-  const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
-  return { promise, resolve, reject };
-}

@@ -1,7 +1,6 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
-import { withResolvers } from '../../../../test/test-helpers';
 const Datasource = require('../../lib/datasources/Datasource').Datasource; // changed to make tests pass, will be revised in follow up pr
 
 const EventEmitter = require('events'),
@@ -108,11 +107,7 @@ describe('Datasource', () => {
     let datasource, initializedListener, errorListener, initResolver, initSpy;
     beforeAll(() => {
       datasource = new Datasource({ dataFactory });
-      datasource._initialize = () => {
-        let { promise, resolve } = withResolvers();
-        initResolver = resolve;
-        return promise;
-      };
+      datasource._initialize = () => new Promise((resolve) => { initResolver = resolve; });
       initSpy = vi.spyOn(datasource, '_initialize');
       Object.defineProperty(datasource, 'supportedFeatures', {
         value: { all: true },
@@ -299,18 +294,17 @@ describe('Datasource', () => {
     });
 
     it('should move triples in the default graph to the given graph', async () => {
-      let { promise, reject } = withResolvers();
-      let result = datasource.select({ features: { custom: true } }, reject), quads = [];
-      result.on('data', (q) => { quads.push(q); });
-      await Promise.race([once(result, 'end'), promise]);
-      let matchingquads = [
+      let quads = await new Promise((resolve, reject) => {
+        let collected = [];
+        let result = datasource.select({ features: { custom: true } }, reject);
+        result.on('data', (q) => { collected.push(q); });
+        result.on('end', () => { resolve(collected); });
+      });
+      expect(quads).toEqual([
         dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o1'), dataFactory.namedNode('http://example.org/#mygraph')),
         dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o2'), dataFactory.namedNode('http://example.org/#mygraph')),
         dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o3'), dataFactory.namedNode('g')),
-      ];
-      expect(matchingquads.length).toBe(quads.length);
-      for (let i = 0; i < quads.length; i++)
-        expect(quads[i]).toEqual(matchingquads[i]);
+      ]);
     });
 
     it('should query the given graph as the default graph', () => {

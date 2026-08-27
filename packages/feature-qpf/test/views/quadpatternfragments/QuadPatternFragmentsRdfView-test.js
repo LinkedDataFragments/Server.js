@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import { createStreamCapture, withResolvers } from '../../../../../test/test-helpers';
+import { createStreamCapture } from '../../../../../test/test-helpers';
 let QuadPatternFragmentsRdfView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsRdfView;
 
 let _ = require('lodash'),
@@ -71,14 +71,12 @@ describe('QuadPatternFragmentsRdfView', () => {
         describe('with an empty triple stream', () => {
           let results = AsyncIterator.empty();
           let response = createStreamCapture();
-          beforeAll(async () => {
-            let { promise, resolve } = withResolvers();
+          beforeAll(() => new Promise((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
             results.setProperty('metadata', { totalCount: 1234 });
-            await promise;
-          });
+          }));
 
           it('should only write data source metadata', () => {
             expect(response.buffer).toBe(readAsset('empty-fragment'));
@@ -92,15 +90,13 @@ describe('QuadPatternFragmentsRdfView', () => {
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
-          beforeAll(async () => {
-            let { promise, resolve } = withResolvers();
+          beforeAll(() => new Promise((resolve) => {
             settings.results = new AsyncIterator.TransformIterator();
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
             settings.results.setProperty('metadata', { totalCount: 1234 });
             settings.results.source = results;
-            await promise;
-          });
+          }));
 
           it('should write data and metadata', () => {
             expect(response.buffer).toBe(readAsset('basic-fragment'));
@@ -114,16 +110,14 @@ describe('QuadPatternFragmentsRdfView', () => {
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
-          beforeAll(async () => {
-            let { promise, resolve } = withResolvers();
+          beforeAll(() => new Promise((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
             setImmediate(() => {
               results.setProperty('metadata', { totalCount: 1234 });
             });
-            await promise;
-          });
+          }));
 
           it('should write data and metadata', () => {
             expect(response.buffer).toBe(readAsset('basic-fragment-metadata-last'));
@@ -143,14 +137,12 @@ describe('QuadPatternFragmentsRdfView', () => {
             query: { limit: 100 },
           };
           let response = createStreamCapture();
-          beforeAll(async () => {
-            let { promise, resolve } = withResolvers();
+          beforeAll(() => new Promise((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
             results.setProperty('metadata', { totalCount: 1234 });
-            await promise;
-          });
+          }));
 
           it('should write a first page link', () => {
             expect(response.buffer).toContain('myfirst');
@@ -178,14 +170,12 @@ describe('QuadPatternFragmentsRdfView', () => {
             query: { limit: 100, offset: 1133 },
           };
           let response = createStreamCapture();
-          beforeAll(async () => {
-            let { promise, resolve } = withResolvers();
+          beforeAll(() => new Promise((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
             results.setProperty('metadata', { totalCount: 1234 });
-            await promise;
-          });
+          }));
 
           it('should write a first page link', () => {
             expect(response.buffer).toContain('myfirst');
@@ -213,14 +203,12 @@ describe('QuadPatternFragmentsRdfView', () => {
             query: { limit: 100, offset: 1135 },
           };
           let response = createStreamCapture();
-          beforeAll(async () => {
-            let { promise, resolve } = withResolvers();
+          beforeAll(() => new Promise((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, {}, response, resolve);
             results.setProperty('metadata', { totalCount: 1234 });
-            await promise;
-          });
+          }));
 
           it('should write a first page link', () => {
             expect(response.buffer).toContain('myfirst');
