@@ -197,11 +197,6 @@
       plugins: [ "eslint-plugin-promise" ],
       rules: {
         "import/no-extraneous-dependencies": "off",
-        // Comunica's eslint config pushes the same modern-async-only style;
-        // vitest/supertest are promise-based, so wrapping them back in
-        // `new Promise((done) => ...)` or driving them through .then()/callbacks
-        // is no longer needed.
-        "promise/avoid-new": 2,
         "promise/prefer-await-to-then": 2,
         "promise/prefer-await-to-callbacks": 2
       }

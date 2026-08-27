@@ -2,7 +2,6 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { once } from 'events';
-import { withResolvers } from '../../../../test/test-helpers';
 let N3Datasource = require('../../').datasources.N3Datasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -20,17 +19,13 @@ describe('N3Datasource', () => {
     it('should be a N3Datasource constructor', async () => {
       let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       expect(instance).toBeInstanceOf(N3Datasource);
-      let { promise, resolve } = withResolvers();
-      instance.close(resolve);
-      await promise;
+      await new Promise((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
       let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      let { promise, resolve } = withResolvers();
-      instance.close(resolve);
-      await promise;
+      await new Promise((resolve) => instance.close(resolve));
     });
   });
 
@@ -40,11 +35,7 @@ describe('N3Datasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => {
-      let { promise, resolve } = withResolvers();
-      datasource.close(resolve);
-      return promise;
-    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(datasource,
       'the empty query',

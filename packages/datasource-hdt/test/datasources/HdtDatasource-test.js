@@ -1,7 +1,6 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { withResolvers } from '../../../../test/test-helpers';
 let HdtDatasource = require('../../').datasources.HdtDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -24,18 +23,14 @@ describe('HdtDatasource', () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(HdtDatasource);
-      let { promise, resolve } = withResolvers();
-      instance.close(resolve);
-      await promise;
+      await new Promise((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(Datasource);
-      let { promise, resolve } = withResolvers();
-      instance.close(resolve);
-      await promise;
+      await new Promise((resolve) => instance.close(resolve));
     });
   });
 
@@ -47,11 +42,7 @@ describe('HdtDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => {
-      let { promise, resolve } = withResolvers();
-      datasource.close(resolve);
-      return promise;
-    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -112,11 +103,7 @@ describe('HdtDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => {
-      let { promise, resolve } = withResolvers();
-      datasource.close(resolve);
-      return promise;
-    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -167,11 +154,7 @@ describe('HdtDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => {
-      let { promise, resolve } = withResolvers();
-      datasource.close(resolve);
-      return promise;
-    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',

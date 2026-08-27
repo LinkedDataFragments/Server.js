@@ -45,9 +45,7 @@ describe('Datasource', () => {
     });
 
     it('should throw an error when trying to execute an unsupported query', async () => {
-      let { promise, resolve } = withResolvers();
-      datasource.select({ features: { a: true, b: true } }, resolve);
-      let error = await promise;
+      let error = await new Promise((resolve) => datasource.select({ features: { a: true, b: true } }, resolve));
       expect(error).toBeInstanceOf(Error);
       expect(error).toHaveProperty('message', 'The datasource does not support the given query');
     });
@@ -102,11 +100,7 @@ describe('Datasource', () => {
     });
 
     describe('when closed with a callback', () => {
-      it('should invoke the callback', () => {
-        let { promise, resolve } = withResolvers();
-        datasource.close(resolve);
-        return promise;
-      });
+      it('should invoke the callback', () => new Promise((resolve) => datasource.close(resolve)));
     });
   });
 
@@ -142,9 +136,7 @@ describe('Datasource', () => {
       });
 
       it('should error when trying to query', async () => {
-        let { promise, resolve } = withResolvers();
-        datasource.select({}, resolve);
-        let error = await promise;
+        let error = await new Promise((resolve) => datasource.select({}, resolve));
         expect(error).toHaveProperty('message', 'The datasource is not initialized yet');
       });
     });
@@ -171,9 +163,7 @@ describe('Datasource', () => {
       });
 
       it('should allow querying', async () => {
-        let { promise, resolve } = withResolvers();
-        datasource.select({}, resolve);
-        let error = await promise;
+        let error = await new Promise((resolve) => datasource.select({}, resolve));
         expect(error).toHaveProperty('message', '_executeQuery has not been implemented');
       });
     });

@@ -68,9 +68,7 @@ describe('SparqlDatasource', () => {
     });
 
     it('should throw an error when trying to execute an unsupported query', async () => {
-      let { promise, resolve } = withResolvers();
-      datasource.select({ features: { a: true, b: true } }, resolve);
-      let error = await promise;
+      let error = await new Promise((resolve) => datasource.select({ features: { a: true, b: true } }, resolve));
       expect(error).toBeInstanceOf(Error);
       expect(error).toHaveProperty('message', 'The datasource does not support the given query');
     });
