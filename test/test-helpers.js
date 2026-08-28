@@ -7,8 +7,8 @@ import { Readable, Writable } from 'stream';
 export function extractQueryParams(router, description, url, intent, query, expectedQuery) {
   it(description + ' ' + intent, () => {
     const result = router.extractQueryParams({ url: parseUrl(url, true) }, query);
-    expect(result).toBeUndefined();
-    expect(query).toEqual(expectedQuery);
+    expect(result, 'should not return anything').toBeUndefined();
+    expect(query, 'should match the expected query').toEqual(expectedQuery);
   });
 }
 
