@@ -35,10 +35,9 @@ export function createStreamCapture() {
 }
 
 // Counts the elements in a stream and resolves once it ends
-export function streamLength(stream) {
-  return new Promise((resolve) => {
+export async function streamLength(stream): Promise<number> {
     let length = 0;
     stream.on('data', () => { length++; });
-    stream.on('end', () => resolve(length));
-  });
+    await once(stream, 'end');
+    return length;
 }
