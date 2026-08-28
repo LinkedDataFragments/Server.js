@@ -1,14 +1,17 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect } from 'vitest';
+import { extractQueryParams } from '../../../../test/test-helpers';
 let DatasourceRouter = require('../../lib/routers/DatasourceRouter').DatasourceRouter; // changed to make tests pass, will be revised in follow up pr
 
 describe('DatasourceRouter', () => {
   describe('The DatasourceRouter module', () => {
     it('should be a function', () => {
-      DatasourceRouter.should.be.a('function');
+      expect(typeof DatasourceRouter).toBe('function');
     });
 
     it('should be a DatasourceRouter constructor', () => {
-      new DatasourceRouter().should.be.an.instanceof(DatasourceRouter);
+      expect(new DatasourceRouter()).toBeInstanceOf(DatasourceRouter);
     });
   });
 
@@ -68,7 +71,7 @@ describe('DatasourceRouter', () => {
             { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
           ],
         ]
-          .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -96,7 +99,7 @@ describe('DatasourceRouter', () => {
             { a: 1, features: { datasource: true }, datasource: '/other/path' },
           ],
         ]
-          .forEach((args) => { test.extractQueryParams.apply(router, args); });
+          .forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });

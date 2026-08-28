@@ -23,7 +23,7 @@ export class UrlData {
     options = options || {};
     this.baseURL = (options.baseURL || '/').replace(/\/?$/, '/');
     this.baseURLRoot = this.baseURL.match(/^(?:https?:\/\/[^\/]+)?/)![0];
-    this.baseURLPath = this.baseURL.substr(this.baseURLRoot.length);
+    this.baseURLPath = this.baseURL.slice(this.baseURLRoot.length);
     this.blankNodePath = this.baseURLRoot ? '/.well-known/genid/' : '';
     this.blankNodePrefix = this.blankNodePath ? this.baseURLRoot + this.blankNodePath : 'genid:';
     this.blankNodePrefixLength = this.blankNodePrefix.length;

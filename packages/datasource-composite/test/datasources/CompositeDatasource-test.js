@@ -1,4 +1,6 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 let CompositeDatasource = require('../../').datasources.CompositeDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -6,6 +8,9 @@ let Datasource = require('@ldf/core').datasources.Datasource,
     N3Datasource = require('@ldf/datasource-n3').datasources.N3Datasource,
     path = require('path'),
     dataFactory = require('n3').DataFactory;
+
+let EventEmitter = require('events'),
+    { once } = EventEmitter;
 
 let exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
@@ -25,47 +30,49 @@ describe('CompositeDatasource', () => {
     let size = references[datasourceId].size;
     references[datasourceId] = new DatasourceType(datasource.settings);
     references[datasourceId].size = size;
-    references[datasourceId].initialize();
   });
   let totalSize = Object.keys(references).reduce((acc, key) => {
     return acc + references[key].size;
   }, 0);
 
+  beforeAll(() => Promise.all(Object.keys(references).map(async (key) => {
+    references[key].initialize();
+    await once(references[key], 'initialized');
+  })));
+
   describe('The CompositeDatasource module', () => {
     it('should be a function', () => {
-      CompositeDatasource.should.be.a('function');
+      expect(typeof CompositeDatasource).toBe('function');
     });
 
-    it('should be an CompositeDatasource constructor', (done) => {
+    it('should be an CompositeDatasource constructor', async () => {
       let instance = new CompositeDatasource({ references: references, dataFactory });
-      instance.should.be.an.instanceof(CompositeDatasource);
-      instance.close(done);
+      expect(instance).toBeInstanceOf(CompositeDatasource);
+      await new Promise((resolve) => instance.close(resolve));
     });
 
-    it('should create CompositeDatasource objects', (done) => {
+    it('should create CompositeDatasource objects', async () => {
       let instance = new CompositeDatasource({ references: references, dataFactory });
-      instance.should.be.an.instanceof(CompositeDatasource);
-      instance.close(done);
+      expect(instance).toBeInstanceOf(CompositeDatasource);
+      await new Promise((resolve) => instance.close(resolve));
     });
 
-    it('should create Datasource objects', (done) => {
+    it('should create Datasource objects', async () => {
       let instance = new CompositeDatasource({ references: references, dataFactory });
-      instance.should.be.an.instanceof(Datasource);
-      instance.close(done);
+      expect(instance).toBeInstanceOf(Datasource);
+      await new Promise((resolve) => instance.close(resolve));
     });
   });
 
   describe('A CompositeDatasource instance for 4 Datasources', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    before((done) => {
+    beforeAll(async () => {
       datasource = new CompositeDatasource({ references: references, dataFactory });
       datasource.initialize();
-      datasource.on('initialized', done);
+      await once(datasource, 'initialized');
     });
-    after((done) => {
-      datasource.close(done);
-    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -158,26 +165,26 @@ function itShouldExecute(getDatasource, name, query,
   expectedResultsCount, expectedTotalCount, expectedTriples) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount, triples = [];
-    before((done) => {
+    beforeAll(async () => {
       let result = getDatasource().select(query);
       result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       result.on('data', (triple) => { resultsCount++; expectedTriples && triples.push(triple); });
-      result.on('end', done);
+      await once(result, 'end');
     });
 
     it('should return the expected number of triples', () => {
-      expect(resultsCount).to.equal(expectedResultsCount);
+      expect(resultsCount).toBe(expectedResultsCount);
     });
 
     it('should emit the expected total number of triples', () => {
-      expect(totalCount).to.equal(expectedTotalCount);
+      expect(totalCount).toBe(expectedTotalCount);
     });
 
     if (expectedTriples) {
       it('should emit the expected triples', () => {
-        expect(triples.length).to.equal(expectedTriples.length);
+        expect(triples.length).toBe(expectedTriples.length);
         for (let i = 0; i < expectedTriples.length; i++)
-          triples[i].should.deep.equal(expectedTriples[i]);
+          expect(triples[i]).toEqual(expectedTriples[i]);
       });
     }
   });

@@ -1,4 +1,7 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { once } from 'events';
 let N3Datasource = require('../../').datasources.N3Datasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -10,26 +13,29 @@ let exampleTurtleUrl = 'file://' + path.join(__dirname, '../../../../test/assets
 describe('N3Datasource', () => {
   describe('The N3Datasource module', () => {
     it('should be a function', () => {
-      N3Datasource.should.be.a('function');
+      expect(typeof N3Datasource).toBe('function');
     });
 
-    it('should be a N3Datasource constructor', (done) => {
+    it('should be a N3Datasource constructor', async () => {
       let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
-      instance.should.be.an.instanceof(N3Datasource);
-      instance.close(done);
+      expect(instance).toBeInstanceOf(N3Datasource);
+      await new Promise((resolve) => instance.close(resolve));
     });
 
-    it('should create Datasource objects', (done) => {
+    it('should create Datasource objects', async () => {
       let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
-      instance.should.be.an.instanceof(Datasource);
-      instance.close(done);
+      expect(instance).toBeInstanceOf(Datasource);
+      await new Promise((resolve) => instance.close(resolve));
     });
   });
 
   describe('A N3Datasource instance for an example Turtle file', () => {
     let datasource = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
-    datasource.initialize();
-    after((done) => { datasource.close(done); });
+    beforeAll(async () => {
+      datasource.initialize();
+      await once(datasource, 'initialized');
+    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(datasource,
       'the empty query',
@@ -81,19 +87,19 @@ describe('N3Datasource', () => {
 function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount;
-    before((done) => {
+    beforeAll(async () => {
       let result = datasource.select(query);
       result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       result.on('data', (triple) => { resultsCount++; });
-      result.on('end', done);
+      await once(result, 'end');
     });
 
     it('should return the expected number of triples', () => {
-      expect(resultsCount).to.equal(expectedResultsCount);
+      expect(resultsCount).toBe(expectedResultsCount);
     });
 
     it('should emit the expected total number of triples', () => {
-      expect(totalCount).to.equal(expectedTotalCount);
+      expect(totalCount).toBe(expectedTotalCount);
     });
   });
 }

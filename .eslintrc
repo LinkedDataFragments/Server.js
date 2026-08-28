@@ -194,8 +194,11 @@
     {
       // Specific rules for test files
       files: [ "packages/**/test/**/*-test.js" ],
+      plugins: [ "eslint-plugin-promise" ],
       rules: {
-        "import/no-extraneous-dependencies": "off"
+        "import/no-extraneous-dependencies": "off",
+        "promise/prefer-await-to-then": 2,
+        "promise/prefer-await-to-callbacks": 2
       }
     },
     {

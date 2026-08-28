@@ -1,4 +1,7 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { once } from 'events';
 let RdfaDatasource = require('../../').datasources.RdfaDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
@@ -10,26 +13,29 @@ let exampleRdfaUrl = 'file://' + path.join(__dirname, '../../../../test/assets/t
 describe('RdfaDatasource', () => {
   describe('The RdfaDatasource module', () => {
     it('should be a function', () => {
-      RdfaDatasource.should.be.a('function');
+      expect(typeof RdfaDatasource).toBe('function');
     });
 
-    it('should be a RdfaDatasource constructor', (done) => {
+    it('should be a RdfaDatasource constructor', async () => {
       let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
-      instance.should.be.an.instanceof(RdfaDatasource);
-      instance.close(done);
+      expect(instance).toBeInstanceOf(RdfaDatasource);
+      await new Promise((resolve) => instance.close(resolve));
     });
 
-    it('should create Datasource objects', (done) => {
+    it('should create Datasource objects', async () => {
       let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
-      instance.should.be.an.instanceof(Datasource);
-      instance.close(done);
+      expect(instance).toBeInstanceOf(Datasource);
+      await new Promise((resolve) => instance.close(resolve));
     });
   });
 
   describe('A RdfaDatasource instance for an example RDFa HTML file', () => {
     let datasource = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
-    datasource.initialize();
-    after((done) => { datasource.close(done); });
+    beforeAll(async () => {
+      datasource.initialize();
+      await once(datasource, 'initialized');
+    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(datasource,
       'the empty query',
@@ -81,19 +87,19 @@ describe('RdfaDatasource', () => {
 function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount;
-    before((done) => {
+    beforeAll(async () => {
       let result = datasource.select(query);
       result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       result.on('data', (triple) => { resultsCount++; });
-      result.on('end', done);
+      await once(result, 'end');
     });
 
     it('should return the expected number of triples', () => {
-      expect(resultsCount).to.equal(expectedResultsCount);
+      expect(resultsCount).toBe(expectedResultsCount);
     });
 
     it('should emit the expected total number of triples', () => {
-      expect(totalCount).to.equal(expectedTotalCount);
+      expect(totalCount).toBe(expectedTotalCount);
     });
   });
 }

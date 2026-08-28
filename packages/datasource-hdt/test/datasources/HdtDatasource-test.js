@@ -1,11 +1,14 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
+
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 let HdtDatasource = require('../../').datasources.HdtDatasource;
 
 let Datasource = require('@ldf/core').datasources.Datasource,
     UrlData = require('@ldf/core').UrlData,
     path = require('path'),
     dataFactory = require('n3').DataFactory,
-    RdfString = require('rdf-string');
+    RdfString = require('rdf-string'),
+    { once } = require('events');
 
 let exampleHdtFile = path.join(__dirname, '../../../../test/assets/test.hdt');
 let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/test-blank.hdt');
@@ -13,35 +16,33 @@ let exampleHdtFileWithBlanks = path.join(__dirname, '../../../../test/assets/tes
 describe('HdtDatasource', () => {
   describe('The HdtDatasource module', () => {
     it('should be a function', () => {
-      HdtDatasource.should.be.a('function');
+      expect(typeof HdtDatasource).toBe('function');
     });
 
-    it('should be an HdtDatasource constructor', (done) => {
+    it('should be an HdtDatasource constructor', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
-      instance.should.be.an.instanceof(HdtDatasource);
-      instance.close(done);
+      expect(instance).toBeInstanceOf(HdtDatasource);
+      await new Promise((resolve) => instance.close(resolve));
     });
 
-    it('should create Datasource objects', (done) => {
+    it('should create Datasource objects', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
-      instance.should.be.an.instanceof(Datasource);
-      instance.close(done);
+      expect(instance).toBeInstanceOf(Datasource);
+      await new Promise((resolve) => instance.close(resolve));
     });
   });
 
   describe('A HdtDatasource instance for an example HDT file', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    before((done) => {
+    beforeAll(async () => {
       datasource = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       datasource.initialize();
-      datasource.on('initialized', done);
+      await once(datasource, 'initialized');
     });
-    after((done) => {
-      datasource.close(done);
-    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -97,14 +98,12 @@ describe('HdtDatasource', () => {
   describe('A HdtDatasource instance with blank nodes', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    before((done) => {
+    beforeAll(async () => {
       datasource = new HdtDatasource({ dataFactory, file: exampleHdtFileWithBlanks });
       datasource.initialize();
-      datasource.on('initialized', done);
+      await once(datasource, 'initialized');
     });
-    after((done) => {
-      datasource.close(done);
-    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -146,18 +145,16 @@ describe('HdtDatasource', () => {
   describe('A HdtDatasource instance with blank nodes and a blank node prefix', () => {
     let datasource;
     function getDatasource() { return datasource; }
-    before((done) => {
+    beforeAll(async () => {
       datasource = new HdtDatasource({
         dataFactory,
         file: exampleHdtFileWithBlanks,
         urlData: new UrlData({ baseURL: 'http://example.org/' }),
       });
       datasource.initialize();
-      datasource.on('initialized', done);
+      await once(datasource, 'initialized');
     });
-    after((done) => {
-      datasource.close(done);
-    });
+    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -201,26 +198,26 @@ function itShouldExecute(getDatasource, name, query,
   expectedResultsCount, expectedTotalCount, expectedTriples) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount, triples = [];
-    before((done) => {
+    beforeAll(async () => {
       let result = getDatasource().select(query);
       result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
       result.on('data', (triple) => { resultsCount++; expectedTriples && triples.push(triple); });
-      result.on('end', done);
+      await once(result, 'end');
     });
 
     it('should return the expected number of triples', () => {
-      expect(resultsCount).to.equal(expectedResultsCount);
+      expect(resultsCount).toBe(expectedResultsCount);
     });
 
     it('should emit the expected total number of triples', () => {
-      expect(totalCount).to.equal(expectedTotalCount);
+      expect(totalCount).toBe(expectedTotalCount);
     });
 
     if (expectedTriples) {
       it('should emit the expected triples', () => {
-        expect(triples.length).to.equal(expectedTriples.length);
+        expect(triples.length).toBe(expectedTriples.length);
         for (let i = 0; i < expectedTriples.length; i++)
-          triples[i].should.deep.equal(RdfString.stringQuadToQuad(expectedTriples[i], dataFactory));
+          expect(triples[i]).toEqual(RdfString.stringQuadToQuad(expectedTriples[i], dataFactory));
       });
     }
   });
