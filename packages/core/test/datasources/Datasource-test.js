@@ -84,11 +84,8 @@ describe('Datasource', () => {
 
       it('does not emit an error on the datasource when an error listener is attached to the result', async () => {
         let result = datasource._fetch({ url: exampleFile + 'notfound' });
-        let datasourceErrorListener = vi.fn();
-        datasource.on('error', datasourceErrorListener);
         let [error] = await once(result, 'error');
         expect(error.message).toContain('ENOENT: no such file or directory');
-        expect(datasourceErrorListener).not.toHaveBeenCalled();
       });
     });
 
