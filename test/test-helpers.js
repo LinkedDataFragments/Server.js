@@ -2,6 +2,7 @@
 import { it, expect } from 'vitest';
 import { parse as parseUrl } from 'url';
 import { Readable, Writable } from 'stream';
+import { once } from 'events';
 
 // Generates an `it` block that verifies a router's extractQueryParams behavior
 export function extractQueryParams(router, description, url, intent, query, expectedQuery) {
@@ -35,9 +36,9 @@ export function createStreamCapture() {
 }
 
 // Counts the elements in a stream and resolves once it ends
-export async function streamLength(stream): Promise<number> {
-    let length = 0;
-    stream.on('data', () => { length++; });
-    await once(stream, 'end');
-    return length;
+export async function streamLength(stream) {
+  let length = 0;
+  stream.on('data', () => { length++; });
+  await once(stream, 'end');
+  return length;
 }
