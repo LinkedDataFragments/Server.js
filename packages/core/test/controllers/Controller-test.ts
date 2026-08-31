@@ -31,7 +31,9 @@ describe('Controller', () => {
   });
 
   describe('A Controller instance without baseURL', () => {
-    let controller: TestableController & Partial<SpiedController>, client: ReturnType<typeof request.agent>, handleRequestSpy: Mock<TestableController['_handleRequest']>;
+    let controller: TestableController & Partial<SpiedController>;
+    let client: ReturnType<typeof request.agent>;
+    let handleRequestSpy: Mock<TestableController['_handleRequest']>;
     beforeAll(() => {
       controller = new TestableController();
       handleRequestSpy = vi.spyOn(controller, '_handleRequest');
@@ -67,7 +69,9 @@ describe('Controller', () => {
   });
 
   describe('A Controller instance without baseURL using Forwarded header', () => {
-    let controller: TestableController & Partial<SpiedController>, client: ReturnType<typeof request.agent>, handleRequestSpy: Mock<TestableController['_handleRequest']>;
+    let controller: TestableController & Partial<SpiedController>;
+    let client: ReturnType<typeof request.agent>;
+    let handleRequestSpy: Mock<TestableController['_handleRequest']>;
     beforeAll(() => {
       controller = new TestableController({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       handleRequestSpy = vi.spyOn(controller, '_handleRequest');
@@ -107,7 +111,9 @@ describe('Controller', () => {
   });
 
   describe('A Controller instance without baseURL using X-Forwarded-* headers', () => {
-    let controller: TestableController & Partial<SpiedController>, client: ReturnType<typeof request.agent>, handleRequestSpy: Mock<TestableController['_handleRequest']>;
+    let controller: TestableController & Partial<SpiedController>;
+    let client: ReturnType<typeof request.agent>;
+    let handleRequestSpy: Mock<TestableController['_handleRequest']>;
     beforeAll(() => {
       controller = new TestableController();
       handleRequestSpy = vi.spyOn(controller, '_handleRequest');
@@ -146,7 +152,9 @@ describe('Controller', () => {
   });
 
   describe('A Controller instance with baseURL', () => {
-    let controller: TestableController & Partial<SpiedController>, client: ReturnType<typeof request.agent>, handleRequestSpy: Mock<TestableController['_handleRequest']>;
+    let controller: TestableController & Partial<SpiedController>;
+    let client: ReturnType<typeof request.agent>;
+    let handleRequestSpy: Mock<TestableController['_handleRequest']>;
     beforeAll(() => {
       controller = new TestableController({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       handleRequestSpy = vi.spyOn(controller, '_handleRequest');
