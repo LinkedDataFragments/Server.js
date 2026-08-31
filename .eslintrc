@@ -193,7 +193,7 @@
   overrides: [
     {
       // Specific rules for test files
-      files: [ "packages/**/test/**/*-test.js" ],
+      files: [ "packages/**/test/**/*-test.ts" ],
       plugins: [ "eslint-plugin-promise" ],
       rules: {
         "import/no-extraneous-dependencies": "off",
@@ -203,13 +203,13 @@
     },
     {
       // TypeScript source files
-      files: [ "packages/**/*.ts" ],
+      files: [ "packages/**/*.ts", "test/**/*.ts" ],
       parser: "@typescript-eslint/parser",
       extends: [ "plugin:@typescript-eslint/recommended-requiring-type-checking" ],
       parserOptions: {
         ecmaVersion: 9,
         sourceType: "module",
-        project: "./tsconfig.json"
+        project: "./tsconfig.typecheck.json"
       },
       plugins: [ "@typescript-eslint" ],
       rules: {

@@ -1,31 +1,34 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
-let LinkedDataFragmentsServer = require('../lib/LinkedDataFragmentsServer').LinkedDataFragmentsServer; // changed to make tests pass, will be revised in follow up pr
+import type { Mock } from 'vitest';
+import { LinkedDataFragmentsServer } from '../lib/LinkedDataFragmentsServer';
+import { Controller } from '../lib/controllers/Controller';
+import type { LdfRequestWithUrl, LdfResponse } from '../index';
 
-let request = require('supertest');
+import * as request from 'supertest';
 
 describe('LinkedDataFragmentsServer', () => {
   describe('A LinkedDataFragmentsServer instance with one controller', () => {
-    let server, controller, client;
+    let server: ReturnType<typeof LinkedDataFragmentsServer>, controller: Controller, client: ReturnType<typeof request.agent>;
+    let handleRequestSpy: Mock<Controller['handleRequest']>;
     beforeAll(() => {
-      controller = {
-        handleRequest: vi.fn((request, response, next) => {
-          switch (request.url) {
-          case '/handle':
-            response.end('body contents');
-            break;
-          case '/error':
-            throw new Error('error message');
-          default:
-            next();
-          }
-        }),
-      };
+      controller = new Controller();
+      handleRequestSpy = vi.fn((request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void) => {
+        switch (request.url) {
+        case '/handle':
+          response.end('body contents');
+          break;
+        case '/error':
+          throw new Error('error message');
+        default:
+          next();
+        }
+      });
+      controller.handleRequest = handleRequestSpy;
       server = new LinkedDataFragmentsServer({
         controllers: [controller],
         log: vi.fn(),
-        protocol: 'http',
         response: {
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -36,7 +39,7 @@ describe('LinkedDataFragmentsServer', () => {
       client = request.agent(server);
     });
     beforeEach(() => {
-      controller.handleRequest.mockClear();
+      handleRequestSpy.mockClear();
     });
 
     it('should send the configured headers', async () => {
@@ -47,7 +50,7 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should not allow POST requests', async () => {
       let response = await client.post('/');
-      expect(controller.handleRequest).not.toHaveBeenCalled();
+      expect(handleRequestSpy).not.toHaveBeenCalled();
       expect(response).toHaveProperty('statusCode', 405);
       expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
       expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
@@ -55,28 +58,28 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should send a body with GET requests', async () => {
       let response = await client.get('/handle');
-      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(handleRequestSpy).toHaveBeenCalledOnce();
       expect(response).toHaveProperty('statusCode', 200);
       expect(response).toHaveProperty('text', 'body contents');
     });
 
     it('should not send a body with HEAD requests', async () => {
       let response = await client.head('/handle');
-      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(handleRequestSpy).toHaveBeenCalledOnce();
       expect(response).toHaveProperty('statusCode', 200);
       expect(response.body).not.toHaveProperty('length');
     });
 
     it('should not send a body with OPTIONS requests', async () => {
       let response = await client.options('/handle');
-      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(handleRequestSpy).toHaveBeenCalledOnce();
       expect(response).toHaveProperty('statusCode', 200);
       expect(response).toHaveProperty('text', '');
     });
 
     it('should error when the controller cannot handle the request', async () => {
       let response = await client.get('/unsupported');
-      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(handleRequestSpy).toHaveBeenCalledOnce();
       expect(response).toHaveProperty('statusCode', 500);
       expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
       expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
@@ -84,7 +87,7 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should error when the controller errors', async () => {
       let response = await client.get('/error');
-      expect(controller.handleRequest).toHaveBeenCalledOnce();
+      expect(handleRequestSpy).toHaveBeenCalledOnce();
       expect(response).toHaveProperty('statusCode', 500);
       expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
       expect(response).toHaveProperty('text', 'Application error: error message\n');
@@ -92,51 +95,51 @@ describe('LinkedDataFragmentsServer', () => {
   });
 
   describe('A LinkedDataFragmentsServer instance with two controllers', () => {
-    let server, controllerA, controllerB, client;
+    let server: ReturnType<typeof LinkedDataFragmentsServer>, controllerA: Controller, controllerB: Controller, client: ReturnType<typeof request.agent>;
+    let handleRequestSpyA: Mock<Controller['handleRequest']>, handleRequestSpyB: Mock<Controller['handleRequest']>;
     beforeAll(() => {
-      controllerA = {
-        handleRequest: vi.fn((request, response, next) => {
-          switch (request.url) {
-          case '/handleA':
-            response.end('body contents A');
-            break;
-          case '/errorA':
-            throw new Error('error message A');
-          default:
-            next();
-          }
-        }),
-      };
-      controllerB = {
-        handleRequest: vi.fn((request, response, next) => {
-          switch (request.url) {
-          case '/handleB':
-            response.end('body contents B');
-            break;
-          case '/errorB':
-            next(new Error('error message B'));
-            break;
-          default:
-            next();
-          }
-        }),
-      };
+      controllerA = new Controller();
+      handleRequestSpyA = vi.fn((request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void) => {
+        switch (request.url) {
+        case '/handleA':
+          response.end('body contents A');
+          break;
+        case '/errorA':
+          throw new Error('error message A');
+        default:
+          next();
+        }
+      });
+      controllerA.handleRequest = handleRequestSpyA;
+      controllerB = new Controller();
+      handleRequestSpyB = vi.fn((request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void) => {
+        switch (request.url) {
+        case '/handleB':
+          response.end('body contents B');
+          break;
+        case '/errorB':
+          next(new Error('error message B'));
+          break;
+        default:
+          next();
+        }
+      });
+      controllerB.handleRequest = handleRequestSpyB;
       server = new LinkedDataFragmentsServer({
         controllers: [controllerA, controllerB],
-        protocol: 'http',
         log: vi.fn(),
       });
       client = request.agent(server);
     });
     beforeEach(() => {
-      controllerA.handleRequest.mockClear();
-      controllerB.handleRequest.mockClear();
+      handleRequestSpyA.mockClear();
+      handleRequestSpyB.mockClear();
     });
 
     it('should not allow POST requests', async () => {
       let response = await client.post('/');
-      expect(controllerA.handleRequest).not.toHaveBeenCalled();
-      expect(controllerB.handleRequest).not.toHaveBeenCalled();
+      expect(handleRequestSpyA).not.toHaveBeenCalled();
+      expect(handleRequestSpyB).not.toHaveBeenCalled();
       expect(response).toHaveProperty('statusCode', 405);
       expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
       expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
@@ -144,24 +147,24 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should use the first controller when it can handle the request', async () => {
       let response = await client.get('/handleA');
-      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-      expect(controllerB.handleRequest).not.toHaveBeenCalled();
+      expect(handleRequestSpyA).toHaveBeenCalledOnce();
+      expect(handleRequestSpyB).not.toHaveBeenCalled();
       expect(response).toHaveProperty('statusCode', 200);
       expect(response).toHaveProperty('text', 'body contents A');
     });
 
     it('should use the second controller when the first cannot handle the request', async () => {
       let response = await client.get('/handleB');
-      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-      expect(controllerB.handleRequest).toHaveBeenCalledOnce();
+      expect(handleRequestSpyA).toHaveBeenCalledOnce();
+      expect(handleRequestSpyB).toHaveBeenCalledOnce();
       expect(response).toHaveProperty('statusCode', 200);
       expect(response).toHaveProperty('text', 'body contents B');
     });
 
     it('should error when neither controller can handle the request', async () => {
       let response = await client.get('/unsupported');
-      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-      expect(controllerB.handleRequest).toHaveBeenCalledOnce();
+      expect(handleRequestSpyA).toHaveBeenCalledOnce();
+      expect(handleRequestSpyB).toHaveBeenCalledOnce();
       expect(response).toHaveProperty('statusCode', 500);
       expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
       expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
@@ -169,8 +172,8 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should error when the first controller errors', async () => {
       let response = await client.get('/errorA');
-      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-      expect(controllerB.handleRequest).not.toHaveBeenCalled();
+      expect(handleRequestSpyA).toHaveBeenCalledOnce();
+      expect(handleRequestSpyB).not.toHaveBeenCalled();
       expect(response).toHaveProperty('statusCode', 500);
       expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
       expect(response).toHaveProperty('text', 'Application error: error message A\n');
@@ -178,8 +181,8 @@ describe('LinkedDataFragmentsServer', () => {
 
     it('should error when the second controller errors', async () => {
       let response = await client.get('/errorB');
-      expect(controllerA.handleRequest).toHaveBeenCalledOnce();
-      expect(controllerB.handleRequest).toHaveBeenCalledOnce();
+      expect(handleRequestSpyA).toHaveBeenCalledOnce();
+      expect(handleRequestSpyB).toHaveBeenCalledOnce();
       expect(response).toHaveProperty('statusCode', 500);
       expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
       expect(response).toHaveProperty('text', 'Application error: error message B\n');

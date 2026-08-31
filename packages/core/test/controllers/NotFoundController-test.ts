@@ -1,14 +1,17 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import { DummyServer } from '../../../../test/DummyServer';
-let NotFoundController = require('../../lib/controllers/NotFoundController').NotFoundController;
+import type { Mock } from 'vitest';
+import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
+import { controllers, views, datasources as coreDatasources, UrlData } from '../../index';
+import type { DatasourceRegistry } from '../../index';
 
-let request = require('supertest'),
-    dataFactory = require('n3').DataFactory;
+import * as request from 'supertest';
+import { DataFactory as dataFactory } from 'n3';
 
-let NotFoundHtmlView = require('../../lib/views/notfound/NotFoundHtmlView').NotFoundHtmlView,
-    NotFoundRdfView = require('../../lib/views/notfound/NotFoundRdfView').NotFoundRdfView;
+const { NotFoundController } = controllers;
+const { NotFoundHtmlView, NotFoundRdfView } = views.notfound;
+const { Datasource } = coreDatasources;
 
 describe('NotFoundController', () => {
   describe('The NotFoundController module', () => {
@@ -22,14 +25,14 @@ describe('NotFoundController', () => {
   });
 
   describe('A NotFoundController instance without views', () => {
-    let controller, client;
+    let controller: InstanceType<typeof NotFoundController> & Partial<SpiedController>, client: ReturnType<typeof request.agent>;
     beforeAll(() => {
       controller = new NotFoundController();
-      client = request.agent(new DummyServer(controller), {});
+      client = request.agent(DummyServer(controller));
     });
 
     describe('receiving a request', () => {
-      let response;
+      let response: Awaited<ReturnType<typeof client.get>>;
       beforeAll(async () => {
         response = await client.get('/notfound');
       });
@@ -57,23 +60,27 @@ describe('NotFoundController', () => {
   });
 
   describe('A NotFoundController instance with HTML and RDF views', () => {
-    let controller, htmlView, rdfView, datasources, client;
+    let controller: InstanceType<typeof NotFoundController> & Partial<SpiedController>,
+        htmlView: InstanceType<typeof NotFoundHtmlView>, rdfView: InstanceType<typeof NotFoundRdfView>,
+        htmlRenderSpy: Mock<InstanceType<typeof NotFoundHtmlView>['render']>,
+        rdfRenderSpy: Mock<InstanceType<typeof NotFoundRdfView>['render']>,
+        datasources: DatasourceRegistry, client: ReturnType<typeof request.agent>;
     beforeAll(() => {
       htmlView = new NotFoundHtmlView({ dataFactory });
       rdfView  = new NotFoundRdfView({ dataFactory });
-      vi.spyOn(htmlView, 'render');
-      vi.spyOn(rdfView, 'render');
-      datasources = { a: { title: 'foo', url: 'http://example.org/foo#dataset' } };
+      htmlRenderSpy = vi.spyOn(htmlView, 'render');
+      rdfRenderSpy = vi.spyOn(rdfView, 'render');
+      datasources = { a: new Datasource({ dataFactory, title: 'foo', path: 'foo', urlData: new UrlData({ baseURL: 'http://example.org/' }) }) };
       controller = new NotFoundController({ views: [htmlView, rdfView], datasources: datasources });
-      client = request.agent(new DummyServer(controller), {});
+      client = request.agent(DummyServer(controller));
     });
     function resetAll() {
-      htmlView.render.mockClear();
-      rdfView.render.mockClear();
+      htmlRenderSpy.mockClear();
+      rdfRenderSpy.mockClear();
     }
 
     describe('receiving a request without Accept header', () => {
-      let response;
+      let response: Awaited<ReturnType<typeof client.get>>;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound');
@@ -84,11 +91,11 @@ describe('NotFoundController', () => {
       });
 
       it('should call the HTML view', () => {
-        expect(htmlView.render).toHaveBeenCalledOnce();
+        expect(htmlRenderSpy).toHaveBeenCalledOnce();
       });
 
       it('should not call the RDF view', () => {
-        expect(rdfView.render).not.toHaveBeenCalled();
+        expect(rdfRenderSpy).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -109,7 +116,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of */*', () => {
-      let response;
+      let response: Awaited<ReturnType<typeof client.get>>;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound').set('Accept', '*/*');
@@ -120,11 +127,11 @@ describe('NotFoundController', () => {
       });
 
       it('should call the HTML view', () => {
-        expect(htmlView.render).toHaveBeenCalledOnce();
+        expect(htmlRenderSpy).toHaveBeenCalledOnce();
       });
 
       it('should not call the RDF view', () => {
-        expect(rdfView.render).not.toHaveBeenCalled();
+        expect(rdfRenderSpy).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -145,7 +152,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response;
+      let response: Awaited<ReturnType<typeof client.get>>;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound').set('Accept', 'text/html');
@@ -156,11 +163,11 @@ describe('NotFoundController', () => {
       });
 
       it('should call the HTML view', () => {
-        expect(htmlView.render).toHaveBeenCalledOnce();
+        expect(htmlRenderSpy).toHaveBeenCalledOnce();
       });
 
       it('should not call the RDF view', () => {
-        expect(rdfView.render).not.toHaveBeenCalled();
+        expect(rdfRenderSpy).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -181,7 +188,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of text/turtle', () => {
-      let response;
+      let response: Awaited<ReturnType<typeof client.get>>;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound').set('Accept', 'text/turtle');
@@ -192,11 +199,11 @@ describe('NotFoundController', () => {
       });
 
       it('should call the RDF view', () => {
-        expect(rdfView.render).toHaveBeenCalledOnce();
+        expect(rdfRenderSpy).toHaveBeenCalledOnce();
       });
 
       it('should not call the HTML view', () => {
-        expect(htmlView.render).not.toHaveBeenCalled();
+        expect(htmlRenderSpy).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -218,7 +225,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of application/trig', () => {
-      let response;
+      let response: Awaited<ReturnType<typeof client.get>>;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound').set('Accept', 'application/trig');
@@ -229,11 +236,11 @@ describe('NotFoundController', () => {
       });
 
       it('should call the RDF view', () => {
-        expect(rdfView.render).toHaveBeenCalledOnce();
+        expect(rdfRenderSpy).toHaveBeenCalledOnce();
       });
 
       it('should not call the HTML view', () => {
-        expect(htmlView.render).not.toHaveBeenCalled();
+        expect(htmlRenderSpy).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {

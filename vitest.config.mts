@@ -15,7 +15,7 @@ export default defineConfig({
     ],
   },
   test: {
-    include: ['packages/*/test/**/*-test.js'],
+    include: ['packages/*/test/**/*-test.ts'],
     environment: 'node',
     testTimeout: 5000,
     setupFiles: ['./test/vitest-setup.js'],

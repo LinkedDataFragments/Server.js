@@ -1,12 +1,14 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { DummyServer } from '../../../../test/DummyServer';
-let AssetsController = require('../../lib/controllers/AssetsController').AssetsController; // changed to make tests pass, will be revised in follow up pr
+import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
+import { controllers } from '../../index';
 
-let request = require('supertest'),
-    fs = require('fs'),
-    path = require('path');
+import * as request from 'supertest';
+import * as fs from 'fs';
+import * as path from 'path';
+
+const { AssetsController } = controllers;
 
 describe('AssetsController', () => {
   describe('The AssetsController module', () => {
@@ -20,10 +22,10 @@ describe('AssetsController', () => {
   });
 
   describe('An AssetsController instance', () => {
-    let controller, client;
+    let controller: InstanceType<typeof AssetsController> & Partial<SpiedController>, client: ReturnType<typeof request.agent>;
     beforeAll(() => {
       controller = new AssetsController();
-      client = request.agent(new DummyServer(controller), {});
+      client = request.agent(DummyServer(controller));
     });
 
     it('should correctly serve SVG assets', async () => {
@@ -33,7 +35,7 @@ describe('AssetsController', () => {
       expect(response).toHaveProperty('statusCode', 200);
       expect(response.headers).toHaveProperty('content-type', 'image/svg+xml');
       expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
-      expect(response.body.toString()).toBe(asset);
+      expect(String(response.body)).toBe(asset);
     });
 
     it('should correctly serve CSS assets', async () => {
@@ -53,7 +55,7 @@ describe('AssetsController', () => {
       expect(response).toHaveProperty('statusCode', 200);
       expect(response.headers).toHaveProperty('content-type', 'image/vnd.microsoft.icon');
       expect(response.headers).toHaveProperty('cache-control', 'public,max-age=1209600');
-      expect(response.body.toString()).toBe(asset);
+      expect(String(response.body)).toBe(asset);
     });
 
     it('should hand over to the next controller if no asset with that name is found', async () => {

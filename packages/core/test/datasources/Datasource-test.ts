@@ -1,16 +1,35 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
-const Datasource = require('../../lib/datasources/Datasource').Datasource; // changed to make tests pass, will be revised in follow up pr
-
-const EventEmitter = require('events'),
-    { once } = EventEmitter,
-    fs = require('fs'),
-    path = require('path'),
-    N3 = require('n3');
+import type { Mock } from 'vitest';
+import { Datasource } from '../../lib/datasources/Datasource';
+import { EventEmitter, once } from 'events';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as N3 from 'n3';
+import type { Quad } from 'rdf-js';
+import type { BufferedIterator } from 'asynciterator';
+import type { Pushable, Query } from '../../lib/types';
 
 const exampleFile = path.join(__dirname, '../../../../test/assets/test.ttl');
 const dataFactory = N3.DataFactory;
+
+// Datasource marks these members protected so subclasses can use them internally;
+// this subclass widens them to public so this suite can exercise the base class's
+// own behavior directly, the way its subclasses already do.
+class TestableDatasource extends Datasource {
+  override _fetch(options: { url: string } & Record<string, unknown>): EventEmitter {
+    return super._fetch(options);
+  }
+
+  override _initialize(): Promise<void> {
+    return super._initialize();
+  }
+
+  override _executeQuery(query: Query, destination: BufferedIterator<Quad>): void {
+    return super._executeQuery(query, destination);
+  }
+}
 
 describe('Datasource', () => {
   describe('The Datasource module', () => {
@@ -28,7 +47,7 @@ describe('Datasource', () => {
   });
 
   describe('A Datasource instance', () => {
-    let datasource = new Datasource({ dataFactory });
+    let datasource = new TestableDatasource({ dataFactory });
     datasource.initialize();
 
     it('should not indicate support for any features', () => {
@@ -44,7 +63,7 @@ describe('Datasource', () => {
     });
 
     it('should throw an error when trying to execute an unsupported query', async () => {
-      let error = await new Promise((resolve) => datasource.select({ features: { a: true, b: true } }, resolve));
+      let error = await new Promise<Error>((resolve) => datasource.select({ features: { a: true, b: true } }, resolve));
       expect(error).toBeInstanceOf(Error);
       expect(error).toHaveProperty('message', 'The datasource does not support the given query');
     });
@@ -71,20 +90,20 @@ describe('Datasource', () => {
 
       it('emits an error when the protocol is unknown', async () => {
         let result = datasource._fetch({ url: 'myprotocol:abc' });
-        let [error] = await once(result, 'error');
+        let [error]: Error[] = await once(result, 'error');
         expect(error.message).toContain('Unknown protocol: myprotocol');
       });
 
       it('emits an error on the datasource when no error listener is attached to the result', async () => {
         let result = datasource._fetch({ url: exampleFile + 'notfound' });
         result.on('data', () => {});
-        let [error] = await once(datasource, 'error');
+        let [error]: Error[] = await once(datasource, 'error');
         expect(error.message).toContain('ENOENT: no such file or directory');
       });
 
       it('does not emit an error on the datasource when an error listener is attached to the result', async () => {
         let result = datasource._fetch({ url: exampleFile + 'notfound' });
-        let [error] = await once(result, 'error');
+        let [error]: Error[] = await once(result, 'error');
         expect(error.message).toContain('ENOENT: no such file or directory');
       });
     });
@@ -96,14 +115,14 @@ describe('Datasource', () => {
     });
 
     describe('when closed with a callback', () => {
-      it('should invoke the callback', () => new Promise((resolve) => datasource.close(resolve)));
+      it('should invoke the callback', () => new Promise<void>((resolve) => datasource.close(resolve)));
     });
   });
 
   describe('A Datasource instance with an initializer', () => {
-    let datasource, initializedListener, errorListener, initResolver, initSpy;
+    let datasource: TestableDatasource, initializedListener: Mock, errorListener: Mock, initResolver: () => void, initSpy: Mock<() => Promise<void>>;
     beforeAll(() => {
-      datasource = new Datasource({ dataFactory });
+      datasource = new TestableDatasource({ dataFactory });
       datasource._initialize = () => new Promise((resolve) => { initResolver = resolve; });
       initSpy = vi.spyOn(datasource, '_initialize');
       Object.defineProperty(datasource, 'supportedFeatures', {
@@ -128,7 +147,7 @@ describe('Datasource', () => {
       });
 
       it('should error when trying to query', async () => {
-        let error = await new Promise((resolve) => datasource.select({}, resolve));
+        let error = await new Promise<Error>((resolve) => datasource.select({}, resolve));
         expect(error).toHaveProperty('message', 'The datasource is not initialized yet');
       });
     });
@@ -155,16 +174,16 @@ describe('Datasource', () => {
       });
 
       it('should allow querying', async () => {
-        let error = await new Promise((resolve) => datasource.select({}, resolve));
+        let error = await new Promise<Error>((resolve) => datasource.select({}, resolve));
         expect(error).toHaveProperty('message', '_executeQuery has not been implemented');
       });
     });
   });
 
   describe('A Datasource instance with an initializer that errors synchronously', () => {
-    let datasource, initializedListener, errorListener, error;
+    let datasource: TestableDatasource, initializedListener: Mock, errorListener: Mock, error: Error;
     beforeAll(() => {
-      datasource = new Datasource({ dataFactory });
+      datasource = new TestableDatasource({ dataFactory });
       error = new Error('initializer error');
       datasource._initialize = () => { throw error; };
       vi.spyOn(datasource, '_initialize');
@@ -194,9 +213,9 @@ describe('Datasource', () => {
   });
 
   describe('A Datasource instance with an initializer that errors asynchronously', () => {
-    let datasource, initializedListener, errorListener, error;
+    let datasource: TestableDatasource, initializedListener: Mock, errorListener: Mock, error: Error;
     beforeAll(() => {
-      datasource = new Datasource({ dataFactory });
+      datasource = new TestableDatasource({ dataFactory });
       error = new Error('initializer error');
       datasource._initialize = () => Promise.reject(error);
       vi.spyOn(datasource, '_initialize');
@@ -226,7 +245,7 @@ describe('Datasource', () => {
   });
 
   describe('A derived Datasource instance', () => {
-    let datasource = new Datasource({ dataFactory });
+    let datasource = new TestableDatasource({ dataFactory });
     Object.defineProperty(datasource, 'supportedFeatures', {
       enumerable: true,
       value: { a: true, b: true, c: false },
@@ -270,7 +289,7 @@ describe('Datasource', () => {
   });
 
   describe('A Datasource instance with a graph property', () => {
-    let datasource = new Datasource({
+    let datasource = new TestableDatasource({
       dataFactory,
       graph: 'http://example.org/#mygraph',
     });
@@ -279,22 +298,23 @@ describe('Datasource', () => {
       value: { custom: true },
     });
     datasource.initialize();
-    datasource._executeQuery = vi.fn((query, destination) => {
+    const executeQuerySpy = vi.fn((query: Query, destination: Pushable<Quad>) => {
       destination._push(dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o1')));
       destination._push(dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o2'), dataFactory.defaultGraph()));
       destination._push(dataFactory.quad(dataFactory.namedNode('s'), dataFactory.namedNode('p'), dataFactory.namedNode('o3'), dataFactory.namedNode('g')));
       destination.close();
     });
+    datasource._executeQuery = executeQuerySpy;
 
     beforeEach(() => {
-      datasource._executeQuery.mockClear();
+      executeQuerySpy.mockClear();
     });
 
     it('should move triples in the default graph to the given graph', async () => {
-      let quads = await new Promise((resolve, reject) => {
-        let collected = [];
+      let quads = await new Promise<Quad[]>((resolve, reject) => {
+        let collected: Quad[] = [];
         let result = datasource.select({ features: { custom: true } }, reject);
-        result.on('data', (q) => { collected.push(q); });
+        result.on('data', (q: Quad) => { collected.push(q); });
         result.on('end', () => { resolve(collected); });
       });
       expect(quads).toEqual([
@@ -309,8 +329,8 @@ describe('Datasource', () => {
         graph: dataFactory.namedNode('http://example.org/#mygraph'),
         features: { custom: true },
       });
-      expect(datasource._executeQuery.mock.calls[0][0].features).toEqual({ custom: true }),
-      datasource._executeQuery.mock.calls[0][0].graph.equals(dataFactory.defaultGraph());
+      expect(executeQuerySpy.mock.calls[0][0].features).toEqual({ custom: true }),
+      executeQuerySpy.mock.calls[0][0].graph?.equals(dataFactory.defaultGraph());
     });
 
     it('should query the default graph as the empty graph', () => {
@@ -318,8 +338,8 @@ describe('Datasource', () => {
         graph: dataFactory.defaultGraph(),
         features: { custom: true },
       });
-      expect(datasource._executeQuery.mock.calls[0][0].features).toEqual({ custom: true }),
-      datasource._executeQuery.mock.calls[0][0].graph.equals(dataFactory.namedNode('urn:ldf:emptyGraph'));
+      expect(executeQuerySpy.mock.calls[0][0].features).toEqual({ custom: true }),
+      executeQuerySpy.mock.calls[0][0].graph?.equals(dataFactory.namedNode('urn:ldf:emptyGraph'));
     });
   });
 });

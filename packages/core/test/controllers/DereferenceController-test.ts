@@ -1,10 +1,14 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { DummyServer } from '../../../../test/DummyServer';
-let DereferenceController = require('../../lib/controllers/DereferenceController').DeferenceController; // changed to make tests pass, will be revised in follow up pr
+import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
+import { controllers, datasources } from '../../index';
+import { DataFactory as dataFactory } from 'n3';
 
-let request = require('supertest');
+import * as request from 'supertest';
+
+const { DereferenceController } = controllers;
+const { Datasource } = datasources;
 
 describe('DereferenceController', () => {
   describe('The DereferenceController module', () => {
@@ -18,14 +22,14 @@ describe('DereferenceController', () => {
   });
 
   describe('A DereferenceController instance', () => {
-    let controller, client;
+    let controller: InstanceType<typeof DereferenceController> & Partial<SpiedController>, client: ReturnType<typeof request.agent>;
     beforeAll(() => {
-      controller = new DereferenceController({ dereference: { '/resource/': { path: 'dbpedia/2014' } } });
-      client = request.agent(new DummyServer(controller), {});
+      controller = new DereferenceController({ dereference: { '/resource/': new Datasource({ dataFactory, path: 'dbpedia/2014' }) } });
+      client = request.agent(DummyServer(controller));
     });
 
     describe('receiving a request for a dereferenced URL', () => {
-      let response;
+      let response: Awaited<ReturnType<typeof client.get>>;
       beforeAll(async () => { response = await client.get('/resource/Mickey_Mouse'); });
 
       it('should not hand over to the next controller', () => {
@@ -41,7 +45,7 @@ describe('DereferenceController', () => {
       });
 
       it('should set the Location header correctly', () => {
-        let hostname = response.req.getHeader('Host'),
+        let hostname = String(response.request.req.getHeader('Host')),
             entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
             expectedLocation = 'http://' + hostname + '/dbpedia/2014?subject=' + entityUrl;
 
@@ -49,7 +53,7 @@ describe('DereferenceController', () => {
       });
 
       it('should mention the desired location in the body', () => {
-        let hostname = response.req.getHeader('Host'),
+        let hostname = String(response.request.req.getHeader('Host')),
             entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
             expectedLocation = 'http://' + hostname + '/dbpedia/2014?subject=' + entityUrl;
 
