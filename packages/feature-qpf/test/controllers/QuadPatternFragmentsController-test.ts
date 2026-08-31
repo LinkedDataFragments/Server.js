@@ -442,13 +442,10 @@ describe('QuadPatternFragmentsController', () => {
       error = new Error('datasource error');
       datasource = new Datasource({ dataFactory });
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
-      // Mocks Datasource.select's own callback-based signature.
-      /* eslint-disable promise/prefer-await-to-callbacks */
-      datasource.select = vi.fn((query: Query, callback?: (error?: Error) => void) => {
-        setImmediate(() => callback?.(error));
+      datasource.select = vi.fn((query: Query, onError?: (error?: Error) => void) => {
+        setImmediate(() => onError?.(error));
         return empty<Quad>();
       });
-      /* eslint-enable promise/prefer-await-to-callbacks */
       datasource.supportedFeatures = { triplePattern: true };
       view = new QuadPatternFragmentsRdfView({ dataFactory });
       view.render = vi.fn(); // avoid writing a partial body

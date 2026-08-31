@@ -10,9 +10,9 @@ import type { LdfRequestWithUrl, LdfResponse, ViewSettings } from '../../index';
 import * as http from 'http';
 import * as request from 'supertest';
 
-// Controller marks _handleRequest protected so subclasses can implement it;
-// this subclass widens it to public so this suite can spy on the base class's
-// own behavior directly, the way its subclasses already do.
+// Controller marks _handleRequest protected so subclasses can implement it. This
+// subclass widens it to public so this suite can spy on the base class's own
+// behavior directly, the way its subclasses already do.
 class TestableController extends Controller {
   override _handleRequest(request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void, settings?: ViewSettings): void {
     return super._handleRequest(request, response, next, settings);

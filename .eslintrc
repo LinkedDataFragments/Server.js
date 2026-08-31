@@ -209,7 +209,7 @@
       parserOptions: {
         ecmaVersion: 9,
         sourceType: "module",
-        project: "./tsconfig.typecheck.json"
+        project: "./tsconfig.json"
       },
       plugins: [ "@typescript-eslint" ],
       rules: {

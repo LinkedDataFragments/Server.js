@@ -7,7 +7,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { Socket } from 'net';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../../index';
 
-// View marks _render protected so subclasses can implement it; this subclass
+// View marks _render protected so subclasses can implement it. This subclass
 // widens it to public so this suite can mock/spy on the base class's own
 // behavior directly, the way its subclasses already do.
 class TestableView extends View {

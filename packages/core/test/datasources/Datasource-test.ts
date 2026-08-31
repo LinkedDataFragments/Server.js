@@ -7,15 +7,15 @@ import { EventEmitter, once } from 'events';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as N3 from 'n3';
-import type { Quad } from 'rdf-js';
+import type { Quad, Term } from 'rdf-js';
 import type { BufferedIterator } from 'asynciterator';
 import type { Pushable, Query } from '../../lib/types';
 
 const exampleFile = path.join(__dirname, '../../../../test/assets/test.ttl');
 const dataFactory = N3.DataFactory;
 
-// Datasource marks these members protected so subclasses can use them internally;
-// this subclass widens them to public so this suite can exercise the base class's
+// Datasource marks these members protected so subclasses can use them internally.
+// This subclass widens them to public so this suite can exercise the base class's
 // own behavior directly, the way its subclasses already do.
 class TestableDatasource extends Datasource {
   override _fetch(options: { url: string } & Record<string, unknown>): EventEmitter {
@@ -330,7 +330,7 @@ describe('Datasource', () => {
         features: { custom: true },
       });
       expect(executeQuerySpy.mock.calls[0][0].features).toEqual({ custom: true }),
-      executeQuerySpy.mock.calls[0][0].graph?.equals(dataFactory.defaultGraph());
+      (executeQuerySpy.mock.calls[0][0].graph as Term).equals(dataFactory.defaultGraph());
     });
 
     it('should query the default graph as the empty graph', () => {
@@ -339,7 +339,7 @@ describe('Datasource', () => {
         features: { custom: true },
       });
       expect(executeQuerySpy.mock.calls[0][0].features).toEqual({ custom: true }),
-      executeQuerySpy.mock.calls[0][0].graph?.equals(dataFactory.namedNode('urn:ldf:emptyGraph'));
+      (executeQuerySpy.mock.calls[0][0].graph as Term).equals(dataFactory.namedNode('urn:ldf:emptyGraph'));
     });
   });
 });

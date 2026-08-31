@@ -15,12 +15,14 @@
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": true,
-    "skipLibCheck": false
+    "skipLibCheck": true
   },
   "include": [
     "packages/*/index.ts",
     "packages/*/lib/**/*",
     "packages/*/bin/**/*",
+    "packages/*/test/**/*.ts",
+    "test/**/*.ts",
     "types/**/*.d.ts"
   ],
   "exclude": [
