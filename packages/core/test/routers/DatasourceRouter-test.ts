@@ -26,60 +26,58 @@ describe('DatasourceRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        (
+        const rows: Array<[string, string, string, TestQuery, TestQuery]> = [
           [
-            [
-              'a root URL without trailing slash or query parameters',
-              'http://example.org',
-              'should extract the index datasource',
-              { a: 1 },
-              { a: 1, features: { datasource: true }, datasource: '/' },
-            ],
-            [
-              'a root URL without query parameters',
-              'http://example.org/',
-              'should extract the index datasource',
-              { a: 1 },
-              { a: 1, features: { datasource: true }, datasource: '/' },
-            ],
-            [
-              'a root URL with query parameters',
-              'http://example.org/?a=b&c=d',
-              'should extract the index datasource',
-              { a: 1 },
-              { a: 1, features: { datasource: true }, datasource: '/' },
-            ],
-            [
-              'a URL with word characters without query parameters',
-              'http://example.org/mydatasource',
-              'should extract the datasource',
-              { a: 1 },
-              { a: 1, features: { datasource: true }, datasource: '/mydatasource' },
-            ],
-            [
-              'a URL with word characters with query parameters',
-              'http://example.org/mydatasource?a=b&c=d',
-              'should extract the datasource',
-              { a: 1 },
-              { a: 1, features: { datasource: true }, datasource: '/mydatasource' },
-            ],
-            [
-              'a URL with word and non-word characters without query parameters',
-              'http://example.org/my/data-source',
-              'should extract the datasource',
-              { a: 1 },
-              { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
-            ],
-            [
-              'a URL with word and non-word characters with query parameters',
-              'http://example.org/my/data-source?a=b&c=d',
-              'should extract the datasource',
-              { a: 1 },
-              { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
-            ],
-          ] as Array<[string, string, string, TestQuery, TestQuery]>
-        )
-          .forEach((args) => { extractQueryParams(router, ...args); });
+            'a root URL without trailing slash or query parameters',
+            'http://example.org',
+            'should extract the index datasource',
+            { a: 1 },
+            { a: 1, features: { datasource: true }, datasource: '/' },
+          ],
+          [
+            'a root URL without query parameters',
+            'http://example.org/',
+            'should extract the index datasource',
+            { a: 1 },
+            { a: 1, features: { datasource: true }, datasource: '/' },
+          ],
+          [
+            'a root URL with query parameters',
+            'http://example.org/?a=b&c=d',
+            'should extract the index datasource',
+            { a: 1 },
+            { a: 1, features: { datasource: true }, datasource: '/' },
+          ],
+          [
+            'a URL with word characters without query parameters',
+            'http://example.org/mydatasource',
+            'should extract the datasource',
+            { a: 1 },
+            { a: 1, features: { datasource: true }, datasource: '/mydatasource' },
+          ],
+          [
+            'a URL with word characters with query parameters',
+            'http://example.org/mydatasource?a=b&c=d',
+            'should extract the datasource',
+            { a: 1 },
+            { a: 1, features: { datasource: true }, datasource: '/mydatasource' },
+          ],
+          [
+            'a URL with word and non-word characters without query parameters',
+            'http://example.org/my/data-source',
+            'should extract the datasource',
+            { a: 1 },
+            { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
+          ],
+          [
+            'a URL with word and non-word characters with query parameters',
+            'http://example.org/my/data-source?a=b&c=d',
+            'should extract the datasource',
+            { a: 1 },
+            { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
+          ],
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -91,25 +89,23 @@ describe('DatasourceRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        (
+        const rows: Array<[string, string, string, TestQuery, TestQuery]> = [
           [
-            [
-              'a root URL',
-              'http://example.org/my/base/',
-              'should extract the index datasource',
-              { a: 1 },
-              { a: 1, features: { datasource: true }, datasource: '/' },
-            ],
-            [
-              'a non-root URL',
-              'http://example.org/my/base/other/path',
-              'should extract the index datasource',
-              { a: 1 },
-              { a: 1, features: { datasource: true }, datasource: '/other/path' },
-            ],
-          ] as Array<[string, string, string, TestQuery, TestQuery]>
-        )
-          .forEach((args) => { extractQueryParams(router, ...args); });
+            'a root URL',
+            'http://example.org/my/base/',
+            'should extract the index datasource',
+            { a: 1 },
+            { a: 1, features: { datasource: true }, datasource: '/' },
+          ],
+          [
+            'a non-root URL',
+            'http://example.org/my/base/other/path',
+            'should extract the index datasource',
+            { a: 1 },
+            { a: 1, features: { datasource: true }, datasource: '/other/path' },
+          ],
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
