@@ -266,7 +266,7 @@ describe('SparqlDatasource', () => {
         let query = { subject: dataFactory.namedNode('abcde'), features: { quadPattern: true } };
         result = datasource.select(query);
         let errorEvent = once(result, 'error');
-        request.mock.calls[0][1]?.(new Error('query response error'));
+        (request.mock.calls[0][1] as RequestCallback)(new Error('query response error'));
         [error] = await errorEvent;
       });
 

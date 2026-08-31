@@ -9,6 +9,7 @@ import type { Query } from '../../index';
 // Query has no index signature; this lets the test tables below use an
 // arbitrary 'a' field as a stand-in for "pre-existing data that should survive".
 type TestQuery = Query & { a?: number };
+type QueryParamsTestCase = [string, string, string, TestQuery, TestQuery];
 
 describe('DatasourceRouter', () => {
   describe('The DatasourceRouter module', () => {
@@ -26,7 +27,7 @@ describe('DatasourceRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        const rows: Array<[string, string, string, TestQuery, TestQuery]> = [
+        const rows: QueryParamsTestCase[] = [
           [
             'a root URL without trailing slash or query parameters',
             'http://example.org',
@@ -89,7 +90,7 @@ describe('DatasourceRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        const rows: Array<[string, string, string, TestQuery, TestQuery]> = [
+        const rows: QueryParamsTestCase[] = [
           [
             'a root URL',
             'http://example.org/my/base/',

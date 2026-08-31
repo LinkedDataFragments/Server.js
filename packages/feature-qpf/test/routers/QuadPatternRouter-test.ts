@@ -8,6 +8,7 @@ import type { Query } from '@ldf/core';
 // Query has no index signature; this lets the test tables below use an
 // arbitrary 'a' field as a stand-in for "pre-existing data that should survive".
 type TestQuery = Query & { a?: number };
+type QueryParamsTestCase = [string, string, string, TestQuery, TestQuery];
 import { DataFactory as dataFactory } from 'n3';
 
 const { QuadPatternRouter } = routers;
@@ -28,7 +29,7 @@ describe('QuadPatternRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        const rows: Array<[string, string, string, TestQuery, TestQuery]> = [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -249,7 +250,7 @@ describe('QuadPatternRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        const rows: Array<[string, string, string, TestQuery, TestQuery]> = [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',

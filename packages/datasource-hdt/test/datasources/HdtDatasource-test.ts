@@ -26,14 +26,14 @@ describe('HdtDatasource', () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(HdtDatasource);
-      await new Promise<Error | undefined>((resolve) => instance.close(resolve));
+      await new Promise<unknown>((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
       let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(Datasource);
-      await new Promise<Error | undefined>((resolve) => instance.close(resolve));
+      await new Promise<unknown>((resolve) => instance.close(resolve));
     });
   });
 
@@ -45,7 +45,7 @@ describe('HdtDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => new Promise<Error | undefined>((resolve) => datasource.close(resolve)));
+    afterAll(() => new Promise<unknown>((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -106,7 +106,7 @@ describe('HdtDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => new Promise<Error | undefined>((resolve) => datasource.close(resolve)));
+    afterAll(() => new Promise<unknown>((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',
@@ -157,7 +157,7 @@ describe('HdtDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => new Promise<Error | undefined>((resolve) => datasource.close(resolve)));
+    afterAll(() => new Promise<unknown>((resolve) => datasource.close(resolve)));
 
     itShouldExecute(getDatasource,
       'the empty query',

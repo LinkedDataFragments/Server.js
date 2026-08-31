@@ -80,7 +80,7 @@ describe('QuadPatternFragmentsRdfView', () => {
         describe('with an empty triple stream', () => {
           let results = empty<Quad>();
           let response = createStreamCapture();
-          beforeAll(() => new Promise<Error | null | undefined>((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, createRequest(), response, resolve);
@@ -99,7 +99,7 @@ describe('QuadPatternFragmentsRdfView', () => {
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
-          beforeAll(() => new Promise<Error | null | undefined>((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             let transform = new TransformIterator<Quad>();
             settings.results = transform;
             response.getHeader = vi.fn().mockReturnValue(format);
@@ -120,7 +120,7 @@ describe('QuadPatternFragmentsRdfView', () => {
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
-          beforeAll(() => new Promise<Error | null | undefined>((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, createRequest(), response, resolve);
@@ -147,7 +147,7 @@ describe('QuadPatternFragmentsRdfView', () => {
             query: { limit: 100 },
           };
           let response = createStreamCapture();
-          beforeAll(() => new Promise<Error | null | undefined>((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, createRequest(), response, resolve);
@@ -180,7 +180,7 @@ describe('QuadPatternFragmentsRdfView', () => {
             query: { limit: 100, offset: 1133 },
           };
           let response = createStreamCapture();
-          beforeAll(() => new Promise<Error | null | undefined>((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, createRequest(), response, resolve);
@@ -213,7 +213,7 @@ describe('QuadPatternFragmentsRdfView', () => {
             query: { limit: 100, offset: 1135 },
           };
           let response = createStreamCapture();
-          beforeAll(() => new Promise<Error | null | undefined>((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
             view.render(settings, createRequest(), response, resolve);
