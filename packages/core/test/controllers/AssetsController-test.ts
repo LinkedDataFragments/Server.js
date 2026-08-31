@@ -22,7 +22,7 @@ describe('AssetsController', () => {
   });
 
   describe('An AssetsController instance', () => {
-    let controller: InstanceType<typeof AssetsController> & Partial<SpiedController>, client: ReturnType<typeof request.agent>;
+    let controller: InstanceType<typeof AssetsController> & Partial<SpiedController>, client: request.Agent;
     beforeAll(() => {
       controller = new AssetsController();
       client = request.agent(DummyServer(controller));

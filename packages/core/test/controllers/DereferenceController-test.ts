@@ -22,14 +22,14 @@ describe('DereferenceController', () => {
   });
 
   describe('A DereferenceController instance', () => {
-    let controller: InstanceType<typeof DereferenceController> & Partial<SpiedController>, client: ReturnType<typeof request.agent>;
+    let controller: InstanceType<typeof DereferenceController> & Partial<SpiedController>, client: request.Agent;
     beforeAll(() => {
       controller = new DereferenceController({ dereference: { '/resource/': new Datasource({ dataFactory, path: 'dbpedia/2014' }) } });
       client = request.agent(DummyServer(controller));
     });
 
     describe('receiving a request for a dereferenced URL', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => { response = await client.get('/resource/Mickey_Mouse'); });
 
       it('should not hand over to the next controller', () => {

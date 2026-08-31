@@ -33,7 +33,7 @@ describe('QuadPatternFragmentsController', () => {
 
   describe('A QuadPatternFragmentsController instance with 3 routers', () => {
     let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        client: ReturnType<typeof request.agent>,
+        client: request.Agent,
         routerA: { extractQueryParams: Mock<(request: RouterRequest, query: Query) => void> },
         routerB: { extractQueryParams: Mock<(request: RouterRequest, query: Query) => void> },
         routerC: { extractQueryParams: Mock<(request: RouterRequest, query: MutableQuery) => void> },
@@ -191,7 +191,7 @@ describe('QuadPatternFragmentsController', () => {
 
   describe('A QuadPatternFragmentsController instance with 2 views', () => {
     let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        client: ReturnType<typeof request.agent>,
+        client: request.Agent,
         htmlView: InstanceType<typeof QuadPatternFragmentsHtmlView>, rdfView: InstanceType<typeof QuadPatternFragmentsRdfView>,
         htmlRenderSpy: Mock<InstanceType<typeof QuadPatternFragmentsHtmlView>['render']>,
         rdfRenderSpy: Mock<InstanceType<typeof QuadPatternFragmentsRdfView>['render']>;
@@ -227,7 +227,7 @@ describe('QuadPatternFragmentsController', () => {
     }
 
     describe('receiving a request without Accept header', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/my-datasource');
@@ -247,7 +247,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of */*', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/my-datasource').set('Accept', '*/*');
@@ -267,7 +267,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/my-datasource').set('Accept', 'text/html');
@@ -287,7 +287,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/turtle', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/my-datasource').set('Accept', 'text/turtle');
@@ -307,7 +307,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/n3', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/my-datasource').set('Accept', 'text/n3');
@@ -328,7 +328,7 @@ describe('QuadPatternFragmentsController', () => {
   });
 
   describe('A QuadPatternFragmentsController instance without matching view', () => {
-    let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>, client: ReturnType<typeof request.agent>;
+    let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>, client: request.Agent;
     beforeAll(() => {
       let datasource = new Datasource({ dataFactory });
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
@@ -348,7 +348,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request without Accept header', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         response = await client.get('/my-datasource');
       });
@@ -367,7 +367,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         response = await client.get('/my-datasource').set('Accept', 'text/html');
       });
@@ -388,7 +388,7 @@ describe('QuadPatternFragmentsController', () => {
 
   describe('A QuadPatternFragmentsController instance with a datasource that synchronously errors', () => {
     let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        client: ReturnType<typeof request.agent>,
+        client: request.Agent,
         router: { extractQueryParams: Mock<(request: RouterRequest, query: MutableQuery) => void> },
         datasource: InstanceType<typeof Datasource>, error: Error, view: InstanceType<typeof QuadPatternFragmentsRdfView>;
     beforeAll(() => {
@@ -429,7 +429,7 @@ describe('QuadPatternFragmentsController', () => {
 
   describe('A QuadPatternFragmentsController instance with a datasource that asynchronously errors', () => {
     let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        client: ReturnType<typeof request.agent>,
+        client: request.Agent,
         router: { extractQueryParams: Mock<(request: RouterRequest, query: MutableQuery) => void> },
         datasource: InstanceType<typeof Datasource>, error: Error, view: InstanceType<typeof QuadPatternFragmentsRdfView>;
     beforeAll(() => {

@@ -32,7 +32,7 @@ describe('Controller', () => {
 
   describe('A Controller instance without baseURL', () => {
     let controller: TestableController & Partial<SpiedController>;
-    let client: ReturnType<typeof request.agent>;
+    let client: request.Agent;
     let handleRequestSpy: Mock<TestableController['_handleRequest']>;
     beforeAll(() => {
       controller = new TestableController();
@@ -70,7 +70,7 @@ describe('Controller', () => {
 
   describe('A Controller instance without baseURL using Forwarded header', () => {
     let controller: TestableController & Partial<SpiedController>;
-    let client: ReturnType<typeof request.agent>;
+    let client: request.Agent;
     let handleRequestSpy: Mock<TestableController['_handleRequest']>;
     beforeAll(() => {
       controller = new TestableController({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
@@ -112,7 +112,7 @@ describe('Controller', () => {
 
   describe('A Controller instance without baseURL using X-Forwarded-* headers', () => {
     let controller: TestableController & Partial<SpiedController>;
-    let client: ReturnType<typeof request.agent>;
+    let client: request.Agent;
     let handleRequestSpy: Mock<TestableController['_handleRequest']>;
     beforeAll(() => {
       controller = new TestableController();
@@ -153,7 +153,7 @@ describe('Controller', () => {
 
   describe('A Controller instance with baseURL', () => {
     let controller: TestableController & Partial<SpiedController>;
-    let client: ReturnType<typeof request.agent>;
+    let client: request.Agent;
     let handleRequestSpy: Mock<TestableController['_handleRequest']>;
     beforeAll(() => {
       controller = new TestableController({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });

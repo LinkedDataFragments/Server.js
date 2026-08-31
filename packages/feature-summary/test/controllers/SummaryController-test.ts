@@ -29,7 +29,7 @@ describe('SummaryController', () => {
   });
 
   describe('An SummaryController instance', () => {
-    let controller: InstanceType<typeof SummaryController> & Partial<SpiedController>, client: ReturnType<typeof request.agent>;
+    let controller: InstanceType<typeof SummaryController> & Partial<SpiedController>, client: request.Agent;
     beforeAll(() => {
       controller = new SummaryController({
         views: [new SummaryRdfView({ dataFactory })],

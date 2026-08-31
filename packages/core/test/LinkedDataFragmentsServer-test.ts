@@ -10,7 +10,7 @@ import * as request from 'supertest';
 
 describe('LinkedDataFragmentsServer', () => {
   describe('A LinkedDataFragmentsServer instance with one controller', () => {
-    let server: ReturnType<typeof LinkedDataFragmentsServer>, controller: Controller, client: ReturnType<typeof request.agent>;
+    let server: ReturnType<typeof LinkedDataFragmentsServer>, controller: Controller, client: request.Agent;
     // Kept separate so .mockClear() has a Mock-typed target. controller.handleRequest's
     // declared type is just Controller's plain function signature, not Mock.
     let handleRequestSpy: Mock<Controller['handleRequest']>;
@@ -97,7 +97,7 @@ describe('LinkedDataFragmentsServer', () => {
   });
 
   describe('A LinkedDataFragmentsServer instance with two controllers', () => {
-    let server: ReturnType<typeof LinkedDataFragmentsServer>, controllerA: Controller, controllerB: Controller, client: ReturnType<typeof request.agent>;
+    let server: ReturnType<typeof LinkedDataFragmentsServer>, controllerA: Controller, controllerB: Controller, client: request.Agent;
     // Kept separate so .mockClear() has a Mock-typed target. controllerX.handleRequest's
     // declared type is just Controller's plain function signature, not Mock.
     let handleRequestSpyA: Mock<Controller['handleRequest']>, handleRequestSpyB: Mock<Controller['handleRequest']>;

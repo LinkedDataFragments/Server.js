@@ -25,14 +25,14 @@ describe('NotFoundController', () => {
   });
 
   describe('A NotFoundController instance without views', () => {
-    let controller: InstanceType<typeof NotFoundController> & Partial<SpiedController>, client: ReturnType<typeof request.agent>;
+    let controller: InstanceType<typeof NotFoundController> & Partial<SpiedController>, client: request.Agent;
     beforeAll(() => {
       controller = new NotFoundController();
       client = request.agent(DummyServer(controller));
     });
 
     describe('receiving a request', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         response = await client.get('/notfound');
       });
@@ -64,7 +64,7 @@ describe('NotFoundController', () => {
         htmlView: InstanceType<typeof NotFoundHtmlView>, rdfView: InstanceType<typeof NotFoundRdfView>,
         htmlRenderSpy: Mock<InstanceType<typeof NotFoundHtmlView>['render']>,
         rdfRenderSpy: Mock<InstanceType<typeof NotFoundRdfView>['render']>,
-        datasources: DatasourceRegistry, client: ReturnType<typeof request.agent>;
+        datasources: DatasourceRegistry, client: request.Agent;
     beforeAll(() => {
       htmlView = new NotFoundHtmlView({ dataFactory });
       rdfView  = new NotFoundRdfView({ dataFactory });
@@ -80,7 +80,7 @@ describe('NotFoundController', () => {
     }
 
     describe('receiving a request without Accept header', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound');
@@ -116,7 +116,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of */*', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound').set('Accept', '*/*');
@@ -152,7 +152,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound').set('Accept', 'text/html');
@@ -188,7 +188,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of text/turtle', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound').set('Accept', 'text/turtle');
@@ -225,7 +225,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of application/trig', () => {
-      let response: Awaited<ReturnType<typeof client.get>>;
+      let response: request.Response;
       beforeAll(async () => {
         resetAll();
         response = await client.get('/notfound').set('Accept', 'application/trig');
