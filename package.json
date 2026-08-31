@@ -29,10 +29,6 @@
     "typescript": "^5.9.3",
     "vitest": "^4.1.10"
   },
-  "// resolutions": "pin @types/node: @types/supertest -> @types/superagent otherwise nests an old @types/node, breaking http.Server typing",
-  "resolutions": {
-    "@types/node": "^24.0.0"
-  },
   "pre-commit": [
     "lint",
     "test"
