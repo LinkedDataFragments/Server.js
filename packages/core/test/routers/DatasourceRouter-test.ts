@@ -6,6 +6,10 @@ import { DatasourceRouter } from '../../lib/routers/DatasourceRouter';
 import { UrlData } from '../../index';
 import type { Query } from '../../index';
 
+// Query has no index signature; this lets the test tables below use an
+// arbitrary 'a' field as a stand-in for "pre-existing data that should survive".
+type TestQuery = Query & { a?: number };
+
 describe('DatasourceRouter', () => {
   describe('The DatasourceRouter module', () => {
     it('should be a function', () => {
@@ -28,52 +32,52 @@ describe('DatasourceRouter', () => {
               'a root URL without trailing slash or query parameters',
               'http://example.org',
               'should extract the index datasource',
-              { limit: 1 },
-              { limit: 1, features: { datasource: true }, datasource: '/' },
+              { a: 1 },
+              { a: 1, features: { datasource: true }, datasource: '/' },
             ],
             [
               'a root URL without query parameters',
               'http://example.org/',
               'should extract the index datasource',
-              { limit: 1 },
-              { limit: 1, features: { datasource: true }, datasource: '/' },
+              { a: 1 },
+              { a: 1, features: { datasource: true }, datasource: '/' },
             ],
             [
               'a root URL with query parameters',
               'http://example.org/?a=b&c=d',
               'should extract the index datasource',
-              { limit: 1 },
-              { limit: 1, features: { datasource: true }, datasource: '/' },
+              { a: 1 },
+              { a: 1, features: { datasource: true }, datasource: '/' },
             ],
             [
               'a URL with word characters without query parameters',
               'http://example.org/mydatasource',
               'should extract the datasource',
-              { limit: 1 },
-              { limit: 1, features: { datasource: true }, datasource: '/mydatasource' },
+              { a: 1 },
+              { a: 1, features: { datasource: true }, datasource: '/mydatasource' },
             ],
             [
               'a URL with word characters with query parameters',
               'http://example.org/mydatasource?a=b&c=d',
               'should extract the datasource',
-              { limit: 1 },
-              { limit: 1, features: { datasource: true }, datasource: '/mydatasource' },
+              { a: 1 },
+              { a: 1, features: { datasource: true }, datasource: '/mydatasource' },
             ],
             [
               'a URL with word and non-word characters without query parameters',
               'http://example.org/my/data-source',
               'should extract the datasource',
-              { limit: 1 },
-              { limit: 1, features: { datasource: true }, datasource: '/my/data-source' },
+              { a: 1 },
+              { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
             ],
             [
               'a URL with word and non-word characters with query parameters',
               'http://example.org/my/data-source?a=b&c=d',
               'should extract the datasource',
-              { limit: 1 },
-              { limit: 1, features: { datasource: true }, datasource: '/my/data-source' },
+              { a: 1 },
+              { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
             ],
-          ] as Array<[string, string, string, Query, Query]>
+          ] as Array<[string, string, string, TestQuery, TestQuery]>
         )
           .forEach((args) => { extractQueryParams(router, ...args); });
       });
@@ -93,17 +97,17 @@ describe('DatasourceRouter', () => {
               'a root URL',
               'http://example.org/my/base/',
               'should extract the index datasource',
-              { limit: 1 },
-              { limit: 1, features: { datasource: true }, datasource: '/' },
+              { a: 1 },
+              { a: 1, features: { datasource: true }, datasource: '/' },
             ],
             [
               'a non-root URL',
               'http://example.org/my/base/other/path',
               'should extract the index datasource',
-              { limit: 1 },
-              { limit: 1, features: { datasource: true }, datasource: '/other/path' },
+              { a: 1 },
+              { a: 1, features: { datasource: true }, datasource: '/other/path' },
             ],
-          ] as Array<[string, string, string, Query, Query]>
+          ] as Array<[string, string, string, TestQuery, TestQuery]>
         )
           .forEach((args) => { extractQueryParams(router, ...args); });
       });
