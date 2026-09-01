@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: 24.x
       - run: yarn install
+      - run: yarn run typecheck
       - run: yarn run lint
 
   test:

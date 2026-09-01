@@ -1,16 +1,17 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { DummyServer } from '../../../../test/DummyServer';
-let SummaryController = require('../../lib/controllers/SummaryController').SummaryController; // changed to make tests pass, will be revised in follow up pr
+import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
+import { listen } from '../../../../test/test-helpers';
+import { controllers, views } from '../../index';
 
-let request = require('supertest'),
-    fs = require('fs'),
-    path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
-let SummaryRdfView = require('../../lib/views/summary/SummaryRdfView.js').SummaryRdfView; // changed to make tests pass, will be revised in follow up pr
+import { DataFactory as dataFactory } from 'n3';
 
-let dataFactory = require('n3').DataFactory;
+const { SummaryController } = controllers;
+const { SummaryRdfView } = views.summary;
 
 describe('SummaryController', () => {
   describe('The SummaryController module', () => {
@@ -28,8 +29,8 @@ describe('SummaryController', () => {
   });
 
   describe('An SummaryController instance', () => {
-    let controller, client;
-    beforeAll(() => {
+    let controller: InstanceType<typeof SummaryController> & Partial<SpiedController>, baseUrl: string;
+    beforeAll(async () => {
       controller = new SummaryController({
         views: [new SummaryRdfView({ dataFactory })],
         summaries: { dir: path.join(__dirname, '/../../../../test/assets') },
@@ -38,46 +39,46 @@ describe('SummaryController', () => {
           rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         },
       });
-      client = request.agent(new DummyServer(controller), {});
+      baseUrl = await listen(DummyServer(controller));
     });
 
     it('should correctly serve summary in Turtle', async () => {
-      let response = await client.get('/summaries/summary').set('Accept', 'text/turtle');
+      let response = await fetch(baseUrl + '/summaries/summary', { headers: { Accept: 'text/turtle' } });
       let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
       expect(controller.next).not.toHaveBeenCalled();
-      expect(response).toHaveProperty('statusCode', 200);
-      expect(response.headers).toHaveProperty('content-type', 'text/turtle;charset=utf-8');
-      expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
-      expect(response.text).toBe(summary);
+      expect(response.status).toBe(200);
+      expect(response.headers.get('content-type')).toBe('text/turtle;charset=utf-8');
+      expect(response.headers.get('cache-control')).toBe('public,max-age=604800');
+      expect(await response.text()).toBe(summary);
     });
 
     it('should correctly serve summary in Trig', async () => {
-      let response = await client.get('/summaries/summary');
+      let response = await fetch(baseUrl + '/summaries/summary');
       let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
       expect(controller.next).not.toHaveBeenCalled();
-      expect(response).toHaveProperty('statusCode', 200);
-      expect(response.headers).toHaveProperty('content-type', 'application/trig;charset=utf-8');
-      expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
-      expect(response.text).toBe(summary);
+      expect(response.status).toBe(200);
+      expect(response.headers.get('content-type')).toBe('application/trig;charset=utf-8');
+      expect(response.headers.get('cache-control')).toBe('public,max-age=604800');
+      expect(await response.text()).toBe(summary);
     });
 
     it('should correctly serve summary in ntriples', async () => {
-      let response = await client.get('/summaries/summary').set('Accept', 'application/n-triples');
+      let response = await fetch(baseUrl + '/summaries/summary', { headers: { Accept: 'application/n-triples' } });
       let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
       expect(controller.next).not.toHaveBeenCalled();
-      expect(response).toHaveProperty('statusCode', 200);
-      expect(response.headers).toHaveProperty('content-type', 'application/n-triples;charset=utf-8');
-      expect(response.headers).toHaveProperty('cache-control', 'public,max-age=604800');
-      expect(response.text).toBe(summary);
+      expect(response.status).toBe(200);
+      expect(response.headers.get('content-type')).toBe('application/n-triples;charset=utf-8');
+      expect(response.headers.get('cache-control')).toBe('public,max-age=604800');
+      expect(await response.text()).toBe(summary);
     });
 
     it('should hand over to the next controller if no summary with that name is found', async () => {
-      await client.get('/summaries/unknown');
+      await fetch(baseUrl + '/summaries/unknown');
       expect(controller.next).toHaveBeenCalledOnce();
     });
 
     it('should hand over to the next controller for non-summary paths', async () => {
-      await client.get('/other');
+      await fetch(baseUrl + '/other');
       expect(controller.next).toHaveBeenCalledOnce();
     });
   });
