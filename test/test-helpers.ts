@@ -2,10 +2,19 @@
 import { it, expect } from 'vitest';
 import { parse as parseUrl } from 'url';
 import { Readable } from 'stream';
-import { IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse, type Server } from 'http';
 import { Socket } from 'net';
 import { EventEmitter, once } from 'events';
 import type { Query, RouterRequest } from '../packages/core/lib/types';
+
+// Starts the given server on an ephemeral port and resolves with its base URL
+export async function listen(server: Server): Promise<string> {
+  await new Promise<void>((resolve) => server.listen(0, resolve));
+  const address = server.address();
+  if (address === null || typeof address === 'string')
+    throw new Error('Expected the server to report a network address');
+  return `http://localhost:${address.port}`;
+}
 
 // A router as accepted by extractQueryParams; DatasourceRouter and PageRouter both satisfy this
 interface QueryParamRouter {

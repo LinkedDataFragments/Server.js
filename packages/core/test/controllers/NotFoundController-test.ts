@@ -3,10 +3,10 @@
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
+import { listen } from '../../../../test/test-helpers';
 import { controllers, views, datasources as coreDatasources, UrlData } from '../../index';
 import type { DatasourceRegistry } from '../../index';
 
-import * as request from 'supertest';
 import { DataFactory as dataFactory } from 'n3';
 
 const { NotFoundController } = controllers;
@@ -25,16 +25,17 @@ describe('NotFoundController', () => {
   });
 
   describe('A NotFoundController instance without views', () => {
-    let controller: InstanceType<typeof NotFoundController> & Partial<SpiedController>, client: request.Agent;
-    beforeAll(() => {
+    let controller: InstanceType<typeof NotFoundController> & Partial<SpiedController>, baseUrl: string;
+    beforeAll(async () => {
       controller = new NotFoundController();
-      client = request.agent(DummyServer(controller));
+      baseUrl = await listen(DummyServer(controller));
     });
 
     describe('receiving a request', () => {
-      let response: request.Response;
+      let response: Response, responseText: string;
       beforeAll(async () => {
-        response = await client.get('/notfound');
+        response = await fetch(baseUrl + '/notfound');
+        responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
@@ -42,19 +43,19 @@ describe('NotFoundController', () => {
       });
 
       it('should have a 404 status', () => {
-        expect(response).toHaveProperty('statusCode', 404);
+        expect(response.status).toBe(404);
       });
 
       it('should set the text/plain content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
 
       it('should send a textual error body', () => {
-        expect(response).toHaveProperty('text', '/notfound not found\n');
+        expect(responseText).toBe('/notfound not found\n');
       });
     });
   });
@@ -64,15 +65,15 @@ describe('NotFoundController', () => {
         htmlView: InstanceType<typeof NotFoundHtmlView>, rdfView: InstanceType<typeof NotFoundRdfView>,
         htmlRenderSpy: Mock<InstanceType<typeof NotFoundHtmlView>['render']>,
         rdfRenderSpy: Mock<InstanceType<typeof NotFoundRdfView>['render']>,
-        datasources: DatasourceRegistry, client: request.Agent;
-    beforeAll(() => {
+        datasources: DatasourceRegistry, baseUrl: string;
+    beforeAll(async () => {
       htmlView = new NotFoundHtmlView({ dataFactory });
       rdfView  = new NotFoundRdfView({ dataFactory });
       htmlRenderSpy = vi.spyOn(htmlView, 'render');
       rdfRenderSpy = vi.spyOn(rdfView, 'render');
       datasources = { a: new Datasource({ dataFactory, title: 'foo', path: 'foo', urlData: new UrlData({ baseURL: 'http://example.org/' }) }) };
       controller = new NotFoundController({ views: [htmlView, rdfView], datasources: datasources });
-      client = request.agent(DummyServer(controller));
+      baseUrl = await listen(DummyServer(controller));
     });
     function resetAll() {
       htmlRenderSpy.mockClear();
@@ -80,10 +81,11 @@ describe('NotFoundController', () => {
     }
 
     describe('receiving a request without Accept header', () => {
-      let response: request.Response;
+      let response: Response, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/notfound');
+        response = await fetch(baseUrl + '/notfound');
+        responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
@@ -99,27 +101,28 @@ describe('NotFoundController', () => {
       });
 
       it('should have a 404 status', () => {
-        expect(response).toHaveProperty('statusCode', 404);
+        expect(response.status).toBe(404);
       });
 
       it('should set the text/html content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/html;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/html;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
 
       it('should send an HTML error body', () => {
-        expect(response.text).toContain('No resource with URL <code>/notfound</code> was found.');
+        expect(responseText).toContain('No resource with URL <code>/notfound</code> was found.');
       });
     });
 
     describe('receiving a request with an Accept header of */*', () => {
-      let response: request.Response;
+      let response: Response, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/notfound').set('Accept', '*/*');
+        response = await fetch(baseUrl + '/notfound', { headers: { Accept: '*/*' } });
+        responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
@@ -135,27 +138,28 @@ describe('NotFoundController', () => {
       });
 
       it('should have a 404 status', () => {
-        expect(response).toHaveProperty('statusCode', 404);
+        expect(response.status).toBe(404);
       });
 
       it('should set the text/html content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/html;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/html;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
 
       it('should send an HTML error body', () => {
-        expect(response.text).toContain('No resource with URL <code>/notfound</code> was found.');
+        expect(responseText).toContain('No resource with URL <code>/notfound</code> was found.');
       });
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: request.Response;
+      let response: Response, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/notfound').set('Accept', 'text/html');
+        response = await fetch(baseUrl + '/notfound', { headers: { Accept: 'text/html' } });
+        responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
@@ -171,27 +175,28 @@ describe('NotFoundController', () => {
       });
 
       it('should have a 404 status', () => {
-        expect(response).toHaveProperty('statusCode', 404);
+        expect(response.status).toBe(404);
       });
 
       it('should set the text/html content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/html;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/html;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
 
       it('should send an HTML error body', () => {
-        expect(response.text).toContain('No resource with URL <code>/notfound</code> was found.');
+        expect(responseText).toContain('No resource with URL <code>/notfound</code> was found.');
       });
     });
 
     describe('receiving a request with an Accept header of text/turtle', () => {
-      let response: request.Response;
+      let response: Response, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/notfound').set('Accept', 'text/turtle');
+        response = await fetch(baseUrl + '/notfound', { headers: { Accept: 'text/turtle' } });
+        responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
@@ -207,28 +212,29 @@ describe('NotFoundController', () => {
       });
 
       it('should have a 404 status', () => {
-        expect(response).toHaveProperty('statusCode', 404);
+        expect(response.status).toBe(404);
       });
 
       it('should set the text/turtle content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/turtle;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/turtle;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
 
       it('should send a Turtle error body', () => {
-        expect(response.text).toContain('<http://example.org/foo#dataset> a <http://rdfs.org/ns/void#Dataset>');
-        expect(response.text).not.toContain('<#metadata> <http://xmlns.com/foaf/0.1/primaryTopic> <>.');
+        expect(responseText).toContain('<http://example.org/foo#dataset> a <http://rdfs.org/ns/void#Dataset>');
+        expect(responseText).not.toContain('<#metadata> <http://xmlns.com/foaf/0.1/primaryTopic> <>.');
       });
     });
 
     describe('receiving a request with an Accept header of application/trig', () => {
-      let response: request.Response;
+      let response: Response, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/notfound').set('Accept', 'application/trig');
+        response = await fetch(baseUrl + '/notfound', { headers: { Accept: 'application/trig' } });
+        responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
@@ -244,20 +250,20 @@ describe('NotFoundController', () => {
       });
 
       it('should have a 404 status', () => {
-        expect(response).toHaveProperty('statusCode', 404);
+        expect(response.status).toBe(404);
       });
 
       it('should set the text/html content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'application/trig;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('application/trig;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
 
       it('should send a TriG error body', () => {
-        expect(response.text).toContain('<http://example.org/foo#dataset> a <http://rdfs.org/ns/void#Dataset>');
-        expect(response.text).toContain('<#metadata> <http://xmlns.com/foaf/0.1/primaryTopic> <>.');
+        expect(responseText).toContain('<http://example.org/foo#dataset> a <http://rdfs.org/ns/void#Dataset>');
+        expect(responseText).toContain('<#metadata> <http://xmlns.com/foaf/0.1/primaryTopic> <>.');
       });
     });
   });

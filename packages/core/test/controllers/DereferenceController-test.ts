@@ -2,10 +2,9 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
+import { listen } from '../../../../test/test-helpers';
 import { controllers, datasources } from '../../index';
 import { DataFactory as dataFactory } from 'n3';
-
-import * as request from 'supertest';
 
 const { DereferenceController } = controllers;
 const { Datasource } = datasources;
@@ -22,47 +21,49 @@ describe('DereferenceController', () => {
   });
 
   describe('A DereferenceController instance', () => {
-    let controller: InstanceType<typeof DereferenceController> & Partial<SpiedController>, client: request.Agent;
-    beforeAll(() => {
+    let controller: InstanceType<typeof DereferenceController> & Partial<SpiedController>, baseUrl: string, hostname: string;
+    beforeAll(async () => {
       controller = new DereferenceController({ dereference: { '/resource/': new Datasource({ dataFactory, path: 'dbpedia/2014' }) } });
-      client = request.agent(DummyServer(controller));
+      baseUrl = await listen(DummyServer(controller));
+      hostname = new URL(baseUrl).host;
     });
 
     describe('receiving a request for a dereferenced URL', () => {
-      let response: request.Response;
-      beforeAll(async () => { response = await client.get('/resource/Mickey_Mouse'); });
+      let response: Response, responseText: string;
+      beforeAll(async () => {
+        response = await fetch(baseUrl + '/resource/Mickey_Mouse', { redirect: 'manual' });
+        responseText = await response.text();
+      });
 
       it('should not hand over to the next controller', () => {
         expect(controller.next).not.toHaveBeenCalled();
       });
 
       it('should set the status code to 303', () => {
-        expect(response).toHaveProperty('statusCode', 303);
+        expect(response.status).toBe(303);
       });
 
       it('should set the text/plain content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       });
 
       it('should set the Location header correctly', () => {
-        let hostname = String(response.request.req.getHeader('Host')),
-            entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
+        let entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
             expectedLocation = 'http://' + hostname + '/dbpedia/2014?subject=' + entityUrl;
 
-        expect(response.headers).toHaveProperty('location', expectedLocation);
+        expect(response.headers.get('location')).toBe(expectedLocation);
       });
 
       it('should mention the desired location in the body', () => {
-        let hostname = String(response.request.req.getHeader('Host')),
-            entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
+        let entityUrl = encodeURIComponent('http://' + hostname + '/resource/Mickey_Mouse'),
             expectedLocation = 'http://' + hostname + '/dbpedia/2014?subject=' + entityUrl;
 
-        expect(response.text).toContain(expectedLocation);
+        expect(responseText).toContain(expectedLocation);
       });
     });
 
     describe('receiving a request for a non-defererenced URL', () => {
-      beforeAll(() => client.get('/otherresource/Mickey_Mouse'));
+      beforeAll(() => fetch(baseUrl + '/otherresource/Mickey_Mouse'));
 
       it('should hand over to the next controller', () => {
         expect(controller.next).toHaveBeenCalledOnce();

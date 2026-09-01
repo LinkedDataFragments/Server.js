@@ -3,6 +3,7 @@
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
+import { listen } from '../../../../test/test-helpers';
 import { controllers, views } from '../../index';
 import { datasources as coreDatasources, UrlData } from '@ldf/core';
 import type { DatasourceRegistry, Query, QueryFeatures, RouterRequest } from '@ldf/core';
@@ -11,7 +12,6 @@ import { empty } from 'asynciterator';
 import type { AsyncIterator } from 'asynciterator';
 
 import * as http from 'http';
-import * as request from 'supertest';
 import { DataFactory as dataFactory } from 'n3';
 
 const { QuadPatternFragmentsController } = controllers;
@@ -33,7 +33,7 @@ describe('QuadPatternFragmentsController', () => {
 
   describe('A QuadPatternFragmentsController instance with 3 routers', () => {
     let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        client: request.Agent,
+        baseUrl: string,
         routerA: { extractQueryParams: Mock<(request: RouterRequest, query: Query) => void> },
         routerB: { extractQueryParams: Mock<(request: RouterRequest, query: Query) => void> },
         routerC: { extractQueryParams: Mock<(request: RouterRequest, query: MutableQuery) => void> },
@@ -45,7 +45,7 @@ describe('QuadPatternFragmentsController', () => {
         view: InstanceType<typeof QuadPatternFragmentsRdfView>,
         renderSpy: Mock<InstanceType<typeof QuadPatternFragmentsRdfView>['render']>,
         prefixes: Record<string, string>;
-    beforeAll(() => {
+    beforeAll(async () => {
       routerA = { extractQueryParams: vi.fn() };
       routerB = { extractQueryParams: vi.fn(() => { throw new Error('second router error'); }) };
       routerC = {
@@ -74,7 +74,7 @@ describe('QuadPatternFragmentsController', () => {
         views: [view],
         prefixes: prefixes,
       });
-      client = request.agent(DummyServer(controller));
+      baseUrl = await listen(DummyServer(controller));
     });
     function resetAll() {
       routerA.extractQueryParams.mockClear();
@@ -87,7 +87,7 @@ describe('QuadPatternFragmentsController', () => {
     describe('receiving a request for a fragment', () => {
       beforeAll(async () => {
         resetAll();
-        await client.get('/my-datasource?a=b&c=d');
+        await fetch(baseUrl + '/my-datasource?a=b&c=d');
       });
 
       it('should call the first router with the request and an empty query', () => {
@@ -174,7 +174,7 @@ describe('QuadPatternFragmentsController', () => {
         resetAll();
         supportsQuerySpy = vi.fn().mockReturnValue(false);
         datasource.supportsQuery = supportsQuerySpy;
-        await client.get('/my-datasource?a=b&c=d');
+        await fetch(baseUrl + '/my-datasource?a=b&c=d');
       });
 
       it('should verify whether the data source supports the query', () => {
@@ -191,11 +191,11 @@ describe('QuadPatternFragmentsController', () => {
 
   describe('A QuadPatternFragmentsController instance with 2 views', () => {
     let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        client: request.Agent,
+        baseUrl: string,
         htmlView: InstanceType<typeof QuadPatternFragmentsHtmlView>, rdfView: InstanceType<typeof QuadPatternFragmentsRdfView>,
         htmlRenderSpy: Mock<InstanceType<typeof QuadPatternFragmentsHtmlView>['render']>,
         rdfRenderSpy: Mock<InstanceType<typeof QuadPatternFragmentsRdfView>['render']>;
-    beforeAll(() => {
+    beforeAll(async () => {
       let datasource = new Datasource({ dataFactory });
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => {
@@ -219,7 +219,7 @@ describe('QuadPatternFragmentsController', () => {
         datasources: { 'my-datasource': datasource },
         views: [htmlView, rdfView],
       });
-      client = request.agent(DummyServer(controller));
+      baseUrl = await listen(DummyServer(controller));
     });
     function resetAll() {
       htmlRenderSpy.mockClear();
@@ -227,10 +227,10 @@ describe('QuadPatternFragmentsController', () => {
     }
 
     describe('receiving a request without Accept header', () => {
-      let response: request.Response;
+      let response: Response;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/my-datasource');
+        response = await fetch(baseUrl + '/my-datasource');
       });
 
       it('should call the default view', () => {
@@ -238,19 +238,19 @@ describe('QuadPatternFragmentsController', () => {
       });
 
       it('should set the text/html content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/html;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/html;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
     });
 
     describe('receiving a request with an Accept header of */*', () => {
-      let response: request.Response;
+      let response: Response;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/my-datasource').set('Accept', '*/*');
+        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: '*/*' } });
       });
 
       it('should call the HTML view', () => {
@@ -258,19 +258,19 @@ describe('QuadPatternFragmentsController', () => {
       });
 
       it('should set the text/html content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/html;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/html;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: request.Response;
+      let response: Response;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/my-datasource').set('Accept', 'text/html');
+        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: 'text/html' } });
       });
 
       it('should call the HTML view', () => {
@@ -278,19 +278,19 @@ describe('QuadPatternFragmentsController', () => {
       });
 
       it('should set the text/html content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/html;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/html;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
     });
 
     describe('receiving a request with an Accept header of text/turtle', () => {
-      let response: request.Response;
+      let response: Response;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/my-datasource').set('Accept', 'text/turtle');
+        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: 'text/turtle' } });
       });
 
       it('should call the Turtle view', () => {
@@ -298,19 +298,19 @@ describe('QuadPatternFragmentsController', () => {
       });
 
       it('should set the text/turtle content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/turtle;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/turtle;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
     });
 
     describe('receiving a request with an Accept header of text/n3', () => {
-      let response: request.Response;
+      let response: Response;
       beforeAll(async () => {
         resetAll();
-        response = await client.get('/my-datasource').set('Accept', 'text/n3');
+        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: 'text/n3' } });
       });
 
       it('should call the Turtle view', () => {
@@ -318,18 +318,18 @@ describe('QuadPatternFragmentsController', () => {
       });
 
       it('should set the text/n3 content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/n3;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/n3;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
     });
   });
 
   describe('A QuadPatternFragmentsController instance without matching view', () => {
-    let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>, client: request.Agent;
-    beforeAll(() => {
+    let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>, baseUrl: string;
+    beforeAll(async () => {
       let datasource = new Datasource({ dataFactory });
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => empty<Quad>());
@@ -344,54 +344,54 @@ describe('QuadPatternFragmentsController', () => {
         routers: [router],
         datasources: { 'my-datasource': datasource },
       });
-      client = request.agent(DummyServer(controller));
+      baseUrl = await listen(DummyServer(controller));
     });
 
     describe('receiving a request without Accept header', () => {
-      let response: request.Response;
+      let response: Response;
       beforeAll(async () => {
-        response = await client.get('/my-datasource');
+        response = await fetch(baseUrl + '/my-datasource');
       });
 
       it('should return status code 406', () => {
-        expect(response).toHaveProperty('statusCode', 406);
+        expect(response.status).toBe(406);
       });
 
       it('should set the text/plain content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: request.Response;
+      let response: Response;
       beforeAll(async () => {
-        response = await client.get('/my-datasource').set('Accept', 'text/html');
+        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: 'text/html' } });
       });
 
       it('should return status code 406', () => {
-        expect(response).toHaveProperty('statusCode', 406);
+        expect(response.status).toBe(406);
       });
 
       it('should set the text/plain content type', () => {
-        expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
+        expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       });
 
       it('should indicate Accept in the Vary header', () => {
-        expect(response.headers).toHaveProperty('vary', 'Accept');
+        expect(response.headers.get('vary')).toBe('Accept');
       });
     });
   });
 
   describe('A QuadPatternFragmentsController instance with a datasource that synchronously errors', () => {
     let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        client: request.Agent,
+        baseUrl: string,
         router: { extractQueryParams: Mock<(request: RouterRequest, query: MutableQuery) => void> },
         datasource: InstanceType<typeof Datasource>, error: Error, view: InstanceType<typeof QuadPatternFragmentsRdfView>;
-    beforeAll(() => {
+    beforeAll(async () => {
       router = {
         extractQueryParams: vi.fn((request: RouterRequest, query: MutableQuery) => {
           query.features.datasource = true;
@@ -409,7 +409,7 @@ describe('QuadPatternFragmentsController', () => {
         views: [view],
         datasources: { '/my-datasource': datasource },
       });
-      client = request.agent(DummyServer(controller));
+      baseUrl = await listen(DummyServer(controller));
     });
     function resetAll() {
       router.extractQueryParams.mockClear();
@@ -418,7 +418,7 @@ describe('QuadPatternFragmentsController', () => {
     describe('receiving a request for a fragment', () => {
       beforeAll(async () => {
         resetAll();
-        await client.get('/my-datasource?a=b&c=d');
+        await fetch(baseUrl + '/my-datasource?a=b&c=d');
       });
 
       it('should emit the error', () => {
@@ -429,10 +429,10 @@ describe('QuadPatternFragmentsController', () => {
 
   describe('A QuadPatternFragmentsController instance with a datasource that asynchronously errors', () => {
     let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        client: request.Agent,
+        baseUrl: string,
         router: { extractQueryParams: Mock<(request: RouterRequest, query: MutableQuery) => void> },
         datasource: InstanceType<typeof Datasource>, error: Error, view: InstanceType<typeof QuadPatternFragmentsRdfView>;
-    beforeAll(() => {
+    beforeAll(async () => {
       router = {
         extractQueryParams: vi.fn((request: RouterRequest, query: MutableQuery) => {
           query.features.datasource = true;
@@ -454,7 +454,7 @@ describe('QuadPatternFragmentsController', () => {
         views: [view],
         datasources: { 'my-datasource': datasource },
       });
-      client = request.agent(DummyServer(controller));
+      baseUrl = await listen(DummyServer(controller));
     });
     function resetAll() {
       router.extractQueryParams.mockClear();
@@ -463,7 +463,7 @@ describe('QuadPatternFragmentsController', () => {
     describe('receiving a request for a fragment', () => {
       beforeAll(async () => {
         resetAll();
-        await client.get('/my-datasource?a=b&c=d');
+        await fetch(baseUrl + '/my-datasource?a=b&c=d');
       });
 
       it('should emit the error', () => {

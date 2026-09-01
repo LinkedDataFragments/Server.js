@@ -5,16 +5,15 @@ import type { Mock } from 'vitest';
 import { LinkedDataFragmentsServer } from '../lib/LinkedDataFragmentsServer';
 import { Controller } from '../lib/controllers/Controller';
 import type { LdfRequestWithUrl, LdfResponse } from '../index';
-
-import * as request from 'supertest';
+import { listen } from '../../../test/test-helpers';
 
 describe('LinkedDataFragmentsServer', () => {
   describe('A LinkedDataFragmentsServer instance with one controller', () => {
-    let server: ReturnType<typeof LinkedDataFragmentsServer>, controller: Controller, client: request.Agent;
+    let baseUrl: string, controller: Controller;
     // Kept separate so .mockClear() has a Mock-typed target. controller.handleRequest's
     // declared type is just Controller's plain function signature, not Mock.
     let handleRequestSpy: Mock<Controller['handleRequest']>;
-    beforeAll(() => {
+    beforeAll(async () => {
       controller = new Controller();
       handleRequestSpy = vi.fn((request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void) => {
         switch (request.url) {
@@ -28,7 +27,7 @@ describe('LinkedDataFragmentsServer', () => {
         }
       });
       controller.handleRequest = handleRequestSpy;
-      server = new LinkedDataFragmentsServer({
+      baseUrl = await listen(new LinkedDataFragmentsServer({
         controllers: [controller],
         log: vi.fn(),
         response: {
@@ -37,71 +36,70 @@ describe('LinkedDataFragmentsServer', () => {
             'My-Header': 'value',
           },
         },
-      });
-      client = request.agent(server);
+      }));
     });
     beforeEach(() => {
       handleRequestSpy.mockClear();
     });
 
     it('should send the configured headers', async () => {
-      let response = await client.head('/');
-      expect(response.headers).toHaveProperty('access-control-allow-origin', '*');
-      expect(response.headers).toHaveProperty('my-header', 'value');
+      let response = await fetch(baseUrl + '/', { method: 'HEAD' });
+      expect(response.headers.get('access-control-allow-origin')).toBe('*');
+      expect(response.headers.get('my-header')).toBe('value');
     });
 
     it('should not allow POST requests', async () => {
-      let response = await client.post('/');
+      let response = await fetch(baseUrl + '/', { method: 'POST' });
       expect(controller.handleRequest).not.toHaveBeenCalled();
-      expect(response).toHaveProperty('statusCode', 405);
-      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-      expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
+      expect(response.status).toBe(405);
+      expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
+      expect(await response.text()).toBe('The HTTP method "POST" is not allowed; try "GET" instead.');
     });
 
     it('should send a body with GET requests', async () => {
-      let response = await client.get('/handle');
+      let response = await fetch(baseUrl + '/handle');
       expect(controller.handleRequest).toHaveBeenCalledOnce();
-      expect(response).toHaveProperty('statusCode', 200);
-      expect(response).toHaveProperty('text', 'body contents');
+      expect(response.status).toBe(200);
+      expect(await response.text()).toBe('body contents');
     });
 
     it('should not send a body with HEAD requests', async () => {
-      let response = await client.head('/handle');
+      let response = await fetch(baseUrl + '/handle', { method: 'HEAD' });
       expect(controller.handleRequest).toHaveBeenCalledOnce();
-      expect(response).toHaveProperty('statusCode', 200);
-      expect(response.body).not.toHaveProperty('length');
+      expect(response.status).toBe(200);
+      expect(await response.text()).toBe('');
     });
 
     it('should not send a body with OPTIONS requests', async () => {
-      let response = await client.options('/handle');
+      let response = await fetch(baseUrl + '/handle', { method: 'OPTIONS' });
       expect(controller.handleRequest).toHaveBeenCalledOnce();
-      expect(response).toHaveProperty('statusCode', 200);
-      expect(response).toHaveProperty('text', '');
+      expect(response.status).toBe(200);
+      expect(await response.text()).toBe('');
     });
 
     it('should error when the controller cannot handle the request', async () => {
-      let response = await client.get('/unsupported');
+      let response = await fetch(baseUrl + '/unsupported');
       expect(controller.handleRequest).toHaveBeenCalledOnce();
-      expect(response).toHaveProperty('statusCode', 500);
-      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-      expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
+      expect(response.status).toBe(500);
+      expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
+      expect(await response.text()).toBe('Application error: No controller for /unsupported\n');
     });
 
     it('should error when the controller errors', async () => {
-      let response = await client.get('/error');
+      let response = await fetch(baseUrl + '/error');
       expect(controller.handleRequest).toHaveBeenCalledOnce();
-      expect(response).toHaveProperty('statusCode', 500);
-      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-      expect(response).toHaveProperty('text', 'Application error: error message\n');
+      expect(response.status).toBe(500);
+      expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
+      expect(await response.text()).toBe('Application error: error message\n');
     });
   });
 
   describe('A LinkedDataFragmentsServer instance with two controllers', () => {
-    let server: ReturnType<typeof LinkedDataFragmentsServer>, controllerA: Controller, controllerB: Controller, client: request.Agent;
+    let baseUrl: string, controllerA: Controller, controllerB: Controller;
     // Kept separate so .mockClear() has a Mock-typed target. controllerX.handleRequest's
     // declared type is just Controller's plain function signature, not Mock.
     let handleRequestSpyA: Mock<Controller['handleRequest']>, handleRequestSpyB: Mock<Controller['handleRequest']>;
-    beforeAll(() => {
+    beforeAll(async () => {
       controllerA = new Controller();
       handleRequestSpyA = vi.fn((request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void) => {
         switch (request.url) {
@@ -129,11 +127,10 @@ describe('LinkedDataFragmentsServer', () => {
         }
       });
       controllerB.handleRequest = handleRequestSpyB;
-      server = new LinkedDataFragmentsServer({
+      baseUrl = await listen(new LinkedDataFragmentsServer({
         controllers: [controllerA, controllerB],
         log: vi.fn(),
-      });
-      client = request.agent(server);
+      }));
     });
     beforeEach(() => {
       handleRequestSpyA.mockClear();
@@ -141,55 +138,55 @@ describe('LinkedDataFragmentsServer', () => {
     });
 
     it('should not allow POST requests', async () => {
-      let response = await client.post('/');
+      let response = await fetch(baseUrl + '/', { method: 'POST' });
       expect(controllerA.handleRequest).not.toHaveBeenCalled();
       expect(controllerB.handleRequest).not.toHaveBeenCalled();
-      expect(response).toHaveProperty('statusCode', 405);
-      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-      expect(response).toHaveProperty('text', 'The HTTP method "POST" is not allowed; try "GET" instead.');
+      expect(response.status).toBe(405);
+      expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
+      expect(await response.text()).toBe('The HTTP method "POST" is not allowed; try "GET" instead.');
     });
 
     it('should use the first controller when it can handle the request', async () => {
-      let response = await client.get('/handleA');
+      let response = await fetch(baseUrl + '/handleA');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).not.toHaveBeenCalled();
-      expect(response).toHaveProperty('statusCode', 200);
-      expect(response).toHaveProperty('text', 'body contents A');
+      expect(response.status).toBe(200);
+      expect(await response.text()).toBe('body contents A');
     });
 
     it('should use the second controller when the first cannot handle the request', async () => {
-      let response = await client.get('/handleB');
+      let response = await fetch(baseUrl + '/handleB');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).toHaveBeenCalledOnce();
-      expect(response).toHaveProperty('statusCode', 200);
-      expect(response).toHaveProperty('text', 'body contents B');
+      expect(response.status).toBe(200);
+      expect(await response.text()).toBe('body contents B');
     });
 
     it('should error when neither controller can handle the request', async () => {
-      let response = await client.get('/unsupported');
+      let response = await fetch(baseUrl + '/unsupported');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).toHaveBeenCalledOnce();
-      expect(response).toHaveProperty('statusCode', 500);
-      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-      expect(response).toHaveProperty('text', 'Application error: No controller for /unsupported\n');
+      expect(response.status).toBe(500);
+      expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
+      expect(await response.text()).toBe('Application error: No controller for /unsupported\n');
     });
 
     it('should error when the first controller errors', async () => {
-      let response = await client.get('/errorA');
+      let response = await fetch(baseUrl + '/errorA');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).not.toHaveBeenCalled();
-      expect(response).toHaveProperty('statusCode', 500);
-      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-      expect(response).toHaveProperty('text', 'Application error: error message A\n');
+      expect(response.status).toBe(500);
+      expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
+      expect(await response.text()).toBe('Application error: error message A\n');
     });
 
     it('should error when the second controller errors', async () => {
-      let response = await client.get('/errorB');
+      let response = await fetch(baseUrl + '/errorB');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).toHaveBeenCalledOnce();
-      expect(response).toHaveProperty('statusCode', 500);
-      expect(response.headers).toHaveProperty('content-type', 'text/plain;charset=utf-8');
-      expect(response).toHaveProperty('text', 'Application error: error message B\n');
+      expect(response.status).toBe(500);
+      expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
+      expect(await response.text()).toBe('Application error: error message B\n');
     });
   });
 });

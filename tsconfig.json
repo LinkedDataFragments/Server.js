@@ -15,7 +15,10 @@
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": true,
-    "skipLibCheck": true
+    // false means `yarn typecheck` fails on vitest/vite's own unresolvable .d.ts
+    // subpath imports (moduleResolution can't follow their package.json "exports"),
+    // unrelated to our code. `yarn lint` is unaffected.
+    "skipLibCheck": false
   },
   "include": [
     "packages/*/index.ts",
