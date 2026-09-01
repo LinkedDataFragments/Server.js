@@ -25,7 +25,7 @@
     "lint": "eslint bin/* lib test"
   },
   "dependencies": {
-    "asynciterator": "^3.0.0",
+    "asynciterator": "^3.10.0",
     "componentsjs": "^4.0.4",
     "forwarded-parse": "^2.1.0",
     "jsonld-streaming-serializer": "^3.0.0",

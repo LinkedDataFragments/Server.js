@@ -1,0 +1,8 @@
+// Used by "typecheck"; needs exports-aware resolution for vitest's types.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "preserve",
+    "moduleResolution": "bundler"
+  }
+}
