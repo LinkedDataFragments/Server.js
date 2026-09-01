@@ -1,4 +1,3 @@
-// Used by "build"/postinstall; excludes tests so it never needs vitest's types.
 {
   "extends": "./tsconfig.json",
   "include": [
