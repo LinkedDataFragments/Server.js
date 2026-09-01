@@ -6,7 +6,7 @@
   ],
   "devDependencies": {
     "@types/lodash": "^4.17.24",
-    "@types/lru-cache": "^5.1.1",
+    "@types/lru-cache": "^7.0.0",
     "@types/mime": "^2.0.3",
     "@types/node": "^24.0.0",
     "@types/parse-cache-control": "^1.0.4",
