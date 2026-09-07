@@ -21,7 +21,7 @@
     "eslint-plugin-promise": "^7.3.0",
     "lerna": "^4.0.0",
     "manual-git-changelog": "^1.0.1",
-    "node-gyp": "^11.0.0",
+    "node-gyp": "^13.0.0",
     "pre-commit": "^2.0.0",
     "rdf-object": "^1.14.0",
     "supertest": "^7.0.0",
