@@ -5,13 +5,9 @@ import { Controller } from '@ldf/core/lib/controllers/Controller';
 import * as url from 'url';
 import * as _ from 'lodash';
 import type { ParsedUrlQuery } from 'querystring';
-import type { ControllerOptions, LdfRequestWithUrl, LdfResponse, Query, QueryFeatures, RouterRequest, ViewSettings } from '@ldf/core';
+import type { ControllerOptions, LdfRequestWithUrl, LdfResponse, Query, QueryFeatures, Router, RouterRequest, ViewSettings } from '@ldf/core';
 import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import type { FragmentInfo } from '../views/quadpatternfragments/QuadPatternFragmentsRdfView';
-
-interface Router {
-  extractQueryParams(request: RouterRequest, query: Query): void;
-}
 
 interface QuadPatternFragmentsControllerOptions extends ControllerOptions {
   routers?: Router[];

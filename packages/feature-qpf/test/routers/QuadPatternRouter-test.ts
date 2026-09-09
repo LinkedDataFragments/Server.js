@@ -2,8 +2,16 @@
 
 import { describe, it, expect } from 'vitest';
 import { extractQueryParams } from '../../../../test/test-helpers';
-let QuadPatternRouter = require('../../').routers.QuadPatternRouter;
-const dataFactory = require('n3').DataFactory;
+import { routers } from '../../index';
+import type { Query } from '@ldf/core';
+
+// Query has no index signature; this lets the test tables below use an
+// arbitrary 'a' field as a stand-in for "pre-existing data that should survive".
+type TestQuery = Query & { a?: number };
+type QueryParamsTestCase = [string, string, string, TestQuery, TestQuery];
+import { DataFactory as dataFactory } from 'n3';
+
+const { QuadPatternRouter } = routers;
 
 describe('QuadPatternRouter', () => {
   describe('The QuadPatternRouter module', () => {
@@ -21,7 +29,7 @@ describe('QuadPatternRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -225,8 +233,8 @@ describe('QuadPatternRouter', () => {
             { a: 1 },
             { a: 1, features: { quadPattern: true }, graph: dataFactory.defaultGraph() },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -242,7 +250,7 @@ describe('QuadPatternRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -467,8 +475,8 @@ describe('QuadPatternRouter', () => {
             { a: 1 },
             { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('foo:bar') },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });

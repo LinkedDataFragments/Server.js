@@ -2,40 +2,44 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { once } from 'events';
-let N3Datasource = require('../../').datasources.N3Datasource;
+import { datasources as jsonLdDatasources } from '../../index';
+import { datasources as coreDatasources } from '@ldf/core';
+import type { Query } from '@ldf/core';
+import type { Quad } from 'rdf-js';
+import * as path from 'path';
+import { DataFactory as dataFactory } from 'n3';
 
-let Datasource = require('@ldf/core').datasources.Datasource,
-    path = require('path'),
-    dataFactory = require('n3').DataFactory;
+const { JsonLdDatasource } = jsonLdDatasources;
+const { Datasource } = coreDatasources;
 
-let exampleTurtleUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.ttl');
+let exampleJsonLdUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.jsonld');
 
-describe('N3Datasource', () => {
-  describe('The N3Datasource module', () => {
+describe('JsonLdDatasource', () => {
+  describe('The JsonLdDatasource module', () => {
     it('should be a function', () => {
-      expect(typeof N3Datasource).toBe('function');
+      expect(typeof JsonLdDatasource).toBe('function');
     });
 
-    it('should be a N3Datasource constructor', async () => {
-      let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
-      expect(instance).toBeInstanceOf(N3Datasource);
-      await new Promise((resolve) => instance.close(resolve));
+    it('should be a JsonLdDatasource constructor', async () => {
+      let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
+      expect(instance).toBeInstanceOf(JsonLdDatasource);
+      await new Promise<void>((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
-      let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
+      let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      await new Promise((resolve) => instance.close(resolve));
+      await new Promise<void>((resolve) => instance.close(resolve));
     });
   });
 
-  describe('A N3Datasource instance for an example Turtle file', () => {
-    let datasource = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
+  describe('A JsonLdDatasource instance for an example JsonLd file', () => {
+    let datasource = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
     beforeAll(async () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
+    afterAll(() => new Promise<void>((resolve) => datasource.close(resolve)));
 
     itShouldExecute(datasource,
       'the empty query',
@@ -81,16 +85,26 @@ describe('N3Datasource', () => {
       'a query for a non-existing object',
       { object: dataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
+
+    itShouldExecute(datasource,
+      'a query for an existing graph',
+      { graph: dataFactory.namedNode('http://example.org/g'),      limit: 10, features: { quadPattern: true, limit: true } },
+      10, 10);
+
+    itShouldExecute(datasource,
+      'a query for a non-existing graph',
+      { graph: dataFactory.namedNode('http://example.org/s1'),     limit: 10, features: { quadPattern: true, limit: true } },
+      0, 0);
   });
 });
 
-function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
+function itShouldExecute(datasource: InstanceType<typeof JsonLdDatasource>, name: string, query: Query, expectedResultsCount: number, expectedTotalCount: number) {
   describe('executing ' + name, () => {
-    let resultsCount = 0, totalCount;
+    let resultsCount = 0, totalCount: number | undefined;
     beforeAll(async () => {
       let result = datasource.select(query);
-      result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
-      result.on('data', (triple) => { resultsCount++; });
+      result.getProperty('metadata', (metadata: { totalCount: number }) => { totalCount = metadata.totalCount; });
+      result.on('data', (_triple: Quad) => { resultsCount++; });
       await once(result, 'end');
     });
 

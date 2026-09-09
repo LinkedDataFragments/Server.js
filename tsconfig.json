@@ -21,6 +21,8 @@
     "packages/*/index.ts",
     "packages/*/lib/**/*",
     "packages/*/bin/**/*",
+    "packages/*/test/**/*.ts",
+    "test/**/*.ts",
     "types/**/*.d.ts"
   ],
   "exclude": [

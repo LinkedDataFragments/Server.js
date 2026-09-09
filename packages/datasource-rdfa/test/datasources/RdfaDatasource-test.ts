@@ -2,40 +2,44 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { once } from 'events';
-let JsonLdDatasource = require('../../').datasources.JsonLdDatasource;
+import { datasources as rdfaDatasources } from '../../index';
+import { datasources as coreDatasources } from '@ldf/core';
+import type { Query } from '@ldf/core';
+import type { Quad } from 'rdf-js';
+import * as path from 'path';
+import { DataFactory as dataFactory } from 'n3';
 
-let Datasource = require('@ldf/core').datasources.Datasource,
-    path = require('path'),
-    dataFactory = require('n3').DataFactory;
+const { RdfaDatasource } = rdfaDatasources;
+const { Datasource } = coreDatasources;
 
-let exampleJsonLdUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.jsonld');
+let exampleRdfaUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.html');
 
-describe('JsonLdDatasource', () => {
-  describe('The JsonLdDatasource module', () => {
+describe('RdfaDatasource', () => {
+  describe('The RdfaDatasource module', () => {
     it('should be a function', () => {
-      expect(typeof JsonLdDatasource).toBe('function');
+      expect(typeof RdfaDatasource).toBe('function');
     });
 
-    it('should be a JsonLdDatasource constructor', async () => {
-      let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
-      expect(instance).toBeInstanceOf(JsonLdDatasource);
-      await new Promise((resolve) => instance.close(resolve));
+    it('should be a RdfaDatasource constructor', async () => {
+      let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
+      expect(instance).toBeInstanceOf(RdfaDatasource);
+      await new Promise<void>((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
-      let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
+      let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      await new Promise((resolve) => instance.close(resolve));
+      await new Promise<void>((resolve) => instance.close(resolve));
     });
   });
 
-  describe('A JsonLdDatasource instance for an example JsonLd file', () => {
-    let datasource = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
+  describe('A RdfaDatasource instance for an example RDFa HTML file', () => {
+    let datasource = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
     beforeAll(async () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
+    afterAll(() => new Promise<void>((resolve) => datasource.close(resolve)));
 
     itShouldExecute(datasource,
       'the empty query',
@@ -81,26 +85,16 @@ describe('JsonLdDatasource', () => {
       'a query for a non-existing object',
       { object: dataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
-
-    itShouldExecute(datasource,
-      'a query for an existing graph',
-      { graph: dataFactory.namedNode('http://example.org/g'),      limit: 10, features: { quadPattern: true, limit: true } },
-      10, 10);
-
-    itShouldExecute(datasource,
-      'a query for a non-existing graph',
-      { graph: dataFactory.namedNode('http://example.org/s1'),     limit: 10, features: { quadPattern: true, limit: true } },
-      0, 0);
   });
 });
 
-function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
+function itShouldExecute(datasource: InstanceType<typeof RdfaDatasource>, name: string, query: Query, expectedResultsCount: number, expectedTotalCount: number) {
   describe('executing ' + name, () => {
-    let resultsCount = 0, totalCount;
+    let resultsCount = 0, totalCount: number | undefined;
     beforeAll(async () => {
       let result = datasource.select(query);
-      result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
-      result.on('data', (triple) => { resultsCount++; });
+      result.getProperty('metadata', (metadata: { totalCount: number }) => { totalCount = metadata.totalCount; });
+      result.on('data', (_triple: Quad) => { resultsCount++; });
       await once(result, 'end');
     });
 
