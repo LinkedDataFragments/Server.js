@@ -1,10 +1,10 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* A PageRouter routes page numbers to offsets */
 
-import type { Query, RouterRequest } from '../types';
+import type { Query, Router, RouterRequest } from '../types';
 
 // Creates a new PageRouter with the given page size, which defaults to 100.
-export class PageRouter {
+export class PageRouter implements Router {
   pageSize: number;
 
   constructor(config?: { pageSize?: number }) {

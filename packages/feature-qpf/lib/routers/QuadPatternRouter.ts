@@ -3,7 +3,7 @@
 
 import { stringToTerm } from 'rdf-string';
 import type { DataFactory, Term } from 'rdf-js';
-import type { Query, RouterRequest } from '@ldf/core';
+import type { Query, Router, RouterRequest } from '@ldf/core';
 
 let iriMatcher = /^(<?)([^_?$"<>][^"<>]*)>?$/;
 let literalMatcher = /^("[^]*")(?:|\^\^<?([^"<>]+)>?|@[a-z0-9\-]+)$/i;
@@ -20,7 +20,7 @@ interface QuadPatternRouterConfig {
 }
 
 // Creates a new QuadPatternRouter
-export class QuadPatternRouter {
+export class QuadPatternRouter implements Router {
   protected _prefixes: Record<string, string>;
   dataFactory?: DataFactory;
 

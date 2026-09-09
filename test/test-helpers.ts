@@ -1,12 +1,11 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 import { it, expect } from 'vitest';
 import { parse as parseUrl } from 'url';
-import { Readable } from 'stream';
 import { IncomingMessage, ServerResponse, type Server } from 'http';
 import { Socket } from 'net';
 import { EventEmitter, once } from 'events';
 import inject = require('light-my-request');
-import type { Query, RouterRequest } from '../packages/core/lib/types';
+import type { Query, Router } from '../packages/core/lib/types';
 
 type HttpMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS';
 
@@ -52,37 +51,26 @@ export async function request(server: Server, path: string, init: FetchLikeInit 
   };
 }
 
-// A router as accepted by extractQueryParams; DatasourceRouter and PageRouter both satisfy this
-interface QueryParamRouter {
-  extractQueryParams(request: RouterRequest, query: Query): void;
-}
-
 // Generates an `it` block that verifies a router's extractQueryParams behavior
-export function extractQueryParams(router: QueryParamRouter, description: string, url: string, intent: string, query: Query, expectedQuery: Query) {
+export function extractQueryParams(router: Router, description: string, url: string, intent: string, query: Query, expectedQuery: Query) {
   it(description + ' ' + intent, () => {
     const parsed = parseUrl(url, true);
-    const result = router.extractQueryParams({ url: { pathname: parsed.pathname ?? undefined, query: parsed.query } }, query);
+    const result = router.extractQueryParams({ url: parsed }, query);
     expect(result, 'should not return anything').toBeUndefined();
     expect(query, 'should match the expected query').toEqual(expectedQuery);
   });
 }
 
 // A dummy HTTP response, as returned by createHttpResponse
-class HttpResponse extends Readable {
-  statusCode = 200;
-  headers: Record<string, string>;
-  aborted = false;
+class HttpResponse extends IncomingMessage {
+  override statusCode = 200;
 
   constructor(contentType: string) {
-    super();
+    super(new Socket());
     this.headers = { 'content-type': contentType };
   }
 
   override _read(): void {}
-
-  abort(): void {
-    this.aborted = true;
-  }
 }
 
 // Creates a dummy HTTP response
