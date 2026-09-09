@@ -2,8 +2,8 @@
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import type { Mock } from 'vitest';
-import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
-import { listen } from '../../../../test/test-helpers';
+import { DummyServer } from '../../../../test/DummyServer';
+import { request } from '../../../../test/test-helpers';
 import { Controller } from '../../lib/controllers/Controller';
 import { UrlData } from '../../index';
 import type { LdfRequestWithUrl, LdfResponse, ViewSettings } from '../../index';
@@ -31,17 +31,17 @@ describe('Controller', () => {
   });
 
   describe('A Controller instance without baseURL', () => {
-    let controller: TestableController & Partial<SpiedController>;
-    let baseUrl: string;
+    let controller: TestableController;
+    let server: DummyServer;
     let handleRequestSpy: Mock<TestableController['_handleRequest']>;
-    beforeAll(async () => {
+    beforeAll(() => {
       controller = new TestableController();
       handleRequestSpy = vi.spyOn(controller, '_handleRequest');
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
 
     describe('receiving a request', () => {
-      beforeAll(() => fetch(baseUrl + '/path?a=b'));
+      beforeAll(() => request(server, '/path?a=b'));
 
       it('should call _handleRequest with request, response and next', () => {
         expect(handleRequestSpy).toHaveBeenCalledOnce();
@@ -63,23 +63,23 @@ describe('Controller', () => {
       });
 
       it('should hand over to the next controller', () => {
-        expect(controller.next).toHaveBeenCalledOnce();
+        expect(server.next).toHaveBeenCalledOnce();
       });
     });
   });
 
   describe('A Controller instance without baseURL using Forwarded header', () => {
-    let controller: TestableController & Partial<SpiedController>;
-    let baseUrl: string;
+    let controller: TestableController;
+    let server: DummyServer;
     let handleRequestSpy: Mock<TestableController['_handleRequest']>;
-    beforeAll(async () => {
+    beforeAll(() => {
       controller = new TestableController({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       handleRequestSpy = vi.spyOn(controller, '_handleRequest');
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
 
     describe('receiving a request', () => {
-      beforeAll(() => fetch(baseUrl + '/path?a=b', {
+      beforeAll(() => request(server, '/path?a=b', {
         headers: {
           'X-Forwarded-Host': 'foo:5000',
           // NOTE: the priority will go to the Forwarded header over the X-Forwarded-Host header
@@ -107,23 +107,23 @@ describe('Controller', () => {
       });
 
       it('should hand over to the next controller', () => {
-        expect(controller.next).toHaveBeenCalledOnce();
+        expect(server.next).toHaveBeenCalledOnce();
       });
     });
   });
 
   describe('A Controller instance without baseURL using X-Forwarded-* headers', () => {
-    let controller: TestableController & Partial<SpiedController>;
-    let baseUrl: string;
+    let controller: TestableController;
+    let server: DummyServer;
     let handleRequestSpy: Mock<TestableController['_handleRequest']>;
-    beforeAll(async () => {
+    beforeAll(() => {
       controller = new TestableController();
       handleRequestSpy = vi.spyOn(controller, '_handleRequest');
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
 
     describe('receiving a request', () => {
-      beforeAll(() => fetch(baseUrl + '/path?a=b', {
+      beforeAll(() => request(server, '/path?a=b', {
         headers: {
           'X-Forwarded-Host': 'foo:5000',
           'X-Forwarded-Proto': 'https',
@@ -150,23 +150,23 @@ describe('Controller', () => {
       });
 
       it('should hand over to the next controller', () => {
-        expect(controller.next).toHaveBeenCalledOnce();
+        expect(server.next).toHaveBeenCalledOnce();
       });
     });
   });
 
   describe('A Controller instance with baseURL', () => {
-    let controller: TestableController & Partial<SpiedController>;
-    let baseUrl: string;
+    let controller: TestableController;
+    let server: DummyServer;
     let handleRequestSpy: Mock<TestableController['_handleRequest']>;
-    beforeAll(async () => {
+    beforeAll(() => {
       controller = new TestableController({ urlData: new UrlData({ baseURL: 'http://example.org:1234/base?c=d#f' }) });
       handleRequestSpy = vi.spyOn(controller, '_handleRequest');
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
 
     describe('receiving a request', () => {
-      beforeAll(() => fetch(baseUrl + '/path?a=b'));
+      beforeAll(() => request(server, '/path?a=b'));
 
       it('should call _handleRequest with request, response and next', () => {
         expect(handleRequestSpy).toHaveBeenCalledOnce();
@@ -188,7 +188,7 @@ describe('Controller', () => {
       });
 
       it('should hand over to the next controller', () => {
-        expect(controller.next).toHaveBeenCalledOnce();
+        expect(server.next).toHaveBeenCalledOnce();
       });
     });
   });

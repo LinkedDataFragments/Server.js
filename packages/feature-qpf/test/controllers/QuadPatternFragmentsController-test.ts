@@ -2,10 +2,13 @@
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import type { Mock } from 'vitest';
-import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
-import { listen } from '../../../../test/test-helpers';
-import { controllers, views } from '../../index';
+import { DummyServer } from '../../../../test/DummyServer';
+import { request, type FetchLikeResponse } from '../../../../test/test-helpers';
+import { QuadPatternFragmentsController } from '../../lib/controllers/QuadPatternFragmentsController';
+import { QuadPatternFragmentsHtmlView } from '../../lib/views/quadpatternfragments/QuadPatternFragmentsHtmlView';
+import { QuadPatternFragmentsRdfView } from '../../lib/views/quadpatternfragments/QuadPatternFragmentsRdfView';
 import { datasources as coreDatasources, UrlData } from '@ldf/core';
+import type { Datasource as DatasourceType } from '@ldf/core/lib/datasources/Datasource';
 import type { DatasourceRegistry, Query, QueryFeatures, RouterRequest } from '@ldf/core';
 import type { Quad } from 'rdf-js';
 import { empty } from 'asynciterator';
@@ -14,8 +17,6 @@ import type { AsyncIterator } from 'asynciterator';
 import * as http from 'http';
 import { DataFactory as dataFactory } from 'n3';
 
-const { QuadPatternFragmentsController } = controllers;
-const { QuadPatternFragmentsHtmlView, QuadPatternFragmentsRdfView } = views.quadpatternfragments;
 const { Datasource } = coreDatasources;
 
 type MutableQuery = Query & { features: QueryFeatures };
@@ -32,20 +33,20 @@ describe('QuadPatternFragmentsController', () => {
   });
 
   describe('A QuadPatternFragmentsController instance with 3 routers', () => {
-    let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        baseUrl: string,
+    let controller: QuadPatternFragmentsController,
+        server: DummyServer,
         routerA: { extractQueryParams: Mock<(request: RouterRequest, query: Query) => void> },
         routerB: { extractQueryParams: Mock<(request: RouterRequest, query: Query) => void> },
         routerC: { extractQueryParams: Mock<(request: RouterRequest, query: MutableQuery) => void> },
-        datasource: InstanceType<typeof Datasource>,
+        datasource: DatasourceType,
         supportsQuerySpy: Mock<(query: Query) => boolean>,
         selectSpy: Mock<(query: Query) => AsyncIterator<Quad>>,
         selectResult: AsyncIterator<Quad>,
         datasources: DatasourceRegistry,
-        view: InstanceType<typeof QuadPatternFragmentsRdfView>,
-        renderSpy: Mock<InstanceType<typeof QuadPatternFragmentsRdfView>['render']>,
+        view: QuadPatternFragmentsRdfView,
+        renderSpy: Mock<QuadPatternFragmentsRdfView['render']>,
         prefixes: Record<string, string>;
-    beforeAll(async () => {
+    beforeAll(() => {
       routerA = { extractQueryParams: vi.fn() };
       routerB = { extractQueryParams: vi.fn(() => { throw new Error('second router error'); }) };
       routerC = {
@@ -74,7 +75,7 @@ describe('QuadPatternFragmentsController', () => {
         views: [view],
         prefixes: prefixes,
       });
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
     function resetAll() {
       routerA.extractQueryParams.mockClear();
@@ -87,7 +88,7 @@ describe('QuadPatternFragmentsController', () => {
     describe('receiving a request for a fragment', () => {
       beforeAll(async () => {
         resetAll();
-        await fetch(baseUrl + '/my-datasource?a=b&c=d');
+        await request(server, '/my-datasource?a=b&c=d');
       });
 
       it('should call the first router with the request and an empty query', () => {
@@ -174,7 +175,7 @@ describe('QuadPatternFragmentsController', () => {
         resetAll();
         supportsQuerySpy = vi.fn().mockReturnValue(false);
         datasource.supportsQuery = supportsQuerySpy;
-        await fetch(baseUrl + '/my-datasource?a=b&c=d');
+        await request(server, '/my-datasource?a=b&c=d');
       });
 
       it('should verify whether the data source supports the query', () => {
@@ -190,12 +191,12 @@ describe('QuadPatternFragmentsController', () => {
   });
 
   describe('A QuadPatternFragmentsController instance with 2 views', () => {
-    let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        baseUrl: string,
-        htmlView: InstanceType<typeof QuadPatternFragmentsHtmlView>, rdfView: InstanceType<typeof QuadPatternFragmentsRdfView>,
-        htmlRenderSpy: Mock<InstanceType<typeof QuadPatternFragmentsHtmlView>['render']>,
-        rdfRenderSpy: Mock<InstanceType<typeof QuadPatternFragmentsRdfView>['render']>;
-    beforeAll(async () => {
+    let controller: QuadPatternFragmentsController,
+        server: DummyServer,
+        htmlView: QuadPatternFragmentsHtmlView, rdfView: QuadPatternFragmentsRdfView,
+        htmlRenderSpy: Mock<QuadPatternFragmentsHtmlView['render']>,
+        rdfRenderSpy: Mock<QuadPatternFragmentsRdfView['render']>;
+    beforeAll(() => {
       let datasource = new Datasource({ dataFactory });
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => {
@@ -219,7 +220,7 @@ describe('QuadPatternFragmentsController', () => {
         datasources: { 'my-datasource': datasource },
         views: [htmlView, rdfView],
       });
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
     function resetAll() {
       htmlRenderSpy.mockClear();
@@ -227,10 +228,10 @@ describe('QuadPatternFragmentsController', () => {
     }
 
     describe('receiving a request without Accept header', () => {
-      let response: Response;
+      let response: FetchLikeResponse;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/my-datasource');
+        response = await request(server, '/my-datasource');
       });
 
       it('should call the default view', () => {
@@ -247,10 +248,10 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of */*', () => {
-      let response: Response;
+      let response: FetchLikeResponse;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: '*/*' } });
+        response = await request(server, '/my-datasource', { headers: { Accept: '*/*' } });
       });
 
       it('should call the HTML view', () => {
@@ -267,10 +268,10 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: Response;
+      let response: FetchLikeResponse;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: 'text/html' } });
+        response = await request(server, '/my-datasource', { headers: { Accept: 'text/html' } });
       });
 
       it('should call the HTML view', () => {
@@ -287,10 +288,10 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/turtle', () => {
-      let response: Response;
+      let response: FetchLikeResponse;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: 'text/turtle' } });
+        response = await request(server, '/my-datasource', { headers: { Accept: 'text/turtle' } });
       });
 
       it('should call the Turtle view', () => {
@@ -307,10 +308,10 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/n3', () => {
-      let response: Response;
+      let response: FetchLikeResponse;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: 'text/n3' } });
+        response = await request(server, '/my-datasource', { headers: { Accept: 'text/n3' } });
       });
 
       it('should call the Turtle view', () => {
@@ -328,8 +329,8 @@ describe('QuadPatternFragmentsController', () => {
   });
 
   describe('A QuadPatternFragmentsController instance without matching view', () => {
-    let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>, baseUrl: string;
-    beforeAll(async () => {
+    let controller: QuadPatternFragmentsController, server: DummyServer;
+    beforeAll(() => {
       let datasource = new Datasource({ dataFactory });
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => empty<Quad>());
@@ -344,13 +345,13 @@ describe('QuadPatternFragmentsController', () => {
         routers: [router],
         datasources: { 'my-datasource': datasource },
       });
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
 
     describe('receiving a request without Accept header', () => {
-      let response: Response;
+      let response: FetchLikeResponse;
       beforeAll(async () => {
-        response = await fetch(baseUrl + '/my-datasource');
+        response = await request(server, '/my-datasource');
       });
 
       it('should return status code 406', () => {
@@ -367,9 +368,9 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: Response;
+      let response: FetchLikeResponse;
       beforeAll(async () => {
-        response = await fetch(baseUrl + '/my-datasource', { headers: { Accept: 'text/html' } });
+        response = await request(server, '/my-datasource', { headers: { Accept: 'text/html' } });
       });
 
       it('should return status code 406', () => {
@@ -387,11 +388,11 @@ describe('QuadPatternFragmentsController', () => {
   });
 
   describe('A QuadPatternFragmentsController instance with a datasource that synchronously errors', () => {
-    let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        baseUrl: string,
+    let controller: QuadPatternFragmentsController,
+        server: DummyServer,
         router: { extractQueryParams: Mock<(request: RouterRequest, query: MutableQuery) => void> },
-        datasource: InstanceType<typeof Datasource>, error: Error, view: InstanceType<typeof QuadPatternFragmentsRdfView>;
-    beforeAll(async () => {
+        datasource: DatasourceType, error: Error, view: QuadPatternFragmentsRdfView;
+    beforeAll(() => {
       router = {
         extractQueryParams: vi.fn((request: RouterRequest, query: MutableQuery) => {
           query.features.datasource = true;
@@ -409,7 +410,7 @@ describe('QuadPatternFragmentsController', () => {
         views: [view],
         datasources: { '/my-datasource': datasource },
       });
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
     function resetAll() {
       router.extractQueryParams.mockClear();
@@ -418,21 +419,21 @@ describe('QuadPatternFragmentsController', () => {
     describe('receiving a request for a fragment', () => {
       beforeAll(async () => {
         resetAll();
-        await fetch(baseUrl + '/my-datasource?a=b&c=d');
+        await request(server, '/my-datasource?a=b&c=d');
       });
 
       it('should emit the error', () => {
-        expect(controller.error).toBe(error);
+        expect(server.error).toBe(error);
       });
     });
   });
 
   describe('A QuadPatternFragmentsController instance with a datasource that asynchronously errors', () => {
-    let controller: InstanceType<typeof QuadPatternFragmentsController> & Partial<SpiedController>,
-        baseUrl: string,
+    let controller: QuadPatternFragmentsController,
+        server: DummyServer,
         router: { extractQueryParams: Mock<(request: RouterRequest, query: MutableQuery) => void> },
-        datasource: InstanceType<typeof Datasource>, error: Error, view: InstanceType<typeof QuadPatternFragmentsRdfView>;
-    beforeAll(async () => {
+        datasource: DatasourceType, error: Error, view: QuadPatternFragmentsRdfView;
+    beforeAll(() => {
       router = {
         extractQueryParams: vi.fn((request: RouterRequest, query: MutableQuery) => {
           query.features.datasource = true;
@@ -454,7 +455,7 @@ describe('QuadPatternFragmentsController', () => {
         views: [view],
         datasources: { 'my-datasource': datasource },
       });
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
     function resetAll() {
       router.extractQueryParams.mockClear();
@@ -463,11 +464,11 @@ describe('QuadPatternFragmentsController', () => {
     describe('receiving a request for a fragment', () => {
       beforeAll(async () => {
         resetAll();
-        await fetch(baseUrl + '/my-datasource?a=b&c=d');
+        await request(server, '/my-datasource?a=b&c=d');
       });
 
       it('should emit the error', () => {
-        expect(controller.error).toBe(error);
+        expect(server.error).toBe(error);
       });
     });
   });

@@ -2,15 +2,16 @@
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import type { Mock } from 'vitest';
-import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
-import { listen } from '../../../../test/test-helpers';
-import { controllers, views, datasources as coreDatasources, UrlData } from '../../index';
+import { DummyServer } from '../../../../test/DummyServer';
+import { request, type FetchLikeResponse } from '../../../../test/test-helpers';
+import { datasources as coreDatasources, UrlData } from '../../index';
+import { NotFoundController } from '../../lib/controllers/NotFoundController';
+import { NotFoundHtmlView } from '../../lib/views/notfound/NotFoundHtmlView';
+import { NotFoundRdfView } from '../../lib/views/notfound/NotFoundRdfView';
 import type { DatasourceRegistry } from '../../index';
 
 import { DataFactory as dataFactory } from 'n3';
 
-const { NotFoundController } = controllers;
-const { NotFoundHtmlView, NotFoundRdfView } = views.notfound;
 const { Datasource } = coreDatasources;
 
 describe('NotFoundController', () => {
@@ -25,21 +26,21 @@ describe('NotFoundController', () => {
   });
 
   describe('A NotFoundController instance without views', () => {
-    let controller: InstanceType<typeof NotFoundController> & Partial<SpiedController>, baseUrl: string;
-    beforeAll(async () => {
+    let controller: NotFoundController, server: DummyServer;
+    beforeAll(() => {
       controller = new NotFoundController();
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
 
     describe('receiving a request', () => {
-      let response: Response, responseText: string;
+      let response: FetchLikeResponse, responseText: string;
       beforeAll(async () => {
-        response = await fetch(baseUrl + '/notfound');
+        response = await request(server, '/notfound');
         responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next).not.toHaveBeenCalled();
+        expect(server.next).not.toHaveBeenCalled();
       });
 
       it('should have a 404 status', () => {
@@ -61,19 +62,19 @@ describe('NotFoundController', () => {
   });
 
   describe('A NotFoundController instance with HTML and RDF views', () => {
-    let controller: InstanceType<typeof NotFoundController> & Partial<SpiedController>,
-        htmlView: InstanceType<typeof NotFoundHtmlView>, rdfView: InstanceType<typeof NotFoundRdfView>,
-        htmlRenderSpy: Mock<InstanceType<typeof NotFoundHtmlView>['render']>,
-        rdfRenderSpy: Mock<InstanceType<typeof NotFoundRdfView>['render']>,
-        datasources: DatasourceRegistry, baseUrl: string;
-    beforeAll(async () => {
+    let controller: NotFoundController,
+        htmlView: NotFoundHtmlView, rdfView: NotFoundRdfView,
+        htmlRenderSpy: Mock<NotFoundHtmlView['render']>,
+        rdfRenderSpy: Mock<NotFoundRdfView['render']>,
+        datasources: DatasourceRegistry, server: DummyServer;
+    beforeAll(() => {
       htmlView = new NotFoundHtmlView({ dataFactory });
       rdfView  = new NotFoundRdfView({ dataFactory });
       htmlRenderSpy = vi.spyOn(htmlView, 'render');
       rdfRenderSpy = vi.spyOn(rdfView, 'render');
       datasources = { a: new Datasource({ dataFactory, title: 'foo', path: 'foo', urlData: new UrlData({ baseURL: 'http://example.org/' }) }) };
       controller = new NotFoundController({ views: [htmlView, rdfView], datasources: datasources });
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
     function resetAll() {
       htmlRenderSpy.mockClear();
@@ -81,15 +82,15 @@ describe('NotFoundController', () => {
     }
 
     describe('receiving a request without Accept header', () => {
-      let response: Response, responseText: string;
+      let response: FetchLikeResponse, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/notfound');
+        response = await request(server, '/notfound');
         responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next).not.toHaveBeenCalled();
+        expect(server.next).not.toHaveBeenCalled();
       });
 
       it('should call the HTML view', () => {
@@ -118,15 +119,15 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of */*', () => {
-      let response: Response, responseText: string;
+      let response: FetchLikeResponse, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/notfound', { headers: { Accept: '*/*' } });
+        response = await request(server, '/notfound', { headers: { Accept: '*/*' } });
         responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next).not.toHaveBeenCalled();
+        expect(server.next).not.toHaveBeenCalled();
       });
 
       it('should call the HTML view', () => {
@@ -155,15 +156,15 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: Response, responseText: string;
+      let response: FetchLikeResponse, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/notfound', { headers: { Accept: 'text/html' } });
+        response = await request(server, '/notfound', { headers: { Accept: 'text/html' } });
         responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next).not.toHaveBeenCalled();
+        expect(server.next).not.toHaveBeenCalled();
       });
 
       it('should call the HTML view', () => {
@@ -192,15 +193,15 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of text/turtle', () => {
-      let response: Response, responseText: string;
+      let response: FetchLikeResponse, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/notfound', { headers: { Accept: 'text/turtle' } });
+        response = await request(server, '/notfound', { headers: { Accept: 'text/turtle' } });
         responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next).not.toHaveBeenCalled();
+        expect(server.next).not.toHaveBeenCalled();
       });
 
       it('should call the RDF view', () => {
@@ -230,15 +231,15 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of application/trig', () => {
-      let response: Response, responseText: string;
+      let response: FetchLikeResponse, responseText: string;
       beforeAll(async () => {
         resetAll();
-        response = await fetch(baseUrl + '/notfound', { headers: { Accept: 'application/trig' } });
+        response = await request(server, '/notfound', { headers: { Accept: 'application/trig' } });
         responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next).not.toHaveBeenCalled();
+        expect(server.next).not.toHaveBeenCalled();
       });
 
       it('should call the RDF view', () => {

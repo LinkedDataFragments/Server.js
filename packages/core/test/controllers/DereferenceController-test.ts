@@ -1,12 +1,12 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
-import { listen } from '../../../../test/test-helpers';
-import { controllers, datasources } from '../../index';
+import { DummyServer } from '../../../../test/DummyServer';
+import { request, type FetchLikeResponse } from '../../../../test/test-helpers';
+import { datasources } from '../../index';
+import { DeferenceController as DereferenceController } from '../../lib/controllers/DereferenceController';
 import { DataFactory as dataFactory } from 'n3';
 
-const { DereferenceController } = controllers;
 const { Datasource } = datasources;
 
 describe('DereferenceController', () => {
@@ -21,22 +21,22 @@ describe('DereferenceController', () => {
   });
 
   describe('A DereferenceController instance', () => {
-    let controller: InstanceType<typeof DereferenceController> & Partial<SpiedController>, baseUrl: string, hostname: string;
-    beforeAll(async () => {
+    let controller: DereferenceController, server: DummyServer;
+    const hostname = 'localhost:80';
+    beforeAll(() => {
       controller = new DereferenceController({ dereference: { '/resource/': new Datasource({ dataFactory, path: 'dbpedia/2014' }) } });
-      baseUrl = await listen(DummyServer(controller));
-      hostname = new URL(baseUrl).host;
+      server = new DummyServer(controller);
     });
 
     describe('receiving a request for a dereferenced URL', () => {
-      let response: Response, responseText: string;
+      let response: FetchLikeResponse, responseText: string;
       beforeAll(async () => {
-        response = await fetch(baseUrl + '/resource/Mickey_Mouse', { redirect: 'manual' });
+        response = await request(server, '/resource/Mickey_Mouse');
         responseText = await response.text();
       });
 
       it('should not hand over to the next controller', () => {
-        expect(controller.next).not.toHaveBeenCalled();
+        expect(server.next).not.toHaveBeenCalled();
       });
 
       it('should set the status code to 303', () => {
@@ -63,10 +63,10 @@ describe('DereferenceController', () => {
     });
 
     describe('receiving a request for a non-defererenced URL', () => {
-      beforeAll(() => fetch(baseUrl + '/otherresource/Mickey_Mouse'));
+      beforeAll(() => request(server, '/otherresource/Mickey_Mouse'));
 
       it('should hand over to the next controller', () => {
-        expect(controller.next).toHaveBeenCalledOnce();
+        expect(server.next).toHaveBeenCalledOnce();
       });
     });
   });

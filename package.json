@@ -12,7 +12,6 @@
     "@types/parse-cache-control": "^1.0.4",
     "@types/q": "^1.5.8",
     "@types/request": "^2.48.13",
-    "@types/supertest": "^7.2.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vitest/coverage-v8": "^4.1.10",
@@ -21,11 +20,11 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-promise": "^7.3.0",
     "lerna": "^4.0.0",
+    "light-my-request": "^6.6.0",
     "manual-git-changelog": "^1.0.1",
     "node-gyp": "^11.0.0",
     "pre-commit": "^2.0.0",
     "rdf-object": "^1.14.0",
-    "supertest": "^7.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.10"
   },
@@ -45,7 +44,7 @@
     "dedupe": "npx yarn-deduplicate yarn.lock --scopes",
     "publish": "lerna publish",
     "publish-bare": "lerna exec -- npm publish --silent",
-    "postinstall": "lerna run prepare && yarn run build",
+    "postinstall": "lerna run prepare && yarn run build && yarn run typecheck",
     "version": "manual-git-changelog onversion"
   }
 }

@@ -5,26 +5,25 @@ import { vi, type Mock } from 'vitest';
 import type { Controller } from '@ldf/core/lib/controllers/Controller';
 import type { LdfRequest, LdfRequestWithUrl, LdfResponse } from '@ldf/core';
 
-// The bookkeeping DummyServer attaches to a controller so a test can inspect
-// how the request was ultimately handled
-export interface SpiedController {
-  next: Mock<(error?: Error) => void>;
+/* Dummy server that emulates LinkedDataFragmentsServer, tracking how the
+   controller ultimately handled each request */
+export class DummyServer extends http.Server {
+  // Only set once a request has been handled
+  next?: Mock<(error?: Error) => void>;
   error?: Error;
-}
 
-/* Dummy server that emulates LinkedDataFragmentsServer */
-export function DummyServer(controller: Controller & Partial<SpiedController>): http.Server {
-  const server = http.createServer();
-  server.on('request', (request: LdfRequest, response: LdfResponse) => {
-    // End the response if the controller did not handle the request
-    controller.next = vi.fn((error?: Error) => {
-      controller.error = error;
-      if (!response.headersSent)
-        response.writeHead(error ? 500 : 200);
-      response.end(error && error.message || '');
+  constructor(controller: Controller) {
+    super();
+    this.on('request', (request: LdfRequest, response: LdfResponse) => {
+      // End the response if the controller did not handle the request
+      this.next = vi.fn((error?: Error) => {
+        this.error = error;
+        if (!response.headersSent)
+          response.writeHead(error ? 500 : 200);
+        response.end(error && error.message || '');
+      });
+      try { controller.handleRequest(request as LdfRequestWithUrl, response, this.next); }
+      catch (error) { this.next(error as Error); }
     });
-    try { controller.handleRequest(request as LdfRequestWithUrl, response, controller.next); }
-    catch (error) { controller.next(error as Error); }
-  });
-  return server;
+  }
 }

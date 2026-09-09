@@ -5,15 +5,51 @@ import { Readable } from 'stream';
 import { IncomingMessage, ServerResponse, type Server } from 'http';
 import { Socket } from 'net';
 import { EventEmitter, once } from 'events';
+import inject = require('light-my-request');
 import type { Query, RouterRequest } from '../packages/core/lib/types';
 
-// Starts the given server on an ephemeral port and resolves with its base URL
+type HttpMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS';
+
+export interface FetchLikeInit {
+  method?: HttpMethod;
+  headers?: Record<string, string>;
+}
+
+export interface FetchLikeResponse {
+  status: number;
+  headers: { get(name: string): string | null };
+  text(): Promise<string>;
+}
+
+// Starts the given server on an ephemeral port and resolves with its base URL.
+// Only needed for servers whose error handling relies on emitting 'error' on the
+// response as a recoverable signal (LinkedDataFragmentsServer): light-my-request's
+// `request()` below treats any such 'error' event as fatal to the whole injected exchange.
 export async function listen(server: Server): Promise<string> {
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const address = server.address();
   if (address === null || typeof address === 'string')
     throw new Error('Expected the server to report a network address');
   return `http://localhost:${address.port}`;
+}
+
+export async function request(server: Server, path: string, init: FetchLikeInit = {}): Promise<FetchLikeResponse> {
+  const response = await inject((req, res) => server.emit('request', req, res), {
+    url: path,
+    method: init.method,
+    headers: init.headers,
+    Request: IncomingMessage,
+  });
+  return {
+    status: response.statusCode,
+    headers: {
+      get(name: string) {
+        const value = response.headers[name.toLowerCase()];
+        return Array.isArray(value) ? value.join(', ') : value === undefined ? null : String(value);
+      },
+    },
+    text: () => Promise.resolve(response.payload),
+  };
 }
 
 // A router as accepted by extractQueryParams; DatasourceRouter and PageRouter both satisfy this

@@ -1,16 +1,16 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { DummyServer, type SpiedController } from '../../../../test/DummyServer';
-import { listen } from '../../../../test/test-helpers';
-import { controllers, views } from '../../index';
+import { DummyServer } from '../../../../test/DummyServer';
+import { request } from '../../../../test/test-helpers';
+import { views } from '../../index';
+import { SummaryController } from '../../lib/controllers/SummaryController';
 
 import * as fs from 'fs';
 import * as path from 'path';
 
 import { DataFactory as dataFactory } from 'n3';
 
-const { SummaryController } = controllers;
 const { SummaryRdfView } = views.summary;
 
 describe('SummaryController', () => {
@@ -29,8 +29,8 @@ describe('SummaryController', () => {
   });
 
   describe('An SummaryController instance', () => {
-    let controller: InstanceType<typeof SummaryController> & Partial<SpiedController>, baseUrl: string;
-    beforeAll(async () => {
+    let controller: SummaryController, server: DummyServer;
+    beforeAll(() => {
       controller = new SummaryController({
         views: [new SummaryRdfView({ dataFactory })],
         summaries: { dir: path.join(__dirname, '/../../../../test/assets') },
@@ -39,13 +39,13 @@ describe('SummaryController', () => {
           rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         },
       });
-      baseUrl = await listen(DummyServer(controller));
+      server = new DummyServer(controller);
     });
 
     it('should correctly serve summary in Turtle', async () => {
-      let response = await fetch(baseUrl + '/summaries/summary', { headers: { Accept: 'text/turtle' } });
+      let response = await request(server, '/summaries/summary', { headers: { Accept: 'text/turtle' } });
       let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
-      expect(controller.next).not.toHaveBeenCalled();
+      expect(server.next).not.toHaveBeenCalled();
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe('text/turtle;charset=utf-8');
       expect(response.headers.get('cache-control')).toBe('public,max-age=604800');
@@ -53,9 +53,9 @@ describe('SummaryController', () => {
     });
 
     it('should correctly serve summary in Trig', async () => {
-      let response = await fetch(baseUrl + '/summaries/summary');
+      let response = await request(server, '/summaries/summary');
       let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.ttl'), 'utf8');
-      expect(controller.next).not.toHaveBeenCalled();
+      expect(server.next).not.toHaveBeenCalled();
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe('application/trig;charset=utf-8');
       expect(response.headers.get('cache-control')).toBe('public,max-age=604800');
@@ -63,9 +63,9 @@ describe('SummaryController', () => {
     });
 
     it('should correctly serve summary in ntriples', async () => {
-      let response = await fetch(baseUrl + '/summaries/summary', { headers: { Accept: 'application/n-triples' } });
+      let response = await request(server, '/summaries/summary', { headers: { Accept: 'application/n-triples' } });
       let summary = fs.readFileSync(path.join(__dirname, '/../../../../test/assets/summary.nt'), 'utf8');
-      expect(controller.next).not.toHaveBeenCalled();
+      expect(server.next).not.toHaveBeenCalled();
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe('application/n-triples;charset=utf-8');
       expect(response.headers.get('cache-control')).toBe('public,max-age=604800');
@@ -73,13 +73,13 @@ describe('SummaryController', () => {
     });
 
     it('should hand over to the next controller if no summary with that name is found', async () => {
-      await fetch(baseUrl + '/summaries/unknown');
-      expect(controller.next).toHaveBeenCalledOnce();
+      await request(server, '/summaries/unknown');
+      expect(server.next).toHaveBeenCalledOnce();
     });
 
     it('should hand over to the next controller for non-summary paths', async () => {
-      await fetch(baseUrl + '/other');
-      expect(controller.next).toHaveBeenCalledOnce();
+      await request(server, '/other');
+      expect(server.next).toHaveBeenCalledOnce();
     });
   });
 });
