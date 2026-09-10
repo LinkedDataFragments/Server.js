@@ -2,7 +2,7 @@
 /* View is a base class for objects that generate server responses. */
 
 import { join } from 'path';
-import type { DataFactory } from 'rdf-js';
+import type { DataFactory } from '@rdfjs/types';
 import { ViewCollection } from './ViewCollection';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../types';
 

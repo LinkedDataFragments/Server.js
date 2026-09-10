@@ -10,7 +10,7 @@ import { QuadPatternFragmentsRdfView } from '../../lib/views/quadpatternfragment
 import { datasources as coreDatasources, UrlData } from '@ldf/core';
 import type { Datasource as DatasourceType } from '@ldf/core/lib/datasources/Datasource';
 import type { DatasourceRegistry, Query, QueryFeatures, RouterRequest } from '@ldf/core';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import { empty } from 'asynciterator';
 import type { AsyncIterator } from 'asynciterator';
 

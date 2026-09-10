@@ -4,7 +4,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { datasources as hdtDatasources } from '../../index';
 import { datasources as coreDatasources, UrlData } from '@ldf/core';
 import type { Query } from '@ldf/core';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import { stringQuadToQuad, type IStringQuad } from 'rdf-string';
 import * as path from 'path';
 import { DataFactory as dataFactory } from 'n3';
@@ -220,7 +220,7 @@ function itShouldExecute(getDatasource: () => InstanceType<typeof HdtDatasource>
       it('should emit the expected triples', () => {
         expect(triples.length).toBe(expectedTriples.length);
         for (let i = 0; i < expectedTriples.length; i++)
-          expect(triples[i]).toEqual(stringQuadToQuad(expectedTriples[i], dataFactory));
+          expect(triples[i]).toEqual(stringQuadToQuad<Quad>(expectedTriples[i], dataFactory));
       });
     }
   });

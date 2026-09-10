@@ -6,7 +6,7 @@ import { datasources as coreDatasources } from '@ldf/core';
 import { datasources as hdtDatasources } from '@ldf/datasource-hdt';
 import { datasources as n3Datasources } from '@ldf/datasource-n3';
 import type { DatasourceOptions, DatasourceRegistry, Query } from '@ldf/core';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import * as path from 'path';
 import { DataFactory as dataFactory } from 'n3';
 

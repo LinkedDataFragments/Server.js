@@ -1,7 +1,7 @@
 /*! @license MIT ©2026 Ghent University - imec */
 /* Shared type definitions for @ldf/core */
 
-import type { DataFactory, Term } from 'rdf-js';
+import type { DataFactory, Term } from '@rdfjs/types';
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'http';
 import type { ParsedUrlQuery } from 'querystring';
 import type { UrlObject } from 'url';

@@ -9,7 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { empty, fromArray, TransformIterator } from 'asynciterator';
 import type { AsyncIterator } from 'asynciterator';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import { DataFactory as dataFactory } from 'n3';
 import { IncomingMessage } from 'http';
 import { Socket } from 'net';

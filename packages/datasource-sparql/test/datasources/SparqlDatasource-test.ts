@@ -6,7 +6,7 @@ import { createHttpResponse, streamLength } from '../../../../test/test-helpers'
 import { once } from 'events';
 import { datasources as sparqlDatasources } from '../../index';
 import { datasources as coreDatasources } from '@ldf/core';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import type { Query } from '@ldf/core';
 import type { AsyncIterator } from 'asynciterator';
 import * as fs from 'fs';

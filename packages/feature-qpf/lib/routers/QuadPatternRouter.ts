@@ -2,7 +2,7 @@
 /** A QuadPatternRouter routes basic quad patterns */
 
 import { stringToTerm } from 'rdf-string';
-import type { DataFactory, Term } from 'rdf-js';
+import type { DataFactory, Term } from '@rdfjs/types';
 import type { Query, Router, RouterRequest } from '@ldf/core';
 
 let iriMatcher = /^(<?)([^_?$"<>][^"<>]*)>?$/;

@@ -7,7 +7,7 @@ import { EventEmitter, once } from 'events';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as N3 from 'n3';
-import type { Quad, Term } from 'rdf-js';
+import type { Quad, Term } from '@rdfjs/types';
 import type { BufferedIterator } from 'asynciterator';
 import type { Pushable, Query } from '../../lib/types';
 

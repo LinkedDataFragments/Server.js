@@ -5,7 +5,7 @@ import { once } from 'events';
 import { datasources as jsonLdDatasources } from '../../index';
 import { datasources as coreDatasources } from '@ldf/core';
 import type { Query } from '@ldf/core';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import * as path from 'path';
 import { DataFactory as dataFactory } from 'n3';
 
