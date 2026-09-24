@@ -2,10 +2,10 @@
 /* A DatasourceRouter routes URLs to data sources. */
 
 import { UrlData } from '../UrlData';
-import type { Query, RouterRequest } from '../types';
+import type { Query, Router, RouterRequest } from '../types';
 
 // Creates a new DatasourceRouter
-export class DatasourceRouter {
+export class DatasourceRouter implements Router {
   protected _baseLength: number;
 
   constructor(options?: { urlData?: UrlData }) {

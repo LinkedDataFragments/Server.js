@@ -2,7 +2,13 @@
 
 import { describe, it, expect } from 'vitest';
 import { extractQueryParams } from '../../../../test/test-helpers';
-let PageRouter = require('../../lib/routers/PageRouter').PageRouter; // changed to make tests pass, will be revised in follow up pr
+import { PageRouter } from '../../lib/routers/PageRouter';
+import type { Query } from '../../index';
+
+// Query has no index signature; this lets the test tables below use an
+// arbitrary 'a' field as a stand-in for "pre-existing data that should survive".
+type TestQuery = Query & { a?: number };
+type QueryParamsTestCase = [string, string, string, TestQuery, TestQuery];
 
 describe('PageRouter', () => {
   describe('The PageRouter module', () => {
@@ -20,7 +26,7 @@ describe('PageRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -77,8 +83,8 @@ describe('PageRouter', () => {
             { a: 1, features: { a: true, b: true } },
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 100, offset: 200 },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -88,7 +94,7 @@ describe('PageRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -145,8 +151,8 @@ describe('PageRouter', () => {
             { a: 1, features: { a: true, b: true } },
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 250, offset: 500 },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -156,7 +162,7 @@ describe('PageRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -164,8 +170,8 @@ describe('PageRouter', () => {
             { a: 1 },
             { a: 1, features: { limit: true }, limit: 100 },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });

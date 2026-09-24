@@ -3,7 +3,7 @@
 
 import { RdfView } from '@ldf/core/lib/views/RdfView';
 import type { StreamParser } from 'n3';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import type { RdfViewSettings, RenderDone, ViewSettings } from '@ldf/core';
 
 interface SummaryRdfViewSettings extends ViewSettings {

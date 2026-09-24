@@ -5,7 +5,7 @@ import { RdfView } from '@ldf/core/lib/views/RdfView';
 import { stringQuadToQuad } from 'rdf-string';
 import type { IStringQuad } from 'rdf-string';
 import type { AsyncIterator } from 'asynciterator';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import type { Query, RdfViewSettings, RenderDone, ViewSettings } from '@ldf/core';
 import type { Datasource } from '@ldf/core/lib/datasources/Datasource';
 

@@ -1,9 +1,15 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-let ViewCollection = require('../../lib/views/ViewCollection').ViewCollection; // changed to make tests pass, will be revised in follow up pr
+import { ViewCollection } from '../../lib/views/ViewCollection';
+import { View } from '../../lib/views/View';
+import { IncomingMessage } from 'http';
+import { Socket } from 'net';
+import type { LdfRequest } from '../../index';
 
-let View = require('../../lib/views/View').View; // changed to make tests pass, will be revised in follow up pr
+function createRequest(): LdfRequest {
+  return new IncomingMessage(new Socket());
+}
 
 describe('ViewCollection', () => {
   describe('The ViewCollection module', () => {
@@ -17,35 +23,35 @@ describe('ViewCollection', () => {
   });
 
   describe('A ViewCollection instance without views', () => {
-    let viewCollection;
+    let viewCollection: ViewCollection;
     beforeAll(() => {
       viewCollection = new ViewCollection();
     });
 
     it('should throw an error when matching a view', () => {
-      expect(() => { viewCollection.matchView('Foo'); })
+      expect(() => { viewCollection.matchView('Foo', createRequest()); })
         .toThrow('No view named Foo found.');
     });
   });
 
   describe('A ViewCollection instance with one view', () => {
-    let viewCollection, viewA;
+    let viewCollection: ViewCollection, viewA: View;
     beforeAll(() => {
       viewA = new View('MyView1', 'text/html,application/trig;q=0.7');
       viewCollection = new ViewCollection([viewA]);
     });
 
     it('should throw an error when matching a view with a non-existing type', () => {
-      expect(() => { viewCollection.matchView('Bar'); })
+      expect(() => { viewCollection.matchView('Bar', createRequest()); })
         .toThrow('No view named Bar found.');
     });
 
     describe('when a client requests HTML', () => {
-      let viewDetails, request, response;
+      let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = { headers: { accept: 'text/html' } };
-        response = {};
-        viewDetails = viewCollection.matchView('MyView1', request, response);
+        request = createRequest();
+        request.headers.accept = 'text/html';
+        viewDetails = viewCollection.matchView('MyView1', request);
       });
 
       it('should return a match for the view', () => {
@@ -56,11 +62,11 @@ describe('ViewCollection', () => {
     });
 
     describe('when a client requests TriG', () => {
-      let viewDetails, request, response;
+      let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = { headers: { accept: 'application/trig' } };
-        response = {};
-        viewDetails = viewCollection.matchView('MyView1', request, response);
+        request = createRequest();
+        request.headers.accept = 'application/trig';
+        viewDetails = viewCollection.matchView('MyView1', request);
       });
 
       it('should return a match for the view', () => {
@@ -72,7 +78,7 @@ describe('ViewCollection', () => {
   });
 
   describe('A ViewCollection instance with three views of two types', () => {
-    let viewCollection, viewA, viewB, viewC;
+    let viewCollection: ViewCollection, viewA: View, viewB: View, viewC: View;
     beforeAll(() => {
       viewA = new View('MyView1', 'text/html,application/trig;q=0.5');
       viewB = new View('MyView1', 'text/html;q=1.0,application/trig');
@@ -81,16 +87,16 @@ describe('ViewCollection', () => {
     });
 
     it('should throw an error when matching a view with a non-existing type', () => {
-      expect(() => { viewCollection.matchView('Bar'); })
+      expect(() => { viewCollection.matchView('Bar', createRequest()); })
         .toThrow('No view named Bar found.');
     });
 
     describe('when matching a request of one view type as HTML', () => {
-      let viewDetails, request, response;
+      let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = { headers: { accept: 'text/html' } };
-        response = {};
-        viewDetails = viewCollection.matchView('MyView1', request, response);
+        request = createRequest();
+        request.headers.accept = 'text/html';
+        viewDetails = viewCollection.matchView('MyView1', request);
       });
 
       it('should return a description of the best fitting view', () => {
@@ -101,11 +107,11 @@ describe('ViewCollection', () => {
     });
 
     describe('when matching a request of one view type as TriG', () => {
-      let viewDetails, request, response;
+      let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = { headers: { accept: 'application/trig' } };
-        response = {};
-        viewDetails = viewCollection.matchView('MyView1', request, response);
+        request = createRequest();
+        request.headers.accept = 'application/trig';
+        viewDetails = viewCollection.matchView('MyView1', request);
       });
 
       it('should return a description of the best fitting view', () => {
@@ -116,11 +122,11 @@ describe('ViewCollection', () => {
     });
 
     describe('when matching a request of another view type as HTML', () => {
-      let viewDetails, request, response;
+      let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = { headers: { accept: 'text/html' } };
-        response = {};
-        viewDetails = viewCollection.matchView('MyView2', request, response);
+        request = createRequest();
+        request.headers.accept = 'text/html';
+        viewDetails = viewCollection.matchView('MyView2', request);
       });
 
       it('should return a description of the other view', () => {

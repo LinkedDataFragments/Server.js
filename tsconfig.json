@@ -3,6 +3,10 @@
   "compilerOptions": {
     "target": "es2023",
     "lib": ["es2023"],
+    // This monorepo is CommonJS: no package.json here declares "type": "module".
+    // Since TypeScript 6 this also implies exports-aware module resolution, which
+    // is what lets vitest's type definitions resolve their own subpath imports in
+    // tsconfig.eslint.json without skipLibCheck.
     "module": "commonjs",
     "resolveJsonModule": true,
     "types": ["node"],
@@ -20,8 +24,7 @@
   "include": [
     "packages/*/index.ts",
     "packages/*/lib/**/*",
-    "packages/*/bin/**/*",
-    "types/**/*.d.ts"
+    "packages/*/bin/**/*"
   ],
   "exclude": [
     "**/node_modules"
