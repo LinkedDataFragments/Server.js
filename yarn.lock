@@ -6449,6 +6449,13 @@ rdf-data-factory@^2.0.0:
   dependencies:
     "@rdfjs/types" "^2.0.0"
 
+rdf-data-factory@^2.0.1:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/rdf-data-factory/-/rdf-data-factory-2.1.0.tgz#a8402b6ff0b522eed3b39701531d8cdede1f0886"
+  integrity sha512-q81ZuJvrNLHD4x6qPnNKRKYn1VqYkxZ9zFI8I4JwIfAxlfduNNstmO8i0dRIZemORQDbuVEDoKCo4aOwINmUqQ==
+  dependencies:
+    "@rdfjs/types" "^2.0.0"
+
 rdf-literal@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/rdf-literal/-/rdf-literal-1.2.0.tgz#3159cce5587007144ea4a3a713cea31af4fc0c68"
@@ -6457,7 +6464,7 @@ rdf-literal@^1.2.0:
     "@types/rdf-js" "^4.0.0"
     rdf-data-factory "^1.0.1"
 
-rdf-object@^1.14.0, rdf-object@^1.8.0:
+rdf-object@^1.8.0:
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/rdf-object/-/rdf-object-1.14.0.tgz#a51a2e575d4f838f88eced1e5096616769d17281"
   integrity sha512-/KSUWr7onDtL7d81kOpcUzJ2vHYOYJc2KU9WzBZRYydBhK0Sksh5Hg4VCQNaxUEvYEgdrrTuq9SLpOOCmag0rQ==
@@ -6466,6 +6473,16 @@ rdf-object@^1.14.0, rdf-object@^1.8.0:
     jsonld-context-parser "^2.0.2"
     rdf-data-factory "^1.1.0"
     rdf-string "^1.6.0"
+    streamify-array "^1.0.1"
+
+rdf-object@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/rdf-object/-/rdf-object-3.0.0.tgz#016cec06c3954514bd6f66567ddea35c121a784b"
+  integrity sha512-qefryIRh1d9gqZUKp2qQwzIWLbmQspsc2bvVoOCCp126MZmKubcUTigHiMlCrUI9g7MDCrdTFAwcAal1lVR09A==
+  dependencies:
+    jsonld-context-parser "^3.0.0"
+    rdf-data-factory "^2.0.1"
+    rdf-string "^2.0.0"
     streamify-array "^1.0.1"
 
 rdf-parse@^1.7.0:
@@ -6524,7 +6541,7 @@ rdf-string@^1.6.0:
     "@rdfjs/types" "*"
     rdf-data-factory "^1.1.0"
 
-rdf-string@^2.0.1:
+rdf-string@^2.0.0, rdf-string@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/rdf-string/-/rdf-string-2.0.1.tgz#9beff12486a653d6fb0f229a5e0e5f3cc2e962c6"
   integrity sha512-SMW4ponnKNrsP9kYpOLyICeM4UJmEXIeS3zri7kPK9gzLFsHD88oiza8LnokNYxd76zW4JoYWD+v4x0g8rJBjw==
