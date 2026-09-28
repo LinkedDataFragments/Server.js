@@ -4,7 +4,7 @@ import { parse as parseUrl } from 'url';
 import { IncomingMessage, ServerResponse, type Server } from 'http';
 import { Socket } from 'net';
 import { EventEmitter, once } from 'events';
-import inject = require('light-my-request');
+import inject from 'light-my-request';
 import type { Query, Router } from '../packages/core/lib/types';
 
 type HttpMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS';
@@ -20,16 +20,22 @@ export interface FetchLikeResponse {
   text(): Promise<string>;
 }
 
-// Starts the given server on an ephemeral port and resolves with its base URL.
+// Starts the given server on an ephemeral port, runs callback with its base URL, then closes it.
 // Only needed for servers whose error handling relies on emitting 'error' on the
 // response as a recoverable signal (LinkedDataFragmentsServer): light-my-request's
 // `request()` below treats any such 'error' event as fatal to the whole injected exchange.
-export async function listen(server: Server): Promise<string> {
+export async function withServer<T>(server: Server, callback: (baseUrl: string) => Promise<T>): Promise<T> {
   await new Promise<void>((resolve) => server.listen(0, resolve));
-  const address = server.address();
-  if (address === null || typeof address === 'string')
-    throw new Error('Expected the server to report a network address');
-  return `http://localhost:${address.port}`;
+  try {
+    const address = server.address();
+    if (address === null || typeof address === 'string')
+      throw new Error('Expected the server to report a network address');
+    return await callback(`http://localhost:${address.port}`);
+  }
+  finally {
+    server.closeAllConnections();
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
 }
 
 export async function request(server: Server, path: string, init: FetchLikeInit = {}): Promise<FetchLikeResponse> {

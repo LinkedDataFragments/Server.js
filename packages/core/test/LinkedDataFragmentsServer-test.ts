@@ -1,19 +1,19 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll, beforeEach, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import { LinkedDataFragmentsServer, type LdfHttpServer } from '../lib/LinkedDataFragmentsServer';
 import { Controller } from '../lib/controllers/Controller';
 import type { LdfRequestWithUrl, LdfResponse } from '../index';
-import { listen } from '../../../test/test-helpers';
+import { withServer } from '../../../test/test-helpers';
 
 describe('LinkedDataFragmentsServer', () => {
   describe('A LinkedDataFragmentsServer instance with one controller', () => {
-    let baseUrl: string, server: LdfHttpServer, controller: Controller;
+    let server: LdfHttpServer, controller: Controller;
     // Kept separate so .mockClear() has a Mock-typed target. controller.handleRequest's
     // declared type is just Controller's plain function signature, not Mock.
     let handleRequestSpy: Mock<Controller['handleRequest']>;
-    beforeAll(async () => {
+    beforeAll(() => {
       controller = new Controller();
       handleRequestSpy = vi.fn((request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void) => {
         switch (request.url) {
@@ -37,71 +37,69 @@ describe('LinkedDataFragmentsServer', () => {
           },
         },
       });
-      baseUrl = await listen(server);
     });
-    afterAll(() => { server.stop(); });
     beforeEach(() => {
       handleRequestSpy.mockClear();
     });
 
-    it('should send the configured headers', async () => {
+    it('should send the configured headers', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/', { method: 'HEAD' });
       expect(response.headers.get('access-control-allow-origin')).toBe('*');
       expect(response.headers.get('my-header')).toBe('value');
-    });
+    }));
 
-    it('should not allow POST requests', async () => {
+    it('should not allow POST requests', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/', { method: 'POST' });
       expect(controller.handleRequest).not.toHaveBeenCalled();
       expect(response.status).toBe(405);
       expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       expect(await response.text()).toBe('The HTTP method "POST" is not allowed; try "GET" instead.');
-    });
+    }));
 
-    it('should send a body with GET requests', async () => {
+    it('should send a body with GET requests', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/handle');
       expect(controller.handleRequest).toHaveBeenCalledOnce();
       expect(response.status).toBe(200);
       expect(await response.text()).toBe('body contents');
-    });
+    }));
 
-    it('should not send a body with HEAD requests', async () => {
+    it('should not send a body with HEAD requests', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/handle', { method: 'HEAD' });
       expect(controller.handleRequest).toHaveBeenCalledOnce();
       expect(response.status).toBe(200);
       expect(await response.text()).toBe('');
-    });
+    }));
 
-    it('should not send a body with OPTIONS requests', async () => {
+    it('should not send a body with OPTIONS requests', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/handle', { method: 'OPTIONS' });
       expect(controller.handleRequest).toHaveBeenCalledOnce();
       expect(response.status).toBe(200);
       expect(await response.text()).toBe('');
-    });
+    }));
 
-    it('should error when the controller cannot handle the request', async () => {
+    it('should error when the controller cannot handle the request', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/unsupported');
       expect(controller.handleRequest).toHaveBeenCalledOnce();
       expect(response.status).toBe(500);
       expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       expect(await response.text()).toBe('Application error: No controller for /unsupported\n');
-    });
+    }));
 
-    it('should error when the controller errors', async () => {
+    it('should error when the controller errors', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/error');
       expect(controller.handleRequest).toHaveBeenCalledOnce();
       expect(response.status).toBe(500);
       expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       expect(await response.text()).toBe('Application error: error message\n');
-    });
+    }));
   });
 
   describe('A LinkedDataFragmentsServer instance with two controllers', () => {
-    let baseUrl: string, server: LdfHttpServer, controllerA: Controller, controllerB: Controller;
+    let server: LdfHttpServer, controllerA: Controller, controllerB: Controller;
     // Kept separate so .mockClear() has a Mock-typed target. controllerX.handleRequest's
     // declared type is just Controller's plain function signature, not Mock.
     let handleRequestSpyA: Mock<Controller['handleRequest']>, handleRequestSpyB: Mock<Controller['handleRequest']>;
-    beforeAll(async () => {
+    beforeAll(() => {
       controllerA = new Controller();
       handleRequestSpyA = vi.fn((request: LdfRequestWithUrl, response: LdfResponse, next: (error?: Error) => void) => {
         switch (request.url) {
@@ -133,64 +131,62 @@ describe('LinkedDataFragmentsServer', () => {
         controllers: [controllerA, controllerB],
         log: vi.fn(),
       });
-      baseUrl = await listen(server);
     });
-    afterAll(() => { server.stop(); });
     beforeEach(() => {
       handleRequestSpyA.mockClear();
       handleRequestSpyB.mockClear();
     });
 
-    it('should not allow POST requests', async () => {
+    it('should not allow POST requests', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/', { method: 'POST' });
       expect(controllerA.handleRequest).not.toHaveBeenCalled();
       expect(controllerB.handleRequest).not.toHaveBeenCalled();
       expect(response.status).toBe(405);
       expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       expect(await response.text()).toBe('The HTTP method "POST" is not allowed; try "GET" instead.');
-    });
+    }));
 
-    it('should use the first controller when it can handle the request', async () => {
+    it('should use the first controller when it can handle the request', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/handleA');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).not.toHaveBeenCalled();
       expect(response.status).toBe(200);
       expect(await response.text()).toBe('body contents A');
-    });
+    }));
 
-    it('should use the second controller when the first cannot handle the request', async () => {
+    it('should use the second controller when the first cannot handle the request', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/handleB');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).toHaveBeenCalledOnce();
       expect(response.status).toBe(200);
       expect(await response.text()).toBe('body contents B');
-    });
+    }));
 
-    it('should error when neither controller can handle the request', async () => {
+    it('should error when neither controller can handle the request', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/unsupported');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).toHaveBeenCalledOnce();
       expect(response.status).toBe(500);
       expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       expect(await response.text()).toBe('Application error: No controller for /unsupported\n');
-    });
+    }));
 
-    it('should error when the first controller errors', async () => {
+    it('should error when the first controller errors', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/errorA');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).not.toHaveBeenCalled();
       expect(response.status).toBe(500);
       expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       expect(await response.text()).toBe('Application error: error message A\n');
-    });
+    }));
 
-    it('should error when the second controller errors', async () => {
+    it('should error when the second controller errors', () => withServer(server, async (baseUrl) => {
       let response = await fetch(baseUrl + '/errorB');
       expect(controllerA.handleRequest).toHaveBeenCalledOnce();
       expect(controllerB.handleRequest).toHaveBeenCalledOnce();
       expect(response.status).toBe(500);
       expect(response.headers.get('content-type')).toBe('text/plain;charset=utf-8');
       expect(await response.text()).toBe('Application error: error message B\n');
-    });
+    }));
   });
 });
