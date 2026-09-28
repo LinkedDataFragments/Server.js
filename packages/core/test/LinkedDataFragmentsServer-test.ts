@@ -1,15 +1,15 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
 
-import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, afterAll, vi } from 'vitest';
 import type { Mock } from 'vitest';
-import { LinkedDataFragmentsServer } from '../lib/LinkedDataFragmentsServer';
+import { LinkedDataFragmentsServer, type LdfHttpServer } from '../lib/LinkedDataFragmentsServer';
 import { Controller } from '../lib/controllers/Controller';
 import type { LdfRequestWithUrl, LdfResponse } from '../index';
 import { listen } from '../../../test/test-helpers';
 
 describe('LinkedDataFragmentsServer', () => {
   describe('A LinkedDataFragmentsServer instance with one controller', () => {
-    let baseUrl: string, controller: Controller;
+    let baseUrl: string, server: LdfHttpServer, controller: Controller;
     // Kept separate so .mockClear() has a Mock-typed target. controller.handleRequest's
     // declared type is just Controller's plain function signature, not Mock.
     let handleRequestSpy: Mock<Controller['handleRequest']>;
@@ -27,7 +27,7 @@ describe('LinkedDataFragmentsServer', () => {
         }
       });
       controller.handleRequest = handleRequestSpy;
-      baseUrl = await listen(new LinkedDataFragmentsServer({
+      server = new LinkedDataFragmentsServer({
         controllers: [controller],
         log: vi.fn(),
         response: {
@@ -36,8 +36,10 @@ describe('LinkedDataFragmentsServer', () => {
             'My-Header': 'value',
           },
         },
-      }));
+      });
+      baseUrl = await listen(server);
     });
+    afterAll(() => { server.stop(); });
     beforeEach(() => {
       handleRequestSpy.mockClear();
     });
@@ -95,7 +97,7 @@ describe('LinkedDataFragmentsServer', () => {
   });
 
   describe('A LinkedDataFragmentsServer instance with two controllers', () => {
-    let baseUrl: string, controllerA: Controller, controllerB: Controller;
+    let baseUrl: string, server: LdfHttpServer, controllerA: Controller, controllerB: Controller;
     // Kept separate so .mockClear() has a Mock-typed target. controllerX.handleRequest's
     // declared type is just Controller's plain function signature, not Mock.
     let handleRequestSpyA: Mock<Controller['handleRequest']>, handleRequestSpyB: Mock<Controller['handleRequest']>;
@@ -127,11 +129,13 @@ describe('LinkedDataFragmentsServer', () => {
         }
       });
       controllerB.handleRequest = handleRequestSpyB;
-      baseUrl = await listen(new LinkedDataFragmentsServer({
+      server = new LinkedDataFragmentsServer({
         controllers: [controllerA, controllerB],
         log: vi.fn(),
-      }));
+      });
+      baseUrl = await listen(server);
     });
+    afterAll(() => { server.stop(); });
     beforeEach(() => {
       handleRequestSpyA.mockClear();
       handleRequestSpyB.mockClear();
