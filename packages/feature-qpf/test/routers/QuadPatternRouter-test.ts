@@ -1,15 +1,9 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect } from 'vitest';
-import { extractQueryParams } from '../../../../test/test-helpers';
+import { extractQueryParams, type QueryParamsTestCase } from '../../../../test/test-helpers';
 import { routers } from '../../index';
-import type { Query } from '@ldf/core';
-
-// Query has no index signature; this lets the test tables below use an
-// arbitrary 'a' field as a stand-in for "pre-existing data that should survive".
-type TestQuery = Query & { a?: number };
-type QueryParamsTestCase = [string, string, string, TestQuery, TestQuery];
-import { DataFactory as dataFactory } from 'n3';
+import { DataFactory } from 'n3';
 
 const { QuadPatternRouter } = routers;
 
@@ -25,7 +19,7 @@ describe('QuadPatternRouter', () => {
   });
 
   describe('A QuadPatternRouter instance', () => {
-    let router = new QuadPatternRouter({ dataFactory });
+    let router = new QuadPatternRouter({ dataFactory: DataFactory });
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
@@ -49,14 +43,14 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?subject=http%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the subject to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, subject: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, subject: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with an IRI subject parameter in angular brackets',
             'http://example.org/?subject=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the subject to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, subject: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, subject: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a variable subject parameter',
@@ -91,14 +85,14 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?predicate=http%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the predicate to the query',
             { a: 1, features: { a: true } },
-            { a: 1, features: { a: true, triplePattern: true }, predicate: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { a: true, triplePattern: true }, predicate: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with an IRI predicate parameter in angular brackets',
             'http://example.org/?predicate=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the predicate to the query',
             { a: 1, features: { a: true } },
-            { a: 1, features: { a: true, triplePattern: true }, predicate: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { a: true, triplePattern: true }, predicate: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a variable predicate parameter',
@@ -133,14 +127,14 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?object=http%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with an IRI object parameter in angular brackets',
             'http://example.org/?object=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a variable object parameter',
@@ -161,28 +155,28 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?object=%22foo%22',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.literal('foo') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.literal('foo') },
           ],
           [
             'a URL with a language literal object parameter',
             'http://example.org/?object=%22foo%22@nl-be',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.literal('foo', 'nl-be') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.literal('foo', 'nl-be') },
           ],
           [
             'a URL with a typed literal object parameter',
             'http://example.org/?object=%22foo%22%5E%5Ehttp%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.literal('foo', dataFactory.namedNode('http://example.org/foo#bar')) },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.literal('foo', DataFactory.namedNode('http://example.org/foo#bar')) },
           ],
           [
             'a URL with a typed literal object parameter in angular brackets',
             'http://example.org/?object=%22foo%22%5E%5E%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.literal('foo', dataFactory.namedNode('http://example.org/foo#bar')) },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.literal('foo', DataFactory.namedNode('http://example.org/foo#bar')) },
           ],
           [
             'a URL with an empty graph parameter',
@@ -196,14 +190,14 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?graph=http%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the graph to the query',
             { a: 1 },
-            { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { quadPattern: true }, graph: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with an IRI graph parameter in angular brackets',
             'http://example.org/?graph=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the graph to the query',
             { a: 1 },
-            { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { quadPattern: true }, graph: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a variable graph parameter',
@@ -231,7 +225,7 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?graph=urn%3Aldf%3AdefaultGraph',
             'should add the default graph to the query',
             { a: 1 },
-            { a: 1, features: { quadPattern: true }, graph: dataFactory.defaultGraph() },
+            { a: 1, features: { quadPattern: true }, graph: DataFactory.defaultGraph() },
           ],
         ];
         rows.forEach((args) => { extractQueryParams(router, ...args); });
@@ -245,7 +239,7 @@ describe('QuadPatternRouter', () => {
         foo:  'http://example.org/foo#',
         http: 'http://www.w3.org/2011/http#',
       },
-      dataFactory,
+      dataFactory: DataFactory,
     });
 
     describe('extractUrlParams', () => {
@@ -270,42 +264,42 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?subject=http%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the subject to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, subject: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, subject: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name subject parameter',
             'http://example.org/?subject=foo%3Abar',
             'should add the expanded subject to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, subject: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, subject: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name subject parameter with the "http" prefix',
             'http://example.org/?subject=http%3AConnection',
             'should add the expanded subject to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, subject: dataFactory.namedNode('http://www.w3.org/2011/http#Connection') },
+            { a: 1, features: { triplePattern: true }, subject: DataFactory.namedNode('http://www.w3.org/2011/http#Connection') },
           ],
           [
             'a URL with a prefixed name subject parameter with an unknown prefix',
             'http://example.org/?subject=bar%3Afoo',
             'should add the non-expanded subject to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, subject: dataFactory.namedNode('bar:foo') },
+            { a: 1, features: { triplePattern: true }, subject: DataFactory.namedNode('bar:foo') },
           ],
           [
             'a URL with an IRI subject parameter in angular brackets',
             'http://example.org/?subject=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the non-expanded subject to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, subject: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, subject: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name subject parameter in angular brackets',
             'http://example.org/?subject=%3Cfoo%3Abar%3E',
             'should add the non-expanded subject to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, subject: dataFactory.namedNode('foo:bar') },
+            { a: 1, features: { triplePattern: true }, subject: DataFactory.namedNode('foo:bar') },
           ],
           [
             'a URL with an empty predicate parameter',
@@ -319,42 +313,42 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?predicate=http%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the predicate to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, predicate: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, predicate: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name predicate parameter',
             'http://example.org/?predicate=foo%3Abar',
             'should add the expanded predicate to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, predicate: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, predicate: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name predicate parameter with the "http" prefix',
             'http://example.org/?predicate=http%3Aauthority',
             'should add the expanded predicate to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, predicate: dataFactory.namedNode('http://www.w3.org/2011/http#authority') },
+            { a: 1, features: { triplePattern: true }, predicate: DataFactory.namedNode('http://www.w3.org/2011/http#authority') },
           ],
           [
             'a URL with a prefixed name predicate parameter with an unknown prefix',
             'http://example.org/?predicate=bar%3Afoo',
             'should add the non-expanded predicate to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, predicate: dataFactory.namedNode('bar:foo') },
+            { a: 1, features: { triplePattern: true }, predicate: DataFactory.namedNode('bar:foo') },
           ],
           [
             'a URL with an IRI predicate parameter in angular brackets',
             'http://example.org/?predicate=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the non-expanded predicate to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, predicate: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, predicate: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name predicate parameter in angular brackets',
             'http://example.org/?predicate=%3Cfoo%3Abar%3E',
             'should add the non-expanded predicate to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, predicate: dataFactory.namedNode('foo:bar') },
+            { a: 1, features: { triplePattern: true }, predicate: DataFactory.namedNode('foo:bar') },
           ],
           [
             'a URL with an empty object parameter',
@@ -368,63 +362,63 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?object=http%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name object parameter',
             'http://example.org/?object=foo%3Abar',
             'should add the expanded object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name object parameter with the "http" prefix',
             'http://example.org/?object=http%3AConnection',
             'should add the expanded object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.namedNode('http://www.w3.org/2011/http#Connection') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.namedNode('http://www.w3.org/2011/http#Connection') },
           ],
           [
             'a URL with a prefixed name object parameter with an unknown prefix',
             'http://example.org/?object=bar%3Afoo',
             'should add the non-expanded object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.namedNode('bar:foo') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.namedNode('bar:foo') },
           ],
           [
             'a URL with an IRI object parameter in angular brackets',
             'http://example.org/?object=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the non-expanded object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name object parameter in angular brackets',
             'http://example.org/?object=%3Cfoo%3Abar%3E',
             'should add the non-expanded object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.namedNode('foo:bar') },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.namedNode('foo:bar') },
           ],
           [
             'a URL with a typed literal object parameter',
             'http://example.org/?object=%22foo%22%5E%5Ehttp%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.literal('foo', dataFactory.namedNode('http://example.org/foo#bar')) },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.literal('foo', DataFactory.namedNode('http://example.org/foo#bar')) },
           ],
           [
             'a URL with a typed literal object parameter in angular brackets',
             'http://example.org/?object=%22foo%22%5E%5E%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.literal('foo', dataFactory.namedNode('http://example.org/foo#bar')) },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.literal('foo', DataFactory.namedNode('http://example.org/foo#bar')) },
           ],
           [
             'a URL with a prefixed literal object parameter',
             'http://example.org/?object=%22foo%22%5E%5Efoo%3Abar',
             'should add the object to the query',
             { a: 1 },
-            { a: 1, features: { triplePattern: true }, object: dataFactory.literal('foo', dataFactory.namedNode('http://example.org/foo#bar')) },
+            { a: 1, features: { triplePattern: true }, object: DataFactory.literal('foo', DataFactory.namedNode('http://example.org/foo#bar')) },
           ],
           [
             'a URL with an empty graph parameter',
@@ -438,42 +432,42 @@ describe('QuadPatternRouter', () => {
             'http://example.org/?graph=http%3A%2F%2Fexample.org%2Ffoo%23bar',
             'should add the graph to the query',
             { a: 1 },
-            { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { quadPattern: true }, graph: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name graph parameter',
             'http://example.org/?graph=foo%3Abar',
             'should add the expanded graph to the query',
             { a: 1 },
-            { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { quadPattern: true }, graph: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name graph parameter with the "http" prefix',
             'http://example.org/?graph=http%3AConnection',
             'should add the expanded graph to the query',
             { a: 1 },
-            { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('http://www.w3.org/2011/http#Connection') },
+            { a: 1, features: { quadPattern: true }, graph: DataFactory.namedNode('http://www.w3.org/2011/http#Connection') },
           ],
           [
             'a URL with a prefixed name graph parameter with an unknown prefix',
             'http://example.org/?graph=bar%3Afoo',
             'should add the non-expanded graph to the query',
             { a: 1 },
-            { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('bar:foo') },
+            { a: 1, features: { quadPattern: true }, graph: DataFactory.namedNode('bar:foo') },
           ],
           [
             'a URL with an IRI graph parameter in angular brackets',
             'http://example.org/?graph=%3Chttp%3A%2F%2Fexample.org%2Ffoo%23bar%3E',
             'should add the non-expanded graph to the query',
             { a: 1 },
-            { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('http://example.org/foo#bar') },
+            { a: 1, features: { quadPattern: true }, graph: DataFactory.namedNode('http://example.org/foo#bar') },
           ],
           [
             'a URL with a prefixed name graph parameter in angular brackets',
             'http://example.org/?graph=%3Cfoo%3Abar%3E',
             'should add the non-expanded graph to the query',
             { a: 1 },
-            { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('foo:bar') },
+            { a: 1, features: { quadPattern: true }, graph: DataFactory.namedNode('foo:bar') },
           ],
         ];
         rows.forEach((args) => { extractQueryParams(router, ...args); });

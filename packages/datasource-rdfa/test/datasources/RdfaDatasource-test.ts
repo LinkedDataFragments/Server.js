@@ -7,7 +7,7 @@ import { datasources as coreDatasources } from '@ldf/core';
 import type { Query } from '@ldf/core';
 import type { Quad } from '@rdfjs/types';
 import * as path from 'path';
-import { DataFactory as dataFactory } from 'n3';
+import { DataFactory } from 'n3';
 
 const { RdfaDatasource } = rdfaDatasources;
 const { Datasource } = coreDatasources;
@@ -21,20 +21,20 @@ describe('RdfaDatasource', () => {
     });
 
     it('should be a RdfaDatasource constructor', async () => {
-      let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
+      let instance = new RdfaDatasource({ dataFactory: DataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(RdfaDatasource);
       await new Promise<void>((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
-      let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
+      let instance = new RdfaDatasource({ dataFactory: DataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(Datasource);
       await new Promise<void>((resolve) => instance.close(resolve));
     });
   });
 
   describe('A RdfaDatasource instance for an example RDFa HTML file', () => {
-    let datasource = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
+    let datasource = new RdfaDatasource({ dataFactory: DataFactory, url: exampleRdfaUrl });
     beforeAll(async () => {
       datasource.initialize();
       await once(datasource, 'initialized');
@@ -58,32 +58,32 @@ describe('RdfaDatasource', () => {
 
     itShouldExecute(datasource,
       'a query for an existing subject',
-      { subject: dataFactory.namedNode('http://example.org/s1'),   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: DataFactory.namedNode('http://example.org/s1'),   limit: 10, features: { triplePattern: true, limit: true } },
       10, 100);
 
     itShouldExecute(datasource,
       'a query for a non-existing subject',
-      { subject: dataFactory.namedNode('http://example.org/p1'),   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: DataFactory.namedNode('http://example.org/p1'),   limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(datasource,
       'a query for an existing predicate',
-      { predicate: dataFactory.namedNode('http://example.org/p1'), limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: DataFactory.namedNode('http://example.org/p1'), limit: 10, features: { triplePattern: true, limit: true } },
       10, 110);
 
     itShouldExecute(datasource,
       'a query for a non-existing predicate',
-      { predicate: dataFactory.namedNode('http://example.org/s1'), limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: DataFactory.namedNode('http://example.org/s1'), limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(datasource,
       'a query for an existing object',
-      { object: dataFactory.namedNode('http://example.org/o001'),  limit: 10, features: { triplePattern: true, limit: true } },
+      { object: DataFactory.namedNode('http://example.org/o001'),  limit: 10, features: { triplePattern: true, limit: true } },
       3, 3);
 
     itShouldExecute(datasource,
       'a query for a non-existing object',
-      { object: dataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
+      { object: DataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
   });
 });

@@ -7,7 +7,7 @@ import type { Query } from '@ldf/core';
 import type { Quad } from '@rdfjs/types';
 import { stringQuadToQuad, type IStringQuad } from 'rdf-string';
 import * as path from 'path';
-import { DataFactory as dataFactory } from 'n3';
+import { DataFactory } from 'n3';
 import { once } from 'events';
 
 const { HdtDatasource } = hdtDatasources;
@@ -23,14 +23,14 @@ describe('HdtDatasource', () => {
     });
 
     it('should be an HdtDatasource constructor', async () => {
-      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
+      let instance = new HdtDatasource({ dataFactory: DataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(HdtDatasource);
       await new Promise<unknown>((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
-      let instance = new HdtDatasource({ dataFactory, file: exampleHdtFile });
+      let instance = new HdtDatasource({ dataFactory: DataFactory, file: exampleHdtFile });
       instance.initialize();
       expect(instance).toBeInstanceOf(Datasource);
       await new Promise<unknown>((resolve) => instance.close(resolve));
@@ -41,7 +41,7 @@ describe('HdtDatasource', () => {
     let datasource: InstanceType<typeof HdtDatasource>;
     function getDatasource() { return datasource; }
     beforeAll(async () => {
-      datasource = new HdtDatasource({ dataFactory, file: exampleHdtFile });
+      datasource = new HdtDatasource({ dataFactory: DataFactory, file: exampleHdtFile });
       datasource.initialize();
       await once(datasource, 'initialized');
     });
@@ -64,37 +64,37 @@ describe('HdtDatasource', () => {
 
     itShouldExecute(getDatasource,
       'a query for an existing subject',
-      { subject: dataFactory.namedNode('http://example.org/s1'),   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: DataFactory.namedNode('http://example.org/s1'),   limit: 10, features: { triplePattern: true, limit: true } },
       10, 100);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing subject',
-      { subject: dataFactory.namedNode('http://example.org/p1'),   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: DataFactory.namedNode('http://example.org/p1'),   limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing predicate',
-      { predicate: dataFactory.namedNode('http://example.org/p1'), limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: DataFactory.namedNode('http://example.org/p1'), limit: 10, features: { triplePattern: true, limit: true } },
       10, 110);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing predicate',
-      { predicate: dataFactory.namedNode('http://example.org/s1'), limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: DataFactory.namedNode('http://example.org/s1'), limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing object',
-      { object: dataFactory.namedNode('http://example.org/o001'),  limit: 10, features: { triplePattern: true, limit: true } },
+      { object: DataFactory.namedNode('http://example.org/o001'),  limit: 10, features: { triplePattern: true, limit: true } },
       3, 3);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing object',
-      { object: dataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
+      { object: DataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for a non-default graph',
-      { object: dataFactory.namedNode('http://example.org/s1'), graph: dataFactory.namedNode('g'), features: { quadPattern: true } },
+      { object: DataFactory.namedNode('http://example.org/s1'), graph: DataFactory.namedNode('g'), features: { quadPattern: true } },
       0, 0);
   });
 
@@ -102,7 +102,7 @@ describe('HdtDatasource', () => {
     let datasource: InstanceType<typeof HdtDatasource>;
     function getDatasource() { return datasource; }
     beforeAll(async () => {
-      datasource = new HdtDatasource({ dataFactory, file: exampleHdtFileWithBlanks });
+      datasource = new HdtDatasource({ dataFactory: DataFactory, file: exampleHdtFileWithBlanks });
       datasource.initialize();
       await once(datasource, 'initialized');
     });
@@ -123,12 +123,12 @@ describe('HdtDatasource', () => {
 
     itShouldExecute(getDatasource,
       'a query for a blank subject',
-      { subject: dataFactory.blankNode('a'), features: { triplePattern: true } },
+      { subject: DataFactory.blankNode('a'), features: { triplePattern: true } },
       3, 3);
 
     itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as subject',
-      { subject: dataFactory.namedNode('genid:a'), features: { triplePattern: true } },
+      { subject: DataFactory.namedNode('genid:a'), features: { triplePattern: true } },
       3, 3,
       [
         { subject: 'genid:a', predicate: 'b', object: 'c1' },
@@ -138,7 +138,7 @@ describe('HdtDatasource', () => {
 
     itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as object',
-      { object: dataFactory.namedNode('genid:c1'), features: { triplePattern: true } },
+      { object: DataFactory.namedNode('genid:c1'), features: { triplePattern: true } },
       1, 1,
       [
         { subject: 'a', predicate: 'b', object: 'genid:c1' },
@@ -150,7 +150,7 @@ describe('HdtDatasource', () => {
     function getDatasource() { return datasource; }
     beforeAll(async () => {
       datasource = new HdtDatasource({
-        dataFactory,
+        dataFactory: DataFactory,
         file: exampleHdtFileWithBlanks,
         urlData: new UrlData({ baseURL: 'http://example.org/' }),
       });
@@ -174,12 +174,12 @@ describe('HdtDatasource', () => {
 
     itShouldExecute(getDatasource,
       'a query for a blank subject',
-      { subject: dataFactory.blankNode('a'), features: { triplePattern: true } },
+      { subject: DataFactory.blankNode('a'), features: { triplePattern: true } },
       3, 3);
 
     itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as subject',
-      { subject: dataFactory.namedNode('http://example.org/.well-known/genid/a'), features: { triplePattern: true } },
+      { subject: DataFactory.namedNode('http://example.org/.well-known/genid/a'), features: { triplePattern: true } },
       3, 3,
       [
         { subject: 'http://example.org/.well-known/genid/a', predicate: 'b', object: 'c1' },
@@ -189,7 +189,7 @@ describe('HdtDatasource', () => {
 
     itShouldExecute(getDatasource,
       'a query for a IRI that corresponds to a blank node as object',
-      { object: dataFactory.namedNode('http://example.org/.well-known/genid/c1'), features: { triplePattern: true } },
+      { object: DataFactory.namedNode('http://example.org/.well-known/genid/c1'), features: { triplePattern: true } },
       1, 1,
       [
         { subject: 'a', predicate: 'b', object: 'http://example.org/.well-known/genid/c1' },
@@ -220,7 +220,7 @@ function itShouldExecute(getDatasource: () => InstanceType<typeof HdtDatasource>
       it('should emit the expected triples', () => {
         expect(triples.length).toBe(expectedTriples.length);
         for (let i = 0; i < expectedTriples.length; i++)
-          expect(triples[i]).toEqual(stringQuadToQuad<Quad>(expectedTriples[i], dataFactory));
+          expect(triples[i]).toEqual(stringQuadToQuad<Quad>(expectedTriples[i], DataFactory));
       });
     }
   });

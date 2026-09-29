@@ -3,8 +3,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { View } from '../../lib/views/View';
 import { resolve } from 'path';
-import { IncomingMessage, ServerResponse } from 'http';
-import { Socket } from 'net';
+import { createRequest, createResponse } from '../../../../test/test-helpers';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../../index';
 
 // View marks _render protected so subclasses can implement it. This subclass
@@ -14,14 +13,6 @@ class TestableView extends View {
   override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     return super._render(settings, request, response, done);
   }
-}
-
-function createRequest(): LdfRequest {
-  return new IncomingMessage(new Socket());
-}
-
-function createResponse(): LdfResponse {
-  return new ServerResponse(createRequest());
 }
 
 describe('View', () => {

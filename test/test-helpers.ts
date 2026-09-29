@@ -5,7 +5,7 @@ import { IncomingMessage, ServerResponse, type Server } from 'http';
 import { Socket } from 'net';
 import { EventEmitter, once } from 'events';
 import inject from 'light-my-request';
-import type { Query, Router } from '../packages/core/lib/types';
+import type { LdfRequest, LdfResponse, Query, Router } from '../packages/core/lib/types';
 
 type HttpMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS';
 
@@ -57,6 +57,11 @@ export async function request(server: Server, path: string, init: FetchLikeInit 
   };
 }
 
+// Query has no index signature; this lets the test tables below use an
+// arbitrary 'a' field as a stand-in for "pre-existing data that should survive".
+export type TestQuery = Query & { a?: number };
+export type QueryParamsTestCase = [string, string, string, TestQuery, TestQuery];
+
 // Generates an `it` block that verifies a router's extractQueryParams behavior
 export function extractQueryParams(router: Router, description: string, url: string, intent: string, query: Query, expectedQuery: Query) {
   it(description + ' ' + intent, () => {
@@ -65,6 +70,16 @@ export function extractQueryParams(router: Router, description: string, url: str
     expect(result, 'should not return anything').toBeUndefined();
     expect(query, 'should match the expected query').toEqual(expectedQuery);
   });
+}
+
+// A dummy incoming request, as returned by createRequest
+export function createRequest(): LdfRequest {
+  return new IncomingMessage(new Socket());
+}
+
+// A dummy outgoing response tied to a dummy request, as returned by createResponse
+export function createResponse(): LdfResponse {
+  return new ServerResponse(createRequest());
 }
 
 // A dummy HTTP response, as returned by createHttpResponse

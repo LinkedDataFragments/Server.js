@@ -4,15 +4,13 @@ import { describe, it, expect, beforeAll, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import { DummyServer } from '../../../../test/DummyServer';
 import { request, type FetchLikeResponse } from '../../../../test/test-helpers';
-import { datasources as coreDatasources, UrlData } from '../../index';
 import { NotFoundController } from '../../lib/controllers/NotFoundController';
 import { NotFoundHtmlView } from '../../lib/views/notfound/NotFoundHtmlView';
 import { NotFoundRdfView } from '../../lib/views/notfound/NotFoundRdfView';
 import type { DatasourceRegistry } from '../../index';
+import type { Datasource } from '../../lib/datasources/Datasource';
 
-import { DataFactory as dataFactory } from 'n3';
-
-const { Datasource } = coreDatasources;
+import { DataFactory } from 'n3';
 
 describe('NotFoundController', () => {
   describe('The NotFoundController module', () => {
@@ -68,11 +66,11 @@ describe('NotFoundController', () => {
         rdfRenderSpy: Mock<NotFoundRdfView['render']>,
         datasources: DatasourceRegistry, server: DummyServer;
     beforeAll(() => {
-      htmlView = new NotFoundHtmlView({ dataFactory });
-      rdfView  = new NotFoundRdfView({ dataFactory });
+      htmlView = new NotFoundHtmlView({ dataFactory: DataFactory });
+      rdfView  = new NotFoundRdfView({ dataFactory: DataFactory });
       htmlRenderSpy = vi.spyOn(htmlView, 'render');
       rdfRenderSpy = vi.spyOn(rdfView, 'render');
-      datasources = { a: new Datasource({ dataFactory, title: 'foo', path: 'foo', urlData: new UrlData({ baseURL: 'http://example.org/' }) }) };
+      datasources = { a: { title: 'foo', url: 'http://example.org/foo#dataset' } as Datasource };
       controller = new NotFoundController({ views: [htmlView, rdfView], datasources: datasources });
       server = new DummyServer(controller);
     });

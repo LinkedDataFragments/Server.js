@@ -1,15 +1,9 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect } from 'vitest';
-import { extractQueryParams } from '../../../../test/test-helpers';
+import { extractQueryParams, type QueryParamsTestCase } from '../../../../test/test-helpers';
 import { DatasourceRouter } from '../../lib/routers/DatasourceRouter';
 import { UrlData } from '../../index';
-import type { Query } from '../../index';
-
-// Query has no index signature; this lets the test tables below use an
-// arbitrary 'a' field as a stand-in for "pre-existing data that should survive".
-type TestQuery = Query & { a?: number };
-type QueryParamsTestCase = [string, string, string, TestQuery, TestQuery];
 
 describe('DatasourceRouter', () => {
   describe('The DatasourceRouter module', () => {

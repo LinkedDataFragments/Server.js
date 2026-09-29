@@ -3,13 +3,8 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { ViewCollection } from '../../lib/views/ViewCollection';
 import { View } from '../../lib/views/View';
-import { IncomingMessage } from 'http';
-import { Socket } from 'net';
+import { createRequest } from '../../../../test/test-helpers';
 import type { LdfRequest } from '../../index';
-
-function createRequest(): LdfRequest {
-  return new IncomingMessage(new Socket());
-}
 
 describe('ViewCollection', () => {
   describe('The ViewCollection module', () => {

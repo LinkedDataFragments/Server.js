@@ -12,7 +12,7 @@ import type { AsyncIterator } from 'asynciterator';
 import * as fs from 'fs';
 import * as path from 'path';
 import { parse as parseUrl } from 'url';
-import { DataFactory as dataFactory } from 'n3';
+import { DataFactory } from 'n3';
 
 const { SparqlDatasource } = sparqlDatasources;
 const { Datasource } = coreDatasources;
@@ -53,17 +53,17 @@ describe('SparqlDatasource', () => {
     });
 
     it('should be a SparqlDatasource constructor', () => {
-      expect(new SparqlDatasource({ dataFactory })).toBeInstanceOf(SparqlDatasource);
+      expect(new SparqlDatasource({ dataFactory: DataFactory })).toBeInstanceOf(SparqlDatasource);
     });
 
     it('should create Datasource objects', () => {
-      expect(new SparqlDatasource({ dataFactory })).toBeInstanceOf(Datasource);
+      expect(new SparqlDatasource({ dataFactory: DataFactory })).toBeInstanceOf(Datasource);
     });
   });
 
   describe('A SparqlDatasource instance', () => {
     let request = createRequestStub();
-    let datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql', request: request });
+    let datasource = new SparqlDatasource({ dataFactory: DataFactory, endpoint: 'http://ex.org/sparql', request: request });
     datasource.initialize();
 
     it('should indicate support for its features', () => {
@@ -114,58 +114,58 @@ describe('SparqlDatasource', () => {
 
     itShouldExecute(datasource, request,
       'a query for a subject IRI',
-      { subject: dataFactory.namedNode('http://example.org/bar#foo'), features: { quadPattern: true } },
+      { subject: DataFactory.namedNode('http://example.org/bar#foo'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{<http://example.org/bar#foo> ?p ?o}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{<http://example.org/bar#foo> ?p ?o}}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate IRI',
-      { predicate: dataFactory.namedNode('http://example.org/bar#foo'), features: { quadPattern: true } },
+      { predicate: DataFactory.namedNode('http://example.org/bar#foo'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s <http://example.org/bar#foo> ?o}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s <http://example.org/bar#foo> ?o}}');
 
     itShouldExecute(datasource, request,
       'a query for an object IRI',
-      { object: dataFactory.namedNode('http://example.org/bar#foo'), features: { quadPattern: true } },
+      { object: DataFactory.namedNode('http://example.org/bar#foo'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p <http://example.org/bar#foo>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p <http://example.org/bar#foo>}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal',
-      { object: dataFactory.literal('a literal'), features: { quadPattern: true } },
+      { object: DataFactory.literal('a literal'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with newlines and quotes',
-      { object: dataFactory.literal('a\rb\nc"\r\n\\"'), features: { quadPattern: true } },
+      { object: DataFactory.literal('a\rb\nc"\r\n\\"'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a language',
-      { object: dataFactory.literal('a literal', 'nl-be'), features: { quadPattern: true } },
+      { object: DataFactory.literal('a literal', 'nl-be'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"@nl-be}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"@nl-be}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a type',
-      { object: dataFactory.literal('a literal', dataFactory.namedNode('http://ex.org/foo#literal')), features: { quadPattern: true } },
+      { object: DataFactory.literal('a literal', DataFactory.namedNode('http://ex.org/foo#literal')), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate and object URI',
-      { predicate: dataFactory.namedNode('http://example.org/bar#foo'),
-        object: dataFactory.namedNode('http://example.org/baz#bar'),
+      { predicate: DataFactory.namedNode('http://example.org/bar#foo'),
+        object: DataFactory.namedNode('http://example.org/baz#bar'),
         features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate and object URI with offset and limit',
-      { predicate: dataFactory.namedNode('http://example.org/bar#foo'),
-        object: dataFactory.namedNode('http://example.org/baz#bar'),
+      { predicate: DataFactory.namedNode('http://example.org/bar#foo'),
+        object: DataFactory.namedNode('http://example.org/baz#bar'),
         limit: 50, offset: 150,
         features: { quadPattern: true, offset: true, limit: true } },
       'SELECT * WHERE {GRAPH ?g{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
@@ -174,18 +174,18 @@ describe('SparqlDatasource', () => {
 
     itShouldExecute(datasource, request,
       'a query for a predicate and object URI for the default graph',
-      { predicate: dataFactory.namedNode('http://example.org/bar#foo'),
-        object: dataFactory.namedNode('http://example.org/baz#bar'),
-        graph: dataFactory.defaultGraph(),
+      { predicate: DataFactory.namedNode('http://example.org/bar#foo'),
+        object: DataFactory.namedNode('http://example.org/baz#bar'),
+        graph: DataFactory.defaultGraph(),
         features: { quadPattern: true } },
       'SELECT * WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}',
       'SELECT (COUNT(*) AS ?c) WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate and object URI for the default graph with offset and limit',
-      { predicate: dataFactory.namedNode('http://example.org/bar#foo'),
-        object: dataFactory.namedNode('http://example.org/baz#bar'),
-        graph: dataFactory.defaultGraph(),
+      { predicate: DataFactory.namedNode('http://example.org/bar#foo'),
+        object: DataFactory.namedNode('http://example.org/baz#bar'),
+        graph: DataFactory.defaultGraph(),
         limit: 50, offset: 150,
         features: { quadPattern: true, offset: true, limit: true } },
       'SELECT * WHERE {?s <http://example.org/bar#foo> <http://example.org/baz#bar>} ' +
@@ -194,23 +194,23 @@ describe('SparqlDatasource', () => {
 
     itShouldExecute(datasource, request,
       'a query for a graph IRI',
-      { graph: dataFactory.namedNode('http://dbpedia.org'), features: { quadPattern: true } },
+      { graph: DataFactory.namedNode('http://dbpedia.org'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH <http://dbpedia.org>{?s ?p ?o}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH <http://dbpedia.org>{?s ?p ?o}}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate and graph IRI',
-      { predicate: dataFactory.namedNode('http://example.org/bar#foo'),
-        graph: dataFactory.namedNode('http://dbpedia.org'),
+      { predicate: DataFactory.namedNode('http://example.org/bar#foo'),
+        graph: DataFactory.namedNode('http://dbpedia.org'),
         features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> ?o}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> ?o}}');
 
     itShouldExecute(datasource, request,
       'a query for a predicate, object and graph URI',
-      { predicate: dataFactory.namedNode('http://example.org/bar#foo'),
-        object: dataFactory.namedNode('http://example.org/baz#bar'),
-        graph: dataFactory.namedNode('http://dbpedia.org'),
+      { predicate: DataFactory.namedNode('http://example.org/bar#foo'),
+        object: DataFactory.namedNode('http://example.org/baz#bar'),
+        graph: DataFactory.namedNode('http://dbpedia.org'),
         features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}}',
       'SELECT (COUNT(*) AS ?c) ' +
@@ -218,9 +218,9 @@ describe('SparqlDatasource', () => {
 
     itShouldExecute(datasource, request,
       'a query for a predicate, object and graph URI with offset and limit',
-      { predicate: dataFactory.namedNode('http://example.org/bar#foo'),
-        object: dataFactory.namedNode('http://example.org/baz#bar'),
-        graph: dataFactory.namedNode('http://dbpedia.org'),
+      { predicate: DataFactory.namedNode('http://example.org/bar#foo'),
+        object: DataFactory.namedNode('http://example.org/baz#bar'),
+        graph: DataFactory.namedNode('http://dbpedia.org'),
         limit: 50, offset: 150,
         features: { quadPattern: true, offset: true, limit: true } },
       'SELECT * WHERE {GRAPH <http://dbpedia.org>{?s <http://example.org/bar#foo> <http://example.org/baz#bar>}} ' +
@@ -233,7 +233,7 @@ describe('SparqlDatasource', () => {
         request.mockClear();
         request.onFirstCall(createHttpResponse('invalid', 'application/sparql-results+json'));
         request.onSecondCall(createHttpResponse(countResult, 'text/csv'));
-        let query = { subject: dataFactory.namedNode('abcd'), features: { quadPattern: true } };
+        let query = { subject: DataFactory.namedNode('abcd'), features: { quadPattern: true } };
         result = datasource.select(query);
         [error] = await once(result, 'error');
       });
@@ -249,7 +249,7 @@ describe('SparqlDatasource', () => {
         request.mockClear();
         request.onFirstCall(createHttpResponse(jsonResult, 'application/sparql-results+json'));
         request.onSecondCall(createHttpResponse('invalid', 'application/trig'));
-        let query = { subject: dataFactory.namedNode('abcde'), features: { quadPattern: true } };
+        let query = { subject: DataFactory.namedNode('abcde'), features: { quadPattern: true } };
         result = datasource.select(query);
         [error] = await once(result, 'error');
       });
@@ -263,7 +263,7 @@ describe('SparqlDatasource', () => {
       let result: AsyncIterator<Quad>, error: Error;
       beforeAll(async () => {
         request.mockClear();
-        let query = { subject: dataFactory.namedNode('abcde'), features: { quadPattern: true } };
+        let query = { subject: DataFactory.namedNode('abcde'), features: { quadPattern: true } };
         result = datasource.select(query);
         let errorEvent = once(result, 'error');
         (request.mock.calls[0][1] as RequestCallback)(new Error('query response error'));
@@ -279,7 +279,7 @@ describe('SparqlDatasource', () => {
       let totalCount: number | undefined;
       beforeAll(async () => {
         request.mockClear();
-        let query = { subject: dataFactory.namedNode('abcdef'), features: { quadPattern: true } };
+        let query = { subject: DataFactory.namedNode('abcdef'), features: { quadPattern: true } };
         let result = datasource.select(query);
         let secondCallResult = request.mock.results[1];
         if (secondCallResult.type === 'return')
@@ -297,36 +297,36 @@ describe('SparqlDatasource', () => {
 
   describe('A SparqlDatasource instance with forceTypedLiterals true', () => {
     let request = createRequestStub();
-    let datasource = new SparqlDatasource({ dataFactory, endpoint: 'http://ex.org/sparql', request: request, forceTypedLiterals: true });
+    let datasource = new SparqlDatasource({ dataFactory: DataFactory, endpoint: 'http://ex.org/sparql', request: request, forceTypedLiterals: true });
     datasource.initialize();
 
     itShouldExecute(datasource, request,
       'a query for an object IRI',
-      { object: dataFactory.namedNode('http://example.org/bar#foo'), features: { quadPattern: true } },
+      { object: DataFactory.namedNode('http://example.org/bar#foo'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p <http://example.org/bar#foo>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p <http://example.org/bar#foo>}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal',
-      { object: dataFactory.literal('a literal'), features: { quadPattern: true } },
+      { object: DataFactory.literal('a literal'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"^^<http://www.w3.org/2001/XMLSchema#string>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"^^<http://www.w3.org/2001/XMLSchema#string>}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with newlines and quotes',
-      { object: dataFactory.literal('a\rb\nc"\r\n\\"'), features: { quadPattern: true } },
+      { object: DataFactory.literal('a\rb\nc"\r\n\\"'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""^^<http://www.w3.org/2001/XMLSchema#string>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p """a\rb\nc\\"\r\n\\\\\\""""^^<http://www.w3.org/2001/XMLSchema#string>}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a language',
-      { object: dataFactory.literal('a literal', 'nl-be'), features: { quadPattern: true } },
+      { object: DataFactory.literal('a literal', 'nl-be'), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"@nl-be}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"@nl-be}}');
 
     itShouldExecute(datasource, request,
       'a query for an object literal with a type',
-      { object: dataFactory.literal('a literal', dataFactory.namedNode('http://ex.org/foo#literal')), features: { quadPattern: true } },
+      { object: DataFactory.literal('a literal', DataFactory.namedNode('http://ex.org/foo#literal')), features: { quadPattern: true } },
       'SELECT * WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}',
       'SELECT (COUNT(*) AS ?c) WHERE {GRAPH ?g{?s ?p "a literal"^^<http://ex.org/foo#literal>}}');
   });

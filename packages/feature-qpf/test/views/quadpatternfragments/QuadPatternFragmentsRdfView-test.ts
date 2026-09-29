@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import { createStreamCapture } from '../../../../../test/test-helpers';
+import { createStreamCapture, createRequest } from '../../../../../test/test-helpers';
 import { views } from '../../../index';
 
 import * as _ from 'lodash';
@@ -10,16 +10,9 @@ import * as path from 'path';
 import { empty, fromArray, TransformIterator } from 'asynciterator';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from '@rdfjs/types';
-import { DataFactory as dataFactory } from 'n3';
-import { IncomingMessage } from 'http';
-import { Socket } from 'net';
-import type { LdfRequest } from '../../../../core/index';
+import { DataFactory } from 'n3';
 
 const { QuadPatternFragmentsRdfView } = views.quadpatternfragments;
-
-function createRequest(): LdfRequest {
-  return new IncomingMessage(new Socket());
-}
 
 describe('QuadPatternFragmentsRdfView', () => {
   describe('The QuadPatternFragmentsRdfView module', () => {
@@ -28,12 +21,12 @@ describe('QuadPatternFragmentsRdfView', () => {
     });
 
     it('should be a QuadPatternFragmentsRdfView constructor', () => {
-      expect(new QuadPatternFragmentsRdfView({ dataFactory })).toBeInstanceOf(QuadPatternFragmentsRdfView);
+      expect(new QuadPatternFragmentsRdfView({ dataFactory: DataFactory })).toBeInstanceOf(QuadPatternFragmentsRdfView);
     });
   });
 
   describe('A QuadPatternFragmentsRdfView instance', () => {
-    let view = new QuadPatternFragmentsRdfView({ dataFactory });
+    let view = new QuadPatternFragmentsRdfView({ dataFactory: DataFactory });
     let settings: { results?: AsyncIterator<Quad>; [key: string]: unknown } = {
       datasource: {
         title: 'My data',
@@ -94,9 +87,9 @@ describe('QuadPatternFragmentsRdfView', () => {
 
         describe('with a non-empty triple stream that writes metadata first', () => {
           let results = fromArray<Quad>([
-            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
-            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
-            dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
+            DataFactory.quad(DataFactory.namedNode('a'), DataFactory.namedNode('b'), DataFactory.namedNode('c'), DataFactory.defaultGraph()),
+            DataFactory.quad(DataFactory.namedNode('a'), DataFactory.namedNode('d'), DataFactory.namedNode('e'), DataFactory.defaultGraph()),
+            DataFactory.quad(DataFactory.namedNode('f'), DataFactory.namedNode('g'), DataFactory.namedNode('h'), DataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
           beforeAll(() => new Promise<unknown>((resolve) => {
@@ -115,9 +108,9 @@ describe('QuadPatternFragmentsRdfView', () => {
 
         describe('with a non-empty triple stream that writes metadata afterwards', () => {
           let results = fromArray<Quad>([
-            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
-            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
-            dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
+            DataFactory.quad(DataFactory.namedNode('a'), DataFactory.namedNode('b'), DataFactory.namedNode('c'), DataFactory.defaultGraph()),
+            DataFactory.quad(DataFactory.namedNode('a'), DataFactory.namedNode('d'), DataFactory.namedNode('e'), DataFactory.defaultGraph()),
+            DataFactory.quad(DataFactory.namedNode('f'), DataFactory.namedNode('g'), DataFactory.namedNode('h'), DataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
           beforeAll(() => new Promise<unknown>((resolve) => {
