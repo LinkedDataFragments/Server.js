@@ -5,7 +5,6 @@ import { once } from 'events';
 import { datasources as rdfaDatasources } from '../../index';
 import { datasources as coreDatasources } from '@ldf/core';
 import type { Query } from '@ldf/core';
-import type { Quad } from '@rdfjs/types';
 import * as path from 'path';
 import { DataFactory } from 'n3';
 
@@ -94,7 +93,7 @@ function itShouldExecute(datasource: InstanceType<typeof RdfaDatasource>, name: 
     beforeAll(async () => {
       let result = datasource.select(query);
       result.getProperty('metadata', (metadata: { totalCount: number }) => { totalCount = metadata.totalCount; });
-      result.on('data', (_triple: Quad) => { resultsCount++; });
+      result.on('data', () => { resultsCount++; });
       await once(result, 'end');
     });
 

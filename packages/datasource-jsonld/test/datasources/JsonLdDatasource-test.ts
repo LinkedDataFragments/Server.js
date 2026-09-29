@@ -2,14 +2,12 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { once } from 'events';
-import { datasources as jsonLdDatasources } from '../../index';
+import { JsonLdDatasource } from '../../lib/datasources/JsonLdDatasource';
 import { datasources as coreDatasources } from '@ldf/core';
 import type { Query } from '@ldf/core';
-import type { Quad } from '@rdfjs/types';
 import * as path from 'path';
 import { DataFactory } from 'n3';
 
-const { JsonLdDatasource } = jsonLdDatasources;
 const { Datasource } = coreDatasources;
 
 let exampleJsonLdUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.jsonld');
@@ -98,13 +96,13 @@ describe('JsonLdDatasource', () => {
   });
 });
 
-function itShouldExecute(datasource: InstanceType<typeof JsonLdDatasource>, name: string, query: Query, expectedResultsCount: number, expectedTotalCount: number) {
+function itShouldExecute(datasource: JsonLdDatasource, name: string, query: Query, expectedResultsCount: number, expectedTotalCount: number) {
   describe('executing ' + name, () => {
     let resultsCount = 0, totalCount: number | undefined;
     beforeAll(async () => {
       let result = datasource.select(query);
       result.getProperty('metadata', (metadata: { totalCount: number }) => { totalCount = metadata.totalCount; });
-      result.on('data', (_triple: Quad) => { resultsCount++; });
+      result.on('data', () => { resultsCount++; });
       await once(result, 'end');
     });
 

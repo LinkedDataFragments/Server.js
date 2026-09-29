@@ -6,9 +6,6 @@ import { resolve } from 'path';
 import { createRequest, createResponse } from '../../../../test/test-helpers';
 import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../../index';
 
-// View marks _render protected so subclasses can implement it. This subclass
-// widens it to public so this suite can mock/spy on the base class's own
-// behavior directly, the way its subclasses already do.
 class TestableView extends View {
   override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
     return super._render(settings, request, response, done);
