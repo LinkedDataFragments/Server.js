@@ -14,9 +14,6 @@ import type { Pushable, Query } from '../../lib/types';
 const exampleFile = path.join(__dirname, '../../../../test/assets/test.ttl');
 const dataFactory = N3.DataFactory;
 
-// Datasource marks these members protected so subclasses can use them internally.
-// This subclass widens them to public so this suite can exercise the base class's
-// own behavior directly, the way its subclasses already do.
 class TestableDatasource extends Datasource {
   override _fetch(options: { url: string } & Record<string, unknown>): EventEmitter {
     return super._fetch(options);

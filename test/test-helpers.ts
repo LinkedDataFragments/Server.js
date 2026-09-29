@@ -4,15 +4,11 @@ import { parse as parseUrl } from 'url';
 import { IncomingMessage, ServerResponse, type Server } from 'http';
 import { Socket } from 'net';
 import { EventEmitter, once } from 'events';
-import inject from 'light-my-request';
+import { inject } from 'light-my-request';
+import type { InjectOptions } from 'light-my-request';
 import type { LdfRequest, LdfResponse, Query, Router } from '../packages/core/lib/types';
 
-type HttpMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS';
-
-export interface FetchLikeInit {
-  method?: HttpMethod;
-  headers?: Record<string, string>;
-}
+export type FetchLikeInit = Pick<InjectOptions, 'method' | 'headers'>;
 
 export interface FetchLikeResponse {
   status: number;

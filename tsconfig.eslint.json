@@ -1,6 +1,4 @@
 {
-  // Only ESLint's type-aware rules use this: its parser needs every file it lints
-  // to belong to a program, which the build config deliberately does not cover.
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": true
