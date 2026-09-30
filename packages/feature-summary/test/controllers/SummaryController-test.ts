@@ -9,7 +9,7 @@ import { SummaryController } from '../../lib/controllers/SummaryController';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { DataFactory } from 'n3';
+import { DataFactory as dataFactory } from 'n3';
 
 const { SummaryRdfView } = views.summary;
 
@@ -32,7 +32,7 @@ describe('SummaryController', () => {
     let controller: SummaryController, server: DummyServer;
     beforeAll(() => {
       controller = new SummaryController({
-        views: [new SummaryRdfView({ dataFactory: DataFactory })],
+        views: [new SummaryRdfView({ dataFactory })],
         summaries: { dir: path.join(__dirname, '/../../../../test/assets') },
         prefixes: {
           ds: 'http://semweb.mmlab.be/ns/datasummaries#',

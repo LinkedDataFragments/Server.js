@@ -10,7 +10,7 @@ import { NotFoundRdfView } from '../../lib/views/notfound/NotFoundRdfView';
 import type { DatasourceRegistry } from '../../index';
 import type { Datasource } from '../../lib/datasources/Datasource';
 
-import { DataFactory } from 'n3';
+import { DataFactory as dataFactory } from 'n3';
 
 describe('NotFoundController', () => {
   describe('The NotFoundController module', () => {
@@ -66,8 +66,8 @@ describe('NotFoundController', () => {
         rdfRenderSpy: Mock<NotFoundRdfView['render']>,
         datasources: DatasourceRegistry, server: DummyServer;
     beforeAll(() => {
-      htmlView = new NotFoundHtmlView({ dataFactory: DataFactory });
-      rdfView  = new NotFoundRdfView({ dataFactory: DataFactory });
+      htmlView = new NotFoundHtmlView({ dataFactory });
+      rdfView  = new NotFoundRdfView({ dataFactory });
       htmlRenderSpy = vi.spyOn(htmlView, 'render');
       rdfRenderSpy = vi.spyOn(rdfView, 'render');
       datasources = { a: { title: 'foo', url: 'http://example.org/foo#dataset' } as Datasource };

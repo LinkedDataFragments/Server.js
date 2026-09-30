@@ -8,7 +8,7 @@ import { datasources as n3Datasources } from '@ldf/datasource-n3';
 import type { DatasourceOptions, DatasourceRegistry, Query } from '@ldf/core';
 import type { Quad } from '@rdfjs/types';
 import * as path from 'path';
-import { DataFactory } from 'n3';
+import { DataFactory as dataFactory } from 'n3';
 
 import { once } from 'events';
 
@@ -30,10 +30,10 @@ interface DatasourceReferenceConfig {
 
 describe('CompositeDatasource', () => {
   let referenceConfigs: Record<string, DatasourceReferenceConfig> = {
-    data0: { settings: { dataFactory: DataFactory, file: exampleHdtFile }, datasourceType: HdtDatasource, size: 132 },
-    data1: { settings: { dataFactory: DataFactory, file: exampleHdtFileWithBlanks, graph: 'http://example.org/graph0' }, datasourceType: HdtDatasource, size: 6 },
-    data2: { settings: { dataFactory: DataFactory, url: exampleTurtleUrl }, datasourceType: N3Datasource, size: 129 },
-    data3: { settings: { dataFactory: DataFactory, url: exampleTrigUrl }, datasourceType: N3Datasource, size: 7 },
+    data0: { settings: { dataFactory, file: exampleHdtFile }, datasourceType: HdtDatasource, size: 132 },
+    data1: { settings: { dataFactory, file: exampleHdtFileWithBlanks, graph: 'http://example.org/graph0' }, datasourceType: HdtDatasource, size: 6 },
+    data2: { settings: { dataFactory, url: exampleTurtleUrl }, datasourceType: N3Datasource, size: 129 },
+    data3: { settings: { dataFactory, url: exampleTrigUrl }, datasourceType: N3Datasource, size: 7 },
   };
   let references: DatasourceRegistry = {};
   Object.keys(referenceConfigs).forEach((datasourceId) => {
@@ -55,19 +55,19 @@ describe('CompositeDatasource', () => {
     });
 
     it('should be an CompositeDatasource constructor', async () => {
-      let instance = new CompositeDatasource({ references: references, dataFactory: DataFactory });
+      let instance = new CompositeDatasource({ references: references, dataFactory });
       expect(instance).toBeInstanceOf(CompositeDatasource);
       await new Promise<void>((resolve) => instance.close(resolve));
     });
 
     it('should create CompositeDatasource objects', async () => {
-      let instance = new CompositeDatasource({ references: references, dataFactory: DataFactory });
+      let instance = new CompositeDatasource({ references: references, dataFactory });
       expect(instance).toBeInstanceOf(CompositeDatasource);
       await new Promise<void>((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
-      let instance = new CompositeDatasource({ references: references, dataFactory: DataFactory });
+      let instance = new CompositeDatasource({ references: references, dataFactory });
       expect(instance).toBeInstanceOf(Datasource);
       await new Promise<void>((resolve) => instance.close(resolve));
     });
@@ -77,7 +77,7 @@ describe('CompositeDatasource', () => {
     let datasource: InstanceType<typeof CompositeDatasource>;
     function getDatasource() { return datasource; }
     beforeAll(async () => {
-      datasource = new CompositeDatasource({ references: references, dataFactory: DataFactory });
+      datasource = new CompositeDatasource({ references: references, dataFactory });
       datasource.initialize();
       await once(datasource, 'initialized');
     });
@@ -115,57 +115,57 @@ describe('CompositeDatasource', () => {
 
     itShouldExecute(getDatasource,
       'a query for an existing subject',
-      { subject: DataFactory.namedNode('http://example.org/s1'),   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: dataFactory.namedNode('http://example.org/s1'),   limit: 10, features: { triplePattern: true, limit: true } },
       10, 200);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing subject',
-      { subject: DataFactory.namedNode('http://example.org/p1'),   limit: 10, features: { triplePattern: true, limit: true } },
+      { subject: dataFactory.namedNode('http://example.org/p1'),   limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing predicate',
-      { predicate: DataFactory.namedNode('http://example.org/p1'), limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: dataFactory.namedNode('http://example.org/p1'), limit: 10, features: { triplePattern: true, limit: true } },
       10, 220);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing predicate',
-      { predicate: DataFactory.namedNode('http://example.org/s1'), limit: 10, features: { triplePattern: true, limit: true } },
+      { predicate: dataFactory.namedNode('http://example.org/s1'), limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing object',
-      { object: DataFactory.namedNode('http://example.org/o001'),  limit: 10, features: { triplePattern: true, limit: true } },
+      { object: dataFactory.namedNode('http://example.org/o001'),  limit: 10, features: { triplePattern: true, limit: true } },
       6, 6);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing object',
-      { object: DataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
+      { object: dataFactory.namedNode('http://example.org/s1'),    limit: 10, features: { triplePattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for an existing graph',
-      { graph: DataFactory.namedNode('http://example.org/bob'),    limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.namedNode('http://example.org/bob'),    limit: 10, features: { quadPattern: true, limit: true } },
       3, 3);
 
     itShouldExecute(getDatasource,
       'a query for a non-existing graph',
-      { graph: DataFactory.namedNode('http://example.org/notbob'), limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.namedNode('http://example.org/notbob'), limit: 10, features: { quadPattern: true, limit: true } },
       0, 0);
 
     itShouldExecute(getDatasource,
       'a query for the default graph',
-      { graph: DataFactory.defaultGraph(),                          limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.defaultGraph(),                          limit: 10, features: { quadPattern: true, limit: true } },
       10, 263);
 
     itShouldExecute(getDatasource,
       'a query for the default graph without a limit',
-      { graph: DataFactory.defaultGraph(),                          features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.defaultGraph(),                          features: { quadPattern: true, limit: true } },
       263, 263);
 
     itShouldExecute(getDatasource,
       'a query for graph0',
-      { graph: DataFactory.namedNode('http://example.org/graph0'), limit: 10, features: { quadPattern: true, limit: true } },
+      { graph: dataFactory.namedNode('http://example.org/graph0'), limit: 10, features: { quadPattern: true, limit: true } },
       6, 6);
   });
 });

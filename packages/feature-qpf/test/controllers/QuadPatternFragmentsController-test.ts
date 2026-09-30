@@ -15,7 +15,7 @@ import { empty } from 'asynciterator';
 import type { AsyncIterator } from 'asynciterator';
 
 import * as http from 'http';
-import { DataFactory } from 'n3';
+import { DataFactory as dataFactory } from 'n3';
 
 const { Datasource } = coreDatasources;
 
@@ -56,7 +56,7 @@ describe('QuadPatternFragmentsController', () => {
           query.datasource = '/my-datasource';
         }),
       };
-      datasource = new Datasource({ dataFactory: DataFactory, title: 'My data' }, ['quadPattern']);
+      datasource = new Datasource({ dataFactory, title: 'My data' }, ['quadPattern']);
       supportsQuerySpy = vi.fn().mockReturnValue(true);
       datasource.supportsQuery = supportsQuerySpy;
       selectResult = empty<Quad>();
@@ -64,7 +64,7 @@ describe('QuadPatternFragmentsController', () => {
       selectSpy = vi.fn().mockReturnValue(selectResult);
       datasource.select = selectSpy;
       datasources = { 'my-datasource': datasource };
-      view = new QuadPatternFragmentsRdfView({ dataFactory: DataFactory });
+      view = new QuadPatternFragmentsRdfView({ dataFactory });
       renderSpy = vi.spyOn(view, 'render');
       prefixes = { a: 'a' };
       controller = new QuadPatternFragmentsController({
@@ -196,7 +196,7 @@ describe('QuadPatternFragmentsController', () => {
         htmlRenderSpy: Mock<QuadPatternFragmentsHtmlView['render']>,
         rdfRenderSpy: Mock<QuadPatternFragmentsRdfView['render']>;
     beforeAll(() => {
-      let datasource = new Datasource({ dataFactory: DataFactory }, ['triplePattern']);
+      let datasource = new Datasource({ dataFactory }, ['triplePattern']);
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => {
         let it = empty<Quad>();
@@ -210,7 +210,7 @@ describe('QuadPatternFragmentsController', () => {
         },
       };
       htmlView = new QuadPatternFragmentsHtmlView();
-      rdfView = new QuadPatternFragmentsRdfView({ dataFactory: DataFactory });
+      rdfView = new QuadPatternFragmentsRdfView({ dataFactory });
       htmlRenderSpy = vi.spyOn(htmlView, 'render');
       rdfRenderSpy = vi.spyOn(rdfView, 'render');
       controller = new QuadPatternFragmentsController({
@@ -329,7 +329,7 @@ describe('QuadPatternFragmentsController', () => {
   describe('A QuadPatternFragmentsController instance without matching view', () => {
     let controller: QuadPatternFragmentsController, server: DummyServer;
     beforeAll(() => {
-      let datasource = new Datasource({ dataFactory: DataFactory }, ['triplePattern']);
+      let datasource = new Datasource({ dataFactory }, ['triplePattern']);
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => empty<Quad>());
       let router = {
@@ -397,10 +397,10 @@ describe('QuadPatternFragmentsController', () => {
         }),
       };
       error = new Error('datasource error');
-      datasource = new Datasource({ dataFactory: DataFactory }, ['triplePattern']);
+      datasource = new Datasource({ dataFactory }, ['triplePattern']);
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => { throw error; });
-      view = new QuadPatternFragmentsRdfView({ dataFactory: DataFactory });
+      view = new QuadPatternFragmentsRdfView({ dataFactory });
       controller = new QuadPatternFragmentsController({
         routers: [router],
         views: [view],
@@ -437,13 +437,13 @@ describe('QuadPatternFragmentsController', () => {
         }),
       };
       error = new Error('datasource error');
-      datasource = new Datasource({ dataFactory: DataFactory }, ['triplePattern']);
+      datasource = new Datasource({ dataFactory }, ['triplePattern']);
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn((query: Query, onError?: (error?: Error) => void) => {
         setImmediate(() => onError?.(error));
         return empty<Quad>();
       });
-      view = new QuadPatternFragmentsRdfView({ dataFactory: DataFactory });
+      view = new QuadPatternFragmentsRdfView({ dataFactory });
       view.render = vi.fn(); // avoid writing a partial body
       controller = new QuadPatternFragmentsController({
         routers: [router],

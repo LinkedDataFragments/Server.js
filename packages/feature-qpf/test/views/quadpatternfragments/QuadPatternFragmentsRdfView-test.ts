@@ -10,7 +10,7 @@ import * as path from 'path';
 import { empty, fromArray, TransformIterator } from 'asynciterator';
 import type { AsyncIterator } from 'asynciterator';
 import type { Quad } from '@rdfjs/types';
-import { DataFactory } from 'n3';
+import { DataFactory as dataFactory } from 'n3';
 
 const { QuadPatternFragmentsRdfView } = views.quadpatternfragments;
 
@@ -21,12 +21,12 @@ describe('QuadPatternFragmentsRdfView', () => {
     });
 
     it('should be a QuadPatternFragmentsRdfView constructor', () => {
-      expect(new QuadPatternFragmentsRdfView({ dataFactory: DataFactory })).toBeInstanceOf(QuadPatternFragmentsRdfView);
+      expect(new QuadPatternFragmentsRdfView({ dataFactory })).toBeInstanceOf(QuadPatternFragmentsRdfView);
     });
   });
 
   describe('A QuadPatternFragmentsRdfView instance', () => {
-    let view = new QuadPatternFragmentsRdfView({ dataFactory: DataFactory });
+    let view = new QuadPatternFragmentsRdfView({ dataFactory });
     let settings: { results?: AsyncIterator<Quad>; [key: string]: unknown } = {
       datasource: {
         title: 'My data',
@@ -87,9 +87,9 @@ describe('QuadPatternFragmentsRdfView', () => {
 
         describe('with a non-empty triple stream that writes metadata first', () => {
           let results = fromArray<Quad>([
-            DataFactory.quad(DataFactory.namedNode('a'), DataFactory.namedNode('b'), DataFactory.namedNode('c'), DataFactory.defaultGraph()),
-            DataFactory.quad(DataFactory.namedNode('a'), DataFactory.namedNode('d'), DataFactory.namedNode('e'), DataFactory.defaultGraph()),
-            DataFactory.quad(DataFactory.namedNode('f'), DataFactory.namedNode('g'), DataFactory.namedNode('h'), DataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
           beforeAll(() => new Promise<unknown>((resolve) => {
@@ -108,9 +108,9 @@ describe('QuadPatternFragmentsRdfView', () => {
 
         describe('with a non-empty triple stream that writes metadata afterwards', () => {
           let results = fromArray<Quad>([
-            DataFactory.quad(DataFactory.namedNode('a'), DataFactory.namedNode('b'), DataFactory.namedNode('c'), DataFactory.defaultGraph()),
-            DataFactory.quad(DataFactory.namedNode('a'), DataFactory.namedNode('d'), DataFactory.namedNode('e'), DataFactory.defaultGraph()),
-            DataFactory.quad(DataFactory.namedNode('f'), DataFactory.namedNode('g'), DataFactory.namedNode('h'), DataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
+            dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
           beforeAll(() => new Promise<unknown>((resolve) => {

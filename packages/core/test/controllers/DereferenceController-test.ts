@@ -5,7 +5,7 @@ import { DummyServer } from '../../../../test/DummyServer';
 import { request, type FetchLikeResponse } from '../../../../test/test-helpers';
 import { datasources } from '../../index';
 import { DeferenceController as DereferenceController } from '../../lib/controllers/DereferenceController';
-import { DataFactory } from 'n3';
+import { DataFactory as dataFactory } from 'n3';
 
 const { Datasource } = datasources;
 
@@ -24,7 +24,7 @@ describe('DereferenceController', () => {
     let controller: DereferenceController, server: DummyServer;
     const hostname = 'localhost:80';
     beforeAll(() => {
-      controller = new DereferenceController({ dereference: { '/resource/': new Datasource({ dataFactory: DataFactory, path: 'dbpedia/2014' }) } });
+      controller = new DereferenceController({ dereference: { '/resource/': new Datasource({ dataFactory, path: 'dbpedia/2014' }) } });
       server = new DummyServer(controller);
     });
 
