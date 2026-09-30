@@ -44,8 +44,7 @@ describe('ViewCollection', () => {
     describe('when a client requests HTML', () => {
       let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = createRequest();
-        request.headers.accept = 'text/html';
+        request = createRequest({ accept: 'text/html' });
         viewDetails = viewCollection.matchView('MyView1', request);
       });
 
@@ -59,8 +58,7 @@ describe('ViewCollection', () => {
     describe('when a client requests TriG', () => {
       let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = createRequest();
-        request.headers.accept = 'application/trig';
+        request = createRequest({ accept: 'application/trig' });
         viewDetails = viewCollection.matchView('MyView1', request);
       });
 
@@ -89,8 +87,7 @@ describe('ViewCollection', () => {
     describe('when matching a request of one view type as HTML', () => {
       let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = createRequest();
-        request.headers.accept = 'text/html';
+        request = createRequest({ accept: 'text/html' });
         viewDetails = viewCollection.matchView('MyView1', request);
       });
 
@@ -104,8 +101,7 @@ describe('ViewCollection', () => {
     describe('when matching a request of one view type as TriG', () => {
       let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = createRequest();
-        request.headers.accept = 'application/trig';
+        request = createRequest({ accept: 'application/trig' });
         viewDetails = viewCollection.matchView('MyView1', request);
       });
 
@@ -119,8 +115,7 @@ describe('ViewCollection', () => {
     describe('when matching a request of another view type as HTML', () => {
       let viewDetails: ReturnType<typeof viewCollection.matchView>, request: LdfRequest;
       beforeAll(() => {
-        request = createRequest();
-        request.headers.accept = 'text/html';
+        request = createRequest({ accept: 'text/html' });
         viewDetails = viewCollection.matchView('MyView2', request);
       });
 

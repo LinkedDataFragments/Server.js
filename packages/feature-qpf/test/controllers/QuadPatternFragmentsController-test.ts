@@ -56,14 +56,13 @@ describe('QuadPatternFragmentsController', () => {
           query.datasource = '/my-datasource';
         }),
       };
-      datasource = new Datasource({ dataFactory: DataFactory, title: 'My data' });
+      datasource = new Datasource({ dataFactory: DataFactory, title: 'My data' }, ['quadPattern']);
       supportsQuerySpy = vi.fn().mockReturnValue(true);
       datasource.supportsQuery = supportsQuerySpy;
       selectResult = empty<Quad>();
       selectResult.setProperty('metadata', {});
       selectSpy = vi.fn().mockReturnValue(selectResult);
       datasource.select = selectSpy;
-      datasource.supportedFeatures = { quadPattern: true };
       datasources = { 'my-datasource': datasource };
       view = new QuadPatternFragmentsRdfView({ dataFactory: DataFactory });
       renderSpy = vi.spyOn(view, 'render');
@@ -197,14 +196,13 @@ describe('QuadPatternFragmentsController', () => {
         htmlRenderSpy: Mock<QuadPatternFragmentsHtmlView['render']>,
         rdfRenderSpy: Mock<QuadPatternFragmentsRdfView['render']>;
     beforeAll(() => {
-      let datasource = new Datasource({ dataFactory: DataFactory });
+      let datasource = new Datasource({ dataFactory: DataFactory }, ['triplePattern']);
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => {
         let it = empty<Quad>();
         it.setProperty('metadata', {});
         return it;
       });
-      datasource.supportedFeatures = { triplePattern: true };
       let router = {
         extractQueryParams: function (request: RouterRequest, query: MutableQuery) {
           query.features.datasource = true;
@@ -331,10 +329,9 @@ describe('QuadPatternFragmentsController', () => {
   describe('A QuadPatternFragmentsController instance without matching view', () => {
     let controller: QuadPatternFragmentsController, server: DummyServer;
     beforeAll(() => {
-      let datasource = new Datasource({ dataFactory: DataFactory });
+      let datasource = new Datasource({ dataFactory: DataFactory }, ['triplePattern']);
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => empty<Quad>());
-      datasource.supportedFeatures = { triplePattern: true };
       let router = {
         extractQueryParams: function (request: RouterRequest, query: MutableQuery) {
           query.features.datasource = true;
@@ -400,10 +397,9 @@ describe('QuadPatternFragmentsController', () => {
         }),
       };
       error = new Error('datasource error');
-      datasource = new Datasource({ dataFactory: DataFactory });
+      datasource = new Datasource({ dataFactory: DataFactory }, ['triplePattern']);
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn(() => { throw error; });
-      datasource.supportedFeatures = { triplePattern: true };
       view = new QuadPatternFragmentsRdfView({ dataFactory: DataFactory });
       controller = new QuadPatternFragmentsController({
         routers: [router],
@@ -441,13 +437,12 @@ describe('QuadPatternFragmentsController', () => {
         }),
       };
       error = new Error('datasource error');
-      datasource = new Datasource({ dataFactory: DataFactory });
+      datasource = new Datasource({ dataFactory: DataFactory }, ['triplePattern']);
       datasource.supportsQuery = vi.fn().mockReturnValue(true);
       datasource.select = vi.fn((query: Query, onError?: (error?: Error) => void) => {
         setImmediate(() => onError?.(error));
         return empty<Quad>();
       });
-      datasource.supportedFeatures = { triplePattern: true };
       view = new QuadPatternFragmentsRdfView({ dataFactory: DataFactory });
       view.render = vi.fn(); // avoid writing a partial body
       controller = new QuadPatternFragmentsController({

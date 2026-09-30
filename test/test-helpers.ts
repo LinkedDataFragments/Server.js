@@ -69,8 +69,10 @@ export function extractQueryParams(router: Router, description: string, url: str
 }
 
 // A dummy incoming request, as returned by createRequest
-export function createRequest(): LdfRequest {
-  return new IncomingMessage(new Socket());
+export function createRequest(headers: Record<string, string> = {}): LdfRequest {
+  const request = new IncomingMessage(new Socket());
+  Object.assign(request.headers, headers);
+  return request;
 }
 
 // A dummy outgoing response tied to a dummy request, as returned by createResponse

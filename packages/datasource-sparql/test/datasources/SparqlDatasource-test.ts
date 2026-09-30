@@ -34,9 +34,12 @@ interface RequestStub extends Mock<(options: RequestOptions, callback?: RequestC
   onSecondCall(value: HttpResponse): void;
 }
 
-// Mimics sinon's onFirstCall/onSecondCall: each configured return value stays
-// tied to that call index until overridden, and survives mockClear (unlike
-// mockReturnValueOnce, which is consumed after a single use).
+/**
+ * Creates a mock request function whose return value can be configured per call index.
+ * Each configured value stays tied to that index until overridden, unlike
+ * `mockReturnValueOnce`, which is consumed after a single use.
+ * @returns The mock function, extended with `onFirstCall`/`onSecondCall` setters.
+ */
 function createRequestStub(): RequestStub {
   let responses: HttpResponse[] = [];
   let fn = vi.fn(() => responses[fn.mock.calls.length - 1]);
@@ -333,6 +336,12 @@ describe('SparqlDatasource', () => {
 });
 
 function itShouldExecute(datasource: InstanceType<typeof SparqlDatasource>, request: RequestStub, name: string, query: Query, constructQuery: string, countQuery: string | null) {
+  function expectRequestedQuery(callIndex: number, expectedQuery: string): void {
+    let url = parseUrl(request.mock.calls[callIndex][0].url, true);
+    expect(`${String(url.protocol)}//${String(url.host)}${String(url.pathname)}`).toBe('http://ex.org/sparql');
+    expect(url.query.query).toBe(expectedQuery);
+  }
+
   describe('executing ' + name, () => {
     let result: AsyncIterator<Quad>, totalCount: number | undefined;
     beforeAll(async () => {
@@ -347,17 +356,13 @@ function itShouldExecute(datasource: InstanceType<typeof SparqlDatasource>, requ
 
     it('should request a matching CONSTRUCT query', () => {
       expect(request).toHaveBeenCalled();
-      let url = parseUrl(request.mock.calls[0][0].url, true);
-      expect(`${String(url.protocol)}//${String(url.host)}${String(url.pathname)}`).toBe('http://ex.org/sparql');
-      expect(url.query.query).toBe(constructQuery);
+      expectRequestedQuery(0, constructQuery);
     });
 
     if (countQuery) {
       it('should request a matching COUNT query', () => {
         expect(request).toHaveBeenCalledTimes(2);
-        let url = parseUrl(request.mock.calls[1][0].url, true);
-        expect(`${String(url.protocol)}//${String(url.host)}${String(url.pathname)}`).toBe('http://ex.org/sparql');
-        expect(url.query.query).toBe(countQuery);
+        expectRequestedQuery(1, countQuery);
       });
     }
     else {
