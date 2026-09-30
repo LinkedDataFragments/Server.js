@@ -2,7 +2,7 @@
 /* A SummaryRdfViewExtension extends the Quad Pattern Fragments RDF view with a summary link. */
 
 import { RdfView } from '@ldf/core/lib/views/RdfView';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import type { RdfViewSettings, RenderDone, ViewSettings } from '@ldf/core';
 import type { SummaryRenderSettings } from '../../controllers/SummaryController';
 

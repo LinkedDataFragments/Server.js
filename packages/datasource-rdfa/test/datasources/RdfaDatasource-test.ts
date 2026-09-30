@@ -2,40 +2,43 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { once } from 'events';
-let N3Datasource = require('../../').datasources.N3Datasource;
+import { datasources as rdfaDatasources } from '../../index';
+import { datasources as coreDatasources } from '@ldf/core';
+import type { Query } from '@ldf/core';
+import * as path from 'path';
+import { DataFactory as dataFactory } from 'n3';
 
-let Datasource = require('@ldf/core').datasources.Datasource,
-    path = require('path'),
-    dataFactory = require('n3').DataFactory;
+const { RdfaDatasource } = rdfaDatasources;
+const { Datasource } = coreDatasources;
 
-let exampleTurtleUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.ttl');
+let exampleRdfaUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.html');
 
-describe('N3Datasource', () => {
-  describe('The N3Datasource module', () => {
+describe('RdfaDatasource', () => {
+  describe('The RdfaDatasource module', () => {
     it('should be a function', () => {
-      expect(typeof N3Datasource).toBe('function');
+      expect(typeof RdfaDatasource).toBe('function');
     });
 
-    it('should be a N3Datasource constructor', async () => {
-      let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
-      expect(instance).toBeInstanceOf(N3Datasource);
-      await new Promise((resolve) => instance.close(resolve));
+    it('should be a RdfaDatasource constructor', async () => {
+      let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
+      expect(instance).toBeInstanceOf(RdfaDatasource);
+      await new Promise<void>((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
-      let instance = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
+      let instance = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      await new Promise((resolve) => instance.close(resolve));
+      await new Promise<void>((resolve) => instance.close(resolve));
     });
   });
 
-  describe('A N3Datasource instance for an example Turtle file', () => {
-    let datasource = new N3Datasource({ dataFactory, url: exampleTurtleUrl });
+  describe('A RdfaDatasource instance for an example RDFa HTML file', () => {
+    let datasource = new RdfaDatasource({ dataFactory, url: exampleRdfaUrl });
     beforeAll(async () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
+    afterAll(() => new Promise<void>((resolve) => datasource.close(resolve)));
 
     itShouldExecute(datasource,
       'the empty query',
@@ -84,13 +87,13 @@ describe('N3Datasource', () => {
   });
 });
 
-function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
+function itShouldExecute(datasource: InstanceType<typeof RdfaDatasource>, name: string, query: Query, expectedResultsCount: number, expectedTotalCount: number) {
   describe('executing ' + name, () => {
-    let resultsCount = 0, totalCount;
+    let resultsCount = 0, totalCount: number | undefined;
     beforeAll(async () => {
       let result = datasource.select(query);
-      result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
-      result.on('data', (triple) => { resultsCount++; });
+      result.getProperty('metadata', (metadata: { totalCount: number }) => { totalCount = metadata.totalCount; });
+      result.on('data', () => { resultsCount++; });
       await once(result, 'end');
     });
 

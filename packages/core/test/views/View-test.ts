@@ -1,9 +1,16 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, vi } from 'vitest';
-// changed to make tests pass, will be revised in follow up pr
-let View = require('../../lib/views/View').View,
-    resolve = require('path').resolve;
+import { View } from '../../lib/views/View';
+import { resolve } from 'path';
+import { createRequest, createResponse } from '../../../../test/test-helpers';
+import type { LdfRequest, LdfResponse, RenderDone, ViewSettings } from '../../index';
+
+class TestableView extends View {
+  override _render(settings: ViewSettings, request: LdfRequest, response: LdfResponse, done: RenderDone): void {
+    return super._render(settings, request, response, done);
+  }
+}
 
 describe('View', () => {
   describe('The View module', () => {
@@ -69,54 +76,59 @@ describe('View', () => {
 
     describe('without _render method', () => {
       it('should throw an error on calling render', () => {
-        let response = { getHeader: vi.fn() };
-        expect(() => { new View().render(null, null, response); })
+        let response = createResponse();
+        response.getHeader = vi.fn();
+        expect(() => { new View().render({}, createRequest(), response); })
           .toThrow('The _render method is not yet implemented.');
       });
     });
 
     describe('created without defaults', () => {
       it('should call _render with the given options', () => {
-        let view = new View(),
-            request = {}, response = { getHeader: vi.fn().mockReturnValue('text/html') },
+        let view = new TestableView(),
+            request = createRequest(), response = createResponse(),
             options = { a: 'b' };
-        view._render = vi.fn();
+        response.getHeader = vi.fn().mockReturnValue('text/html');
+        let renderSpy = vi.fn();
+        view._render = renderSpy;
         view.render(options, request, response, noop);
         expect(response.getHeader).toHaveBeenCalledOnce();
         expect(response.getHeader).toHaveBeenCalledWith('Content-Type');
-        expect(view._render.mock.calls[0]).toHaveLength(4);
-        expect(view._render).toHaveBeenCalledOnce();
-        expect(view._render.mock.calls[0][0]).toEqual({
+        expect(renderSpy.mock.calls[0]).toHaveLength(4);
+        expect(renderSpy).toHaveBeenCalledOnce();
+        expect(renderSpy.mock.calls[0][0]).toEqual({
           a: 'b',
           contentType: 'text/html',
           viewPathBase: resolve(__dirname, '../../lib/views/base.html'),
         });
-        expect(view._render.mock.calls[0][1]).toBe(request);
-        expect(view._render.mock.calls[0][2]).toBe(response);
-        expect(view._render.mock.calls[0][3]).toBeInstanceOf(Function);
+        expect(renderSpy.mock.calls[0][1]).toBe(request);
+        expect(renderSpy.mock.calls[0][2]).toBe(response);
+        expect(renderSpy.mock.calls[0][3]).toBeInstanceOf(Function);
       });
     });
 
     describe('created with defaults', () => {
       it('should call _render with the combined defaults and options', () => {
-        let view = new View(null, null, { c: 'd' }),
-            request = {}, response = { getHeader: vi.fn().mockReturnValue('text/html') },
+        let view = new TestableView(undefined, undefined, { c: 'd' }),
+            request = createRequest(), response = createResponse(),
             options = { a: 'b' };
-        view._render = vi.fn();
+        response.getHeader = vi.fn().mockReturnValue('text/html');
+        let renderSpy = vi.fn();
+        view._render = renderSpy;
         view.render(options, request, response, noop);
         expect(response.getHeader).toHaveBeenCalledOnce();
         expect(response.getHeader).toHaveBeenCalledWith('Content-Type');
-        expect(view._render).toHaveBeenCalledOnce();
-        expect(view._render.mock.calls[0]).toHaveLength(4);
-        expect(view._render.mock.calls[0][0]).toEqual({
+        expect(renderSpy).toHaveBeenCalledOnce();
+        expect(renderSpy.mock.calls[0]).toHaveLength(4);
+        expect(renderSpy.mock.calls[0][0]).toEqual({
           a: 'b',
           c: 'd',
           contentType: 'text/html',
           viewPathBase: resolve(__dirname, '../../lib/views/base.html'),
         });
-        expect(view._render.mock.calls[0][1]).toBe(request);
-        expect(view._render.mock.calls[0][2]).toBe(response);
-        expect(view._render.mock.calls[0][3]).toBeInstanceOf(Function);
+        expect(renderSpy.mock.calls[0][1]).toBe(request);
+        expect(renderSpy.mock.calls[0][2]).toBe(response);
+        expect(renderSpy.mock.calls[0][3]).toBeInstanceOf(Function);
       });
     });
   });

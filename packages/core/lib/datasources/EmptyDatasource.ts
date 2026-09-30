@@ -1,7 +1,7 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 /* An empty data source doesn't contain any quads. */
 
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import { MemoryDatasource } from './MemoryDatasource';
 import type { DatasourceOptions } from '../types';
 

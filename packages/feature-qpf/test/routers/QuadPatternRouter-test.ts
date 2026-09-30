@@ -1,9 +1,11 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect } from 'vitest';
-import { extractQueryParams } from '../../../../test/test-helpers';
-let QuadPatternRouter = require('../../').routers.QuadPatternRouter;
-const dataFactory = require('n3').DataFactory;
+import { extractQueryParams, type QueryParamsTestCase } from '../../../../test/test-helpers';
+import { routers } from '../../index';
+import { DataFactory as dataFactory } from 'n3';
+
+const { QuadPatternRouter } = routers;
 
 describe('QuadPatternRouter', () => {
   describe('The QuadPatternRouter module', () => {
@@ -21,7 +23,7 @@ describe('QuadPatternRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -225,8 +227,8 @@ describe('QuadPatternRouter', () => {
             { a: 1 },
             { a: 1, features: { quadPattern: true }, graph: dataFactory.defaultGraph() },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -242,7 +244,7 @@ describe('QuadPatternRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -467,8 +469,8 @@ describe('QuadPatternRouter', () => {
             { a: 1 },
             { a: 1, features: { quadPattern: true }, graph: dataFactory.namedNode('foo:bar') },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });

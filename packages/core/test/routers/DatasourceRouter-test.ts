@@ -1,8 +1,9 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect } from 'vitest';
-import { extractQueryParams } from '../../../../test/test-helpers';
-let DatasourceRouter = require('../../lib/routers/DatasourceRouter').DatasourceRouter; // changed to make tests pass, will be revised in follow up pr
+import { extractQueryParams, type QueryParamsTestCase } from '../../../../test/test-helpers';
+import { DatasourceRouter } from '../../lib/routers/DatasourceRouter';
+import { UrlData } from '../../index';
 
 describe('DatasourceRouter', () => {
   describe('The DatasourceRouter module', () => {
@@ -20,7 +21,7 @@ describe('DatasourceRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a root URL without trailing slash or query parameters',
             'http://example.org',
@@ -70,20 +71,20 @@ describe('DatasourceRouter', () => {
             { a: 1 },
             { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
 
   describe('A DatasourceRouter instance with a base URL', () => {
     let router = new DatasourceRouter({
-      urlData: { baseURLPath: '/my/base/' },
+      urlData: new UrlData({ baseURL: '/my/base' }),
     });
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a root URL',
             'http://example.org/my/base/',
@@ -98,8 +99,8 @@ describe('DatasourceRouter', () => {
             { a: 1 },
             { a: 1, features: { datasource: true }, datasource: '/other/path' },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });

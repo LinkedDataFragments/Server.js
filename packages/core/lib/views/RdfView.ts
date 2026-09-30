@@ -5,7 +5,7 @@ import { View } from './View';
 import * as N3 from 'n3';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import * as _ from 'lodash';
-import type { DataFactory, Quad } from 'rdf-js';
+import type { DataFactory, Quad } from '@rdfjs/types';
 import type { LdfRequest, LdfResponse, RdfViewSettings, RenderDone, ViewSettings } from '../types';
 
 let dcTerms = 'http://purl.org/dc/terms/',

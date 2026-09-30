@@ -1,8 +1,8 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect } from 'vitest';
-import { extractQueryParams } from '../../../../test/test-helpers';
-let PageRouter = require('../../lib/routers/PageRouter').PageRouter; // changed to make tests pass, will be revised in follow up pr
+import { extractQueryParams, type QueryParamsTestCase } from '../../../../test/test-helpers';
+import { PageRouter } from '../../lib/routers/PageRouter';
 
 describe('PageRouter', () => {
   describe('The PageRouter module', () => {
@@ -20,7 +20,7 @@ describe('PageRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -77,8 +77,8 @@ describe('PageRouter', () => {
             { a: 1, features: { a: true, b: true } },
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 100, offset: 200 },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -88,7 +88,7 @@ describe('PageRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -145,8 +145,8 @@ describe('PageRouter', () => {
             { a: 1, features: { a: true, b: true } },
             { a: 1, features: { a: true, b: true, limit: true, offset: true }, limit: 250, offset: 500 },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });
@@ -156,7 +156,7 @@ describe('PageRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        [
+        const rows: QueryParamsTestCase[] = [
           [
             'a URL without query parameters',
             'http://example.org/',
@@ -164,8 +164,8 @@ describe('PageRouter', () => {
             { a: 1 },
             { a: 1, features: { limit: true }, limit: 100 },
           ],
-        ]
-          .forEach((args) => { extractQueryParams(router, ...args); });
+        ];
+        rows.forEach((args) => { extractQueryParams(router, ...args); });
       });
     });
   });

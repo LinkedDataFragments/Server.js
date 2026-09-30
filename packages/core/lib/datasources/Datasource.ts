@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import { EventEmitter } from 'events';
 import { AsyncIterator, BufferedIterator, empty } from 'asynciterator';
 import { stringToTerm } from 'rdf-string';
-import type { DataFactory, Quad, Quad_Graph } from 'rdf-js';
+import type { DataFactory, Quad, Quad_Graph } from '@rdfjs/types';
 import { UrlData } from '../UrlData';
 import type { DatasourceOptions, Query } from '../types';
 import type { CoreOptions, RequestAPI, RequiredUriUrl, Request as RequestT } from 'request';

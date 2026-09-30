@@ -2,7 +2,7 @@
 /* A NotFoundRdfView represents a 404 response in RDF. */
 
 import { RdfView } from '../RdfView';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import type { RdfViewSettings, RenderDone, ViewSettings } from '../../types';
 
 // Creates a new NotFoundRdfView
