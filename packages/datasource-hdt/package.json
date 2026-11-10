@@ -22,13 +22,15 @@
     "lint": "eslint bin/* lib test"
   },
   "dependencies": {
-    "n3": "^1.3.5"
+    "@rdfjs/types": "^2.0.1",
+    "n3": "^1.26.0"
+  },
+  "devDependencies": {
+    "@ldf/core": "^3.2.1",
+    "rdf-string": "^1.6.3"
   },
   "peerDependencies": {
     "@ldf/core": "^3.0.0"
-  },
-  "devDependencies": {
-    "@ldf/core": "^3.2.1"
   },
   "optionalDependencies": {
     "hdt": "^3.3.2"

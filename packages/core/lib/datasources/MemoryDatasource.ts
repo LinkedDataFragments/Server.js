@@ -2,7 +2,7 @@
 /* A MemoryDatasource queries a set of in-memory quads. */
 
 import { Store as N3Store } from 'n3';
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import { Datasource } from './Datasource';
 import type { DatasourceOptions, Pushable, Query } from '../types';
 

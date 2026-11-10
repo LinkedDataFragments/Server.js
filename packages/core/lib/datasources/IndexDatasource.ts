@@ -1,7 +1,7 @@
 /*! @license MIT ©2014-2016 Ruben Verborgh, Ghent University - imec */
 /* An IndexDatasource is a datasource that lists other data sources. */
 
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import { MemoryDatasource } from './MemoryDatasource';
 import type { DatasourceOptions, DatasourceRegistry } from '../types';
 

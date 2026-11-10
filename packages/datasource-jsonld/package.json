@@ -22,13 +22,15 @@
     "lint": "eslint bin/* lib test"
   },
   "dependencies": {
-    "jsonld-streaming-parser": "^4.0.0",
-    "rdf-string": "^1.3.1"
+    "@rdfjs/types": "^2.0.1",
+    "jsonld-streaming-parser": "^5.0.1",
+    "rdf-string": "^1.6.3"
+  },
+  "devDependencies": {
+    "@ldf/core": "^3.2.1",
+    "n3": "^1.26.0"
   },
   "peerDependencies": {
     "@ldf/core": "^3.0.0"
-  },
-  "devDependencies": {
-    "@ldf/core": "^3.2.1"
   }
 }

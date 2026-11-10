@@ -1,16 +1,18 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import { createStreamCapture } from '../../../../../test/test-helpers';
-let QuadPatternFragmentsRdfView = require('../../../').views.quadpatternfragments.QuadPatternFragmentsRdfView;
+import { createStreamCapture, createRequest } from '../../../../../test/test-helpers';
+import { views } from '../../../index';
 
-let _ = require('lodash'),
-    fs = require('fs'),
-    path = require('path'),
-    AsyncIterator = require('asynciterator'),
-    N3 = require('n3');
+import * as _ from 'lodash';
+import * as fs from 'fs';
+import * as path from 'path';
+import { empty, fromArray, TransformIterator } from 'asynciterator';
+import type { AsyncIterator } from 'asynciterator';
+import type { Quad } from '@rdfjs/types';
+import { DataFactory as dataFactory } from 'n3';
 
-const dataFactory = N3.DataFactory;
+const { QuadPatternFragmentsRdfView } = views.quadpatternfragments;
 
 describe('QuadPatternFragmentsRdfView', () => {
   describe('The QuadPatternFragmentsRdfView module', () => {
@@ -25,7 +27,7 @@ describe('QuadPatternFragmentsRdfView', () => {
 
   describe('A QuadPatternFragmentsRdfView instance', () => {
     let view = new QuadPatternFragmentsRdfView({ dataFactory });
-    let settings = {
+    let settings: { results?: AsyncIterator<Quad>; [key: string]: unknown } = {
       datasource: {
         title: 'My data',
         index: 'http://ex.org/#dataset',
@@ -63,18 +65,18 @@ describe('QuadPatternFragmentsRdfView', () => {
     },
     (extension, format) => {
       describe('when render is called for ' + format, () => {
-        function readAsset(name) {
+        function readAsset(name: string) {
           let file = path.join(__dirname, '../../../../../test/assets/', name + '.' + extension);
           return fs.readFileSync(file, 'utf8');
         }
 
         describe('with an empty triple stream', () => {
-          let results = AsyncIterator.empty();
+          let results = empty<Quad>();
           let response = createStreamCapture();
-          beforeAll(() => new Promise((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
-            view.render(settings, {}, response, resolve);
+            view.render(settings, createRequest(), response, resolve);
             results.setProperty('metadata', { totalCount: 1234 });
           }));
 
@@ -84,18 +86,19 @@ describe('QuadPatternFragmentsRdfView', () => {
         });
 
         describe('with a non-empty triple stream that writes metadata first', () => {
-          let results = AsyncIterator.fromArray([
+          let results = fromArray<Quad>([
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
-          beforeAll(() => new Promise((resolve) => {
-            settings.results = new AsyncIterator.TransformIterator();
+          beforeAll(() => new Promise<unknown>((resolve) => {
+            let transform = new TransformIterator<Quad>();
+            settings.results = transform;
             response.getHeader = vi.fn().mockReturnValue(format);
-            view.render(settings, {}, response, resolve);
-            settings.results.setProperty('metadata', { totalCount: 1234 });
-            settings.results.source = results;
+            view.render(settings, createRequest(), response, resolve);
+            transform.setProperty('metadata', { totalCount: 1234 });
+            transform.source = results;
           }));
 
           it('should write data and metadata', () => {
@@ -104,16 +107,16 @@ describe('QuadPatternFragmentsRdfView', () => {
         });
 
         describe('with a non-empty triple stream that writes metadata afterwards', () => {
-          let results = AsyncIterator.fromArray([
+          let results = fromArray<Quad>([
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('b'), dataFactory.namedNode('c'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('a'), dataFactory.namedNode('d'), dataFactory.namedNode('e'), dataFactory.defaultGraph()),
             dataFactory.quad(dataFactory.namedNode('f'), dataFactory.namedNode('g'), dataFactory.namedNode('h'), dataFactory.defaultGraph()),
           ]);
           let response = createStreamCapture();
-          beforeAll(() => new Promise((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
-            view.render(settings, {}, response, resolve);
+            view.render(settings, createRequest(), response, resolve);
             setImmediate(() => {
               results.setProperty('metadata', { totalCount: 1234 });
             });
@@ -125,8 +128,8 @@ describe('QuadPatternFragmentsRdfView', () => {
         });
 
         describe('with a query with a limit but no offset', () => {
-          let results = AsyncIterator.empty();
-          let settings = {
+          let results = empty<Quad>();
+          let settings: { results?: AsyncIterator<Quad>; [key: string]: unknown } = {
             datasource: { },
             fragment: {
               pageUrl:         'mypage',
@@ -137,10 +140,10 @@ describe('QuadPatternFragmentsRdfView', () => {
             query: { limit: 100 },
           };
           let response = createStreamCapture();
-          beforeAll(() => new Promise((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
-            view.render(settings, {}, response, resolve);
+            view.render(settings, createRequest(), response, resolve);
             results.setProperty('metadata', { totalCount: 1234 });
           }));
 
@@ -158,8 +161,8 @@ describe('QuadPatternFragmentsRdfView', () => {
         });
 
         describe('with a query with a limit and offset before the end', () => {
-          let results = AsyncIterator.empty();
-          let settings = {
+          let results = empty<Quad>();
+          let settings: { results?: AsyncIterator<Quad>; [key: string]: unknown } = {
             datasource: { },
             fragment: {
               pageUrl:         'mypage',
@@ -170,10 +173,10 @@ describe('QuadPatternFragmentsRdfView', () => {
             query: { limit: 100, offset: 1133 },
           };
           let response = createStreamCapture();
-          beforeAll(() => new Promise((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
-            view.render(settings, {}, response, resolve);
+            view.render(settings, createRequest(), response, resolve);
             results.setProperty('metadata', { totalCount: 1234 });
           }));
 
@@ -191,8 +194,8 @@ describe('QuadPatternFragmentsRdfView', () => {
         });
 
         describe('with a query with a limit and offset past the end', () => {
-          let results = AsyncIterator.empty();
-          let settings = {
+          let results = empty<Quad>();
+          let settings: { results?: AsyncIterator<Quad>; [key: string]: unknown } = {
             datasource: { },
             fragment: {
               pageUrl:         'mypage',
@@ -203,10 +206,10 @@ describe('QuadPatternFragmentsRdfView', () => {
             query: { limit: 100, offset: 1135 },
           };
           let response = createStreamCapture();
-          beforeAll(() => new Promise((resolve) => {
+          beforeAll(() => new Promise<unknown>((resolve) => {
             settings.results = results;
             response.getHeader = vi.fn().mockReturnValue(format);
-            view.render(settings, {}, response, resolve);
+            view.render(settings, createRequest(), response, resolve);
             results.setProperty('metadata', { totalCount: 1234 });
           }));
 

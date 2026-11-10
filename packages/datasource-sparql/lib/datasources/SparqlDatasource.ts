@@ -5,7 +5,7 @@ import { Datasource } from '@ldf/core/lib/datasources/Datasource';
 import { SparqlJsonParser } from 'sparqljson-parse';
 import LRU = require('lru-cache');
 import type { IBindings } from 'sparqljson-parse';
-import type { Literal, NamedNode, Quad, Quad_Graph, Quad_Object, Quad_Predicate, Quad_Subject, Term } from 'rdf-js';
+import type { Literal, NamedNode, Quad, Quad_Graph, Quad_Object, Quad_Predicate, Quad_Subject, Term } from '@rdfjs/types';
 import type { DatasourceOptions, Pushable, Query } from '@ldf/core';
 
 interface SparqlDatasourceOptions extends DatasourceOptions {

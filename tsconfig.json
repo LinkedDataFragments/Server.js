@@ -20,8 +20,7 @@
   "include": [
     "packages/*/index.ts",
     "packages/*/lib/**/*",
-    "packages/*/bin/**/*",
-    "types/**/*.d.ts"
+    "packages/*/bin/**/*"
   ],
   "exclude": [
     "**/node_modules"

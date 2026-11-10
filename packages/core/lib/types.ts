@@ -1,7 +1,7 @@
 /*! @license MIT ©2026 Ghent University - imec */
 /* Shared type definitions for @ldf/core */
 
-import type { DataFactory, Term } from 'rdf-js';
+import type { DataFactory, Term } from '@rdfjs/types';
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'http';
 import type { ParsedUrlQuery } from 'querystring';
 import type { UrlObject } from 'url';
@@ -93,8 +93,13 @@ export interface LdfResponse extends ServerResponse {
 // The (already-parsed) request shape routers' extractQueryParams receives —
 // note this is distinct from LdfRequest: callers pass { url: request.parsedUrl, headers }.
 export interface RouterRequest {
-  url?: { pathname?: string; query?: ParsedUrlQuery };
+  url?: { pathname?: string | null; query?: ParsedUrlQuery };
   headers?: IncomingHttpHeaders;
+}
+
+// A router extracts query parameters from a (partial) request into a query object
+export interface Router {
+  extractQueryParams(request: RouterRequest, query: Query): void;
 }
 
 // Options accepted by the Controller base class (and its subclasses) constructor

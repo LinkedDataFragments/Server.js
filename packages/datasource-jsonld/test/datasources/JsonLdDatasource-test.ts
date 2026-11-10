@@ -2,11 +2,13 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { once } from 'events';
-let JsonLdDatasource = require('../../').datasources.JsonLdDatasource;
+import { JsonLdDatasource } from '../../lib/datasources/JsonLdDatasource';
+import { datasources as coreDatasources } from '@ldf/core';
+import type { Query } from '@ldf/core';
+import * as path from 'path';
+import { DataFactory as dataFactory } from 'n3';
 
-let Datasource = require('@ldf/core').datasources.Datasource,
-    path = require('path'),
-    dataFactory = require('n3').DataFactory;
+const { Datasource } = coreDatasources;
 
 let exampleJsonLdUrl = 'file://' + path.join(__dirname, '../../../../test/assets/test.jsonld');
 
@@ -19,13 +21,13 @@ describe('JsonLdDatasource', () => {
     it('should be a JsonLdDatasource constructor', async () => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       expect(instance).toBeInstanceOf(JsonLdDatasource);
-      await new Promise((resolve) => instance.close(resolve));
+      await new Promise<void>((resolve) => instance.close(resolve));
     });
 
     it('should create Datasource objects', async () => {
       let instance = new JsonLdDatasource({ dataFactory, url: exampleJsonLdUrl });
       expect(instance).toBeInstanceOf(Datasource);
-      await new Promise((resolve) => instance.close(resolve));
+      await new Promise<void>((resolve) => instance.close(resolve));
     });
   });
 
@@ -35,7 +37,7 @@ describe('JsonLdDatasource', () => {
       datasource.initialize();
       await once(datasource, 'initialized');
     });
-    afterAll(() => new Promise((resolve) => datasource.close(resolve)));
+    afterAll(() => new Promise<void>((resolve) => datasource.close(resolve)));
 
     itShouldExecute(datasource,
       'the empty query',
@@ -94,13 +96,13 @@ describe('JsonLdDatasource', () => {
   });
 });
 
-function itShouldExecute(datasource, name, query, expectedResultsCount, expectedTotalCount) {
+function itShouldExecute(datasource: JsonLdDatasource, name: string, query: Query, expectedResultsCount: number, expectedTotalCount: number) {
   describe('executing ' + name, () => {
-    let resultsCount = 0, totalCount;
+    let resultsCount = 0, totalCount: number | undefined;
     beforeAll(async () => {
       let result = datasource.select(query);
-      result.getProperty('metadata', (metadata) => { totalCount = metadata.totalCount; });
-      result.on('data', (triple) => { resultsCount++; });
+      result.getProperty('metadata', (metadata: { totalCount: number }) => { totalCount = metadata.totalCount; });
+      result.on('data', () => { resultsCount++; });
       await once(result, 'end');
     });
 
