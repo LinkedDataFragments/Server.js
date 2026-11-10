@@ -3,7 +3,7 @@
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import { DummyServer } from '../../../../test/DummyServer';
-import { request, type FetchLikeResponse } from '../../../../test/test-helpers';
+import { request } from '../../../../test/test-helpers';
 import { NotFoundController } from '../../lib/controllers/NotFoundController';
 import { NotFoundHtmlView } from '../../lib/views/notfound/NotFoundHtmlView';
 import { NotFoundRdfView } from '../../lib/views/notfound/NotFoundRdfView';
@@ -31,7 +31,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request', () => {
-      let response: FetchLikeResponse, responseText: string;
+      let response: Awaited<ReturnType<typeof request>>, responseText: string;
       beforeAll(async () => {
         response = await request(server, '/notfound');
         responseText = await response.text();
@@ -80,7 +80,7 @@ describe('NotFoundController', () => {
     }
 
     describe('receiving a request without Accept header', () => {
-      let response: FetchLikeResponse, responseText: string;
+      let response: Awaited<ReturnType<typeof request>>, responseText: string;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/notfound');
@@ -117,7 +117,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of */*', () => {
-      let response: FetchLikeResponse, responseText: string;
+      let response: Awaited<ReturnType<typeof request>>, responseText: string;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/notfound', { headers: { Accept: '*/*' } });
@@ -154,7 +154,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: FetchLikeResponse, responseText: string;
+      let response: Awaited<ReturnType<typeof request>>, responseText: string;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/notfound', { headers: { Accept: 'text/html' } });
@@ -191,7 +191,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of text/turtle', () => {
-      let response: FetchLikeResponse, responseText: string;
+      let response: Awaited<ReturnType<typeof request>>, responseText: string;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/notfound', { headers: { Accept: 'text/turtle' } });
@@ -229,7 +229,7 @@ describe('NotFoundController', () => {
     });
 
     describe('receiving a request with an Accept header of application/trig', () => {
-      let response: FetchLikeResponse, responseText: string;
+      let response: Awaited<ReturnType<typeof request>>, responseText: string;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/notfound', { headers: { Accept: 'application/trig' } });

@@ -3,7 +3,7 @@
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import { DummyServer } from '../../../../test/DummyServer';
-import { request, type FetchLikeResponse } from '../../../../test/test-helpers';
+import { request } from '../../../../test/test-helpers';
 import { QuadPatternFragmentsController } from '../../lib/controllers/QuadPatternFragmentsController';
 import { QuadPatternFragmentsHtmlView } from '../../lib/views/quadpatternfragments/QuadPatternFragmentsHtmlView';
 import { QuadPatternFragmentsRdfView } from '../../lib/views/quadpatternfragments/QuadPatternFragmentsRdfView';
@@ -226,7 +226,7 @@ describe('QuadPatternFragmentsController', () => {
     }
 
     describe('receiving a request without Accept header', () => {
-      let response: FetchLikeResponse;
+      let response: Awaited<ReturnType<typeof request>>;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/my-datasource');
@@ -246,7 +246,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of */*', () => {
-      let response: FetchLikeResponse;
+      let response: Awaited<ReturnType<typeof request>>;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/my-datasource', { headers: { Accept: '*/*' } });
@@ -266,7 +266,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: FetchLikeResponse;
+      let response: Awaited<ReturnType<typeof request>>;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/my-datasource', { headers: { Accept: 'text/html' } });
@@ -286,7 +286,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/turtle', () => {
-      let response: FetchLikeResponse;
+      let response: Awaited<ReturnType<typeof request>>;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/my-datasource', { headers: { Accept: 'text/turtle' } });
@@ -306,7 +306,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/n3', () => {
-      let response: FetchLikeResponse;
+      let response: Awaited<ReturnType<typeof request>>;
       beforeAll(async () => {
         resetAll();
         response = await request(server, '/my-datasource', { headers: { Accept: 'text/n3' } });
@@ -346,7 +346,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request without Accept header', () => {
-      let response: FetchLikeResponse;
+      let response: Awaited<ReturnType<typeof request>>;
       beforeAll(async () => {
         response = await request(server, '/my-datasource');
       });
@@ -365,7 +365,7 @@ describe('QuadPatternFragmentsController', () => {
     });
 
     describe('receiving a request with an Accept header of text/html', () => {
-      let response: FetchLikeResponse;
+      let response: Awaited<ReturnType<typeof request>>;
       beforeAll(async () => {
         response = await request(server, '/my-datasource', { headers: { Accept: 'text/html' } });
       });

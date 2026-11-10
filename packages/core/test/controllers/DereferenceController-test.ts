@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import { DummyServer } from '../../../../test/DummyServer';
-import { request, type FetchLikeResponse } from '../../../../test/test-helpers';
+import { request } from '../../../../test/test-helpers';
 import { datasources } from '../../index';
 import { DeferenceController as DereferenceController } from '../../lib/controllers/DereferenceController';
 import { DataFactory as dataFactory } from 'n3';
@@ -29,7 +29,7 @@ describe('DereferenceController', () => {
     });
 
     describe('receiving a request for a dereferenced URL', () => {
-      let response: FetchLikeResponse, responseText: string;
+      let response: Awaited<ReturnType<typeof request>>, responseText: string;
       beforeAll(async () => {
         response = await request(server, '/resource/Mickey_Mouse');
         responseText = await response.text();

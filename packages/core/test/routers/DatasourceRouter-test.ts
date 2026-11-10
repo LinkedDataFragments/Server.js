@@ -1,9 +1,9 @@
 /*! @license MIT ©2015-2016 Ruben Verborgh, Ghent University - imec */
 
 import { describe, it, expect } from 'vitest';
-import { extractQueryParams, type QueryParamsTestCase } from '../../../../test/test-helpers';
+import { parse as parseUrl } from 'url';
 import { DatasourceRouter } from '../../lib/routers/DatasourceRouter';
-import { UrlData } from '../../index';
+import { UrlData, type Query } from '../../index';
 
 describe('DatasourceRouter', () => {
   describe('The DatasourceRouter module', () => {
@@ -21,58 +21,54 @@ describe('DatasourceRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        const rows: QueryParamsTestCase[] = [
-          [
-            'a root URL without trailing slash or query parameters',
-            'http://example.org',
-            'should extract the index datasource',
-            { a: 1 },
-            { a: 1, features: { datasource: true }, datasource: '/' },
-          ],
-          [
-            'a root URL without query parameters',
-            'http://example.org/',
-            'should extract the index datasource',
-            { a: 1 },
-            { a: 1, features: { datasource: true }, datasource: '/' },
-          ],
-          [
-            'a root URL with query parameters',
-            'http://example.org/?a=b&c=d',
-            'should extract the index datasource',
-            { a: 1 },
-            { a: 1, features: { datasource: true }, datasource: '/' },
-          ],
-          [
-            'a URL with word characters without query parameters',
-            'http://example.org/mydatasource',
-            'should extract the datasource',
-            { a: 1 },
-            { a: 1, features: { datasource: true }, datasource: '/mydatasource' },
-          ],
-          [
-            'a URL with word characters with query parameters',
-            'http://example.org/mydatasource?a=b&c=d',
-            'should extract the datasource',
-            { a: 1 },
-            { a: 1, features: { datasource: true }, datasource: '/mydatasource' },
-          ],
-          [
-            'a URL with word and non-word characters without query parameters',
-            'http://example.org/my/data-source',
-            'should extract the datasource',
-            { a: 1 },
-            { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
-          ],
-          [
-            'a URL with word and non-word characters with query parameters',
-            'http://example.org/my/data-source?a=b&c=d',
-            'should extract the datasource',
-            { a: 1 },
-            { a: 1, features: { datasource: true }, datasource: '/my/data-source' },
-          ],
-        ];
-        rows.forEach((args) => { extractQueryParams(router, ...args); });
+        it('a root URL without trailing slash or query parameters should extract the index datasource', () => {
+          let query = { a: 1 };
+          const result = router.extractQueryParams({ url: parseUrl('http://example.org', true) }, query as Query);
+          expect(result, 'should not return anything').toBeUndefined();
+          expect(query, 'should match the expected query').toEqual({ a: 1, features: { datasource: true }, datasource: '/' });
+        });
+
+        it('a root URL without query parameters should extract the index datasource', () => {
+          let query = { a: 1 };
+          const result = router.extractQueryParams({ url: parseUrl('http://example.org/', true) }, query as Query);
+          expect(result, 'should not return anything').toBeUndefined();
+          expect(query, 'should match the expected query').toEqual({ a: 1, features: { datasource: true }, datasource: '/' });
+        });
+
+        it('a root URL with query parameters should extract the index datasource', () => {
+          let query = { a: 1 };
+          const result = router.extractQueryParams({ url: parseUrl('http://example.org/?a=b&c=d', true) }, query as Query);
+          expect(result, 'should not return anything').toBeUndefined();
+          expect(query, 'should match the expected query').toEqual({ a: 1, features: { datasource: true }, datasource: '/' });
+        });
+
+        it('a URL with word characters without query parameters should extract the datasource', () => {
+          let query = { a: 1 };
+          const result = router.extractQueryParams({ url: parseUrl('http://example.org/mydatasource', true) }, query as Query);
+          expect(result, 'should not return anything').toBeUndefined();
+          expect(query, 'should match the expected query').toEqual({ a: 1, features: { datasource: true }, datasource: '/mydatasource' });
+        });
+
+        it('a URL with word characters with query parameters should extract the datasource', () => {
+          let query = { a: 1 };
+          const result = router.extractQueryParams({ url: parseUrl('http://example.org/mydatasource?a=b&c=d', true) }, query as Query);
+          expect(result, 'should not return anything').toBeUndefined();
+          expect(query, 'should match the expected query').toEqual({ a: 1, features: { datasource: true }, datasource: '/mydatasource' });
+        });
+
+        it('a URL with word and non-word characters without query parameters should extract the datasource', () => {
+          let query = { a: 1 };
+          const result = router.extractQueryParams({ url: parseUrl('http://example.org/my/data-source', true) }, query as Query);
+          expect(result, 'should not return anything').toBeUndefined();
+          expect(query, 'should match the expected query').toEqual({ a: 1, features: { datasource: true }, datasource: '/my/data-source' });
+        });
+
+        it('a URL with word and non-word characters with query parameters should extract the datasource', () => {
+          let query = { a: 1 };
+          const result = router.extractQueryParams({ url: parseUrl('http://example.org/my/data-source?a=b&c=d', true) }, query as Query);
+          expect(result, 'should not return anything').toBeUndefined();
+          expect(query, 'should match the expected query').toEqual({ a: 1, features: { datasource: true }, datasource: '/my/data-source' });
+        });
       });
     });
   });
@@ -84,23 +80,19 @@ describe('DatasourceRouter', () => {
 
     describe('extractUrlParams', () => {
       describe('with an existing query', () => {
-        const rows: QueryParamsTestCase[] = [
-          [
-            'a root URL',
-            'http://example.org/my/base/',
-            'should extract the index datasource',
-            { a: 1 },
-            { a: 1, features: { datasource: true }, datasource: '/' },
-          ],
-          [
-            'a non-root URL',
-            'http://example.org/my/base/other/path',
-            'should extract the index datasource',
-            { a: 1 },
-            { a: 1, features: { datasource: true }, datasource: '/other/path' },
-          ],
-        ];
-        rows.forEach((args) => { extractQueryParams(router, ...args); });
+        it('a root URL should extract the index datasource', () => {
+          let query = { a: 1 };
+          const result = router.extractQueryParams({ url: parseUrl('http://example.org/my/base/', true) }, query as Query);
+          expect(result, 'should not return anything').toBeUndefined();
+          expect(query, 'should match the expected query').toEqual({ a: 1, features: { datasource: true }, datasource: '/' });
+        });
+
+        it('a non-root URL should extract the index datasource', () => {
+          let query = { a: 1 };
+          const result = router.extractQueryParams({ url: parseUrl('http://example.org/my/base/other/path', true) }, query as Query);
+          expect(result, 'should not return anything').toBeUndefined();
+          expect(query, 'should match the expected query').toEqual({ a: 1, features: { datasource: true }, datasource: '/other/path' });
+        });
       });
     });
   });

@@ -1,25 +1,19 @@
 /*! @license MIT ©2013-2016 Ruben Verborgh, Ghent University - imec */
-import { it, expect } from 'vitest';
-import { parse as parseUrl } from 'url';
 import { IncomingMessage, ServerResponse, type Server } from 'http';
 import { Socket } from 'net';
 import { EventEmitter, once } from 'events';
 import { inject } from 'light-my-request';
-import type { InjectOptions } from 'light-my-request';
-import type { LdfRequest, LdfResponse, Query, Router } from '../packages/core/lib/types';
+import type { LdfRequest, LdfResponse } from '../packages/core/lib/types';
 
-export type FetchLikeInit = Pick<InjectOptions, 'method' | 'headers'>;
-
-export interface FetchLikeResponse {
-  status: number;
-  headers: { get(name: string): string | null };
-  text(): Promise<string>;
-}
-
-// Starts the given server on an ephemeral port, runs callback with its base URL, then closes it.
-// Only needed for servers whose error handling relies on emitting 'error' on the
-// response as a recoverable signal (LinkedDataFragmentsServer): light-my-request's
-// `request()` below treats any such 'error' event as fatal to the whole injected exchange.
+/**
+ * Starts the given server on an ephemeral port, runs the callback with its base URL, then closes it.
+ * Only needed for servers whose error handling relies on emitting 'error' on the response as a
+ * recoverable signal (LinkedDataFragmentsServer): light-my-request's request() below treats any
+ * such 'error' event as fatal to the whole injected exchange.
+ * @param server - The HTTP server to start.
+ * @param callback - Called with the server's base URL once it is listening.
+ * @returns The value resolved by callback.
+ */
 export async function withServer<T>(server: Server, callback: (baseUrl: string) => Promise<T>): Promise<T> {
   await new Promise<void>((resolve) => server.listen(0, resolve));
   try {
@@ -34,10 +28,16 @@ export async function withServer<T>(server: Server, callback: (baseUrl: string) 
   }
 }
 
-export async function request(server: Server, path: string, init: FetchLikeInit = {}): Promise<FetchLikeResponse> {
+/**
+ * Simulates an HTTP request against the given server without opening a real port.
+ * @param server - The HTTP server to dispatch the request to.
+ * @param path - The request path, including any query string.
+ * @param init - Optional request headers.
+ * @returns The response's status, headers, and body text.
+ */
+export async function request(server: Server, path: string, init: { headers?: Record<string, string> } = {}) {
   const response = await inject((req, res) => server.emit('request', req, res), {
     url: path,
-    method: init.method,
     headers: init.headers,
     Request: IncomingMessage,
   });
@@ -51,21 +51,6 @@ export async function request(server: Server, path: string, init: FetchLikeInit 
     },
     text: () => Promise.resolve(response.payload),
   };
-}
-
-// Query has no index signature; this lets the test tables below use an
-// arbitrary 'a' field as a stand-in for "pre-existing data that should survive".
-export type TestQuery = Query & { a?: number };
-export type QueryParamsTestCase = [string, string, string, TestQuery, TestQuery];
-
-// Generates an `it` block that verifies a router's extractQueryParams behavior
-export function extractQueryParams(router: Router, description: string, url: string, intent: string, query: Query, expectedQuery: Query) {
-  it(description + ' ' + intent, () => {
-    const parsed = parseUrl(url, true);
-    const result = router.extractQueryParams({ url: parsed }, query);
-    expect(result, 'should not return anything').toBeUndefined();
-    expect(query, 'should match the expected query').toEqual(expectedQuery);
-  });
 }
 
 // A dummy incoming request, as returned by createRequest
